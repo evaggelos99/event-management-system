@@ -1,4 +1,4 @@
-package com.news.scrape;
+package org.com.ems;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

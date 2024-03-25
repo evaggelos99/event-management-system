@@ -1,4 +1,4 @@
-package com.news.scrape;
+package org.com.ems;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
