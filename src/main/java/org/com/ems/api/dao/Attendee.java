@@ -1,7 +1,6 @@
 package org.com.ems.api.dao;
 
 import java.util.Optional;
-import java.util.UUID;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -10,9 +9,6 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Null;
@@ -22,9 +18,6 @@ public final class Attendee extends AbstractDAO {
 
 	private static final long serialVersionUID = -6594393457575545824L;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.UUID)
-	private UUID uuid;
 	@NotNull
 	private String firstName;
 	@NotNull
@@ -40,18 +33,19 @@ public final class Attendee extends AbstractDAO {
 	@Override
 	public String toString() {
 
-		return new ToStringBuilder(ToStringStyle.MULTI_LINE_STYLE).append(uuid).append(firstName).append(lastName)
-				.append(ticket).build();
+		return new ToStringBuilder(ToStringStyle.MULTI_LINE_STYLE).append(this.getUuid()).append(this.firstName)
+				.append(this.lastName).append(this.ticket).build();
 	}
 
 	@Override
 	public int hashCode() {
 
-		return new HashCodeBuilder().append(uuid).append(firstName).append(lastName).append(ticket).build();
+		return new HashCodeBuilder().append(this.getUuid()).append(this.firstName).append(this.lastName)
+				.append(this.ticket).build();
 	}
 
 	@Override
-	public boolean equals(Object object) {
+	public boolean equals(final Object object) {
 
 		if (this == object) {
 			return true;
@@ -61,30 +55,26 @@ public final class Attendee extends AbstractDAO {
 			return false;
 		}
 
-		if (getClass() != object.getClass()) {
+		if (this.getClass() != object.getClass()) {
 			return false;
 		}
 
-		var rhs = (Attendee) object;
+		final var rhs = (Attendee) object;
 
-		return new EqualsBuilder().append(this.uuid, rhs.uuid).append(this.firstName, rhs.firstName)
+		return new EqualsBuilder().append(this.getUuid(), rhs.getUuid()).append(this.firstName, rhs.firstName)
 				.append(this.lastName, rhs.lastName).append(this.ticket, rhs.ticket).build();
 	}
 
-	public UUID getUuid() {
-		return uuid;
-	}
-
 	public String getFirstName() {
-		return firstName;
+		return this.firstName;
 	}
 
 	public String getLastName() {
-		return lastName;
+		return this.lastName;
 	}
 
 	public Optional<Ticket> getTicket() {
-		return Optional.ofNullable(ticket);
+		return Optional.ofNullable(this.ticket);
 	}
 
 }

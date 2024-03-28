@@ -1,4 +1,4 @@
-package org.com.ems.db.api;
+package org.com.ems.db;
 
 import java.util.UUID;
 

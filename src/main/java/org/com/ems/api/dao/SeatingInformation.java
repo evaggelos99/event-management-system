@@ -5,15 +5,16 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import jakarta.persistence.Embeddable;
+
 /**
  * TODO can we transform this to record?
- * 
+ *
  * @author Evangelos Georgiou
  *
  */
-public class SeatingInformation extends AbstractDAO {
-
-	private static final long serialVersionUID = 1635646193965736631L;
+@Embeddable
+public final class SeatingInformation {
 
 	String seat;
 
@@ -23,24 +24,24 @@ public class SeatingInformation extends AbstractDAO {
 
 	}
 
-	public SeatingInformation(String seat, String section) {
+	public SeatingInformation(final String seat, final String section) {
 
 	}
 
 	@Override
 	public String toString() {
 
-		return new ToStringBuilder(ToStringStyle.MULTI_LINE_STYLE).append(seat).append(section).build();
+		return new ToStringBuilder(ToStringStyle.MULTI_LINE_STYLE).append(this.seat).append(this.section).build();
 	}
 
 	@Override
 	public int hashCode() {
 
-		return new HashCodeBuilder().append(seat).append(section).build();
+		return new HashCodeBuilder().append(this.seat).append(this.section).build();
 	}
 
 	@Override
-	public boolean equals(Object object) {
+	public boolean equals(final Object object) {
 
 		if (this == object) {
 			return true;
@@ -50,21 +51,21 @@ public class SeatingInformation extends AbstractDAO {
 			return false;
 		}
 
-		if (getClass() != object.getClass()) {
+		if (this.getClass() != object.getClass()) {
 			return false;
 		}
 
-		var rhs = (SeatingInformation) object;
+		final var rhs = (SeatingInformation) object;
 
 		return new EqualsBuilder().append(this.seat, rhs.seat).append(this.section, rhs.section).build();
 	}
 
 	public String getSeat() {
-		return seat;
+		return this.seat;
 	}
 
 	public String getSection() {
-		return section;
+		return this.section;
 	}
 
 }

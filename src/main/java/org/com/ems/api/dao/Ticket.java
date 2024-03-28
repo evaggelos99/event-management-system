@@ -8,22 +8,17 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import jakarta.annotation.Nullable;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Null;
 
 @Entity
 public final class Ticket extends AbstractDAO {
 
 	private static final long serialVersionUID = 7755157879519770362L;
-	
-	@Id
-	@GeneratedValue(strategy = GenerationType.UUID)
-	private UUID UUID;
-	@Null
+
+	@Nullable
 	private UUID attendeeID; // might not have an attendee at first
 	@NotNull
 	private UUID eventID;
@@ -34,6 +29,7 @@ public final class Ticket extends AbstractDAO {
 	@NotNull
 	private Boolean transferable;
 	@NotNull
+	@Embedded
 	private SeatingInformation seatInfo;
 
 	protected Ticket() {
@@ -43,19 +39,20 @@ public final class Ticket extends AbstractDAO {
 	@Override
 	public String toString() {
 
-		return new ToStringBuilder(ToStringStyle.MULTI_LINE_STYLE).append(UUID).append(attendeeID).append(eventID)
-				.append(ticketType).append(price).append(transferable).append(seatInfo).build();
+		return new ToStringBuilder(ToStringStyle.MULTI_LINE_STYLE).append(this.uuid).append(this.attendeeID)
+				.append(this.eventID).append(this.ticketType).append(this.price).append(this.transferable)
+				.append(this.seatInfo).build();
 	}
 
 	@Override
 	public int hashCode() {
 
-		return new HashCodeBuilder().append(UUID).append(attendeeID).append(eventID).append(ticketType).append(price)
-				.append(transferable).append(seatInfo).build();
+		return new HashCodeBuilder().append(this.uuid).append(this.attendeeID).append(this.eventID)
+				.append(this.ticketType).append(this.price).append(this.transferable).append(this.seatInfo).build();
 	}
 
 	@Override
-	public boolean equals(Object object) {
+	public boolean equals(final Object object) {
 
 		if (this == object) {
 			return true;
@@ -65,43 +62,39 @@ public final class Ticket extends AbstractDAO {
 			return false;
 		}
 
-		if (getClass() != object.getClass()) {
+		if (this.getClass() != object.getClass()) {
 			return false;
 		}
 
-		var rhs = (Ticket) object;
+		final var rhs = (Ticket) object;
 
-		return new EqualsBuilder().append(this.UUID, rhs.UUID).append(this.attendeeID, rhs.attendeeID)
+		return new EqualsBuilder().append(this.uuid, rhs.uuid).append(this.attendeeID, rhs.attendeeID)
 				.append(this.eventID, rhs.eventID).append(this.ticketType, rhs.ticketType).append(this.price, rhs.price)
 				.append(this.transferable, rhs.transferable).append(this.seatInfo, rhs.seatInfo).build();
 	}
 
-	public UUID getUUID() {
-		return UUID;
-	}
-
 	public Optional<UUID> getAttendeeID() {
-		return Optional.ofNullable(attendeeID);
+		return Optional.ofNullable(this.attendeeID);
 	}
 
 	public UUID getEventID() {
-		return eventID;
+		return this.eventID;
 	}
 
 	public TicketType getTicketType() {
-		return ticketType;
+		return this.ticketType;
 	}
 
 	public Integer getPrice() {
-		return price;
+		return this.price;
 	}
 
 	public Boolean isTransferable() {
-		return transferable;
+		return this.transferable;
 	}
 
 	public SeatingInformation getSeatInfo() {
-		return seatInfo;
+		return this.seatInfo;
 	}
 
 }

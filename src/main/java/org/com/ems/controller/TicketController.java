@@ -8,7 +8,7 @@ import org.com.ems.api.dao.Ticket;
 import org.com.ems.controller.api.ITicketController;
 import org.com.ems.controller.exceptions.ObjectNotFoundException;
 import org.com.ems.controller.utils.CommonControllerUtils;
-import org.com.ems.db.api.ITicketRepository;
+import org.com.ems.db.ITicketRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

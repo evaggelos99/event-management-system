@@ -9,7 +9,7 @@ import org.com.ems.api.dao.Organizer;
 import org.com.ems.controller.api.IOrganizerController;
 import org.com.ems.controller.exceptions.ObjectNotFoundException;
 import org.com.ems.controller.utils.CommonControllerUtils;
-import org.com.ems.db.api.IOrganizerRepository;
+import org.com.ems.db.IOrganizerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;

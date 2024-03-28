@@ -8,7 +8,7 @@ import org.com.ems.api.dao.Event;
 import org.com.ems.controller.api.IEventController;
 import org.com.ems.controller.exceptions.ObjectNotFoundException;
 import org.com.ems.controller.utils.CommonControllerUtils;
-import org.com.ems.db.api.IEventRepository;
+import org.com.ems.db.IEventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
