@@ -33,7 +33,7 @@ public final class Attendee extends AbstractDAO {
 	@Override
 	public String toString() {
 
-		return new ToStringBuilder(ToStringStyle.MULTI_LINE_STYLE).append(this.getUuid()).append(this.firstName)
+		return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append(this.getUuid()).append(this.firstName)
 				.append(this.lastName).append(this.ticket).build();
 	}
 

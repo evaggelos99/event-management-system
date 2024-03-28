@@ -39,7 +39,7 @@ public final class Ticket extends AbstractDAO {
 	@Override
 	public String toString() {
 
-		return new ToStringBuilder(ToStringStyle.MULTI_LINE_STYLE).append(this.uuid).append(this.attendeeID)
+		return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append(this.uuid).append(this.attendeeID)
 				.append(this.eventID).append(this.ticketType).append(this.price).append(this.transferable)
 				.append(this.seatInfo).build();
 	}

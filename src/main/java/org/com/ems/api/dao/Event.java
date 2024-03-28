@@ -40,7 +40,7 @@ public final class Event extends AbstractDAO {
 	@Override
 	public String toString() {
 
-		return new ToStringBuilder(ToStringStyle.MULTI_LINE_STYLE).append(this.uuid).append(this.name)
+		return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append(this.uuid).append(this.name)
 				.append(this.place).append(this.eventType).append(this.attendees).append(this.organizer).build();
 	}
 

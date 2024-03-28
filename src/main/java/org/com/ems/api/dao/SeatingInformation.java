@@ -31,7 +31,7 @@ public final class SeatingInformation {
 	@Override
 	public String toString() {
 
-		return new ToStringBuilder(ToStringStyle.MULTI_LINE_STYLE).append(this.seat).append(this.section).build();
+		return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append(this.seat).append(this.section).build();
 	}
 
 	@Override
