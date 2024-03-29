@@ -2,6 +2,9 @@
 bin/
 tmp/
 *.tmp
+*.class
+*.jar
+*.war
 *.bak
 *.swp
 *~.nib
@@ -18,6 +21,7 @@ local.properties
 
 # PyDev specific (Python IDE for Eclipse)
 *.pydevproject
+**.DS_Store
 
 # CDT-specific (C/C++ Development Tooling)
 .cproject
@@ -33,7 +37,7 @@ local.properties
 
 # sbteclipse plugin
 .target
-/target
+**/target
 
 # Tern plugin
 .tern-project
