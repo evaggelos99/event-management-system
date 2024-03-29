@@ -1,5 +1,7 @@
 package org.com.ems.api.dao;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.Optional;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -35,6 +37,13 @@ public final class Attendee extends AbstractDAO {
 
 	}
 
+	public Attendee(@NotNull final String firstName, @NotNull final String lastName, final Ticket ticket) {
+
+		this.firstName = requireNonNull(firstName);
+		this.lastName = requireNonNull(lastName);
+		this.ticket = ticket;
+	}
+
 	@Override
 	public String toString() {
 
@@ -45,8 +54,7 @@ public final class Attendee extends AbstractDAO {
 	@Override
 	public int hashCode() {
 
-		return new HashCodeBuilder().append(this.uuid).append(this.firstName).append(this.lastName).append(this.ticket)
-				.build();
+		return new HashCodeBuilder().append(this.firstName).append(this.lastName).append(this.ticket).build();
 	}
 
 	@Override
@@ -66,8 +74,8 @@ public final class Attendee extends AbstractDAO {
 
 		final var rhs = (Attendee) object;
 
-		return new EqualsBuilder().append(this.getUuid(), rhs.getUuid()).append(this.firstName, rhs.firstName)
-				.append(this.lastName, rhs.lastName).append(this.ticket, rhs.ticket).build();
+		return new EqualsBuilder().append(this.firstName, rhs.firstName).append(this.lastName, rhs.lastName)
+				.append(this.ticket, rhs.ticket).build();
 	}
 
 	public String getFirstName() {

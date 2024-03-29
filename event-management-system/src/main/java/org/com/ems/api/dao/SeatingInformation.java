@@ -1,5 +1,7 @@
 package org.com.ems.api.dao;
 
+import static java.util.Objects.requireNonNull;
+
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
@@ -18,16 +20,17 @@ import jakarta.validation.constraints.NotNull;
 public final class SeatingInformation {
 
 	@NotNull
-	String seat;
+	private String seat;
 	@NotNull
-	String section;
+	private String section;
 
 	protected SeatingInformation() {
 
 	}
 
 	public SeatingInformation(final String seat, final String section) {
-
+		this.seat = requireNonNull(seat);
+		this.section = requireNonNull(section);
 	}
 
 	@Override

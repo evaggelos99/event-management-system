@@ -1,5 +1,7 @@
 package org.com.ems.api.dao;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.Optional;
 import java.util.UUID;
 
@@ -19,9 +21,9 @@ public final class Ticket extends AbstractDAO {
 	private static final long serialVersionUID = 7755157879519770362L;
 
 	@Nullable
-	private UUID attendeeID; // might not have an attendee at first
+	private UUID attendeeID;
 	@NotNull
-	private UUID eventID;
+	private UUID eventID; // TODO change to event object
 	@NotNull
 	private TicketType ticketType;
 	@NotNull
@@ -36,6 +38,18 @@ public final class Ticket extends AbstractDAO {
 
 	}
 
+	public Ticket(final UUID attendeeID, @NotNull final UUID eventID, @NotNull final TicketType ticketType,
+			@NotNull final Integer price, @NotNull final Boolean transferable,
+			@NotNull final SeatingInformation seatInfo) {
+
+		this.attendeeID = attendeeID;
+		this.eventID = requireNonNull(eventID);
+		this.ticketType = requireNonNull(ticketType);
+		this.price = requireNonNull(price);
+		this.transferable = requireNonNull(transferable);
+		this.seatInfo = requireNonNull(seatInfo);
+	}
+
 	@Override
 	public String toString() {
 
@@ -47,8 +61,8 @@ public final class Ticket extends AbstractDAO {
 	@Override
 	public int hashCode() {
 
-		return new HashCodeBuilder().append(this.uuid).append(this.attendeeID).append(this.eventID)
-				.append(this.ticketType).append(this.price).append(this.transferable).append(this.seatInfo).build();
+		return new HashCodeBuilder().append(this.attendeeID).append(this.eventID).append(this.ticketType)
+				.append(this.price).append(this.transferable).append(this.seatInfo).build();
 	}
 
 	@Override
@@ -68,8 +82,8 @@ public final class Ticket extends AbstractDAO {
 
 		final var rhs = (Ticket) object;
 
-		return new EqualsBuilder().append(this.uuid, rhs.uuid).append(this.attendeeID, rhs.attendeeID)
-				.append(this.eventID, rhs.eventID).append(this.ticketType, rhs.ticketType).append(this.price, rhs.price)
+		return new EqualsBuilder().append(this.attendeeID, rhs.attendeeID).append(this.eventID, rhs.eventID)
+				.append(this.ticketType, rhs.ticketType).append(this.price, rhs.price)
 				.append(this.transferable, rhs.transferable).append(this.seatInfo, rhs.seatInfo).build();
 	}
 

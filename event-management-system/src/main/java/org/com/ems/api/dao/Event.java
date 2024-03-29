@@ -1,5 +1,7 @@
 package org.com.ems.api.dao;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.List;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -37,6 +39,18 @@ public final class Event extends AbstractDAO {
 
 	}
 
+	public Event(@NotNull final String name, @NotNull final String place, @NotNull final EventType eventType,
+			@NotNull final List<Attendee> attendees, @NotNull final Organizer organizer,
+			@NotNull final Integer limitOfPeople) {
+
+		this.name = requireNonNull(name);
+		this.place = requireNonNull(place);
+		this.eventType = requireNonNull(eventType);
+		this.attendees = requireNonNull(attendees);
+		this.organizer = requireNonNull(organizer);
+		this.limitOfPeople = requireNonNull(limitOfPeople);
+	}
+
 	@Override
 	public String toString() {
 
@@ -48,8 +62,8 @@ public final class Event extends AbstractDAO {
 	@Override
 	public int hashCode() {
 
-		return new HashCodeBuilder().append(this.uuid).append(this.name).append(this.place).append(this.eventType)
-				.append(this.attendees).append(this.organizer).append(this.limitOfPeople).build();
+		return new HashCodeBuilder().append(this.name).append(this.place).append(this.eventType).append(this.attendees)
+				.append(this.organizer).append(this.limitOfPeople).build();
 	}
 
 	@Override
@@ -69,9 +83,9 @@ public final class Event extends AbstractDAO {
 
 		final var rhs = (Event) object;
 
-		return new EqualsBuilder().append(this.uuid, rhs.uuid).append(this.name, rhs.name).append(this.place, rhs.place)
+		return new EqualsBuilder().append(this.name, rhs.name).append(this.place, rhs.place)
 				.append(this.eventType, rhs.eventType).append(this.attendees, rhs.attendees)
-				.append(this.organizer, rhs.organizer).build();
+				.append(this.organizer, rhs.organizer).append(this.limitOfPeople, rhs.limitOfPeople).build();
 	}
 
 	public String getName() {
