@@ -2,6 +2,7 @@ package org.com.ems.controller;
 
 import static java.util.Objects.requireNonNull;
 
+import java.util.Collection;
 import java.util.UUID;
 
 import org.com.ems.api.dao.Attendee;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Controller for CRUD operation for the DAO object {@link Attendee}
- * 
+ *
  * @author Evangelos Georgiou
  */
 @RestController
@@ -24,44 +25,49 @@ public class AttendeeController implements IAttendeeController {
 
 	private final IAttendeeRepository attendeeRepository;
 
-	public AttendeeController(@Autowired IAttendeeRepository attendeeRepository) {
+	public AttendeeController(@Autowired final IAttendeeRepository attendeeRepository) {
 
 		this.attendeeRepository = requireNonNull(attendeeRepository);
 	}
 
 	@Override
-	public Attendee postAttendee(Attendee attendee) {
+	public Attendee postAttendee(final Attendee attendee) {
 
-		return attendeeRepository.save(attendee);
+		return this.attendeeRepository.save(attendee);
 	}
 
 	@Override
-	public Attendee getAttendee(String attendeeId) {
+	public Attendee getAttendee(final String attendeeId) {
 
-		UUID uuid = CommonControllerUtils.stringToUUID(attendeeId);
-		var optionalAttendee = attendeeRepository.findById(uuid);
+		final UUID uuid = CommonControllerUtils.stringToUUID(attendeeId);
+		final var optionalAttendee = this.attendeeRepository.findById(uuid);
 
-		return optionalAttendee.orElseThrow(() -> new ObjectNotFoundException(uuid,Attendee.class));
+		return optionalAttendee.orElseThrow(() -> new ObjectNotFoundException(uuid, Attendee.class));
 	}
 
 	@Override
-	public Attendee updateAttendee(String attendeeId, Attendee attendee) {
+	public Attendee putAttendee(final String attendeeId, final Attendee attendee) {
 
-		UUID uuid = CommonControllerUtils.stringToUUID(attendeeId);
-		
-		if (attendeeRepository.existsById(uuid)) {
-			
-			attendeeRepository.deleteById(uuid);
-			return attendeeRepository.save(attendee);
+		final UUID uuid = CommonControllerUtils.stringToUUID(attendeeId);
+
+		if (this.attendeeRepository.existsById(uuid)) {
+
+			return this.attendeeRepository.save(attendee);
 		}
 
 		throw new ObjectNotFoundException(uuid, Attendee.class);
 	}
 
 	@Override
-	public void deleteAttendee(String attendeeId) {
+	public void deleteAttendee(final String attendeeId) {
 
-		attendeeRepository.deleteById(CommonControllerUtils.stringToUUID(attendeeId));
+		this.attendeeRepository.deleteById(CommonControllerUtils.stringToUUID(attendeeId));
+	}
+
+	@Override
+	public Collection<Attendee> getAttendees() {
+
+		return this.attendeeRepository.findAll();
 	}
 
 }

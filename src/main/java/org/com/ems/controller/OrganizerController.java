@@ -2,9 +2,9 @@ package org.com.ems.controller;
 
 import static java.util.Objects.requireNonNull;
 
+import java.util.Collection;
 import java.util.UUID;
 
-import org.com.ems.api.dao.Event;
 import org.com.ems.api.dao.Organizer;
 import org.com.ems.controller.api.IOrganizerController;
 import org.com.ems.controller.exceptions.ObjectNotFoundException;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Controller for CRUD operation for the DAO object {@link Organizer}
- * 
+ *
  * @author Evangelos Georgiou
  */
 @RestController
@@ -25,41 +25,46 @@ public class OrganizerController implements IOrganizerController {
 
 	private final IOrganizerRepository organizerRepository;
 
-	public OrganizerController(@Autowired IOrganizerRepository organizerRepository) {
+	public OrganizerController(@Autowired final IOrganizerRepository organizerRepository) {
 
 		this.organizerRepository = requireNonNull(organizerRepository);
 	}
 
 	@Override
-	public Organizer postOrganizer(Organizer organizer) {
+	public Organizer postOrganizer(final Organizer organizer) {
 
-		return organizerRepository.save(organizer);
+		return this.organizerRepository.save(organizer);
 	}
 
 	@Override
-	public Organizer getOrganizer(String organizerId) {
+	public Organizer getOrganizer(final String organizerId) {
 
-		UUID uuid = CommonControllerUtils.stringToUUID(organizerId);
-		return organizerRepository.findById(uuid)
+		final UUID uuid = CommonControllerUtils.stringToUUID(organizerId);
+		return this.organizerRepository.findById(uuid)
 				.orElseThrow(() -> new ObjectNotFoundException(uuid, Organizer.class));
 	}
 
 	@Override
-	public Organizer updateOrganizer(String organizerId, Organizer organizer) {
+	public Organizer putOrganizer(final String organizerId, final Organizer organizer) {
 
-		UUID uuid = CommonControllerUtils.stringToUUID(organizerId);
-		if (organizerRepository.existsById(uuid)) {
-			organizerRepository.deleteById(uuid);
-			return organizerRepository.save(organizer);
+		final UUID uuid = CommonControllerUtils.stringToUUID(organizerId);
+		if (this.organizerRepository.existsById(uuid)) {
+			return this.organizerRepository.save(organizer);
 		}
 
 		throw new ObjectNotFoundException(uuid, Organizer.class);
 	}
 
 	@Override
-	public void deleteOrganizer(String organizerId) {
+	public void deleteOrganizer(final String organizerId) {
 
-		organizerRepository.deleteById(CommonControllerUtils.stringToUUID(organizerId));
+		this.organizerRepository.deleteById(CommonControllerUtils.stringToUUID(organizerId));
+	}
+
+	@Override
+	public Collection<Organizer> getOrganizer() {
+
+		return this.organizerRepository.findAll();
 	}
 
 }

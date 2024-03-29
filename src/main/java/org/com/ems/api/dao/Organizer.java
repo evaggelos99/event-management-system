@@ -9,6 +9,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import jakarta.annotation.Nullable;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -20,6 +21,7 @@ public final class Organizer extends AbstractDAO {
 
 	@NotNull
 	@NotBlank
+	@Column(unique = true)
 	private String name;
 	// TODO ContactInformation object entity
 	// TODO website string

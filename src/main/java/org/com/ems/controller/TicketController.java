@@ -2,6 +2,7 @@ package org.com.ems.controller;
 
 import static java.util.Objects.requireNonNull;
 
+import java.util.Collection;
 import java.util.UUID;
 
 import org.com.ems.api.dao.Ticket;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Controller for CRUD operation for the DAO object {@link Ticket}
- * 
+ *
  * @author Evangelos Georgiou
  */
 @RestController
@@ -24,41 +25,45 @@ public class TicketController implements ITicketController {
 
 	private final ITicketRepository ticketRepository;
 
-	public TicketController(@Autowired ITicketRepository ticketRepository) {
+	public TicketController(@Autowired final ITicketRepository ticketRepository) {
 
 		this.ticketRepository = requireNonNull(ticketRepository);
 	}
 
 	@Override
-	public Ticket postTicket(Ticket ticket) {
+	public Ticket postTicket(final Ticket ticket) {
 
-		return ticketRepository.save(ticket);
+		return this.ticketRepository.save(ticket);
 	}
 
 	@Override
-	public Ticket getTicket(String ticketId) {
+	public Ticket getTicket(final String ticketId) {
 
-		UUID uuid = CommonControllerUtils.stringToUUID(ticketId);
-		return ticketRepository.findById(uuid)
-				.orElseThrow(() -> new ObjectNotFoundException(uuid, Ticket.class));
+		final UUID uuid = CommonControllerUtils.stringToUUID(ticketId);
+		return this.ticketRepository.findById(uuid).orElseThrow(() -> new ObjectNotFoundException(uuid, Ticket.class));
 	}
 
 	@Override
-	public Ticket updateTicket(String ticketId, Ticket ticket) {
-		
-		UUID uuid = CommonControllerUtils.stringToUUID(ticketId);
-		if (ticketRepository.existsById(uuid)) {
-			ticketRepository.deleteById(uuid);
-			return ticketRepository.save(ticket);
+	public Ticket putTicket(final String ticketId, final Ticket ticket) {
+
+		final UUID uuid = CommonControllerUtils.stringToUUID(ticketId);
+		if (this.ticketRepository.existsById(uuid)) {
+			return this.ticketRepository.save(ticket);
 		}
 
 		throw new ObjectNotFoundException(uuid, Ticket.class);
 	}
 
 	@Override
-	public void deleteTicket(String ticketId) {
+	public void deleteTicket(final String ticketId) {
 
-		ticketRepository.deleteById(CommonControllerUtils.stringToUUID(ticketId));
+		this.ticketRepository.deleteById(CommonControllerUtils.stringToUUID(ticketId));
+	}
+
+	@Override
+	public Collection<Ticket> getTickets() {
+
+		return this.ticketRepository.findAll();
 	}
 
 }

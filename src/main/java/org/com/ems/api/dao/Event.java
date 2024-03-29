@@ -24,10 +24,10 @@ public final class Event extends AbstractDAO {
 	private String place;
 	@NotNull
 	private EventType eventType;
-	@OneToMany(cascade = CascadeType.ALL)
+	@OneToMany(cascade = { CascadeType.MERGE, CascadeType.PERSIST }) // CascadeType.REFRESH
 	@NotNull
 	private List<Attendee> attendees;
-	@OneToOne(cascade = CascadeType.ALL)
+	@OneToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST })
 	@NotNull
 	private Organizer organizer;
 	@NotNull
@@ -41,14 +41,15 @@ public final class Event extends AbstractDAO {
 	public String toString() {
 
 		return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append(this.uuid).append(this.name)
-				.append(this.place).append(this.eventType).append(this.attendees).append(this.organizer).build();
+				.append(this.place).append(this.eventType).append(this.attendees).append(this.organizer)
+				.append(this.limitOfPeople).build();
 	}
 
 	@Override
 	public int hashCode() {
 
 		return new HashCodeBuilder().append(this.uuid).append(this.name).append(this.place).append(this.eventType)
-				.append(this.attendees).append(this.organizer).build();
+				.append(this.attendees).append(this.organizer).append(this.limitOfPeople).build();
 	}
 
 	@Override

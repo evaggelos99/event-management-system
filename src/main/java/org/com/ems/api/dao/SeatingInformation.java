@@ -6,6 +6,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import jakarta.persistence.Embeddable;
+import jakarta.validation.constraints.NotNull;
 
 /**
  * TODO can we transform this to record?
@@ -16,8 +17,9 @@ import jakarta.persistence.Embeddable;
 @Embeddable
 public final class SeatingInformation {
 
+	@NotNull
 	String seat;
-
+	@NotNull
 	String section;
 
 	protected SeatingInformation() {

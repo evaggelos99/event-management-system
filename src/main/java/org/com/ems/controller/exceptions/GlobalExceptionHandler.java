@@ -34,7 +34,7 @@ public class GlobalExceptionHandler {
 	}
 
 	@ExceptionHandler(ObjectNotFoundException.class)
-	protected ResponseEntity<Map<String, Object>> handleObjectNotFound(final ObjectNotFoundException ex) {
+	protected ResponseEntity<Map<String, Object>> handleObjectNotFoundException(final ObjectNotFoundException ex) {
 
 		final HttpStatusCode statusCode = ex.getStatusCode();
 

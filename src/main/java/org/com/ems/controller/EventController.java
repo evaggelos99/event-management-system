@@ -2,6 +2,7 @@ package org.com.ems.controller;
 
 import static java.util.Objects.requireNonNull;
 
+import java.util.Collection;
 import java.util.UUID;
 
 import org.com.ems.api.dao.Event;
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Controller for CRUD operation for the DAO object {@link Event}
- * 
+ *
  * @author Evangelos Georgiou
  */
 @RestController
@@ -26,10 +27,10 @@ public class EventController implements IEventController {
 
 	/**
 	 * C-or responsible for CRUD operations for the Object {@link Event}
-	 * 
+	 *
 	 * @param eventRepo
 	 */
-	public EventController(@Autowired IEventRepository eventRepo) {
+	public EventController(@Autowired final IEventRepository eventRepo) {
 		this.eventRepository = requireNonNull(eventRepo);
 	}
 
@@ -37,11 +38,11 @@ public class EventController implements IEventController {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Event getEvent(String eventId) {
+	public Event getEvent(final String eventId) {
 
-		UUID uuid = CommonControllerUtils.stringToUUID(eventId);
-		
-		var optionalEvent = eventRepository.findById(uuid);
+		final UUID uuid = CommonControllerUtils.stringToUUID(eventId);
+
+		final var optionalEvent = this.eventRepository.findById(uuid);
 
 		return optionalEvent.orElseThrow(() -> new ObjectNotFoundException(uuid, Event.class));
 	}
@@ -50,13 +51,12 @@ public class EventController implements IEventController {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Event updateEvent(String eventId, Event event) {
+	public Event putEvent(final String eventId, final Event event) {
 
-		UUID uuid = CommonControllerUtils.stringToUUID(eventId);
-		
-		if (eventRepository.existsById(uuid)) {
-			eventRepository.deleteById(uuid);
-			return eventRepository.save(event);
+		final UUID uuid = CommonControllerUtils.stringToUUID(eventId);
+
+		if (this.eventRepository.existsById(uuid)) {
+			return this.eventRepository.save(event);
 		}
 
 		throw new ObjectNotFoundException(uuid, Event.class);
@@ -66,18 +66,23 @@ public class EventController implements IEventController {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void deleteEvent(String eventId) {
+	public void deleteEvent(final String eventId) {
 
-		eventRepository.deleteById(CommonControllerUtils.stringToUUID(eventId));
+		this.eventRepository.deleteById(CommonControllerUtils.stringToUUID(eventId));
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Event postEvent(Event event) {
+	public Event postEvent(final Event event) {
 
-		return eventRepository.save(event);
+		return this.eventRepository.save(event);
+	}
+
+	@Override
+	public Collection<Event> getEvents() {
+		return this.eventRepository.findAll();
 	}
 
 }

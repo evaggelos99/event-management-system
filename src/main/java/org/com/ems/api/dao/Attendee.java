@@ -7,11 +7,13 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Null;
 
 @Entity
 public final class Attendee extends AbstractDAO {
@@ -19,11 +21,14 @@ public final class Attendee extends AbstractDAO {
 	private static final long serialVersionUID = -6594393457575545824L;
 
 	@NotNull
+	@Column(name = "firstName", unique = false, nullable = false, insertable = true, updatable = true)
 	private String firstName;
 	@NotNull
+	@Column(name = "lastName", unique = false, nullable = false, insertable = true, updatable = true)
 	private String lastName;
-	@OneToOne(cascade = CascadeType.ALL)
-	@Null
+	@OneToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST })
+	@Nullable
+	@PrimaryKeyJoinColumn
 	private Ticket ticket;
 
 	protected Attendee() {
@@ -33,15 +38,15 @@ public final class Attendee extends AbstractDAO {
 	@Override
 	public String toString() {
 
-		return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append(this.getUuid()).append(this.firstName)
+		return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append(this.uuid).append(this.firstName)
 				.append(this.lastName).append(this.ticket).build();
 	}
 
 	@Override
 	public int hashCode() {
 
-		return new HashCodeBuilder().append(this.getUuid()).append(this.firstName).append(this.lastName)
-				.append(this.ticket).build();
+		return new HashCodeBuilder().append(this.uuid).append(this.firstName).append(this.lastName).append(this.ticket)
+				.build();
 	}
 
 	@Override
