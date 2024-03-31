@@ -9,14 +9,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 
-@RestController
-@RequestMapping("/event")
+@Tag(name = "Event", description = "API to create Event objects")
 public interface IEventController {
 
 	/**
@@ -24,6 +25,8 @@ public interface IEventController {
 	 *
 	 * @param event
 	 */
+	@Operation(summary = "POST operation that creates an event object", description = "creates an Attendee object and stores it in the data source")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "successful operation") })
 	@PostMapping
 	@Transactional
 	Event postEvent(@Valid @RequestBody Event event);
@@ -33,6 +36,9 @@ public interface IEventController {
 	 *
 	 * @param eventId the UUID that will be used to search for the Event
 	 */
+	@Operation(summary = "GET operation that returns an event object", description = "retrieves an Attendee object from the data source")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "successful operation"),
+			@ApiResponse(responseCode = "404", description = "could not find the object") })
 	@GetMapping("/{eventId}")
 	Event getEvent(@PathVariable String eventId);
 
@@ -40,6 +46,8 @@ public interface IEventController {
 	 * Method that gets all Event objects from the DB
 	 *
 	 */
+	@Operation(summary = "GET operation that returns all event object", description = "retrieves all Attendee objects from the data source")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "successful operation") })
 	@GetMapping()
 	Collection<Event> getEvents();
 
@@ -50,6 +58,9 @@ public interface IEventController {
 	 * @param eventId the UUID of the Event object
 	 * @param event   the edited Event object
 	 */
+	@Operation(summary = "PUT operation that updates or creates an event object", description = "updates or creates an Attendee object and stores it in the data source")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "successful operation"),
+			@ApiResponse(responseCode = "404", description = "could not find the object") })
 	@PutMapping("/{eventId}")
 	@Transactional
 	Event putEvent(@PathVariable String eventId, @Valid @RequestBody Event event);
@@ -59,6 +70,8 @@ public interface IEventController {
 	 *
 	 * @param eventId the UUID of the Event object
 	 */
+	@Operation(summary = "DELETE operation that deletes an event object", description = "deletes an Attendee object and stores it in the data source")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "successful operation") })
 	@DeleteMapping(path = "/{eventId}")
 	void deleteEvent(@PathVariable String eventId);
 

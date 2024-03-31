@@ -3,6 +3,7 @@ package org.com.ems.api.dao;
 import static java.util.Objects.requireNonNull;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -39,10 +40,11 @@ public final class Event extends AbstractDAO {
 
 	}
 
-	public Event(@NotNull final String name, @NotNull final String place, @NotNull final EventType eventType,
-			@NotNull final List<Attendee> attendees, @NotNull final Organizer organizer,
-			@NotNull final Integer limitOfPeople) {
+	public Event(final UUID uuid, @NotNull final String name, @NotNull final String place,
+			@NotNull final EventType eventType, @NotNull final List<Attendee> attendees,
+			@NotNull final Organizer organizer, @NotNull final Integer limitOfPeople) {
 
+		super(uuid);
 		this.name = requireNonNull(name);
 		this.place = requireNonNull(place);
 		this.eventType = requireNonNull(eventType);

@@ -1,5 +1,7 @@
 package org.com.ems.api.dao;
 
+import static java.util.Objects.requireNonNull;
+
 import java.io.Serializable;
 import java.util.UUID;
 
@@ -17,7 +19,16 @@ public abstract class AbstractDAO implements Serializable {
 	@GeneratedValue(strategy = GenerationType.UUID)
 	protected UUID uuid;
 
-	public UUID getUuid() {
+	protected AbstractDAO() {
+
+	}
+
+	public AbstractDAO(final UUID uuid) {
+
+		this.uuid = requireNonNull(uuid);
+	}
+
+	public final UUID getUuid() {
 		return this.uuid;
 	}
 

@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -42,9 +43,10 @@ public final class Organizer extends AbstractDAO {
 
 	}
 
-	public Organizer(@NotNull @NotBlank final String name, @NotNull @NotBlank final String website,
+	public Organizer(final UUID uuid, @NotNull @NotBlank final String name, @NotNull @NotBlank final String website,
 			final String description, @NotNull final Collection<EventType> eventTypes) {
 
+		super(uuid);
 		this.name = requireNonNull(name);
 		this.website = requireNonNull(website);
 		this.description = description;

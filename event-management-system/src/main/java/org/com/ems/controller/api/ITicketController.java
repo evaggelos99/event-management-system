@@ -10,8 +10,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
+@Tag(name = "Ticket", description = "API to create Ticket objects")
 public interface ITicketController {
 
 	/**
@@ -19,7 +24,9 @@ public interface ITicketController {
 	 *
 	 * @param ticket
 	 */
-	@PostMapping("/ticket")
+	@Operation(summary = "POST operation that creates an ticket object", description = "creates an Attendee object and stores it in the data source")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "successful operation") })
+	@PostMapping
 	Ticket postTicket(@Valid @RequestBody Ticket ticket);
 
 	/**
@@ -27,13 +34,18 @@ public interface ITicketController {
 	 *
 	 * @param ticketId the UUID that will be used to search for the Attendee
 	 */
-	@GetMapping("/ticket/{ticketId}")
+	@Operation(summary = "GET operation that returns an ticket object", description = "retrieves an Attendee object from the data source")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "successful operation"),
+			@ApiResponse(responseCode = "404", description = "could not find the object") })
+	@GetMapping("/{ticketId}")
 	Ticket getTicket(@PathVariable String ticketId);
 
 	/**
 	 * Method that returns all Ticket objects from the DB
 	 *
 	 */
+	@Operation(summary = "GET operation that returns all ticket object", description = "retrieves all Attendee objects from the data source")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "successful operation") })
 	@GetMapping()
 	Collection<Ticket> getTickets();
 
@@ -44,7 +56,10 @@ public interface ITicketController {
 	 * @param ticketId the UUID of the Attendee object
 	 * @param ticket   the edited Ticket object
 	 */
-	@PutMapping("/ticket/{ticketId}")
+	@Operation(summary = "PUT operation that updates or creates an ticket object", description = "updates or creates an Attendee object and stores it in the data source")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "successful operation"),
+			@ApiResponse(responseCode = "404", description = "could not find the object") })
+	@PutMapping("/{ticketId}")
 	Ticket putTicket(@PathVariable String ticketId, @Valid @RequestBody Ticket ticket);
 
 	/**
@@ -52,7 +67,9 @@ public interface ITicketController {
 	 *
 	 * @param ticketId the UUID of the Ticket object
 	 */
-	@DeleteMapping(path = "/ticket/{ticketId}")
+	@Operation(summary = "DELETE operation that deletes an ticket object", description = "deletes an Attendee object and stores it in the data source")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "successful operation") })
+	@DeleteMapping("/{ticketId}")
 	void deleteTicket(@PathVariable String ticketId);
 
 }

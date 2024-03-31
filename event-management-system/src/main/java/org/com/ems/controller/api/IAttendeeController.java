@@ -10,9 +10,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 
+@Tag(name = "Attendee", description = "API to create Attendee objects")
 public interface IAttendeeController {
 
 	/**
@@ -20,6 +25,8 @@ public interface IAttendeeController {
 	 *
 	 * @param attendee
 	 */
+	@Operation(summary = "POST operation that creates an attendee object", description = "creates an Attendee object and stores it in the data source")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "successful operation") })
 	@PostMapping
 	@Transactional
 	Attendee postAttendee(@Valid @RequestBody Attendee attendee);
@@ -29,6 +36,9 @@ public interface IAttendeeController {
 	 *
 	 * @param attendeeId the UUID that will be used to search for the Attendee
 	 */
+	@Operation(summary = "GET operation that returns an attendee object", description = "retrieves an Attendee object from the data source")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "successful operation"),
+			@ApiResponse(responseCode = "404", description = "could not find the object") })
 	@GetMapping("/{attendeeId}")
 	Attendee getAttendee(@PathVariable String attendeeId);
 
@@ -36,6 +46,8 @@ public interface IAttendeeController {
 	 * Method that gets all Attendee objects from the DB
 	 *
 	 */
+	@Operation(summary = "GET operation that returns all attendee object", description = "retrieves all Attendee objects from the data source")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "successful operation") })
 	@GetMapping()
 	Collection<Attendee> getAttendees();
 
@@ -47,6 +59,9 @@ public interface IAttendeeController {
 	 * @param attendeeId the UUID of the Attendee object
 	 * @param attendee   the edited Attendee object
 	 */
+	@Operation(summary = "PUT operation that updates or creates an attendee object", description = "updates or creates an Attendee object and stores it in the data source")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "successful operation"),
+			@ApiResponse(responseCode = "404", description = "could not find the object") })
 	@PutMapping("/{attendeeId}")
 	@Transactional
 	Attendee putAttendee(@PathVariable String attendeeId, @Valid @RequestBody Attendee attendee);
@@ -56,6 +71,8 @@ public interface IAttendeeController {
 	 *
 	 * @param attendeeId the UUID of the Attendee object
 	 */
+	@Operation(summary = "DELETE operation that deletes an attendee object", description = "deletes an Attendee object and stores it in the data source")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "successful operation") })
 	@DeleteMapping(path = "/{attendeeId}")
 	void deleteAttendee(@PathVariable String attendeeId);
 

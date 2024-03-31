@@ -3,6 +3,7 @@ package org.com.ems.api.dao;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Optional;
+import java.util.UUID;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
@@ -37,8 +38,10 @@ public final class Attendee extends AbstractDAO {
 
 	}
 
-	public Attendee(@NotNull final String firstName, @NotNull final String lastName, final Ticket ticket) {
+	public Attendee(final UUID uuid, @NotNull final String firstName, @NotNull final String lastName,
+			final Ticket ticket) {
 
+		super(uuid);
 		this.firstName = requireNonNull(firstName);
 		this.lastName = requireNonNull(lastName);
 		this.ticket = ticket;

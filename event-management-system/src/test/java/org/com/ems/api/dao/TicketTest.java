@@ -19,12 +19,13 @@ class TicketTest {
 	@Test
 	void testHashCodeNullAttendeeId() {
 
+		final UUID randomUUID = UUID.randomUUID();
 		final UUID attendeeID = null;
 		final UUID eventID = UUID.randomUUID();
 
-		final var lhs = new Ticket(attendeeID, eventID, TicketType.GENERAL_ADMISSION, 50, true,
+		final var lhs = new Ticket(randomUUID, attendeeID, eventID, TicketType.GENERAL_ADMISSION, 50, true,
 				new SeatingInformation("AB", "NORTH"));
-		final var rhs = new Ticket(attendeeID, eventID, TicketType.GENERAL_ADMISSION, 50, true,
+		final var rhs = new Ticket(randomUUID, attendeeID, eventID, TicketType.GENERAL_ADMISSION, 50, true,
 				new SeatingInformation("AB", "NORTH"));
 
 		assertEquals(lhs, rhs);
@@ -34,12 +35,13 @@ class TicketTest {
 	@Test
 	void testHashCodeAttendeeId() {
 
+		final UUID randomUUID = UUID.randomUUID();
 		final UUID attendeeID = UUID.randomUUID();
 		final UUID eventID = UUID.randomUUID();
 
-		final var lhs = new Attendee("firstName", "lastName", new Ticket(attendeeID, eventID,
+		final var lhs = new Attendee(randomUUID, "firstName", "lastName", new Ticket(randomUUID, attendeeID, eventID,
 				TicketType.GENERAL_ADMISSION, 50, true, new SeatingInformation("AB", "NORTH")));
-		final var rhs = new Attendee("firstName", "lastName", new Ticket(attendeeID, eventID,
+		final var rhs = new Attendee(randomUUID, "firstName", "lastName", new Ticket(randomUUID, attendeeID, eventID,
 				TicketType.GENERAL_ADMISSION, 50, true, new SeatingInformation("AB", "NORTH")));
 
 		assertEquals(lhs, rhs);

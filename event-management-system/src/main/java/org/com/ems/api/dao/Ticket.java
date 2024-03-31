@@ -38,10 +38,11 @@ public final class Ticket extends AbstractDAO {
 
 	}
 
-	public Ticket(final UUID attendeeID, @NotNull final UUID eventID, @NotNull final TicketType ticketType,
-			@NotNull final Integer price, @NotNull final Boolean transferable,
+	public Ticket(final UUID uuid, final UUID attendeeID, @NotNull final UUID eventID,
+			@NotNull final TicketType ticketType, @NotNull final Integer price, @NotNull final Boolean transferable,
 			@NotNull final SeatingInformation seatInfo) {
 
+		super(uuid);
 		this.attendeeID = attendeeID;
 		this.eventID = requireNonNull(eventID);
 		this.ticketType = requireNonNull(ticketType);

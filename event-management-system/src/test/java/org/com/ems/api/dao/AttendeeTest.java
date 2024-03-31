@@ -19,8 +19,9 @@ class AttendeeTest {
 	@Test
 	void testHashCodeEmptyTicket() {
 
-		final var lhs = new Attendee("firstName", "lastName", new Ticket());
-		final var rhs = new Attendee("firstName", "lastName", new Ticket());
+		final UUID randomUUID = UUID.randomUUID();
+		final var lhs = new Attendee(randomUUID, "firstName", "lastName", new Ticket());
+		final var rhs = new Attendee(randomUUID, "firstName", "lastName", new Ticket());
 
 		assertEquals(lhs, rhs);
 		assertEquals(lhs.hashCode(), rhs.hashCode());
@@ -29,12 +30,13 @@ class AttendeeTest {
 	@Test
 	void testHashCodeTicket() {
 
+		final UUID randomUUID = UUID.randomUUID();
 		final UUID attendeeID = UUID.randomUUID();
 		final UUID eventID = UUID.randomUUID();
 
-		final var lhs = new Attendee("firstName", "lastName", new Ticket(attendeeID, eventID,
+		final var lhs = new Attendee(randomUUID, "firstName", "lastName", new Ticket(randomUUID, attendeeID, eventID,
 				TicketType.GENERAL_ADMISSION, 50, true, new SeatingInformation("AB", "NORTH")));
-		final var rhs = new Attendee("firstName", "lastName", new Ticket(attendeeID, eventID,
+		final var rhs = new Attendee(randomUUID, "firstName", "lastName", new Ticket(randomUUID, attendeeID, eventID,
 				TicketType.GENERAL_ADMISSION, 50, true, new SeatingInformation("AB", "NORTH")));
 
 		assertEquals(lhs, rhs);

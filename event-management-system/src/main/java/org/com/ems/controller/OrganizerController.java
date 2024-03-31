@@ -62,7 +62,7 @@ public class OrganizerController implements IOrganizerController {
 	}
 
 	@Override
-	public Collection<Organizer> getOrganizer() {
+	public Collection<Organizer> getOrganizers() {
 
 		return this.organizerRepository.findAll();
 	}
