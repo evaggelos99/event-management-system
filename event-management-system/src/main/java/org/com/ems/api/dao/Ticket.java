@@ -9,7 +9,9 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.com.ems.api.dao.validators.constraints.NotNegative;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -21,17 +23,23 @@ public final class Ticket extends AbstractDAO {
 	private static final long serialVersionUID = 7755157879519770362L;
 
 	@Nullable
+	@Schema(example = "034ce7c5-ccf2-417c-886b-71305349ac80", description = "The uuid of the Attendee")
 	private UUID attendeeID;
 	@NotNull
-	private UUID eventID; // TODO change to event object
+	@Schema(example = "61ee465a-f3d8-400a-8ae4-5e806b3eba92", description = "The uuid of the event")
+	private UUID eventID;
 	@NotNull
 	private TicketType ticketType;
 	@NotNull
+	@Schema(example = "150", description = "The price of the ticket")
+	@NotNegative(message = "cannot be negative")
 	private Integer price;
 	@NotNull
+	@Schema(example = "true", description = "The ticket is transferable")
 	private Boolean transferable;
 	@NotNull
 	@Embedded
+	@Schema(description = "The SeatingInformation of the ticket")
 	private SeatingInformation seatInfo;
 
 	protected Ticket() {

@@ -14,6 +14,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -28,15 +29,19 @@ public final class Organizer extends AbstractDAO {
 	@NotNull
 	@NotBlank
 	@Column(unique = true)
+	@Schema(example = "SpecialWeddings", description = "The limit of the event")
 	private String name;
 	// TODO ContactInformation object entity
 	@NotNull
 	@NotBlank
 	@Column(unique = true) // TODO add regex validation
+	@Schema(example = "www.google.com", description = "The website of the organizer")
 	private String website;
 	@Nullable
+	@Schema(example = "Organizer specialized in weddings taking place in the country or even outside!", description = "The description of the organizer")
 	private String description;
 	@NotNull
+	@Schema(description = "The event types of the organizer plans")
 	private Collection<EventType> eventTypes;
 
 	protected Organizer() {

@@ -10,6 +10,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
@@ -22,18 +23,24 @@ public final class Event extends AbstractDAO {
 	private static final long serialVersionUID = -8863335953855552553L;
 
 	@NotNull
+	@Schema(example = "Wedding of Maria and Andreas", description = "Name of the Event")
 	private String name;
 	@NotNull
+	@Schema(example = "Place of Interest", description = "The place of the Event")
 	private String place;
 	@NotNull
+	@Schema(example = "WEDDING", description = "The type of the Event")
 	private EventType eventType;
 	@OneToMany(cascade = { CascadeType.MERGE, CascadeType.PERSIST }) // CascadeType.REFRESH
 	@NotNull
+	@Schema(description = "a list of attendees")
 	private List<Attendee> attendees;
 	@OneToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST })
 	@NotNull
+	@Schema(description = "The organizer of the event")
 	private Organizer organizer;
 	@NotNull
+	@Schema(example = "580", description = "The limit of the event")
 	private Integer limitOfPeople;
 
 	protected Event() {

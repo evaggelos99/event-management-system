@@ -7,6 +7,7 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Embeddable;
 import jakarta.validation.constraints.NotNull;
 
@@ -20,8 +21,10 @@ import jakarta.validation.constraints.NotNull;
 public final class SeatingInformation {
 
 	@NotNull
+	@Schema(example = "A15", description = "The description of the organizer")
 	private String seat;
 	@NotNull
+	@Schema(example = "West", description = "The description of the organizer")
 	private String section;
 
 	protected SeatingInformation() {

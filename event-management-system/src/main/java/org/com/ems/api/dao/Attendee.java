@@ -10,12 +10,12 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToOne;
-import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.validation.constraints.NotNull;
 
 @Entity
@@ -25,13 +25,15 @@ public final class Attendee extends AbstractDAO {
 
 	@NotNull
 	@Column(name = "firstName", unique = false, nullable = false, insertable = true, updatable = true)
+	@Schema(example = "John", description = "First name of the Attendee")
 	private String firstName;
 	@NotNull
 	@Column(name = "lastName", unique = false, nullable = false, insertable = true, updatable = true)
+	@Schema(example = "Smith", description = "Last name of the Attendee")
 	private String lastName;
 	@OneToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST })
 	@Nullable
-	@PrimaryKeyJoinColumn
+	@Schema(description = "The ticket of an event belonging to an Attendee")
 	private Ticket ticket;
 
 	protected Attendee() {

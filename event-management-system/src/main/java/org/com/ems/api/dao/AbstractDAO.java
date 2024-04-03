@@ -5,6 +5,7 @@ import static java.util.Objects.requireNonNull;
 import java.io.Serializable;
 import java.util.UUID;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -17,6 +18,7 @@ public abstract class AbstractDAO implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
+	@Schema(example = "1f0ae3a4-9843-4135-bad9-295736330f20", description = "the uuid of the dao object")
 	protected UUID uuid;
 
 	protected AbstractDAO() {
