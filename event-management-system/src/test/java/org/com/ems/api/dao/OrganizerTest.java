@@ -11,10 +11,12 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 
 class OrganizerTest {
 
+	String[] ignoredFields = new String[] { "timestamp", "updatedOn" };
+
 	@Test
 	void test() {
 
-		EqualsVerifier.forClass(Organizer.class).verify();
+		EqualsVerifier.forClass(Organizer.class).withIgnoredFields(this.ignoredFields).verify();
 	}
 
 	@Test
@@ -23,9 +25,11 @@ class OrganizerTest {
 		final UUID randomUUID = UUID.randomUUID();
 
 		final var lhs = new Organizer(randomUUID, "name", "website", "description",
-				List.of(EventType.CONFERENCE, EventType.NIGHTLIFE));
+				List.of(EventType.CONFERENCE, EventType.NIGHTLIFE), new ContactInformation("example@domain.com",
+						70493729392L, "308 Negra Arroyo Lane, Albuquerque, New Mexico."));
 		final var rhs = new Organizer(randomUUID, "name", "website", "description",
-				List.of(EventType.CONFERENCE, EventType.NIGHTLIFE));
+				List.of(EventType.CONFERENCE, EventType.NIGHTLIFE), new ContactInformation("example@domain.com",
+						70493729392L, "308 Negra Arroyo Lane, Albuquerque, New Mexico."));
 
 		assertEquals(lhs, rhs);
 		assertEquals(lhs.hashCode(), rhs.hashCode());
@@ -37,9 +41,11 @@ class OrganizerTest {
 		final UUID randomUUID = UUID.randomUUID();
 
 		final var lhs = new Organizer(randomUUID, "name", "website", null,
-				List.of(EventType.CONFERENCE, EventType.NIGHTLIFE));
+				List.of(EventType.CONFERENCE, EventType.NIGHTLIFE), new ContactInformation("example@domain.com",
+						70493729392L, "308 Negra Arroyo Lane, Albuquerque, New Mexico."));
 		final var rhs = new Organizer(randomUUID, "name", "website", null,
-				List.of(EventType.CONFERENCE, EventType.NIGHTLIFE));
+				List.of(EventType.CONFERENCE, EventType.NIGHTLIFE), new ContactInformation("example@domain.com",
+						70493729392L, "308 Negra Arroyo Lane, Albuquerque, New Mexico."));
 
 		assertEquals(lhs, rhs);
 		assertEquals(lhs.hashCode(), rhs.hashCode());

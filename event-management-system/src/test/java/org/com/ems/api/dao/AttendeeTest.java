@@ -10,10 +10,12 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 
 class AttendeeTest {
 
+	String[] ignoredFields = new String[] { "timestamp", "updatedOn" };
+
 	@Test
 	void testEquals() {
 
-		EqualsVerifier.forClass(Attendee.class).verify();
+		EqualsVerifier.forClass(Attendee.class).withIgnoredFields(this.ignoredFields).verify();
 	}
 
 	@Test

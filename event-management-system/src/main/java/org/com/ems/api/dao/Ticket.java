@@ -41,6 +41,7 @@ public final class Ticket extends AbstractDAO {
 	@Embedded
 	@Schema(description = "The SeatingInformation of the ticket")
 	private SeatingInformation seatInfo;
+	// TODO create QR code referenceing this ticket
 
 	protected Ticket() {
 

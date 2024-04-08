@@ -5,7 +5,6 @@ import static java.util.Objects.requireNonNull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -31,7 +30,6 @@ public final class Organizer extends AbstractDAO {
 	@Column(unique = true)
 	@Schema(example = "SpecialWeddings", description = "The limit of the event")
 	private String name;
-	// TODO ContactInformation object entity
 	@NotNull
 	@NotBlank
 	@Column(unique = true) // TODO add regex validation
@@ -43,33 +41,39 @@ public final class Organizer extends AbstractDAO {
 	@NotNull
 	@Schema(description = "The event types of the organizer plans")
 	private Collection<EventType> eventTypes;
+	@NotNull
+	@Schema(description = "The contact information of the Organizer")
+	private ContactInformation contactInformation;
 
 	protected Organizer() {
 
 	}
 
 	public Organizer(final UUID uuid, @NotNull @NotBlank final String name, @NotNull @NotBlank final String website,
-			final String description, @NotNull final Collection<EventType> eventTypes) {
+			final String description, @NotNull final Collection<EventType> eventTypes,
+			@NotNull final ContactInformation contactInformation) {
 
 		super(uuid);
 		this.name = requireNonNull(name);
 		this.website = requireNonNull(website);
 		this.description = description;
-		this.eventTypes = Objects.requireNonNull(new ArrayList<>(eventTypes));
+		this.eventTypes = requireNonNull(new ArrayList<>(eventTypes));
+		this.contactInformation = requireNonNull(contactInformation);
 	}
 
 	@Override
 	public String toString() {
 
 		return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append(this.uuid).append(this.name)
-				.append(this.description).append(this.eventTypes).append(this.website).build();
+				.append(this.description).append(this.eventTypes).append(this.website).append(this.contactInformation)
+				.build();
 	}
 
 	@Override
 	public int hashCode() {
 
 		return new HashCodeBuilder().append(this.name).append(this.description).append(this.eventTypes)
-				.append(this.website).build();
+				.append(this.website).append(this.contactInformation).build();
 	}
 
 	@Override
@@ -90,7 +94,8 @@ public final class Organizer extends AbstractDAO {
 		final var rhs = (Organizer) object;
 
 		return new EqualsBuilder().append(this.name, rhs.name).append(this.description, rhs.description)
-				.append(this.eventTypes, rhs.eventTypes).append(this.website, rhs.website).build();
+				.append(this.eventTypes, rhs.eventTypes).append(this.website, rhs.website)
+				.append(this.contactInformation, rhs.contactInformation).build();
 	}
 
 	public String getName() {
@@ -107,6 +112,10 @@ public final class Organizer extends AbstractDAO {
 
 	public String getWebsite() {
 		return this.website;
+	}
+
+	public ContactInformation getContactInformation() {
+		return this.contactInformation;
 	}
 
 }
