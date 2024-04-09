@@ -1,5 +1,10 @@
 package org.com.ems.api.dao;
 
+/**
+ * EventType object
+ *
+ * @author Evangelos Georgiou
+ */
 public enum EventType {
 
 	/**

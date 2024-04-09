@@ -17,6 +17,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 
+/**
+ * Interface for the {@link Event} Controller
+ *
+ * @author Evangelos Georgiou
+ *
+ */
 @Tag(name = "Event", description = "API to create Event objects")
 public interface IEventController {
 

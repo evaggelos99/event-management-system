@@ -16,6 +16,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
+/**
+ * Interface for the {@link Ticket} Controller
+ *
+ * @author Evangelos Georgiou
+ *
+ */
 @Tag(name = "Ticket", description = "API to create Ticket objects")
 public interface ITicketController {
 

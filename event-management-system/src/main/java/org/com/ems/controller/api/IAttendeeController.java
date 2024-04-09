@@ -17,6 +17,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 
+/**
+ * Interface for the {@link Attendee} Controller
+ *
+ * @author Evangelos Georgiou
+ *
+ */
 @Tag(name = "Attendee", description = "API to create Attendee objects")
 public interface IAttendeeController {
 

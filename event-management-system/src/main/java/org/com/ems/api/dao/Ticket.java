@@ -17,6 +17,11 @@ import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.validation.constraints.NotNull;
 
+/**
+ * Ticket Entity object
+ *
+ * @author Evangelos Georgiou
+ */
 @Entity
 public final class Ticket extends AbstractDAO {
 

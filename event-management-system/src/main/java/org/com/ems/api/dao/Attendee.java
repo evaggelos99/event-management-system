@@ -18,6 +18,11 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.NotNull;
 
+/**
+ * Attendee Entity object
+ *
+ * @author Evangelos Georgiou
+ */
 @Entity
 public final class Attendee extends AbstractDAO {
 

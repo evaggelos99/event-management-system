@@ -11,6 +11,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Embeddable;
 import jakarta.validation.constraints.NotNull;
 
+/**
+ * ContactInformation Embeddable object
+ *
+ * @author Evangelos Georgiou
+ */
 @Embeddable
 public final class ContactInformation {
 

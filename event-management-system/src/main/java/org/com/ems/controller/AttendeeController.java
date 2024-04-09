@@ -30,12 +30,18 @@ public class AttendeeController implements IAttendeeController {
 		this.attendeeRepository = requireNonNull(attendeeRepository);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Attendee postAttendee(final Attendee attendee) {
 
 		return this.attendeeRepository.save(attendee);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Attendee getAttendee(final String attendeeId) {
 
@@ -45,6 +51,9 @@ public class AttendeeController implements IAttendeeController {
 		return optionalAttendee.orElseThrow(() -> new ObjectNotFoundException(uuid, Attendee.class));
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Attendee putAttendee(final String attendeeId, final Attendee attendee) {
 
@@ -58,12 +67,18 @@ public class AttendeeController implements IAttendeeController {
 		throw new ObjectNotFoundException(uuid, Attendee.class);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void deleteAttendee(final String attendeeId) {
 
 		this.attendeeRepository.deleteById(CommonControllerUtils.stringToUUID(attendeeId));
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Collection<Attendee> getAttendees() {
 

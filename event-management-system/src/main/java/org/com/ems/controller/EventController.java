@@ -80,6 +80,9 @@ public class EventController implements IEventController {
 		return this.eventRepository.save(event);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Collection<Event> getEvents() {
 		return this.eventRepository.findAll();

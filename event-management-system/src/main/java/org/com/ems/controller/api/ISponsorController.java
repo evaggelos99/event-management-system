@@ -17,6 +17,12 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 
+/**
+ * Interface for the {@link Sponsor} Controller
+ *
+ * @author Evangelos Georgiou
+ *
+ */
 @Tag(name = "Sponsor", description = "API to create Sponsor objects")
 public interface ISponsorController {
 

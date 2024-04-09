@@ -16,6 +16,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
+/**
+ * Interface for the {@link Organizer} Controller
+ *
+ * @author Evangelos Georgiou
+ *
+ */
 @Tag(name = "Organizer", description = "API to create Organizer objects")
 public interface IOrganizerController {
 

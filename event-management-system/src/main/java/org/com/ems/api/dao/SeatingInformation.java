@@ -12,10 +12,9 @@ import jakarta.persistence.Embeddable;
 import jakarta.validation.constraints.NotNull;
 
 /**
- * TODO can we transform this to record?
+ * SeatingInformation Embeddable object
  *
  * @author Evangelos Georgiou
- *
  */
 @Embeddable
 public final class SeatingInformation {

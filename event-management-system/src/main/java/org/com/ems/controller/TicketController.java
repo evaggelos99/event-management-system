@@ -30,12 +30,18 @@ public class TicketController implements ITicketController {
 		this.ticketRepository = requireNonNull(ticketRepository);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Ticket postTicket(final Ticket ticket) {
 
 		return this.ticketRepository.save(ticket);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Ticket getTicket(final String ticketId) {
 
@@ -43,6 +49,9 @@ public class TicketController implements ITicketController {
 		return this.ticketRepository.findById(uuid).orElseThrow(() -> new ObjectNotFoundException(uuid, Ticket.class));
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Ticket putTicket(final String ticketId, final Ticket ticket) {
 
@@ -54,12 +63,18 @@ public class TicketController implements ITicketController {
 		throw new ObjectNotFoundException(uuid, Ticket.class);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void deleteTicket(final String ticketId) {
 
 		this.ticketRepository.deleteById(CommonControllerUtils.stringToUUID(ticketId));
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Collection<Ticket> getTickets() {
 

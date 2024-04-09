@@ -15,6 +15,11 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
 
+/**
+ * Super class for Entity classes
+ *
+ * @author Evangelos Georgiou
+ */
 @MappedSuperclass
 public abstract class AbstractDAO implements Serializable {
 

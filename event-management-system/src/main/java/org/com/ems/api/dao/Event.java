@@ -20,6 +20,11 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.NotNull;
 
+/**
+ * Event Entity object
+ *
+ * @author Evangelos Georgiou
+ */
 @Entity
 public final class Event extends AbstractDAO {
 

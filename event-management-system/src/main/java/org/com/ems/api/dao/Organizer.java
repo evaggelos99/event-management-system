@@ -20,6 +20,11 @@ import jakarta.persistence.Entity;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
+/**
+ * Organizer Entity object
+ *
+ * @author Evangelos Georgiou
+ */
 @Entity
 public final class Organizer extends AbstractDAO {
 

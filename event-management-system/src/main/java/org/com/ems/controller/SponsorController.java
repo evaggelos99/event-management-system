@@ -30,12 +30,18 @@ public class SponsorController implements ISponsorController {
 		this.sponsorRepository = requireNonNull(sponsorRepository);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Sponsor postSponsor(final Sponsor sponsor) {
 
 		return this.sponsorRepository.save(sponsor);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Sponsor getSponsor(final String attendeeId) {
 
@@ -45,6 +51,9 @@ public class SponsorController implements ISponsorController {
 		return optionalSponsor.orElseThrow(() -> new ObjectNotFoundException(uuid, Sponsor.class));
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Sponsor putSponsor(final String attendeeId, final Sponsor sponsor) {
 
@@ -58,12 +67,18 @@ public class SponsorController implements ISponsorController {
 		throw new ObjectNotFoundException(uuid, Sponsor.class);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void deleteSponsor(final String attendeeId) {
 
 		this.sponsorRepository.deleteById(CommonControllerUtils.stringToUUID(attendeeId));
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Collection<Sponsor> getSponsors() {
 

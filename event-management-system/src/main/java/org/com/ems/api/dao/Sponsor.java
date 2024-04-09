@@ -14,6 +14,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Entity;
 import jakarta.validation.constraints.NotNull;
 
+/**
+ * Sponsor Entity object
+ *
+ * @author Evangelos Georgiou
+ */
 @Entity
 public final class Sponsor extends AbstractDAO {
 

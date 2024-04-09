@@ -1,5 +1,10 @@
 package org.com.ems.api.dao;
 
+/**
+ * TicketType object
+ *
+ * @author Evangelos Georgiou
+ */
 public enum TicketType {
 
 	/**

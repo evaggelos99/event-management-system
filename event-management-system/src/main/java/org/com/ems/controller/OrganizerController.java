@@ -30,12 +30,18 @@ public class OrganizerController implements IOrganizerController {
 		this.organizerRepository = requireNonNull(organizerRepository);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Organizer postOrganizer(final Organizer organizer) {
 
 		return this.organizerRepository.save(organizer);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Organizer getOrganizer(final String organizerId) {
 
@@ -44,6 +50,9 @@ public class OrganizerController implements IOrganizerController {
 				.orElseThrow(() -> new ObjectNotFoundException(uuid, Organizer.class));
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Organizer putOrganizer(final String organizerId, final Organizer organizer) {
 
@@ -55,12 +64,18 @@ public class OrganizerController implements IOrganizerController {
 		throw new ObjectNotFoundException(uuid, Organizer.class);
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public void deleteOrganizer(final String organizerId) {
 
 		this.organizerRepository.deleteById(CommonControllerUtils.stringToUUID(organizerId));
 	}
 
+	/**
+	 * {@inheritDoc}
+	 */
 	@Override
 	public Collection<Organizer> getOrganizers() {
 
