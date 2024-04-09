@@ -55,9 +55,9 @@ public class SponsorController implements ISponsorController {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Sponsor putSponsor(final String attendeeId, final Sponsor sponsor) {
+	public Sponsor putSponsor(final String sponsorId, final Sponsor sponsor) {
 
-		final UUID uuid = CommonControllerUtils.stringToUUID(attendeeId);
+		final UUID uuid = CommonControllerUtils.stringToUUID(sponsorId);
 
 		if (this.sponsorRepository.existsById(uuid)) {
 
