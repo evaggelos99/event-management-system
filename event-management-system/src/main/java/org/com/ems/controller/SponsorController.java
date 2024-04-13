@@ -3,7 +3,6 @@ package org.com.ems.controller;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Collection;
-import java.util.UUID;
 
 import org.com.ems.api.dao.Sponsor;
 import org.com.ems.controller.api.ISponsorController;
@@ -43,9 +42,9 @@ public class SponsorController implements ISponsorController {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Sponsor getSponsor(final String attendeeId) {
+	public Sponsor getSponsor(final String sponsorId) {
 
-		final UUID uuid = CommonControllerUtils.stringToUUID(attendeeId);
+		final var uuid = CommonControllerUtils.stringToUUID(sponsorId);
 		final var optionalSponsor = this.sponsorRepository.findById(uuid);
 
 		return optionalSponsor.orElseThrow(() -> new ObjectNotFoundException(uuid, Sponsor.class));
@@ -57,7 +56,7 @@ public class SponsorController implements ISponsorController {
 	@Override
 	public Sponsor putSponsor(final String sponsorId, final Sponsor sponsor) {
 
-		final UUID uuid = CommonControllerUtils.stringToUUID(sponsorId);
+		final var uuid = CommonControllerUtils.stringToUUID(sponsorId);
 
 		if (this.sponsorRepository.existsById(uuid)) {
 
@@ -71,9 +70,9 @@ public class SponsorController implements ISponsorController {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void deleteSponsor(final String attendeeId) {
+	public void deleteSponsor(final String sponsorId) {
 
-		this.sponsorRepository.deleteById(CommonControllerUtils.stringToUUID(attendeeId));
+		this.sponsorRepository.deleteById(CommonControllerUtils.stringToUUID(sponsorId));
 	}
 
 	/**

@@ -11,6 +11,11 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.com.ems.api.dao.json.DurationDeserialzer;
+import org.com.ems.api.dao.json.DurationSerialzer;
+
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.annotation.Nullable;
@@ -51,13 +56,16 @@ public final class Event extends AbstractDAO {
 	@Schema(example = "580", description = "The limit of the event")
 	private Integer limitOfPeople;
 	@Nullable
+	@OneToOne(cascade = { CascadeType.MERGE, CascadeType.PERSIST })
 	@Schema(description = "The sponsor of the event")
 	private Sponsor sponsor;
 	@NotNull
 	@Schema(description = "The start time of the Event")
 	private ZonedDateTime startTimeOfEvent;
 	@NotNull
-	@Schema(description = "The duration of the Event")
+	@Schema(description = "The duration of the Event", example = "PT5H")
+	@JsonDeserialize(using = DurationDeserialzer.class)
+	@JsonSerialize(using = DurationSerialzer.class)
 	private Duration durationOfEvent;
 
 	protected Event() {

@@ -54,7 +54,8 @@ public class GlobalExceptionHandler {
 	 * @return {@link ResponseEntity} of a JSON response
 	 */
 	@ExceptionHandler(ObjectNotFoundException.class)
-	protected ResponseEntity<Map<String, Object>> handleObjectNotFoundException(final ObjectNotFoundException exception) {
+	protected ResponseEntity<Map<String, Object>> handleObjectNotFoundException(
+			final ObjectNotFoundException exception) {
 
 		final HttpStatusCode statusCode = exception.getStatusCode();
 

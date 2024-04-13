@@ -3,7 +3,6 @@ package org.com.ems.controller;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Collection;
-import java.util.UUID;
 
 import org.com.ems.api.dao.Organizer;
 import org.com.ems.controller.api.IOrganizerController;
@@ -45,7 +44,7 @@ public class OrganizerController implements IOrganizerController {
 	@Override
 	public Organizer getOrganizer(final String organizerId) {
 
-		final UUID uuid = CommonControllerUtils.stringToUUID(organizerId);
+		final var uuid = CommonControllerUtils.stringToUUID(organizerId);
 		return this.organizerRepository.findById(uuid)
 				.orElseThrow(() -> new ObjectNotFoundException(uuid, Organizer.class));
 	}
@@ -56,7 +55,7 @@ public class OrganizerController implements IOrganizerController {
 	@Override
 	public Organizer putOrganizer(final String organizerId, final Organizer organizer) {
 
-		final UUID uuid = CommonControllerUtils.stringToUUID(organizerId);
+		final var uuid = CommonControllerUtils.stringToUUID(organizerId);
 		if (this.organizerRepository.existsById(uuid)) {
 			return this.organizerRepository.save(organizer);
 		}

@@ -3,7 +3,6 @@ package org.com.ems.controller;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Collection;
-import java.util.UUID;
 
 import org.com.ems.api.dao.Attendee;
 import org.com.ems.controller.api.IAttendeeController;
@@ -45,7 +44,7 @@ public class AttendeeController implements IAttendeeController {
 	@Override
 	public Attendee getAttendee(final String attendeeId) {
 
-		final UUID uuid = CommonControllerUtils.stringToUUID(attendeeId);
+		final var uuid = CommonControllerUtils.stringToUUID(attendeeId);
 		final var optionalAttendee = this.attendeeRepository.findById(uuid);
 
 		return optionalAttendee.orElseThrow(() -> new ObjectNotFoundException(uuid, Attendee.class));
@@ -57,7 +56,7 @@ public class AttendeeController implements IAttendeeController {
 	@Override
 	public Attendee putAttendee(final String attendeeId, final Attendee attendee) {
 
-		final UUID uuid = CommonControllerUtils.stringToUUID(attendeeId);
+		final var uuid = CommonControllerUtils.stringToUUID(attendeeId);
 
 		if (this.attendeeRepository.existsById(uuid)) {
 

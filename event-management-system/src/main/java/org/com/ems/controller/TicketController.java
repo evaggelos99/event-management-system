@@ -3,7 +3,6 @@ package org.com.ems.controller;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Collection;
-import java.util.UUID;
 
 import org.com.ems.api.dao.Ticket;
 import org.com.ems.controller.api.ITicketController;
@@ -45,7 +44,7 @@ public class TicketController implements ITicketController {
 	@Override
 	public Ticket getTicket(final String ticketId) {
 
-		final UUID uuid = CommonControllerUtils.stringToUUID(ticketId);
+		final var uuid = CommonControllerUtils.stringToUUID(ticketId);
 		return this.ticketRepository.findById(uuid).orElseThrow(() -> new ObjectNotFoundException(uuid, Ticket.class));
 	}
 
@@ -55,7 +54,7 @@ public class TicketController implements ITicketController {
 	@Override
 	public Ticket putTicket(final String ticketId, final Ticket ticket) {
 
-		final UUID uuid = CommonControllerUtils.stringToUUID(ticketId);
+		final var uuid = CommonControllerUtils.stringToUUID(ticketId);
 		if (this.ticketRepository.existsById(uuid)) {
 			return this.ticketRepository.save(ticket);
 		}

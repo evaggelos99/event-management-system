@@ -3,7 +3,6 @@ package org.com.ems.controller;
 import static java.util.Objects.requireNonNull;
 
 import java.util.Collection;
-import java.util.UUID;
 
 import org.com.ems.api.dao.Event;
 import org.com.ems.controller.api.IEventController;
@@ -40,7 +39,7 @@ public class EventController implements IEventController {
 	@Override
 	public Event getEvent(final String eventId) {
 
-		final UUID uuid = CommonControllerUtils.stringToUUID(eventId);
+		final var uuid = CommonControllerUtils.stringToUUID(eventId);
 
 		final var optionalEvent = this.eventRepository.findById(uuid);
 
@@ -53,7 +52,7 @@ public class EventController implements IEventController {
 	@Override
 	public Event putEvent(final String eventId, final Event event) {
 
-		final UUID uuid = CommonControllerUtils.stringToUUID(eventId);
+		final var uuid = CommonControllerUtils.stringToUUID(eventId);
 
 		if (this.eventRepository.existsById(uuid)) {
 			return this.eventRepository.save(event);
