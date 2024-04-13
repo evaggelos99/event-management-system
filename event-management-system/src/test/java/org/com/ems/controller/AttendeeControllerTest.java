@@ -7,10 +7,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.com.ems.api.dao.Attendee;
-import org.com.ems.api.dao.SeatingInformation;
-import org.com.ems.api.dao.Ticket;
-import org.com.ems.api.dao.TicketType;
+import org.com.ems.api.domainobjects.Attendee;
+import org.com.ems.api.domainobjects.SeatingInformation;
+import org.com.ems.api.domainobjects.Ticket;
+import org.com.ems.api.domainobjects.TicketType;
 import org.com.ems.controller.exceptions.ObjectNotFoundException;
 import org.com.ems.db.IAttendeeRepository;
 import org.junit.jupiter.api.Assertions;

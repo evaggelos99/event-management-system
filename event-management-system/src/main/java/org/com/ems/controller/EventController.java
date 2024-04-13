@@ -4,7 +4,7 @@ import static java.util.Objects.requireNonNull;
 
 import java.util.Collection;
 
-import org.com.ems.api.dao.Event;
+import org.com.ems.api.domainobjects.Event;
 import org.com.ems.controller.api.IEventController;
 import org.com.ems.controller.exceptions.ObjectNotFoundException;
 import org.com.ems.controller.utils.CommonControllerUtils;

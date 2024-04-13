@@ -2,7 +2,7 @@ package org.com.ems.controller.api;
 
 import java.util.Collection;
 
-import org.com.ems.api.dao.Organizer;
+import org.com.ems.api.domainobjects.Organizer;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
