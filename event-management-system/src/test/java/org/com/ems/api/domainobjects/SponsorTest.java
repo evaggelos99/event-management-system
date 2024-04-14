@@ -4,18 +4,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.UUID;
 
-import org.com.ems.api.domainobjects.ContactInformation;
-import org.com.ems.api.domainobjects.Sponsor;
 import org.junit.jupiter.api.Test;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 
 class SponsorTest {
 
-	String[] ignoredFields = new String[] { "timestamp", "updatedOn" };
+	String[] ignoredFields = new String[] { "updatedTimestamp" };
 
 	@Test
-	void test() {
+	void testEquals() {
 
 		EqualsVerifier.simple().forClass(Sponsor.class).withIgnoredFields(this.ignoredFields).verify();
 	}

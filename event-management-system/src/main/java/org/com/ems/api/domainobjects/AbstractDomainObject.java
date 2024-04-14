@@ -26,7 +26,7 @@ public abstract class AbstractDomainObject implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
-	@Schema(example = "1f0ae3a4-9843-4135-bad9-295736330f20", description = "the uuid of the dao object")
+	@Schema(description = "the uuid of the dao object", hidden = true)
 	protected UUID uuid;
 	@UpdateTimestamp
 	@Schema(description = "the update timestamp of the dao object", hidden = true)

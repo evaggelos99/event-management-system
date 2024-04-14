@@ -18,6 +18,10 @@ public class NotNegativeValidator implements ConstraintValidator<NotNegative, Nu
 	@Override
 	public boolean isValid(final Number value, final ConstraintValidatorContext context) {
 
+		if (null == value) {
+			return false;
+		}
+
 		return value.intValue() >= 0;
 	}
 

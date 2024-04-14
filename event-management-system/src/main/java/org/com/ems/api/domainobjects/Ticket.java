@@ -2,7 +2,6 @@ package org.com.ems.api.domainobjects;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.Optional;
 import java.util.UUID;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -12,7 +11,6 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import org.com.ems.api.domainobjects.validators.constraints.NotNegative;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.annotation.Nullable;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.validation.constraints.NotNull;
@@ -27,9 +25,6 @@ public final class Ticket extends AbstractDomainObject {
 
 	private static final long serialVersionUID = 7755157879519770362L;
 
-	@Nullable
-	@Schema(example = "034ce7c5-ccf2-417c-886b-71305349ac80", description = "The uuid of the Attendee")
-	private UUID attendeeID;
 	@NotNull
 	@Schema(example = "61ee465a-f3d8-400a-8ae4-5e806b3eba92", description = "The uuid of the event")
 	private UUID eventID;
@@ -52,12 +47,11 @@ public final class Ticket extends AbstractDomainObject {
 
 	}
 
-	public Ticket(final UUID uuid, final UUID attendeeID, @NotNull final UUID eventID,
-			@NotNull final TicketType ticketType, @NotNull final Integer price, @NotNull final Boolean transferable,
+	public Ticket(final UUID uuid, @NotNull final UUID eventID, @NotNull final TicketType ticketType,
+			@NotNull final Integer price, @NotNull final Boolean transferable,
 			@NotNull final SeatingInformation seatInfo) {
 
 		super(uuid);
-		this.attendeeID = attendeeID;
 		this.eventID = requireNonNull(eventID);
 		this.ticketType = requireNonNull(ticketType);
 		this.price = requireNonNull(price);
@@ -68,16 +62,15 @@ public final class Ticket extends AbstractDomainObject {
 	@Override
 	public String toString() {
 
-		return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append(this.uuid).append(this.attendeeID)
-				.append(this.eventID).append(this.ticketType).append(this.price).append(this.transferable)
-				.append(this.seatInfo).build();
+		return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append(this.uuid).append(this.eventID)
+				.append(this.ticketType).append(this.price).append(this.transferable).append(this.seatInfo).build();
 	}
 
 	@Override
 	public int hashCode() {
 
-		return new HashCodeBuilder().append(this.attendeeID).append(this.eventID).append(this.ticketType)
-				.append(this.price).append(this.transferable).append(this.seatInfo).build();
+		return new HashCodeBuilder().append(this.eventID).append(this.ticketType).append(this.price)
+				.append(this.transferable).append(this.seatInfo).build();
 	}
 
 	@Override
@@ -97,13 +90,9 @@ public final class Ticket extends AbstractDomainObject {
 
 		final var rhs = (Ticket) object;
 
-		return new EqualsBuilder().append(this.attendeeID, rhs.attendeeID).append(this.eventID, rhs.eventID)
-				.append(this.ticketType, rhs.ticketType).append(this.price, rhs.price)
-				.append(this.transferable, rhs.transferable).append(this.seatInfo, rhs.seatInfo).build();
-	}
-
-	public Optional<UUID> getAttendeeID() {
-		return Optional.ofNullable(this.attendeeID);
+		return new EqualsBuilder().append(this.eventID, rhs.eventID).append(this.ticketType, rhs.ticketType)
+				.append(this.price, rhs.price).append(this.transferable, rhs.transferable)
+				.append(this.seatInfo, rhs.seatInfo).build();
 	}
 
 	public UUID getEventID() {

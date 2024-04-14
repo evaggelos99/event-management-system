@@ -5,19 +5,16 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.util.List;
 import java.util.UUID;
 
-import org.com.ems.api.domainobjects.ContactInformation;
-import org.com.ems.api.domainobjects.EventType;
-import org.com.ems.api.domainobjects.Organizer;
 import org.junit.jupiter.api.Test;
 
 import nl.jqno.equalsverifier.EqualsVerifier;
 
 class OrganizerTest {
 
-	String[] ignoredFields = new String[] { "timestamp", "updatedOn" };
+	String[] ignoredFields = new String[] { "updatedTimestamp" };
 
 	@Test
-	void test() {
+	void testEquals() {
 
 		EqualsVerifier.forClass(Organizer.class).withIgnoredFields(this.ignoredFields).verify();
 	}

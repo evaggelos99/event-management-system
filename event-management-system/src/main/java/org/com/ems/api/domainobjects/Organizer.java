@@ -44,7 +44,6 @@ public final class Organizer extends AbstractDomainObject {
 	@Schema(example = "Organizer specialized in weddings taking place in the country or even outside!", description = "The description of the organizer")
 	private String description;
 	@NotNull
-	@Schema(description = "The event types of the organizer plans")
 	private Collection<EventType> eventTypes;
 	@NotNull
 	@Schema(description = "The contact information of the Organizer")
