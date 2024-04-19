@@ -1,9 +1,11 @@
 package org.com.ems.controller.api;
 
 import java.util.Collection;
+import java.util.UUID;
 
 import org.com.ems.api.domainobjects.Ticket;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,7 +38,7 @@ public interface ITicketController {
 	@ApiResponses(value = { @ApiResponse(responseCode = "201", description = "successful operation") })
 	@ResponseStatus(value = HttpStatus.CREATED)
 	@PostMapping
-	Ticket postTicket(@Valid @RequestBody Ticket ticket);
+	ResponseEntity<Ticket> postTicket(@Valid @RequestBody Ticket ticket);
 
 	/**
 	 * Method that gets an Ticket DAO object from the DB
@@ -48,7 +50,7 @@ public interface ITicketController {
 			@ApiResponse(responseCode = "404", description = "could not find the object") })
 	@ResponseStatus(value = HttpStatus.OK)
 	@GetMapping("/{ticketId}")
-	Ticket getTicket(@PathVariable String ticketId);
+	ResponseEntity<Ticket> getTicket(@PathVariable UUID ticketId);
 
 	/**
 	 * Method that returns all Ticket objects from the DB
@@ -58,11 +60,11 @@ public interface ITicketController {
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "successful operation") })
 	@ResponseStatus(value = HttpStatus.OK)
 	@GetMapping()
-	Collection<Ticket> getTickets();
+	ResponseEntity<Collection<Ticket>> getTickets();
 
 	/**
 	 * Method that updates the Ticket with that AttendeeId If the id does not match
-	 * any Attendee stored in the DB it will throw {@link ObjectNotFoundException}
+	 * any Attendee stored in the DB it will return 404
 	 *
 	 * @param ticketId the UUID of the Attendee object
 	 * @param ticket   the edited Ticket object
@@ -72,7 +74,7 @@ public interface ITicketController {
 			@ApiResponse(responseCode = "404", description = "could not find the object") })
 	@ResponseStatus(value = HttpStatus.CREATED)
 	@PutMapping("/{ticketId}")
-	Ticket putTicket(@PathVariable String ticketId, @Valid @RequestBody Ticket ticket);
+	ResponseEntity<Ticket> putTicket(@PathVariable UUID ticketId, @Valid @RequestBody Ticket ticket);
 
 	/**
 	 * Method that deletes the Ticket with the specific AttendeeId
@@ -83,6 +85,6 @@ public interface ITicketController {
 	@ApiResponses(value = { @ApiResponse(responseCode = "204", description = "successful operation") })
 	@ResponseStatus(value = HttpStatus.NO_CONTENT)
 	@DeleteMapping("/{ticketId}")
-	void deleteTicket(@PathVariable String ticketId);
+	ResponseEntity<?> deleteTicket(@PathVariable UUID ticketId);
 
 }

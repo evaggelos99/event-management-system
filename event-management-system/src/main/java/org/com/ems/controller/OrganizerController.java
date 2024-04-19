@@ -2,14 +2,18 @@ package org.com.ems.controller;
 
 import static java.util.Objects.requireNonNull;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Collection;
+import java.util.UUID;
 
 import org.com.ems.api.domainobjects.Organizer;
 import org.com.ems.controller.api.IOrganizerController;
 import org.com.ems.controller.exceptions.ObjectNotFoundException;
-import org.com.ems.controller.utils.CommonControllerUtils;
 import org.com.ems.db.IOrganizerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -33,52 +37,71 @@ public class OrganizerController implements IOrganizerController {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Organizer postOrganizer(final Organizer organizer) {
+	public ResponseEntity<Organizer> postOrganizer(final Organizer organizer) {
 
-		return this.organizerRepository.save(organizer);
-	}
+		try {
+			return ResponseEntity.created(new URI("/attendee/")).body(this.organizerRepository.save(organizer));
+		} catch (final URISyntaxException e) {
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Organizer getOrganizer(final String organizerId) {
-
-		final var uuid = CommonControllerUtils.stringToUUID(organizerId);
-		return this.organizerRepository.findById(uuid)
-				.orElseThrow(() -> new ObjectNotFoundException(uuid, Organizer.class));
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Organizer putOrganizer(final String organizerId, final Organizer organizer) {
-
-		final var uuid = CommonControllerUtils.stringToUUID(organizerId);
-		if (this.organizerRepository.existsById(uuid)) {
-			return this.organizerRepository.save(organizer);
+			return new ResponseEntity<>(this.organizerRepository.save(organizer), HttpStatus.CREATED);
 		}
 
-		throw new ObjectNotFoundException(uuid, Organizer.class);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void deleteOrganizer(final String organizerId) {
+	public ResponseEntity<Organizer> getOrganizer(final UUID organizerId) {
 
-		this.organizerRepository.deleteById(CommonControllerUtils.stringToUUID(organizerId));
+		final var optionalOrganizer = this.organizerRepository.findById(organizerId);
+
+		return ResponseEntity.of(optionalOrganizer);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Collection<Organizer> getOrganizers() {
+	public ResponseEntity<Organizer> putOrganizer(final UUID organizerId, final Organizer organizer) {
 
-		return this.organizerRepository.findAll();
+		if (this.organizerRepository.existsById(organizerId)) {
+
+			try {
+				return ResponseEntity.created(new URI("/organizer/" + organizerId))
+						.body(this.organizerRepository.save(organizer));
+			} catch (final URISyntaxException e) {
+
+				return new ResponseEntity<>(this.organizerRepository.save(organizer), HttpStatus.CREATED);
+			}
+		}
+
+		throw new ObjectNotFoundException(organizerId, Organizer.class);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public ResponseEntity<?> deleteOrganizer(final UUID organizerId) {
+
+		if (!this.organizerRepository.existsById(organizerId)) {
+
+			throw new ObjectNotFoundException(organizerId, Organizer.class);
+		}
+
+		this.organizerRepository.deleteById(organizerId);
+		return ResponseEntity.noContent().build();
+
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public ResponseEntity<Collection<Organizer>> getOrganizers() {
+
+		return ResponseEntity.ok().body(this.organizerRepository.findAll());
 	}
 
 }

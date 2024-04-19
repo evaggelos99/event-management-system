@@ -2,14 +2,18 @@ package org.com.ems.controller;
 
 import static java.util.Objects.requireNonNull;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Collection;
+import java.util.UUID;
 
 import org.com.ems.api.domainobjects.Sponsor;
 import org.com.ems.controller.api.ISponsorController;
 import org.com.ems.controller.exceptions.ObjectNotFoundException;
-import org.com.ems.controller.utils.CommonControllerUtils;
 import org.com.ems.db.ISponsorRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -33,55 +37,72 @@ public class SponsorController implements ISponsorController {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Sponsor postSponsor(final Sponsor sponsor) {
+	public ResponseEntity<Sponsor> postSponsor(final Sponsor sponsor) {
 
-		return this.sponsorRepository.save(sponsor);
-	}
+		try {
+			return ResponseEntity.created(new URI("/sponsor/")).body(this.sponsorRepository.save(sponsor));
+		} catch (final URISyntaxException e) {
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Sponsor getSponsor(final String sponsorId) {
-
-		final var uuid = CommonControllerUtils.stringToUUID(sponsorId);
-		final var optionalSponsor = this.sponsorRepository.findById(uuid);
-
-		return optionalSponsor.orElseThrow(() -> new ObjectNotFoundException(uuid, Sponsor.class));
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Sponsor putSponsor(final String sponsorId, final Sponsor sponsor) {
-
-		final var uuid = CommonControllerUtils.stringToUUID(sponsorId);
-
-		if (this.sponsorRepository.existsById(uuid)) {
-
-			return this.sponsorRepository.save(sponsor);
+			return new ResponseEntity<>(this.sponsorRepository.save(sponsor), HttpStatus.CREATED);
 		}
 
-		throw new ObjectNotFoundException(uuid, Sponsor.class);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void deleteSponsor(final String sponsorId) {
+	public ResponseEntity<Sponsor> getSponsor(final UUID sponsorId) {
 
-		this.sponsorRepository.deleteById(CommonControllerUtils.stringToUUID(sponsorId));
+		final var optionalSponsor = this.sponsorRepository.findById(sponsorId);
+
+		return ResponseEntity.of(optionalSponsor);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Collection<Sponsor> getSponsors() {
+	public ResponseEntity<Sponsor> putSponsor(final UUID sponsorId, final Sponsor sponsor) {
 
-		return this.sponsorRepository.findAll();
+		if (this.sponsorRepository.existsById(sponsorId)) {
+
+			try {
+				return ResponseEntity.created(new URI("/sponsor/" + sponsorId))
+						.body(this.sponsorRepository.save(sponsor));
+			} catch (final URISyntaxException e) {
+
+				return new ResponseEntity<>(this.sponsorRepository.save(sponsor), HttpStatus.CREATED);
+			}
+		}
+
+		throw new ObjectNotFoundException(sponsorId, Sponsor.class);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public ResponseEntity<?> deleteSponsor(final UUID sponsorId) {
+
+		if (!this.sponsorRepository.existsById(sponsorId)) {
+
+			throw new ObjectNotFoundException(sponsorId, Sponsor.class);
+		}
+
+		this.sponsorRepository.deleteById(sponsorId);
+
+		return ResponseEntity.noContent().build();
+
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public ResponseEntity<Collection<Sponsor>> getSponsors() {
+
+		return ResponseEntity.ofNullable(this.sponsorRepository.findAll());
 	}
 
 }

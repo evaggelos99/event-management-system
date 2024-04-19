@@ -1,9 +1,11 @@
 package org.com.ems.controller.api;
 
 import java.util.Collection;
+import java.util.UUID;
 
 import org.com.ems.api.domainobjects.Attendee;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -38,7 +40,7 @@ public interface IAttendeeController {
 	@PostMapping
 	@ResponseStatus(value = HttpStatus.CREATED)
 	@Transactional
-	Attendee postAttendee(@Valid @RequestBody Attendee attendee);
+	ResponseEntity<Attendee> postAttendee(@Valid @RequestBody Attendee attendee);
 
 	/**
 	 * Method that gets an Attendee DAO object from the DB
@@ -50,7 +52,7 @@ public interface IAttendeeController {
 			@ApiResponse(responseCode = "404", description = "could not find the object") })
 	@ResponseStatus(value = HttpStatus.OK)
 	@GetMapping("/{attendeeId}")
-	Attendee getAttendee(@PathVariable String attendeeId);
+	ResponseEntity<Attendee> getAttendee(@PathVariable UUID attendeeId);
 
 	/**
 	 * Method that gets all Attendee objects from the DB
@@ -60,12 +62,11 @@ public interface IAttendeeController {
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "successful operation") })
 	@ResponseStatus(value = HttpStatus.OK)
 	@GetMapping()
-	Collection<Attendee> getAttendees();
+	ResponseEntity<Collection<Attendee>> getAttendees();
 
 	/**
 	 * Method that updates the Attendee with that AttendeeId If the id does not
-	 * match any Attendee stored in the DB it will throw
-	 * {@link ObjectNotFoundException}
+	 * match any Attendee stored in the DB it will return 404
 	 *
 	 * @param attendeeId the UUID of the Attendee object
 	 * @param attendee   the edited Attendee object
@@ -76,7 +77,7 @@ public interface IAttendeeController {
 	@PutMapping("/{attendeeId}")
 	@ResponseStatus(value = HttpStatus.CREATED)
 	@Transactional
-	Attendee putAttendee(@PathVariable String attendeeId, @Valid @RequestBody Attendee attendee);
+	ResponseEntity<Attendee> putAttendee(@PathVariable UUID attendeeId, @Valid @RequestBody Attendee attendee);
 
 	/**
 	 * Method that deletes the Attendee with the specific attendeeId
@@ -87,6 +88,6 @@ public interface IAttendeeController {
 	@ApiResponses(value = { @ApiResponse(responseCode = "204", description = "successful operation") })
 	@ResponseStatus(value = HttpStatus.NO_CONTENT)
 	@DeleteMapping(path = "/{attendeeId}")
-	void deleteAttendee(@PathVariable String attendeeId);
+	ResponseEntity<?> deleteAttendee(@PathVariable UUID attendeeId);
 
 }

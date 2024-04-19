@@ -2,14 +2,18 @@ package org.com.ems.controller;
 
 import static java.util.Objects.requireNonNull;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Collection;
+import java.util.UUID;
 
 import org.com.ems.api.domainobjects.Event;
 import org.com.ems.controller.api.IEventController;
 import org.com.ems.controller.exceptions.ObjectNotFoundException;
-import org.com.ems.controller.utils.CommonControllerUtils;
 import org.com.ems.db.IEventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -27,64 +31,80 @@ public class EventController implements IEventController {
 	/**
 	 * C-or responsible for CRUD operations for the Object {@link Event}
 	 *
-	 * @param eventRepo
+	 * @param eventRepository
 	 */
-	public EventController(@Autowired final IEventRepository eventRepo) {
-		this.eventRepository = requireNonNull(eventRepo);
+	public EventController(@Autowired final IEventRepository eventRepository) {
+		this.eventRepository = requireNonNull(eventRepository);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Event getEvent(final String eventId) {
+	public ResponseEntity<Event> getEvent(final UUID eventId) {
 
-		final var uuid = CommonControllerUtils.stringToUUID(eventId);
+		final var optionalEvent = this.eventRepository.findById(eventId);
 
-		final var optionalEvent = this.eventRepository.findById(uuid);
-
-		return optionalEvent.orElseThrow(() -> new ObjectNotFoundException(uuid, Event.class));
+		return ResponseEntity.of(optionalEvent);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Event putEvent(final String eventId, final Event event) {
+	public ResponseEntity<Event> putEvent(final UUID eventId, final Event event) {
 
-		final var uuid = CommonControllerUtils.stringToUUID(eventId);
+		if (this.eventRepository.existsById(eventId)) {
 
-		if (this.eventRepository.existsById(uuid)) {
-			return this.eventRepository.save(event);
+			try {
+				return ResponseEntity.created(new URI("/event/" + eventId)).body(this.eventRepository.save(event));
+			} catch (final URISyntaxException e) {
+
+				return new ResponseEntity<>(this.eventRepository.save(event), HttpStatus.CREATED);
+			}
 		}
 
-		throw new ObjectNotFoundException(uuid, Event.class);
+		throw new ObjectNotFoundException(eventId, Event.class);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void deleteEvent(final String eventId) {
+	public ResponseEntity<?> deleteEvent(final UUID eventId) {
 
-		this.eventRepository.deleteById(CommonControllerUtils.stringToUUID(eventId));
+		if (!this.eventRepository.existsById(eventId)) {
+
+			throw new ObjectNotFoundException(eventId, Event.class);
+		}
+
+		this.eventRepository.deleteById(eventId);
+
+		return ResponseEntity.noContent().build();
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Event postEvent(final Event event) {
+	public ResponseEntity<Event> postEvent(final Event event) {
 
-		return this.eventRepository.save(event);
+		try {
+			return ResponseEntity.created(new URI("/event/")).body(this.eventRepository.save(event));
+		} catch (final URISyntaxException e) {
+
+			return new ResponseEntity<>(this.eventRepository.save(event), HttpStatus.CREATED);
+		}
+
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Collection<Event> getEvents() {
-		return this.eventRepository.findAll();
+	public ResponseEntity<Collection<Event>> getEvents() {
+
+		return ResponseEntity.ok().body(this.eventRepository.findAll());
 	}
 
 }

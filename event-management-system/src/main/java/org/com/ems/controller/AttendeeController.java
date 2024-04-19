@@ -2,14 +2,18 @@ package org.com.ems.controller;
 
 import static java.util.Objects.requireNonNull;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Collection;
+import java.util.UUID;
 
 import org.com.ems.api.domainobjects.Attendee;
 import org.com.ems.controller.api.IAttendeeController;
 import org.com.ems.controller.exceptions.ObjectNotFoundException;
-import org.com.ems.controller.utils.CommonControllerUtils;
 import org.com.ems.db.IAttendeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -31,57 +35,76 @@ public class AttendeeController implements IAttendeeController {
 
 	/**
 	 * {@inheritDoc}
+	 *
+	 * @throws URISyntaxException
 	 */
 	@Override
-	public Attendee postAttendee(final Attendee attendee) {
+	public ResponseEntity<Attendee> postAttendee(final Attendee attendee) {
 
-		return this.attendeeRepository.save(attendee);
-	}
+		try {
+			return ResponseEntity.created(new URI("/attendee/")).body(this.attendeeRepository.save(attendee));
+		} catch (final URISyntaxException e) {
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Attendee getAttendee(final String attendeeId) {
-
-		final var uuid = CommonControllerUtils.stringToUUID(attendeeId);
-		final var optionalAttendee = this.attendeeRepository.findById(uuid);
-
-		return optionalAttendee.orElseThrow(() -> new ObjectNotFoundException(uuid, Attendee.class));
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public Attendee putAttendee(final String attendeeId, final Attendee attendee) {
-
-		final var uuid = CommonControllerUtils.stringToUUID(attendeeId);
-
-		if (this.attendeeRepository.existsById(uuid)) {
-
-			return this.attendeeRepository.save(attendee);
+			return new ResponseEntity<>(this.attendeeRepository.save(attendee), HttpStatus.CREATED);
 		}
 
-		throw new ObjectNotFoundException(uuid, Attendee.class);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public void deleteAttendee(final String attendeeId) {
+	public ResponseEntity<Attendee> getAttendee(final UUID attendeeId) {
 
-		this.attendeeRepository.deleteById(CommonControllerUtils.stringToUUID(attendeeId));
+		final var optionalAttendee = this.attendeeRepository.findById(attendeeId);
+
+		return ResponseEntity.of(optionalAttendee);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 *
+	 */
+	@Override
+	public ResponseEntity<Attendee> putAttendee(final UUID attendeeId, final Attendee attendee) {
+
+		if (this.attendeeRepository.existsById(attendeeId)) {
+
+			try {
+				return ResponseEntity.created(new URI("/attendee/" + attendeeId))
+						.body(this.attendeeRepository.save(attendee));
+			} catch (final URISyntaxException e) {
+
+				return new ResponseEntity<>(this.attendeeRepository.save(attendee), HttpStatus.CREATED);
+			}
+		}
+
+		throw new ObjectNotFoundException(attendeeId, Attendee.class);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Collection<Attendee> getAttendees() {
+	public ResponseEntity<?> deleteAttendee(final UUID attendeeId) {
 
-		return this.attendeeRepository.findAll();
+		if (!this.attendeeRepository.existsById(attendeeId)) {
+
+			throw new ObjectNotFoundException(attendeeId, Attendee.class);
+		}
+
+		this.attendeeRepository.deleteById(attendeeId);
+
+		return ResponseEntity.noContent().build();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public ResponseEntity<Collection<Attendee>> getAttendees() {
+
+		return ResponseEntity.ok().body(this.attendeeRepository.findAll());
 	}
 
 }
