@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.UUID;
 
 import org.com.ems.api.domainobjects.Event;
+import org.com.ems.api.dto.EventDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -40,7 +41,7 @@ public interface IEventController {
 	@PostMapping
 	@ResponseStatus(value = HttpStatus.CREATED)
 	@Transactional
-	ResponseEntity<Event> postEvent(@Valid @RequestBody Event event);
+	ResponseEntity<EventDto> postEvent(@Valid @RequestBody EventDto eventDto);
 
 	/**
 	 * Method that gets an Event DAO object from the DB
@@ -52,7 +53,7 @@ public interface IEventController {
 			@ApiResponse(responseCode = "404", description = "could not find the object") })
 	@ResponseStatus(value = HttpStatus.OK)
 	@GetMapping("/{eventId}")
-	ResponseEntity<Event> getEvent(@PathVariable UUID eventId);
+	ResponseEntity<EventDto> getEvent(@PathVariable UUID eventId);
 
 	/**
 	 * Method that gets all Event objects from the DB
@@ -62,7 +63,7 @@ public interface IEventController {
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "successful operation") })
 	@ResponseStatus(value = HttpStatus.OK)
 	@GetMapping()
-	ResponseEntity<Collection<Event>> getEvents();
+	ResponseEntity<Collection<EventDto>> getEvents();
 
 	/**
 	 * Method that updates the Event with that eventId If the id does not match any
@@ -77,7 +78,7 @@ public interface IEventController {
 	@PutMapping("/{eventId}")
 	@ResponseStatus(value = HttpStatus.CREATED)
 	@Transactional
-	ResponseEntity<Event> putEvent(@PathVariable UUID eventId, @Valid @RequestBody Event event);
+	ResponseEntity<EventDto> putEvent(@PathVariable UUID eventId, @Valid @RequestBody EventDto eventDto);
 
 	/**
 	 * Method that deletes the event with the specific eventId

@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.UUID;
 
 import org.com.ems.api.domainobjects.Organizer;
+import org.com.ems.api.dto.OrganizerDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -38,7 +39,7 @@ public interface IOrganizerController {
 	@ApiResponses(value = { @ApiResponse(responseCode = "201", description = "successful operation") })
 	@ResponseStatus(value = HttpStatus.CREATED)
 	@PostMapping
-	ResponseEntity<Organizer> postOrganizer(@Valid @RequestBody Organizer organizer);
+	ResponseEntity<OrganizerDto> postOrganizer(@Valid @RequestBody OrganizerDto organizerDto);
 
 	/**
 	 * Method that gets an Organizer DAO object from the DB
@@ -50,7 +51,7 @@ public interface IOrganizerController {
 			@ApiResponse(responseCode = "404", description = "could not find the object") })
 	@ResponseStatus(value = HttpStatus.OK)
 	@GetMapping("/{organizerId}")
-	ResponseEntity<Organizer> getOrganizer(@PathVariable UUID organizerId);
+	ResponseEntity<OrganizerDto> getOrganizer(@PathVariable UUID organizerId);
 
 	/**
 	 * Method that gets all Organizer objects from the DB
@@ -60,7 +61,7 @@ public interface IOrganizerController {
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "successful operation") })
 	@ResponseStatus(value = HttpStatus.OK)
 	@GetMapping()
-	ResponseEntity<Collection<Organizer>> getOrganizers();
+	ResponseEntity<Collection<OrganizerDto>> getOrganizers();
 
 	/**
 	 * Method that updates the Organizer with that organizerId If the id does not
@@ -74,7 +75,8 @@ public interface IOrganizerController {
 			@ApiResponse(responseCode = "404", description = "could not find the object") })
 	@ResponseStatus(value = HttpStatus.CREATED)
 	@PutMapping("/{organizerId}")
-	ResponseEntity<Organizer> putOrganizer(@PathVariable UUID organizerId, @Valid @RequestBody Organizer organizer);
+	ResponseEntity<OrganizerDto> putOrganizer(@PathVariable UUID organizerId,
+			@Valid @RequestBody OrganizerDto organizerDto);
 
 	/**
 	 * Method that deletes the Organizer with the specific organizerId

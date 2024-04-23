@@ -5,13 +5,17 @@ import static java.util.Objects.requireNonNull;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
+import java.util.function.Function;
 
 import org.com.ems.api.domainobjects.Event;
+import org.com.ems.api.dto.EventDto;
 import org.com.ems.controller.api.IEventController;
 import org.com.ems.controller.exceptions.ObjectNotFoundException;
 import org.com.ems.db.IEventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,40 +31,72 @@ import org.springframework.web.bind.annotation.RestController;
 public class EventController implements IEventController {
 
 	private final IEventRepository eventRepository;
+	private final Function<Event, EventDto> eventToEventDtoConverter;
+	private final Function<EventDto, Event> eventDtoToEventConverter;
 
 	/**
 	 * C-or responsible for CRUD operations for the Object {@link Event}
 	 *
 	 * @param eventRepository
 	 */
-	public EventController(@Autowired final IEventRepository eventRepository) {
+	public EventController(@Autowired final IEventRepository eventRepository,
+			@Autowired @Qualifier("eventToEventDtoConverter") final Function<Event, EventDto> eventToEventDtoConverter,
+			@Autowired @Qualifier("eventDtoToEventConverter") final Function<EventDto, Event> eventDtoToEventConverter) {
+
 		this.eventRepository = requireNonNull(eventRepository);
+		this.eventToEventDtoConverter = requireNonNull(eventToEventDtoConverter);
+		this.eventDtoToEventConverter = requireNonNull(eventDtoToEventConverter);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public ResponseEntity<Event> getEvent(final UUID eventId) {
+	public ResponseEntity<EventDto> postEvent(final EventDto eventDto) {
+
+		final Event event = this.eventRepository.save(this.eventDtoToEventConverter.apply(eventDto));
+		final EventDto newDto = this.eventToEventDtoConverter.apply(event);
+
+		try {
+
+			return ResponseEntity.created(new URI("/event/")).body(newDto);
+		} catch (final URISyntaxException e) {
+
+			return new ResponseEntity<>(newDto, HttpStatus.CREATED);
+		}
+
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public ResponseEntity<EventDto> getEvent(final UUID eventId) {
 
 		final var optionalEvent = this.eventRepository.findById(eventId);
 
-		return ResponseEntity.of(optionalEvent);
+		final EventDto eventDto = this.eventToEventDtoConverter
+				.apply(optionalEvent.orElseThrow(() -> new ObjectNotFoundException(eventId, Event.class)));
+
+		return ResponseEntity.ok(eventDto);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public ResponseEntity<Event> putEvent(final UUID eventId, final Event event) {
+	public ResponseEntity<EventDto> putEvent(final UUID eventId, final EventDto eventDto) {
 
 		if (this.eventRepository.existsById(eventId)) {
 
+			final Event event = this.eventRepository.save(this.eventDtoToEventConverter.apply(eventDto));
+			final EventDto newDto = this.eventToEventDtoConverter.apply(event);
+
 			try {
-				return ResponseEntity.created(new URI("/event/" + eventId)).body(this.eventRepository.save(event));
+				return ResponseEntity.created(new URI("/event/" + eventId)).body(newDto);
 			} catch (final URISyntaxException e) {
 
-				return new ResponseEntity<>(this.eventRepository.save(event), HttpStatus.CREATED);
+				return new ResponseEntity<>(newDto, HttpStatus.CREATED);
 			}
 		}
 
@@ -87,24 +123,12 @@ public class EventController implements IEventController {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public ResponseEntity<Event> postEvent(final Event event) {
+	public ResponseEntity<Collection<EventDto>> getEvents() {
 
-		try {
-			return ResponseEntity.created(new URI("/event/")).body(this.eventRepository.save(event));
-		} catch (final URISyntaxException e) {
+		final List<EventDto> listOfDtos = this.eventRepository.findAll().stream()
+				.map(this.eventToEventDtoConverter::apply).toList();
 
-			return new ResponseEntity<>(this.eventRepository.save(event), HttpStatus.CREATED);
-		}
-
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public ResponseEntity<Collection<Event>> getEvents() {
-
-		return ResponseEntity.ok().body(this.eventRepository.findAll());
+		return ResponseEntity.ok(listOfDtos);
 	}
 
 }

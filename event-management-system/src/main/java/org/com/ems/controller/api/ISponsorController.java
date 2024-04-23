@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.UUID;
 
 import org.com.ems.api.domainobjects.Sponsor;
+import org.com.ems.api.dto.SponsorDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -40,7 +41,7 @@ public interface ISponsorController {
 	@PostMapping
 	@ResponseStatus(value = HttpStatus.CREATED)
 	@Transactional
-	ResponseEntity<Sponsor> postSponsor(@Valid @RequestBody Sponsor sponsor);
+	ResponseEntity<SponsorDto> postSponsor(@Valid @RequestBody SponsorDto sponsorDto);
 
 	/**
 	 * Method that gets an Sponsor DAO object from the DB
@@ -52,7 +53,7 @@ public interface ISponsorController {
 			@ApiResponse(responseCode = "404", description = "could not find the object") })
 	@ResponseStatus(value = HttpStatus.OK)
 	@GetMapping("/{sponsorId}")
-	ResponseEntity<Sponsor> getSponsor(@PathVariable UUID sponsorId);
+	ResponseEntity<SponsorDto> getSponsor(@PathVariable UUID sponsorId);
 
 	/**
 	 * Method that gets all Sponsor objects from the DB
@@ -62,7 +63,7 @@ public interface ISponsorController {
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "successful operation") })
 	@ResponseStatus(value = HttpStatus.OK)
 	@GetMapping()
-	ResponseEntity<Collection<Sponsor>> getSponsors();
+	ResponseEntity<Collection<SponsorDto>> getSponsors();
 
 	/**
 	 * Method that updates the Sponsor with that SponsorId If the id does not match
@@ -77,7 +78,7 @@ public interface ISponsorController {
 	@PutMapping("/{sponsorId}")
 	@ResponseStatus(value = HttpStatus.CREATED)
 	@Transactional
-	ResponseEntity<Sponsor> putSponsor(@PathVariable UUID sponsorId, @Valid @RequestBody Sponsor sponsor);
+	ResponseEntity<SponsorDto> putSponsor(@PathVariable UUID sponsorId, @Valid @RequestBody SponsorDto sponsorDto);
 
 	/**
 	 * Method that deletes the Sponsor with the specific sponsorId

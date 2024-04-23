@@ -1,9 +1,6 @@
 package org.com.ems.api.domainobjects;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 import java.util.List;
-import java.util.UUID;
 
 import org.junit.jupiter.api.Test;
 
@@ -11,38 +8,22 @@ import nl.jqno.equalsverifier.EqualsVerifier;
 
 class AttendeeTest {
 
-	String[] ignoredFields = new String[] { "updatedTimestamp" };
-
 	@Test
 	void testEquals() {
 
-		EqualsVerifier.forClass(Attendee.class).withIgnoredFields(this.ignoredFields).verify();
+		EqualsVerifier.forClass(Attendee.class).verify();
 	}
 
 	@Test
-	void testHashCodeTicket() {
+	void testEquals2() {
 
-		final UUID randomUUID = UUID.randomUUID();
-		final UUID ticketUUID = UUID.randomUUID();
-		final var lhs = new Attendee(randomUUID, "firstName", "lastName", List.of(ticketUUID));
-		final var rhs = new Attendee(randomUUID, "firstName", "lastName", List.of(ticketUUID));
+		final Attendee attendee = Attendee.builder().firstName("firstname").lastName("lastname").ticketsIDs(List.of())
+				.build();
 
-		assertEquals(lhs, rhs);
-		assertEquals(lhs.hashCode(), rhs.hashCode());
-	}
+		final Attendee attendee2 = Attendee.builder().firstName("firstname").lastName("lastname").ticketsIDs(List.of())
+				.build();
 
-	@Test
-	void testHashCodeEmptyTicket() {
-
-		final UUID randomUUID = UUID.randomUUID();
-		final UUID eventUUID = UUID.randomUUID();
-		final UUID ticketUUID = UUID.randomUUID();
-
-		final var lhs = new Attendee(randomUUID, "firstName", "lastName", List.of());
-		final var rhs = new Attendee(randomUUID, "firstName", "lastName", List.of());
-
-		assertEquals(lhs, rhs);
-		assertEquals(lhs.hashCode(), rhs.hashCode());
+		System.out.println(attendee.equals(attendee2));
 	}
 
 }

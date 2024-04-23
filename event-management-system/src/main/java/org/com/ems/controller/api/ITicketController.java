@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.UUID;
 
 import org.com.ems.api.domainobjects.Ticket;
+import org.com.ems.api.dto.TicketDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -38,7 +39,7 @@ public interface ITicketController {
 	@ApiResponses(value = { @ApiResponse(responseCode = "201", description = "successful operation") })
 	@ResponseStatus(value = HttpStatus.CREATED)
 	@PostMapping
-	ResponseEntity<Ticket> postTicket(@Valid @RequestBody Ticket ticket);
+	ResponseEntity<TicketDto> postTicket(@Valid @RequestBody TicketDto ticketDto);
 
 	/**
 	 * Method that gets an Ticket DAO object from the DB
@@ -50,7 +51,7 @@ public interface ITicketController {
 			@ApiResponse(responseCode = "404", description = "could not find the object") })
 	@ResponseStatus(value = HttpStatus.OK)
 	@GetMapping("/{ticketId}")
-	ResponseEntity<Ticket> getTicket(@PathVariable UUID ticketId);
+	ResponseEntity<TicketDto> getTicket(@PathVariable UUID ticketId);
 
 	/**
 	 * Method that returns all Ticket objects from the DB
@@ -60,7 +61,7 @@ public interface ITicketController {
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "successful operation") })
 	@ResponseStatus(value = HttpStatus.OK)
 	@GetMapping()
-	ResponseEntity<Collection<Ticket>> getTickets();
+	ResponseEntity<Collection<TicketDto>> getTickets();
 
 	/**
 	 * Method that updates the Ticket with that AttendeeId If the id does not match
@@ -74,7 +75,7 @@ public interface ITicketController {
 			@ApiResponse(responseCode = "404", description = "could not find the object") })
 	@ResponseStatus(value = HttpStatus.CREATED)
 	@PutMapping("/{ticketId}")
-	ResponseEntity<Ticket> putTicket(@PathVariable UUID ticketId, @Valid @RequestBody Ticket ticket);
+	ResponseEntity<TicketDto> putTicket(@PathVariable UUID ticketId, @Valid @RequestBody TicketDto ticketDto);
 
 	/**
 	 * Method that deletes the Ticket with the specific AttendeeId

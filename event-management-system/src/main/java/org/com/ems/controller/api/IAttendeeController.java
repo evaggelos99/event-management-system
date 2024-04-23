@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.UUID;
 
 import org.com.ems.api.domainobjects.Attendee;
+import org.com.ems.api.dto.AttendeeDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -40,7 +41,7 @@ public interface IAttendeeController {
 	@PostMapping
 	@ResponseStatus(value = HttpStatus.CREATED)
 	@Transactional
-	ResponseEntity<Attendee> postAttendee(@Valid @RequestBody Attendee attendee);
+	ResponseEntity<AttendeeDto> postAttendee(@Valid @RequestBody AttendeeDto attendee);
 
 	/**
 	 * Method that gets an Attendee DAO object from the DB
@@ -52,7 +53,7 @@ public interface IAttendeeController {
 			@ApiResponse(responseCode = "404", description = "could not find the object") })
 	@ResponseStatus(value = HttpStatus.OK)
 	@GetMapping("/{attendeeId}")
-	ResponseEntity<Attendee> getAttendee(@PathVariable UUID attendeeId);
+	ResponseEntity<AttendeeDto> getAttendee(@PathVariable UUID attendeeId);
 
 	/**
 	 * Method that gets all Attendee objects from the DB
@@ -62,7 +63,7 @@ public interface IAttendeeController {
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "successful operation") })
 	@ResponseStatus(value = HttpStatus.OK)
 	@GetMapping()
-	ResponseEntity<Collection<Attendee>> getAttendees();
+	ResponseEntity<Collection<AttendeeDto>> getAttendees();
 
 	/**
 	 * Method that updates the Attendee with that AttendeeId If the id does not
@@ -77,7 +78,7 @@ public interface IAttendeeController {
 	@PutMapping("/{attendeeId}")
 	@ResponseStatus(value = HttpStatus.CREATED)
 	@Transactional
-	ResponseEntity<Attendee> putAttendee(@PathVariable UUID attendeeId, @Valid @RequestBody Attendee attendee);
+	ResponseEntity<AttendeeDto> putAttendee(@PathVariable UUID attendeeId, @Valid @RequestBody AttendeeDto attendee);
 
 	/**
 	 * Method that deletes the Attendee with the specific attendeeId

@@ -3,6 +3,7 @@ package org.com.ems.controller.exceptions;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
@@ -10,6 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+
+import jakarta.validation.ConstraintViolation;
+import jakarta.validation.ConstraintViolationException;
 
 /**
  * Exception Handler
@@ -68,17 +72,17 @@ public class GlobalExceptionHandler {
 		return new ResponseEntity<>(errorResponse, new HttpHeaders(), statusCode);
 	}
 
-//	@ExceptionHandler(ConstraintViolationException.class) TODO
-//	protected ResponseEntity<Map<String, Object>> handleConstraintViolationException(
-//			final ConstraintViolationException ex) {
-//
-//		final Set<ConstraintViolation<?>> set = ex.getConstraintViolations();
-//
-//		final Map<String, Object> errorResponse = new HashMap<>();
-//		errorResponse.put("timeStamp", Instant.now());
-//		errorResponse.put("error", set);
-//
-//		return new ResponseEntity<>(errorResponse, new HttpHeaders(), 400);
-//	}
+	@ExceptionHandler(ConstraintViolationException.class) // does not work FIXME
+	protected ResponseEntity<Map<String, Object>> handleConstraintViolationException(
+			final ConstraintViolationException ex) {
+
+		final Set<ConstraintViolation<?>> set = ex.getConstraintViolations();
+
+		final Map<String, Object> errorResponse = new HashMap<>();
+		errorResponse.put("timeStamp", Instant.now());
+		errorResponse.put("errors", set);
+
+		return new ResponseEntity<>(errorResponse, new HttpHeaders(), 400);
+	}
 
 }

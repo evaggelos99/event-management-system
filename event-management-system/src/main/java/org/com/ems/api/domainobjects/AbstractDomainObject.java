@@ -1,7 +1,5 @@
 package org.com.ems.api.domainobjects;
 
-import static java.util.Objects.requireNonNull;
-
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.UUID;
@@ -13,6 +11,10 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 /**
  * Super class for Entity classes
@@ -20,9 +22,13 @@ import jakarta.persistence.MappedSuperclass;
  * @author Evangelos Georgiou
  */
 @MappedSuperclass
+@Getter
+@EqualsAndHashCode(exclude = { "updatedTimestamp" })
+@ToString
+@NoArgsConstructor
 public abstract class AbstractDomainObject implements Serializable {
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 2518014933571661892L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
@@ -30,32 +36,6 @@ public abstract class AbstractDomainObject implements Serializable {
 	protected UUID uuid;
 	@UpdateTimestamp
 	@Schema(description = "the update timestamp of the dao object", hidden = true)
-	private Instant updatedTimestamp;
-
-	protected AbstractDomainObject() {
-
-	}
-
-	public AbstractDomainObject(final UUID uuid) {
-
-		this.uuid = requireNonNull(uuid);
-	}
-
-	public Instant getUpdatedTimestamp() {
-		return this.updatedTimestamp;
-	}
-
-	public final UUID getUuid() {
-		return this.uuid;
-	}
-
-	@Override
-	public abstract String toString();
-
-	@Override
-	public abstract int hashCode();
-
-	@Override
-	public abstract boolean equals(Object object);
+	protected Instant updatedTimestamp;
 
 }

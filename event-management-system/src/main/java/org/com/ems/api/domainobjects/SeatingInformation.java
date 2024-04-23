@@ -20,10 +20,10 @@ import jakarta.validation.constraints.NotNull;
 public final class SeatingInformation {
 
 	@NotNull
-	@Schema(example = "A15", description = "The description of the organizer")
+	@Schema(example = "A15", description = "The number of the seat")
 	private String seat;
 	@NotNull
-	@Schema(example = "West", description = "The description of the organizer")
+	@Schema(example = "West", description = "Which section your seat is located in")
 	private String section;
 
 	protected SeatingInformation() {

@@ -5,13 +5,17 @@ import static java.util.Objects.requireNonNull;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
+import java.util.function.Function;
 
 import org.com.ems.api.domainobjects.Ticket;
+import org.com.ems.api.dto.TicketDto;
 import org.com.ems.controller.api.ITicketController;
 import org.com.ems.controller.exceptions.ObjectNotFoundException;
 import org.com.ems.db.ITicketRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,23 +31,34 @@ import org.springframework.web.bind.annotation.RestController;
 public class TicketController implements ITicketController {
 
 	private final ITicketRepository ticketRepository;
+	private final Function<Ticket, TicketDto> ticketToTicketDtoConverter;
+	private final Function<TicketDto, Ticket> ticketDtoToTicketConverter;
 
-	public TicketController(@Autowired final ITicketRepository ticketRepository) {
+	public TicketController(@Autowired final ITicketRepository ticketRepository,
+			@Autowired @Qualifier("ticketToTicketDtoConverter") final Function<Ticket, TicketDto> ticketToTicketDtoConverter,
+			@Autowired @Qualifier("ticketDtoToTicketConverter") final Function<TicketDto, Ticket> ticketDtoToTicketConverter) {
 
 		this.ticketRepository = requireNonNull(ticketRepository);
+		this.ticketToTicketDtoConverter = requireNonNull(ticketToTicketDtoConverter);
+		this.ticketDtoToTicketConverter = requireNonNull(ticketDtoToTicketConverter);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public ResponseEntity<Ticket> postTicket(final Ticket ticket) {
+	public ResponseEntity<TicketDto> postTicket(final TicketDto ticketDto) {
+
+		final Ticket newTicket = this.ticketRepository.save(this.ticketDtoToTicketConverter.apply(ticketDto));
+
+		final TicketDto newDto = this.ticketToTicketDtoConverter.apply(newTicket);
 
 		try {
-			return ResponseEntity.created(new URI("/ticket/")).body(this.ticketRepository.save(ticket));
+
+			return ResponseEntity.created(new URI("/ticket/")).body(newDto);
 		} catch (final URISyntaxException e) {
 
-			return new ResponseEntity<>(this.ticketRepository.save(ticket), HttpStatus.CREATED);
+			return new ResponseEntity<>(newDto, HttpStatus.CREATED);
 		}
 
 	}
@@ -52,26 +67,33 @@ public class TicketController implements ITicketController {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public ResponseEntity<Ticket> getTicket(final UUID ticketId) {
+	public ResponseEntity<TicketDto> getTicket(final UUID ticketId) {
 
 		final var optionalTicket = this.ticketRepository.findById(ticketId);
 
-		return ResponseEntity.of(optionalTicket);
+		final TicketDto ticketDto = this.ticketToTicketDtoConverter
+				.apply(optionalTicket.orElseThrow(() -> new ObjectNotFoundException(ticketId, TicketDto.class)));
+
+		return ResponseEntity.ok(ticketDto);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
 	@Override
-	public ResponseEntity<Ticket> putTicket(final UUID ticketId, final Ticket ticket) {
+	public ResponseEntity<TicketDto> putTicket(final UUID ticketId, final TicketDto ticketDto) {
 
 		if (this.ticketRepository.existsById(ticketId)) {
 
+			final Ticket newTicket = this.ticketRepository.save(this.ticketDtoToTicketConverter.apply(ticketDto));
+
+			final TicketDto newDto = this.ticketToTicketDtoConverter.apply(newTicket);
+
 			try {
-				return ResponseEntity.created(new URI("/ticket/" + ticketId)).body(this.ticketRepository.save(ticket));
+				return ResponseEntity.created(new URI("/ticket/" + ticketId)).body(newDto);
 			} catch (final URISyntaxException e) {
 
-				return new ResponseEntity<>(this.ticketRepository.save(ticket), HttpStatus.CREATED);
+				return new ResponseEntity<>(newDto, HttpStatus.CREATED);
 			}
 		}
 
@@ -99,9 +121,12 @@ public class TicketController implements ITicketController {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public ResponseEntity<Collection<Ticket>> getTickets() {
+	public ResponseEntity<Collection<TicketDto>> getTickets() {
 
-		return ResponseEntity.ok().body(this.ticketRepository.findAll());
+		final List<TicketDto> listOfDtos = this.ticketRepository.findAll().stream()
+				.map(this.ticketToTicketDtoConverter::apply).toList();
+
+		return ResponseEntity.ok(listOfDtos);
 	}
 
 }
