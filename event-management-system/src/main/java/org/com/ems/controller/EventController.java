@@ -13,7 +13,7 @@ import org.com.ems.api.domainobjects.Event;
 import org.com.ems.api.dto.EventDto;
 import org.com.ems.controller.api.IEventController;
 import org.com.ems.controller.exceptions.ObjectNotFoundException;
-import org.com.ems.db.IEventRepository;
+import org.com.ems.services.IService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -30,20 +30,20 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/event")
 public class EventController implements IEventController {
 
-	private final IEventRepository eventRepository;
+	private final IService<Event> eventService;
 	private final Function<Event, EventDto> eventToEventDtoConverter;
 	private final Function<EventDto, Event> eventDtoToEventConverter;
 
 	/**
 	 * C-or responsible for CRUD operations for the Object {@link Event}
 	 *
-	 * @param eventRepository
+	 * @param eventService
 	 */
-	public EventController(@Autowired final IEventRepository eventRepository,
+	public EventController(@Autowired final IService<Event> eventService,
 			@Autowired @Qualifier("eventToEventDtoConverter") final Function<Event, EventDto> eventToEventDtoConverter,
 			@Autowired @Qualifier("eventDtoToEventConverter") final Function<EventDto, Event> eventDtoToEventConverter) {
 
-		this.eventRepository = requireNonNull(eventRepository);
+		this.eventService = requireNonNull(eventService);
 		this.eventToEventDtoConverter = requireNonNull(eventToEventDtoConverter);
 		this.eventDtoToEventConverter = requireNonNull(eventDtoToEventConverter);
 	}
@@ -54,7 +54,7 @@ public class EventController implements IEventController {
 	@Override
 	public ResponseEntity<EventDto> postEvent(final EventDto eventDto) {
 
-		final Event event = this.eventRepository.save(this.eventDtoToEventConverter.apply(eventDto));
+		final Event event = this.eventService.add(this.eventDtoToEventConverter.apply(eventDto));
 		final EventDto newDto = this.eventToEventDtoConverter.apply(event);
 
 		try {
@@ -73,10 +73,10 @@ public class EventController implements IEventController {
 	@Override
 	public ResponseEntity<EventDto> getEvent(final UUID eventId) {
 
-		final var optionalEvent = this.eventRepository.findById(eventId);
+		final var optionalEvent = this.eventService.get(eventId);
 
 		final EventDto eventDto = this.eventToEventDtoConverter
-				.apply(optionalEvent.orElseThrow(() -> new ObjectNotFoundException(eventId, Event.class)));
+				.apply(optionalEvent.orElseThrow(() -> new ObjectNotFoundException(eventId, EventDto.class)));
 
 		return ResponseEntity.ok(eventDto);
 	}
@@ -87,20 +87,16 @@ public class EventController implements IEventController {
 	@Override
 	public ResponseEntity<EventDto> putEvent(final UUID eventId, final EventDto eventDto) {
 
-		if (this.eventRepository.existsById(eventId)) {
+		final Event event = this.eventService.edit(eventId, this.eventDtoToEventConverter.apply(eventDto));
+		final EventDto newDto = this.eventToEventDtoConverter.apply(event);
 
-			final Event event = this.eventRepository.save(this.eventDtoToEventConverter.apply(eventDto));
-			final EventDto newDto = this.eventToEventDtoConverter.apply(event);
+		try {
+			return ResponseEntity.created(new URI("/event/" + eventId)).body(newDto);
+		} catch (final URISyntaxException e) {
 
-			try {
-				return ResponseEntity.created(new URI("/event/" + eventId)).body(newDto);
-			} catch (final URISyntaxException e) {
-
-				return new ResponseEntity<>(newDto, HttpStatus.CREATED);
-			}
+			return new ResponseEntity<>(newDto, HttpStatus.CREATED);
 		}
 
-		throw new ObjectNotFoundException(eventId, Event.class);
 	}
 
 	/**
@@ -109,12 +105,7 @@ public class EventController implements IEventController {
 	@Override
 	public ResponseEntity<?> deleteEvent(final UUID eventId) {
 
-		if (!this.eventRepository.existsById(eventId)) {
-
-			throw new ObjectNotFoundException(eventId, Event.class);
-		}
-
-		this.eventRepository.deleteById(eventId);
+		this.eventService.delete(eventId);
 
 		return ResponseEntity.noContent().build();
 	}
@@ -125,8 +116,8 @@ public class EventController implements IEventController {
 	@Override
 	public ResponseEntity<Collection<EventDto>> getEvents() {
 
-		final List<EventDto> listOfDtos = this.eventRepository.findAll().stream()
-				.map(this.eventToEventDtoConverter::apply).toList();
+		final List<EventDto> listOfDtos = this.eventService.getAll().stream().map(this.eventToEventDtoConverter::apply)
+				.toList();
 
 		return ResponseEntity.ok(listOfDtos);
 	}

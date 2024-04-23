@@ -12,8 +12,8 @@ public class TicketDtoToTicketConverter implements Function<TicketDto, Ticket> {
 	@Override
 	public Ticket apply(final TicketDto ticketDto) {
 
-		return Ticket.builder().eventID(ticketDto.eventID()).ticketType(ticketDto.ticketType()).price(ticketDto.price())
-				.transferable(ticketDto.transferable()).seatInfo(ticketDto.seatInfo()).build();
+		return new Ticket(ticketDto.uuid(), ticketDto.lastUpdated(), ticketDto.eventID(), ticketDto.ticketType(),
+				ticketDto.price(), ticketDto.transferable(), ticketDto.seatInfo());
 	}
 
 }

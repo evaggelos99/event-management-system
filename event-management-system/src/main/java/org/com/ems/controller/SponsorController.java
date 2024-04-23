@@ -12,7 +12,7 @@ import org.com.ems.api.domainobjects.Sponsor;
 import org.com.ems.api.dto.SponsorDto;
 import org.com.ems.controller.api.ISponsorController;
 import org.com.ems.controller.exceptions.ObjectNotFoundException;
-import org.com.ems.db.ISponsorRepository;
+import org.com.ems.services.IService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -29,15 +29,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/sponsor")
 public class SponsorController implements ISponsorController {
 
-	private final ISponsorRepository sponsorRepository;
+	private final IService<Sponsor> sponsorService;
 	private final Function<Sponsor, SponsorDto> sponsorToSponsorDtoConverter;
 	private final Function<SponsorDto, Sponsor> sponsorDtoToSponsorConverter;
 
-	public SponsorController(@Autowired final ISponsorRepository sponsorRepository,
+	public SponsorController(@Autowired final IService<Sponsor> sponsorService,
 			@Autowired @Qualifier("sponsorToSponsorDtoConverter") final Function<Sponsor, SponsorDto> sponsorToSponsorDtoConverter,
 			@Autowired @Qualifier("sponsorDtoToSponsorConverter") final Function<SponsorDto, Sponsor> sponsorDtoToSponsorConverter) {
 
-		this.sponsorRepository = requireNonNull(sponsorRepository);
+		this.sponsorService = requireNonNull(sponsorService);
 		this.sponsorToSponsorDtoConverter = requireNonNull(sponsorToSponsorDtoConverter);
 		this.sponsorDtoToSponsorConverter = requireNonNull(sponsorDtoToSponsorConverter);
 	}
@@ -48,7 +48,7 @@ public class SponsorController implements ISponsorController {
 	@Override
 	public ResponseEntity<SponsorDto> postSponsor(final SponsorDto sponsorDto) {
 
-		final Sponsor sponsor = this.sponsorRepository.save(this.sponsorDtoToSponsorConverter.apply(sponsorDto));
+		final Sponsor sponsor = this.sponsorService.add(this.sponsorDtoToSponsorConverter.apply(sponsorDto));
 		final SponsorDto newSponsorDto = this.sponsorToSponsorDtoConverter.apply(sponsor);
 
 		try {
@@ -67,7 +67,7 @@ public class SponsorController implements ISponsorController {
 	@Override
 	public ResponseEntity<SponsorDto> getSponsor(final UUID sponsorId) {
 
-		final var optionalSponsor = this.sponsorRepository.findById(sponsorId);
+		final var optionalSponsor = this.sponsorService.get(sponsorId);
 
 		final SponsorDto sponsorDto = this.sponsorToSponsorDtoConverter
 				.apply(optionalSponsor.orElseThrow(() -> new ObjectNotFoundException(sponsorId, SponsorDto.class)));
@@ -81,20 +81,16 @@ public class SponsorController implements ISponsorController {
 	@Override
 	public ResponseEntity<SponsorDto> putSponsor(final UUID sponsorId, final SponsorDto sponsorDto) {
 
-		if (this.sponsorRepository.existsById(sponsorId)) {
+		final Sponsor sponsor = this.sponsorService.edit(sponsorId,
+				this.sponsorDtoToSponsorConverter.apply(sponsorDto));
+		final SponsorDto newSponsorDto = this.sponsorToSponsorDtoConverter.apply(sponsor);
 
-			final Sponsor sponsor = this.sponsorRepository.save(this.sponsorDtoToSponsorConverter.apply(sponsorDto));
-			final SponsorDto newSponsorDto = this.sponsorToSponsorDtoConverter.apply(sponsor);
+		try {
+			return ResponseEntity.created(new URI("/sponsor/" + sponsorId)).body(newSponsorDto);
+		} catch (final URISyntaxException e) {
 
-			try {
-				return ResponseEntity.created(new URI("/sponsor/" + sponsorId)).body(newSponsorDto);
-			} catch (final URISyntaxException e) {
-
-				return new ResponseEntity<>(newSponsorDto, HttpStatus.CREATED);
-			}
+			return new ResponseEntity<>(newSponsorDto, HttpStatus.CREATED);
 		}
-
-		throw new ObjectNotFoundException(sponsorId, Sponsor.class);
 	}
 
 	/**
@@ -103,12 +99,7 @@ public class SponsorController implements ISponsorController {
 	@Override
 	public ResponseEntity<?> deleteSponsor(final UUID sponsorId) {
 
-		if (!this.sponsorRepository.existsById(sponsorId)) {
-
-			throw new ObjectNotFoundException(sponsorId, Sponsor.class);
-		}
-
-		this.sponsorRepository.deleteById(sponsorId);
+		this.sponsorService.delete(sponsorId);
 
 		return ResponseEntity.noContent().build();
 
@@ -120,7 +111,7 @@ public class SponsorController implements ISponsorController {
 	@Override
 	public ResponseEntity<Collection<SponsorDto>> getSponsors() {
 
-		final var listOfDtos = this.sponsorRepository.findAll().stream().map(this.sponsorToSponsorDtoConverter::apply)
+		final var listOfDtos = this.sponsorService.getAll().stream().map(this.sponsorToSponsorDtoConverter::apply)
 				.toList();
 
 		return ResponseEntity.ok(listOfDtos);

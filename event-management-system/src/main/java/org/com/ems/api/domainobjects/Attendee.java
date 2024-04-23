@@ -1,27 +1,23 @@
 package org.com.ems.api.domainobjects;
 
-import java.util.List;
+import java.time.Instant;
+import java.util.Collection;
 import java.util.UUID;
+
+import org.apache.commons.lang3.builder.EqualsBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.validation.constraints.NotNull;
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
 
 /**
  * Attendee Entity object
  *
  * @author Evangelos Georgiou
  */
-@NoArgsConstructor
-@Builder
-@Getter
-@EqualsAndHashCode(callSuper = true, doNotUseGetters = true)
-@ToString
 @Entity
 public class Attendee extends AbstractDomainObject {
 
@@ -34,14 +30,60 @@ public class Attendee extends AbstractDomainObject {
 	@Column(name = "lastName", unique = false, nullable = false, insertable = true, updatable = true)
 	private String lastName;
 	// OneToMany
-	private List<UUID> ticketsIDs;
+	private Collection<UUID> ticketsIDs;
 
-	public Attendee(@NotNull final String firstName, @NotNull final String lastName, final List<UUID> ticketsIDs) {
+	public Attendee(final UUID uuid, final Instant lastUpdated, @NotNull final String firstName,
+			@NotNull final String lastName, final Collection<UUID> ticketsIDs) {
 
-		super();
+		super(uuid, lastUpdated);
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.ticketsIDs = ticketsIDs;
+	}
+
+	public Attendee() {
+
+	}
+
+	public String getFirstName() {
+		return this.firstName;
+	}
+
+	public String getLastName() {
+		return this.lastName;
+	}
+
+	public Collection<UUID> getTicketsIDs() {
+		return this.ticketsIDs;
+	}
+
+	@Override
+	public boolean equals(final Object o) {
+
+		if (this == o)
+			return true;
+		if (o == null || this.getClass() != o.getClass())
+			return false;
+
+		final Attendee that = (Attendee) o;
+
+		return new EqualsBuilder().appendSuper(super.equals(that)).append(this.firstName, that.firstName)
+				.append(this.lastName, that.lastName).append(this.ticketsIDs, that.ticketsIDs).isEquals();
+	}
+
+	@Override
+	public int hashCode() {
+
+		return new HashCodeBuilder(17, 37).appendSuper(super.hashCode()).append(this.firstName).append(this.lastName)
+				.append(this.ticketsIDs).toHashCode();
+	}
+
+	@Override
+	public String toString() {
+
+		return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).appendSuper(super.toString())
+				.append("firstName", this.firstName).append("lastName", this.lastName)
+				.append("ticketIDs", this.ticketsIDs).toString();
 	}
 
 }

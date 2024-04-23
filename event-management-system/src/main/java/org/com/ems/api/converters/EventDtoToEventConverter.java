@@ -12,10 +12,9 @@ public class EventDtoToEventConverter implements Function<EventDto, Event> {
 	@Override
 	public Event apply(final EventDto eventDto) {
 
-		return Event.builder().name(eventDto.name()).place(eventDto.place()).eventType(eventDto.eventType())
-				.attendeesIDs(eventDto.attendeesIDs()).organizerID(eventDto.organizerID())
-				.limitOfPeople(eventDto.limitOfPeople()).sponsorID(eventDto.sponsorID())
-				.startTimeOfEvent(eventDto.startTimeOfEvent()).durationOfEvent(eventDto.durationOfEvent()).build();
+		return new Event(eventDto.uuid(), eventDto.lastUpdated(), eventDto.name(), eventDto.place(),
+				eventDto.eventType(), eventDto.attendeesIDs(), eventDto.organizerID(), eventDto.limitOfPeople(),
+				eventDto.sponsorID(), eventDto.startTimeOfEvent(), eventDto.durationOfEvent());
 	}
 
 }

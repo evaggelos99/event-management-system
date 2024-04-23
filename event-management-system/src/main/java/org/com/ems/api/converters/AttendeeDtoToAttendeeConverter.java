@@ -12,8 +12,8 @@ public class AttendeeDtoToAttendeeConverter implements Function<AttendeeDto, Att
 	@Override
 	public Attendee apply(final AttendeeDto attendeeDto) {
 
-		return Attendee.builder().firstName(attendeeDto.firstName()).lastName(attendeeDto.lastName())
-				.ticketsIDs(attendeeDto.ticketsIDs()).build();
+		return new Attendee(attendeeDto.uuid(), attendeeDto.lastUpdated(), attendeeDto.firstName(),
+				attendeeDto.lastName(), attendeeDto.ticketsIDs());
 	}
 
 }

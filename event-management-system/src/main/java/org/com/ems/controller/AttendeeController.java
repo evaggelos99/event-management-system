@@ -13,7 +13,7 @@ import org.com.ems.api.domainobjects.Attendee;
 import org.com.ems.api.dto.AttendeeDto;
 import org.com.ems.controller.api.IAttendeeController;
 import org.com.ems.controller.exceptions.ObjectNotFoundException;
-import org.com.ems.db.IAttendeeRepository;
+import org.com.ems.services.IService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -30,15 +30,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/attendee")
 public class AttendeeController implements IAttendeeController {
 
-	private final IAttendeeRepository attendeeRepository;
+	IService<Attendee> attendeeService;
 	private final Function<Attendee, AttendeeDto> attendeeToAttendeeDtoConverter;
 	private final Function<AttendeeDto, Attendee> attendeeDtoToAttendeeConverter;
 
-	public AttendeeController(@Autowired final IAttendeeRepository attendeeRepository,
+	public AttendeeController(@Autowired final IService<Attendee> attendeeRepository,
 			@Autowired @Qualifier("attendeeToAttendeeDtoConverter") final Function<Attendee, AttendeeDto> attendeeToAttendeeDtoConverter,
 			@Autowired @Qualifier("attendeeDtoToAttendeeConverter") final Function<AttendeeDto, Attendee> attendeeDtoToAttendeeConverter) {
 
-		this.attendeeRepository = requireNonNull(attendeeRepository);
+		this.attendeeService = requireNonNull(attendeeRepository);
 		this.attendeeToAttendeeDtoConverter = requireNonNull(attendeeToAttendeeDtoConverter);
 		this.attendeeDtoToAttendeeConverter = requireNonNull(attendeeDtoToAttendeeConverter);
 	}
@@ -51,7 +51,7 @@ public class AttendeeController implements IAttendeeController {
 	@Override
 	public ResponseEntity<AttendeeDto> postAttendee(final AttendeeDto attendeeDto) {
 
-		final Attendee attendee = this.attendeeRepository.save(this.attendeeDtoToAttendeeConverter.apply(attendeeDto));
+		final Attendee attendee = this.attendeeService.add(this.attendeeDtoToAttendeeConverter.apply(attendeeDto));
 		final AttendeeDto newDto = this.attendeeToAttendeeDtoConverter.apply(attendee);
 
 		try {
@@ -70,7 +70,7 @@ public class AttendeeController implements IAttendeeController {
 	@Override
 	public ResponseEntity<AttendeeDto> getAttendee(final UUID attendeeId) {
 
-		final var optionalAttendee = this.attendeeRepository.findById(attendeeId);
+		final var optionalAttendee = this.attendeeService.get(attendeeId);
 
 		final AttendeeDto attendeeDto = this.attendeeToAttendeeDtoConverter
 				.apply(optionalAttendee.orElseThrow(() -> new ObjectNotFoundException(attendeeId, AttendeeDto.class)));
@@ -85,22 +85,16 @@ public class AttendeeController implements IAttendeeController {
 	@Override
 	public ResponseEntity<AttendeeDto> putAttendee(final UUID attendeeId, final AttendeeDto attendeeDto) {
 
-		if (this.attendeeRepository.existsById(attendeeId)) {
+		final Attendee attendee = this.attendeeService.edit(attendeeId,
+				this.attendeeDtoToAttendeeConverter.apply(attendeeDto));
+		final AttendeeDto newDto = this.attendeeToAttendeeDtoConverter.apply(attendee);
 
-			final Attendee attendee = this.attendeeRepository
-					.save(this.attendeeDtoToAttendeeConverter.apply(attendeeDto));
+		try {
+			return ResponseEntity.created(new URI("/attendee/" + attendeeId)).body(newDto);
+		} catch (final URISyntaxException e) {
 
-			final AttendeeDto newDto = this.attendeeToAttendeeDtoConverter.apply(attendee);
-
-			try {
-				return ResponseEntity.created(new URI("/attendee/" + attendeeId)).body(newDto);
-			} catch (final URISyntaxException e) {
-
-				return new ResponseEntity<>(newDto, HttpStatus.CREATED);
-			}
+			return new ResponseEntity<>(newDto, HttpStatus.CREATED);
 		}
-
-		throw new ObjectNotFoundException(attendeeId, Attendee.class);
 	}
 
 	/**
@@ -109,12 +103,7 @@ public class AttendeeController implements IAttendeeController {
 	@Override
 	public ResponseEntity<?> deleteAttendee(final UUID attendeeId) {
 
-		if (!this.attendeeRepository.existsById(attendeeId)) {
-
-			throw new ObjectNotFoundException(attendeeId, Attendee.class);
-		}
-
-		this.attendeeRepository.deleteById(attendeeId);
+		this.attendeeService.delete(attendeeId);
 
 		return ResponseEntity.noContent().build();
 	}
@@ -125,7 +114,7 @@ public class AttendeeController implements IAttendeeController {
 	@Override
 	public ResponseEntity<Collection<AttendeeDto>> getAttendees() {
 
-		final List<AttendeeDto> listOfDtos = this.attendeeRepository.findAll().stream()
+		final List<AttendeeDto> listOfDtos = this.attendeeService.getAll().stream()
 				.map(this.attendeeToAttendeeDtoConverter::apply).toList();
 
 		return ResponseEntity.ok(listOfDtos);

@@ -13,7 +13,7 @@ import org.com.ems.api.domainobjects.Organizer;
 import org.com.ems.api.dto.OrganizerDto;
 import org.com.ems.controller.api.IOrganizerController;
 import org.com.ems.controller.exceptions.ObjectNotFoundException;
-import org.com.ems.db.IOrganizerRepository;
+import org.com.ems.services.IService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -30,15 +30,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/organizer")
 public class OrganizerController implements IOrganizerController {
 
-	private final IOrganizerRepository organizerRepository;
+	private final IService<Organizer> organizerService;
 	private final Function<OrganizerDto, Organizer> organizerDtoToOrganizerConverter;
 	private final Function<Organizer, OrganizerDto> organizerToOrganizerDtoConverter;
 
-	public OrganizerController(@Autowired final IOrganizerRepository organizerRepository,
+	public OrganizerController(@Autowired final IService<Organizer> organizerService,
 			@Autowired @Qualifier("organizerToOrganizerDtoConverter") final Function<Organizer, OrganizerDto> organizerToOrganizerDtoConverter,
 			@Autowired @Qualifier("organizerDtoToOrganizerConverter") final Function<OrganizerDto, Organizer> organizerDtoToOrganizerConverter) {
 
-		this.organizerRepository = requireNonNull(organizerRepository);
+		this.organizerService = requireNonNull(organizerService);
 		this.organizerDtoToOrganizerConverter = requireNonNull(organizerDtoToOrganizerConverter);
 		this.organizerToOrganizerDtoConverter = requireNonNull(organizerToOrganizerDtoConverter);
 	}
@@ -49,8 +49,8 @@ public class OrganizerController implements IOrganizerController {
 	@Override
 	public ResponseEntity<OrganizerDto> postOrganizer(final OrganizerDto organizerDto) {
 
-		final Organizer organizer = this.organizerRepository
-				.save(this.organizerDtoToOrganizerConverter.apply(organizerDto));
+		final Organizer organizer = this.organizerService
+				.add(this.organizerDtoToOrganizerConverter.apply(organizerDto));
 
 		final OrganizerDto newDto = this.organizerToOrganizerDtoConverter.apply(organizer);
 
@@ -69,7 +69,7 @@ public class OrganizerController implements IOrganizerController {
 	@Override
 	public ResponseEntity<OrganizerDto> getOrganizer(final UUID organizerId) {
 
-		final var optionalOrganizer = this.organizerRepository.findById(organizerId);
+		final var optionalOrganizer = this.organizerService.get(organizerId);
 
 		final OrganizerDto organizerDto = this.organizerToOrganizerDtoConverter.apply(
 				optionalOrganizer.orElseThrow(() -> new ObjectNotFoundException(organizerId, OrganizerDto.class)));
@@ -83,22 +83,17 @@ public class OrganizerController implements IOrganizerController {
 	@Override
 	public ResponseEntity<OrganizerDto> putOrganizer(final UUID organizerId, final OrganizerDto organizerDto) {
 
-		if (this.organizerRepository.existsById(organizerId)) {
+		final Organizer organizer = this.organizerService.edit(organizerId,
+				this.organizerDtoToOrganizerConverter.apply(organizerDto));
 
-			final Organizer organizer = this.organizerRepository
-					.save(this.organizerDtoToOrganizerConverter.apply(organizerDto));
+		final OrganizerDto newDto = this.organizerToOrganizerDtoConverter.apply(organizer);
 
-			final OrganizerDto newDto = this.organizerToOrganizerDtoConverter.apply(organizer);
+		try {
+			return ResponseEntity.created(new URI("/organizer/" + organizerId)).body(newDto);
+		} catch (final URISyntaxException e) {
 
-			try {
-				return ResponseEntity.created(new URI("/organizer/" + organizerId)).body(newDto);
-			} catch (final URISyntaxException e) {
-
-				return new ResponseEntity<>(newDto, HttpStatus.CREATED);
-			}
+			return new ResponseEntity<>(newDto, HttpStatus.CREATED);
 		}
-
-		throw new ObjectNotFoundException(organizerId, Organizer.class);
 	}
 
 	/**
@@ -107,12 +102,7 @@ public class OrganizerController implements IOrganizerController {
 	@Override
 	public ResponseEntity<?> deleteOrganizer(final UUID organizerId) {
 
-		if (!this.organizerRepository.existsById(organizerId)) {
-
-			throw new ObjectNotFoundException(organizerId, Organizer.class);
-		}
-
-		this.organizerRepository.deleteById(organizerId);
+		this.organizerService.delete(organizerId);
 		return ResponseEntity.noContent().build();
 
 	}
@@ -123,7 +113,7 @@ public class OrganizerController implements IOrganizerController {
 	@Override
 	public ResponseEntity<Collection<OrganizerDto>> getOrganizers() {
 
-		final List<OrganizerDto> listOfDtos = this.organizerRepository.findAll().stream()
+		final List<OrganizerDto> listOfDtos = this.organizerService.getAll().stream()
 				.map(this.organizerToOrganizerDtoConverter::apply).toList();
 
 		return ResponseEntity.ok(listOfDtos);
