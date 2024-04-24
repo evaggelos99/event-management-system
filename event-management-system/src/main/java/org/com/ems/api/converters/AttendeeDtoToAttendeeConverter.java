@@ -13,7 +13,7 @@ public class AttendeeDtoToAttendeeConverter implements Function<AttendeeDto, Att
 	public Attendee apply(final AttendeeDto attendeeDto) {
 
 		return new Attendee(attendeeDto.uuid(), attendeeDto.lastUpdated(), attendeeDto.firstName(),
-				attendeeDto.lastName(), attendeeDto.ticketsIDs());
+				attendeeDto.lastName(), attendeeDto.ticketIDs());
 	}
 
 }

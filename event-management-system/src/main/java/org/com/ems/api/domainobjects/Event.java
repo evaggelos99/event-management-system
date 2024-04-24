@@ -125,7 +125,7 @@ public class Event extends AbstractDomainObject {
 				.append(this.attendeesIDs, that.attendeesIDs).append(this.organizerID, that.organizerID)
 				.append(this.limitOfPeople, that.limitOfPeople).append(this.sponsorID, that.sponsorID)
 				.append(this.startTimeOfEvent, that.startTimeOfEvent).append(this.durationOfEvent, that.durationOfEvent)
-				.isEquals();
+				.build();
 	}
 
 	@Override

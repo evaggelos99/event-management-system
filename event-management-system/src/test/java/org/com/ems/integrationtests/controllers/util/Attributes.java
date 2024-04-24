@@ -6,6 +6,8 @@ public final class Attributes {
 
 	public static final Set<String> attendeeNotNullAttributes = Set.of("uuid", "lastUpdated", "firstName", "lastName");
 
+	public static final Set<String> attendeeNullAttributes = Set.of("ticketIDs");
+
 	public static final Set<String> ticketNotNullAttributes = Set.of("uuid", "lastUpdated", "firstName", "lastName",
 			"eventID", "ticketType", "price", "transferable");
 

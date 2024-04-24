@@ -62,7 +62,7 @@ public abstract class AbstractDomainObject implements Serializable {
 
 		final AbstractDomainObject that = (AbstractDomainObject) o;
 
-		return new EqualsBuilder().append(this.uuid, that.uuid).isEquals();
+		return new EqualsBuilder().append(this.uuid, that.uuid).build();
 	}
 
 	@Override

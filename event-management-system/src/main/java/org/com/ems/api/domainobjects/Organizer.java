@@ -95,7 +95,7 @@ public class Organizer extends AbstractDomainObject {
 		return new EqualsBuilder().appendSuper(super.equals(that)).append(this.name, that.name)
 				.append(this.website, that.website).append(this.description, that.description)
 				.append(this.eventTypes, that.eventTypes).append(this.contactInformation, that.contactInformation)
-				.isEquals();
+				.build();
 	}
 
 	@Override

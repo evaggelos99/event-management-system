@@ -73,7 +73,7 @@ public class Sponsor extends AbstractDomainObject {
 
 		return new EqualsBuilder().appendSuper(super.equals(that)).append(this.name, that.name)
 				.append(this.website, that.website).append(this.financialContribution, that.financialContribution)
-				.append(this.contactInformation, that.contactInformation).isEquals();
+				.append(this.contactInformation, that.contactInformation).build();
 	}
 
 	@Override

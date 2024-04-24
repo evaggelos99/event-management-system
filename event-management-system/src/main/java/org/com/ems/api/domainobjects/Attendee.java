@@ -30,15 +30,15 @@ public class Attendee extends AbstractDomainObject {
 	@Column(name = "lastName", unique = false, nullable = false, insertable = true, updatable = true)
 	private String lastName;
 	// OneToMany
-	private Collection<UUID> ticketsIDs;
+	private Collection<UUID> ticketIDs;
 
 	public Attendee(final UUID uuid, final Instant lastUpdated, @NotNull final String firstName,
-			@NotNull final String lastName, final Collection<UUID> ticketsIDs) {
+			@NotNull final String lastName, final Collection<UUID> ticketIDs) {
 
 		super(uuid, lastUpdated);
 		this.firstName = firstName;
 		this.lastName = lastName;
-		this.ticketsIDs = ticketsIDs;
+		this.ticketIDs = ticketIDs;
 	}
 
 	public Attendee() {
@@ -53,8 +53,8 @@ public class Attendee extends AbstractDomainObject {
 		return this.lastName;
 	}
 
-	public Collection<UUID> getTicketsIDs() {
-		return this.ticketsIDs;
+	public Collection<UUID> getTicketIDs() {
+		return this.ticketIDs;
 	}
 
 	@Override
@@ -68,14 +68,14 @@ public class Attendee extends AbstractDomainObject {
 		final Attendee that = (Attendee) o;
 
 		return new EqualsBuilder().appendSuper(super.equals(that)).append(this.firstName, that.firstName)
-				.append(this.lastName, that.lastName).append(this.ticketsIDs, that.ticketsIDs).isEquals();
+				.append(this.lastName, that.lastName).append(this.ticketIDs, that.ticketIDs).build();
 	}
 
 	@Override
 	public int hashCode() {
 
 		return new HashCodeBuilder(17, 37).appendSuper(super.hashCode()).append(this.firstName).append(this.lastName)
-				.append(this.ticketsIDs).toHashCode();
+				.append(this.ticketIDs).toHashCode();
 	}
 
 	@Override
@@ -83,7 +83,7 @@ public class Attendee extends AbstractDomainObject {
 
 		return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).appendSuper(super.toString())
 				.append("firstName", this.firstName).append("lastName", this.lastName)
-				.append("ticketIDs", this.ticketsIDs).toString();
+				.append("ticketIDs", this.ticketIDs).toString();
 	}
 
 }
