@@ -30,93 +30,110 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/organizer")
 public class OrganizerController implements IOrganizerController {
 
-	private final IService<Organizer> organizerService;
-	private final Function<OrganizerDto, Organizer> organizerDtoToOrganizerConverter;
-	private final Function<Organizer, OrganizerDto> organizerToOrganizerDtoConverter;
+    private final IService<Organizer> organizerService;
+    private final Function<OrganizerDto, Organizer> organizerDtoToOrganizerConverter;
+    private final Function<Organizer, OrganizerDto> organizerToOrganizerDtoConverter;
 
-	public OrganizerController(@Autowired final IService<Organizer> organizerService,
-			@Autowired @Qualifier("organizerToOrganizerDtoConverter") final Function<Organizer, OrganizerDto> organizerToOrganizerDtoConverter,
-			@Autowired @Qualifier("organizerDtoToOrganizerConverter") final Function<OrganizerDto, Organizer> organizerDtoToOrganizerConverter) {
+    /**
+     * c-or
+     *
+     * @param organizerService                 service responsible for CRUD
+     *                                         operations
+     * @param organizerToOrganizerDtoConverter organizer to DTO
+     * @param organizerDtoToOrganizerConverter DTO to organizer
+     */
+    public OrganizerController(@Autowired final IService<Organizer> organizerService,
+			       @Autowired @Qualifier("organizerToOrganizerDtoConverter") final Function<Organizer,
+				       OrganizerDto> organizerToOrganizerDtoConverter,
+			       @Autowired @Qualifier("organizerDtoToOrganizerConverter") final Function<OrganizerDto,
+				       Organizer> organizerDtoToOrganizerConverter) {
 
-		this.organizerService = requireNonNull(organizerService);
-		this.organizerDtoToOrganizerConverter = requireNonNull(organizerDtoToOrganizerConverter);
-		this.organizerToOrganizerDtoConverter = requireNonNull(organizerToOrganizerDtoConverter);
+	this.organizerService = requireNonNull(organizerService);
+	this.organizerDtoToOrganizerConverter = requireNonNull(organizerDtoToOrganizerConverter);
+	this.organizerToOrganizerDtoConverter = requireNonNull(organizerToOrganizerDtoConverter);
+
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ResponseEntity<OrganizerDto> postOrganizer(final OrganizerDto organizerDto) {
+
+	final Organizer organizer = this.organizerService
+		.add(this.organizerDtoToOrganizerConverter.apply(organizerDto));
+
+	final OrganizerDto newDto = this.organizerToOrganizerDtoConverter.apply(organizer);
+
+	try {
+
+	    return ResponseEntity.created(new URI("/attendee/")).body(newDto);
+	} catch (final URISyntaxException e) {
+
+	    return new ResponseEntity<>(newDto, HttpStatus.CREATED);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public ResponseEntity<OrganizerDto> postOrganizer(final OrganizerDto organizerDto) {
+    }
 
-		final Organizer organizer = this.organizerService
-				.add(this.organizerDtoToOrganizerConverter.apply(organizerDto));
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ResponseEntity<OrganizerDto> getOrganizer(final UUID organizerId) {
 
-		final OrganizerDto newDto = this.organizerToOrganizerDtoConverter.apply(organizer);
+	final var optionalOrganizer = this.organizerService.get(organizerId);
 
-		try {
-			return ResponseEntity.created(new URI("/attendee/")).body(newDto);
-		} catch (final URISyntaxException e) {
+	final OrganizerDto organizerDto = this.organizerToOrganizerDtoConverter.apply(
+		optionalOrganizer.orElseThrow(() -> new ObjectNotFoundException(organizerId, OrganizerDto.class)));
 
-			return new ResponseEntity<>(newDto, HttpStatus.CREATED);
-		}
+	return ResponseEntity.ok(organizerDto);
 
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ResponseEntity<OrganizerDto> putOrganizer(final UUID organizerId,
+						     final OrganizerDto organizerDto) {
+
+	final Organizer organizer = this.organizerService.edit(organizerId,
+		this.organizerDtoToOrganizerConverter.apply(organizerDto));
+
+	final OrganizerDto newDto = this.organizerToOrganizerDtoConverter.apply(organizer);
+
+	try {
+
+	    return ResponseEntity.created(new URI("/organizer/" + organizerId)).body(newDto);
+	} catch (final URISyntaxException e) {
+
+	    return new ResponseEntity<>(newDto, HttpStatus.CREATED);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public ResponseEntity<OrganizerDto> getOrganizer(final UUID organizerId) {
+    }
 
-		final var optionalOrganizer = this.organizerService.get(organizerId);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ResponseEntity<?> deleteOrganizer(final UUID organizerId) {
 
-		final OrganizerDto organizerDto = this.organizerToOrganizerDtoConverter.apply(
-				optionalOrganizer.orElseThrow(() -> new ObjectNotFoundException(organizerId, OrganizerDto.class)));
+	this.organizerService.delete(organizerId);
+	return ResponseEntity.noContent().build();
 
-		return ResponseEntity.ok(organizerDto);
-	}
+    }
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public ResponseEntity<OrganizerDto> putOrganizer(final UUID organizerId, final OrganizerDto organizerDto) {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ResponseEntity<Collection<OrganizerDto>> getOrganizers() {
 
-		final Organizer organizer = this.organizerService.edit(organizerId,
-				this.organizerDtoToOrganizerConverter.apply(organizerDto));
+	final List<OrganizerDto> listOfDtos = this.organizerService.getAll().stream()
+		.map(this.organizerToOrganizerDtoConverter::apply).toList();
 
-		final OrganizerDto newDto = this.organizerToOrganizerDtoConverter.apply(organizer);
+	return ResponseEntity.ok(listOfDtos);
 
-		try {
-			return ResponseEntity.created(new URI("/organizer/" + organizerId)).body(newDto);
-		} catch (final URISyntaxException e) {
-
-			return new ResponseEntity<>(newDto, HttpStatus.CREATED);
-		}
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public ResponseEntity<?> deleteOrganizer(final UUID organizerId) {
-
-		this.organizerService.delete(organizerId);
-		return ResponseEntity.noContent().build();
-
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public ResponseEntity<Collection<OrganizerDto>> getOrganizers() {
-
-		final List<OrganizerDto> listOfDtos = this.organizerService.getAll().stream()
-				.map(this.organizerToOrganizerDtoConverter::apply).toList();
-
-		return ResponseEntity.ok(listOfDtos);
-	}
+    }
 
 }

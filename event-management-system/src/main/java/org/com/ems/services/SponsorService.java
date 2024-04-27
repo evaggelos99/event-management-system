@@ -13,50 +13,58 @@ import org.springframework.stereotype.Service;
 @Service
 public class SponsorService implements IService<Sponsor> {
 
-	private final ISponsorRepository sponsorRepository;
+    private final ISponsorRepository sponsorRepository;
 
-	public SponsorService(@Autowired final ISponsorRepository sponsorRepository) {
+    public SponsorService(@Autowired final ISponsorRepository sponsorRepository) {
 
-		this.sponsorRepository = sponsorRepository;
-	}
+	this.sponsorRepository = sponsorRepository;
 
-	@Override
-	public Sponsor add(final Sponsor attendee) {
+    }
 
-		return this.sponsorRepository.save(attendee);
-	}
+    @Override
+    public Sponsor add(final Sponsor attendee) {
 
-	@Override
-	public Optional<Sponsor> get(final UUID uuid) {
+	return this.sponsorRepository.save(attendee);
 
-		return this.sponsorRepository.findById(uuid);
-	}
+    }
 
-	@Override
-	public void delete(final UUID uuid) {
+    @Override
+    public Optional<Sponsor> get(final UUID uuid) {
 
-		this.sponsorRepository.deleteById(uuid);
-	}
+	return this.sponsorRepository.findById(uuid);
 
-	@Override
-	public Sponsor edit(final UUID uuid, final Sponsor attendee) {
+    }
 
-		if (!this.sponsorRepository.existsById(uuid))
-			throw new NoSuchElementException();
+    @Override
+    public void delete(final UUID uuid) {
 
-		return this.sponsorRepository.save(attendee);
-	}
+	this.sponsorRepository.deleteById(uuid);
 
-	@Override
-	public Collection<Sponsor> getAll() {
+    }
 
-		return this.sponsorRepository.findAll();
-	}
+    @Override
+    public Sponsor edit(final UUID uuid,
+			final Sponsor attendee) {
 
-	@Override
-	public boolean existsById(final UUID attendeeId) {
+	if (!this.sponsorRepository.existsById(uuid))
+	    throw new NoSuchElementException();
 
-		return this.sponsorRepository.existsById(attendeeId);
-	}
+	return this.sponsorRepository.save(attendee);
+
+    }
+
+    @Override
+    public Collection<Sponsor> getAll() {
+
+	return this.sponsorRepository.findAll();
+
+    }
+
+    @Override
+    public boolean existsById(final UUID attendeeId) {
+
+	return this.sponsorRepository.existsById(attendeeId);
+
+    }
 
 }

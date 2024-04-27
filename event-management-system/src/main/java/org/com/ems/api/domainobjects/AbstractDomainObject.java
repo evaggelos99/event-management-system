@@ -8,13 +8,12 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+import org.hibernate.annotations.UpdateTimestamp;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
-import jakarta.persistence.Version;
 
 /**
  * Super class for Entity classes
@@ -24,57 +23,64 @@ import jakarta.persistence.Version;
 @MappedSuperclass
 public abstract class AbstractDomainObject implements Serializable {
 
-	private static final long serialVersionUID = 2518014933571661892L;
+    private static final long serialVersionUID = 2114216090280817221L;
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.UUID)
-	@Schema(description = "the uuid of the dao object", hidden = true)
-	protected UUID uuid;
-	@Version
-	@Schema(description = "the last updated timestamp of the dao object", hidden = true)
-	protected Instant lastUpdated;
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    protected UUID uuid;
+    @UpdateTimestamp
+    protected Instant lastUpdated;
 
-	public AbstractDomainObject(final UUID uuid, final Instant lastUpdated) {
+    public AbstractDomainObject(final UUID uuid,
+				final Instant lastUpdated) {
 
-		this.uuid = uuid;
-		this.lastUpdated = lastUpdated;
-	}
+	this.uuid = uuid;
+	this.lastUpdated = lastUpdated;
 
-	protected AbstractDomainObject() {
+    }
 
-	}
+    protected AbstractDomainObject() {
 
-	public UUID getUuid() {
-		return this.uuid;
-	}
+    }
 
-	public Instant getLastUpdated() {
-		return this.lastUpdated;
-	}
+    public UUID getUuid() {
 
-	@Override
-	public boolean equals(final Object o) {
+	return this.uuid;
 
-		if (this == o)
-			return true;
-		if (o == null || this.getClass() != o.getClass())
-			return false;
+    }
 
-		final AbstractDomainObject that = (AbstractDomainObject) o;
+    public Instant getLastUpdated() {
 
-		return new EqualsBuilder().append(this.uuid, that.uuid).build();
-	}
+	return this.lastUpdated;
 
-	@Override
-	public int hashCode() {
+    }
 
-		return new HashCodeBuilder(17, 37).append(this.uuid).toHashCode();
-	}
+    @Override
+    public boolean equals(final Object o) {
 
-	@Override
-	public String toString() {
+	if (this == o)
+	    return true;
+	if (o == null || this.getClass() != o.getClass())
+	    return false;
 
-		return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("uuid", this.uuid).toString();
-	}
+	final AbstractDomainObject that = (AbstractDomainObject) o;
+
+	return new EqualsBuilder().append(this.uuid, that.uuid).build();
+
+    }
+
+    @Override
+    public int hashCode() {
+
+	return new HashCodeBuilder(17, 37).append(this.uuid).build();
+
+    }
+
+    @Override
+    public String toString() {
+
+	return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("uuid", this.uuid).toString();
+
+    }
 
 }

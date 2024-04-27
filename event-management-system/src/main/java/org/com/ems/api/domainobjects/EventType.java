@@ -7,29 +7,29 @@ package org.com.ems.api.domainobjects;
  */
 public enum EventType {
 
-	/**
-	 * Event type used for nightlife related events
-	 */
-	NIGHTLIFE,
+    /**
+     * Event type used for nightlife related events
+     */
+    NIGHTLIFE,
 
-	/**
-	 * Event type used for Wedding events
-	 */
-	WEDDING,
+    /**
+     * Event type used for Wedding events
+     */
+    WEDDING,
 
-	/**
-	 * Event type used for Conference events
-	 */
-	CONFERENCE,
+    /**
+     * Event type used for Conference events
+     */
+    CONFERENCE,
 
-	/**
-	 * Event type used for Sporting events
-	 */
-	SPORT,
+    /**
+     * Event type used for Sporting events
+     */
+    SPORT,
 
-	/**
-	 * Event type used for difference types of events
-	 */
-	OTHER;
+    /**
+     * Event type used for difference types of events
+     */
+    OTHER;
 
 }

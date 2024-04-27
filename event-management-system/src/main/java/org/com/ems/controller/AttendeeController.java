@@ -30,94 +30,110 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/attendee")
 public class AttendeeController implements IAttendeeController {
 
-	IService<Attendee> attendeeService;
-	private final Function<Attendee, AttendeeDto> attendeeToAttendeeDtoConverter;
-	private final Function<AttendeeDto, Attendee> attendeeDtoToAttendeeConverter;
+    IService<Attendee> attendeeService;
+    private final Function<Attendee, AttendeeDto> attendeeToAttendeeDtoConverter;
+    private final Function<AttendeeDto, Attendee> attendeeDtoToAttendeeConverter;
 
-	public AttendeeController(@Autowired final IService<Attendee> attendeeRepository,
-			@Autowired @Qualifier("attendeeToAttendeeDtoConverter") final Function<Attendee, AttendeeDto> attendeeToAttendeeDtoConverter,
-			@Autowired @Qualifier("attendeeDtoToAttendeeConverter") final Function<AttendeeDto, Attendee> attendeeDtoToAttendeeConverter) {
+    /**
+     * C-or
+     *
+     * @param attendeeService                service responsible for CRUD operations
+     * @param attendeeToAttendeeDtoConverter converts attendee to DTO
+     * @param attendeeDtoToAttendeeConverter converts DTO to attendee
+     */
+    public AttendeeController(@Autowired final IService<Attendee> attendeeService,
+			      @Autowired @Qualifier("attendeeToAttendeeDtoConverter") final Function<Attendee,
+				      AttendeeDto> attendeeToAttendeeDtoConverter,
+			      @Autowired @Qualifier("attendeeDtoToAttendeeConverter") final Function<AttendeeDto,
+				      Attendee> attendeeDtoToAttendeeConverter) {
 
-		this.attendeeService = requireNonNull(attendeeRepository);
-		this.attendeeToAttendeeDtoConverter = requireNonNull(attendeeToAttendeeDtoConverter);
-		this.attendeeDtoToAttendeeConverter = requireNonNull(attendeeDtoToAttendeeConverter);
+	this.attendeeService = requireNonNull(attendeeService);
+	this.attendeeToAttendeeDtoConverter = requireNonNull(attendeeToAttendeeDtoConverter);
+	this.attendeeDtoToAttendeeConverter = requireNonNull(attendeeDtoToAttendeeConverter);
+
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @throws URISyntaxException
+     */
+    @Override
+    public ResponseEntity<AttendeeDto> postAttendee(final AttendeeDto attendeeDto) {
+
+	final Attendee attendee = this.attendeeService.add(this.attendeeDtoToAttendeeConverter.apply(attendeeDto));
+	final AttendeeDto newDto = this.attendeeToAttendeeDtoConverter.apply(attendee);
+
+	try {
+
+	    return ResponseEntity.created(new URI("/attendee/")).body(newDto);
+	} catch (final URISyntaxException e) {
+
+	    return new ResponseEntity<>(newDto, HttpStatus.CREATED);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 * @throws URISyntaxException
-	 */
-	@Override
-	public ResponseEntity<AttendeeDto> postAttendee(final AttendeeDto attendeeDto) {
+    }
 
-		final Attendee attendee = this.attendeeService.add(this.attendeeDtoToAttendeeConverter.apply(attendeeDto));
-		final AttendeeDto newDto = this.attendeeToAttendeeDtoConverter.apply(attendee);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ResponseEntity<AttendeeDto> getAttendee(final UUID attendeeId) {
 
-		try {
+	final var optionalAttendee = this.attendeeService.get(attendeeId);
 
-			return ResponseEntity.created(new URI("/attendee/")).body(newDto);
-		} catch (final URISyntaxException e) {
+	final AttendeeDto attendeeDto = this.attendeeToAttendeeDtoConverter
+		.apply(optionalAttendee.orElseThrow(() -> new ObjectNotFoundException(attendeeId, AttendeeDto.class)));
 
-			return new ResponseEntity<>(newDto, HttpStatus.CREATED);
-		}
+	return ResponseEntity.ok(attendeeDto);
 
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     */
+    @Override
+    public ResponseEntity<AttendeeDto> putAttendee(final UUID attendeeId,
+						   final AttendeeDto attendeeDto) {
+
+	final Attendee attendee = this.attendeeService.edit(attendeeId,
+		this.attendeeDtoToAttendeeConverter.apply(attendeeDto));
+	final AttendeeDto newDto = this.attendeeToAttendeeDtoConverter.apply(attendee);
+
+	try {
+
+	    return ResponseEntity.created(new URI("/attendee/" + attendeeId)).body(newDto);
+	} catch (final URISyntaxException e) {
+
+	    return new ResponseEntity<>(newDto, HttpStatus.CREATED);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public ResponseEntity<AttendeeDto> getAttendee(final UUID attendeeId) {
+    }
 
-		final var optionalAttendee = this.attendeeService.get(attendeeId);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ResponseEntity<?> deleteAttendee(final UUID attendeeId) {
 
-		final AttendeeDto attendeeDto = this.attendeeToAttendeeDtoConverter
-				.apply(optionalAttendee.orElseThrow(() -> new ObjectNotFoundException(attendeeId, AttendeeDto.class)));
+	this.attendeeService.delete(attendeeId);
 
-		return ResponseEntity.ok(attendeeDto);
-	}
+	return ResponseEntity.noContent().build();
 
-	/**
-	 * {@inheritDoc}
-	 *
-	 */
-	@Override
-	public ResponseEntity<AttendeeDto> putAttendee(final UUID attendeeId, final AttendeeDto attendeeDto) {
+    }
 
-		final Attendee attendee = this.attendeeService.edit(attendeeId,
-				this.attendeeDtoToAttendeeConverter.apply(attendeeDto));
-		final AttendeeDto newDto = this.attendeeToAttendeeDtoConverter.apply(attendee);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ResponseEntity<Collection<AttendeeDto>> getAttendees() {
 
-		try {
-			return ResponseEntity.created(new URI("/attendee/" + attendeeId)).body(newDto);
-		} catch (final URISyntaxException e) {
+	final List<AttendeeDto> listOfDtos = this.attendeeService.getAll().stream()
+		.map(this.attendeeToAttendeeDtoConverter::apply).toList();
 
-			return new ResponseEntity<>(newDto, HttpStatus.CREATED);
-		}
-	}
+	return ResponseEntity.ok(listOfDtos);
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public ResponseEntity<?> deleteAttendee(final UUID attendeeId) {
-
-		this.attendeeService.delete(attendeeId);
-
-		return ResponseEntity.noContent().build();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public ResponseEntity<Collection<AttendeeDto>> getAttendees() {
-
-		final List<AttendeeDto> listOfDtos = this.attendeeService.getAll().stream()
-				.map(this.attendeeToAttendeeDtoConverter::apply).toList();
-
-		return ResponseEntity.ok(listOfDtos);
-	}
+    }
 
 }

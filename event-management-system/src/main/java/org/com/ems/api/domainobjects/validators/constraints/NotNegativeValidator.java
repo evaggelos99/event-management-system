@@ -11,18 +11,21 @@ import jakarta.validation.ConstraintValidatorContext;
  */
 public class NotNegativeValidator implements ConstraintValidator<NotNegative, Number> {
 
-	/**
-	 * Returns {@link Boolean#TRUE} if the value is not negative else
-	 * {@link Boolean#FALSE}
-	 */
-	@Override
-	public boolean isValid(final Number value, final ConstraintValidatorContext context) {
+    /**
+     * Returns {@link Boolean#TRUE} if the value is not negative else
+     * {@link Boolean#FALSE}
+     */
+    @Override
+    public boolean isValid(final Number value,
+			   final ConstraintValidatorContext context) {
 
-		if (null == value) {
-			return false;
-		}
+	if (null == value) {
 
-		return value.intValue() >= 0;
+	    return false;
 	}
+
+	return value.intValue() >= 0;
+
+    }
 
 }

@@ -15,10 +15,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * @author Evangelos Georgiou
  */
 public record OrganizerDto(@Schema(hidden = true) UUID uuid, @Schema(hidden = true) Instant lastUpdated,
-		@Schema(example = "SpecialWeddings", description = "The limit of the event") String name,
-		@Schema(example = "www.google.com", description = "The website of the organizer") String website,
-		@Schema(example = "Organizer specialized in weddings taking place in the country or even outside!", description = "The description of the organizer") String description,
-		@Schema(description = "The event types that organizer has specializes in") Collection<EventType> eventTypes,
-		@Schema(description = "The contact information of the Organizer") ContactInformation contactInformation) {
+	@Schema(example = "SpecialWeddings", description = "The limit of the event") String name,
+	@Schema(example = "www.google.com", description = "The website of the organizer") String website,
+	@Schema(example = "Organizer specialized in weddings taking place in the country or even outside!", description = "The description of the organizer") String description,
+	@Schema(description = "The event types that organizer has specializes in") Collection<EventType> eventTypes,
+	@Schema(description = "The contact information of the Organizer") ContactInformation contactInformation) {
 
 }

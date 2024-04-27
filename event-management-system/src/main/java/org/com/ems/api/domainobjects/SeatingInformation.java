@@ -19,60 +19,73 @@ import jakarta.validation.constraints.NotNull;
 @Embeddable
 public final class SeatingInformation {
 
-	@NotNull
-	@Schema(example = "A15", description = "The number of the seat")
-	private String seat;
-	@NotNull
-	@Schema(example = "West", description = "Which section your seat is located in")
-	private String section;
+    @NotNull
+    @Schema(example = "A15", description = "The number of the seat")
+    private String seat;
+    @NotNull
+    @Schema(example = "West", description = "Which section your seat is located in")
+    private String section;
 
-	protected SeatingInformation() {
+    protected SeatingInformation() {
 
+    }
+
+    public SeatingInformation(final String seat,
+			      final String section) {
+
+	this.seat = requireNonNull(seat);
+	this.section = requireNonNull(section);
+
+    }
+
+    @Override
+    public String toString() {
+
+	return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append(this.seat).append(this.section).build();
+
+    }
+
+    @Override
+    public int hashCode() {
+
+	return new HashCodeBuilder().append(this.seat).append(this.section).build();
+
+    }
+
+    @Override
+    public boolean equals(final Object object) {
+
+	if (this == object) {
+
+	    return true;
 	}
 
-	public SeatingInformation(final String seat, final String section) {
-		this.seat = requireNonNull(seat);
-		this.section = requireNonNull(section);
+	if (object == null) {
+
+	    return false;
 	}
 
-	@Override
-	public String toString() {
+	if (this.getClass() != object.getClass()) {
 
-		return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append(this.seat).append(this.section).build();
+	    return false;
 	}
 
-	@Override
-	public int hashCode() {
+	final var rhs = (SeatingInformation) object;
 
-		return new HashCodeBuilder().append(this.seat).append(this.section).build();
-	}
+	return new EqualsBuilder().append(this.seat, rhs.seat).append(this.section, rhs.section).build();
 
-	@Override
-	public boolean equals(final Object object) {
+    }
 
-		if (this == object) {
-			return true;
-		}
+    public String getSeat() {
 
-		if (object == null) {
-			return false;
-		}
+	return this.seat;
 
-		if (this.getClass() != object.getClass()) {
-			return false;
-		}
+    }
 
-		final var rhs = (SeatingInformation) object;
+    public String getSection() {
 
-		return new EqualsBuilder().append(this.seat, rhs.seat).append(this.section, rhs.section).build();
-	}
+	return this.section;
 
-	public String getSeat() {
-		return this.seat;
-	}
-
-	public String getSection() {
-		return this.section;
-	}
+    }
 
 }

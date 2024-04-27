@@ -19,57 +19,72 @@ import jakarta.validation.constraints.NotNull;
 @Entity
 public class Ticket extends AbstractDomainObject {
 
-	private static final long serialVersionUID = -8096585962117403667L;
+    private static final long serialVersionUID = 1386924435430719755L;
 
-	@NotNull
-	private UUID eventID;
-	@NotNull
-	@Enumerated(EnumType.STRING)
-	private TicketType ticketType;
-	@NotNull
-	@NotNegative(message = "cannot be negative")
-	private Integer price;
-	@NotNull
-	private Boolean transferable;
-	@NotNull
-	@Embedded
-	private SeatingInformation seatInfo;
-	// TODO create QR code referenceing this ticket
+    @NotNull
+    private UUID eventID;
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    private TicketType ticketType;
+    @NotNull
+    @NotNegative(message = "cannot be negative")
+    private Integer price;
+    @NotNull
+    private Boolean transferable;
+    @NotNull
+    @Embedded
+    private SeatingInformation seatInfo;
+    // TODO create QR code referenceing this ticket
 
-	public Ticket(final UUID uuid, final Instant lastUpdated, @NotNull final UUID eventID,
-			@NotNull final TicketType ticketType,
-			@NotNull @NotNegative(message = "cannot be negative") final Integer price,
-			@NotNull final Boolean transferable, @NotNull final SeatingInformation seatInfo) {
-		super(uuid, lastUpdated);
-		this.eventID = eventID;
-		this.ticketType = ticketType;
-		this.price = price;
-		this.transferable = transferable;
-		this.seatInfo = seatInfo;
-	}
+    public Ticket(final UUID uuid,
+		  final Instant lastUpdated,
+		  @NotNull final UUID eventID,
+		  @NotNull final TicketType ticketType,
+		  @NotNull @NotNegative(message = "cannot be negative") final Integer price,
+		  @NotNull final Boolean transferable,
+		  @NotNull final SeatingInformation seatInfo) {
 
-	public Ticket() {
+	super(uuid, lastUpdated);
+	this.eventID = eventID;
+	this.ticketType = ticketType;
+	this.price = price;
+	this.transferable = transferable;
+	this.seatInfo = seatInfo;
 
-	}
+    }
 
-	public UUID getEventID() {
-		return this.eventID;
-	}
+    public Ticket() {
 
-	public TicketType getTicketType() {
-		return this.ticketType;
-	}
+    }
 
-	public Integer getPrice() {
-		return this.price;
-	}
+    public UUID getEventID() {
 
-	public Boolean getTransferable() {
-		return this.transferable;
-	}
+	return this.eventID;
 
-	public SeatingInformation getSeatInfo() {
-		return this.seatInfo;
-	}
+    }
+
+    public TicketType getTicketType() {
+
+	return this.ticketType;
+
+    }
+
+    public Integer getPrice() {
+
+	return this.price;
+
+    }
+
+    public Boolean getTransferable() {
+
+	return this.transferable;
+
+    }
+
+    public SeatingInformation getSeatInfo() {
+
+	return this.seatInfo;
+
+    }
 
 }

@@ -9,11 +9,14 @@ import com.fasterxml.jackson.databind.SerializerProvider;
 
 public class DurationSerialzer extends JsonSerializer<Duration> {
 
-	@Override
-	public void serialize(final Duration value, final JsonGenerator gen, final SerializerProvider serializers)
-			throws IOException {
+    @Override
+    public void serialize(final Duration value,
+			  final JsonGenerator gen,
+			  final SerializerProvider serializers)
+	    throws IOException {
 
-		gen.writeString(value.toString());
-	}
+	gen.writeString(value.toString());
+
+    }
 
 }

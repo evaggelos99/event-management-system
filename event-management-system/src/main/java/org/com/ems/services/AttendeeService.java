@@ -13,50 +13,58 @@ import org.springframework.stereotype.Service;
 @Service
 public class AttendeeService implements IService<Attendee> {
 
-	private final IAttendeeRepository attendeeRepository;
+    private final IAttendeeRepository attendeeRepository;
 
-	public AttendeeService(@Autowired final IAttendeeRepository attendeeRepository) {
+    public AttendeeService(@Autowired final IAttendeeRepository attendeeRepository) {
 
-		this.attendeeRepository = attendeeRepository;
-	}
+	this.attendeeRepository = attendeeRepository;
 
-	@Override
-	public Attendee add(final Attendee attendee) {
+    }
 
-		return this.attendeeRepository.save(attendee);
-	}
+    @Override
+    public Attendee add(final Attendee attendee) {
 
-	@Override
-	public Optional<Attendee> get(final UUID uuid) {
+	return this.attendeeRepository.save(attendee);
 
-		return this.attendeeRepository.findById(uuid);
-	}
+    }
 
-	@Override
-	public void delete(final UUID uuid) {
+    @Override
+    public Optional<Attendee> get(final UUID uuid) {
 
-		this.attendeeRepository.deleteById(uuid);
-	}
+	return this.attendeeRepository.findById(uuid);
 
-	@Override
-	public Attendee edit(final UUID uuid, final Attendee attendee) {
+    }
 
-		if (!this.attendeeRepository.existsById(uuid))
-			throw new NoSuchElementException();
+    @Override
+    public void delete(final UUID uuid) {
 
-		return this.attendeeRepository.save(attendee);
-	}
+	this.attendeeRepository.deleteById(uuid);
 
-	@Override
-	public Collection<Attendee> getAll() {
+    }
 
-		return this.attendeeRepository.findAll();
-	}
+    @Override
+    public Attendee edit(final UUID uuid,
+			 final Attendee attendee) {
 
-	@Override
-	public boolean existsById(final UUID attendeeId) {
+	if (!this.attendeeRepository.existsById(uuid))
+	    throw new NoSuchElementException();
 
-		return this.attendeeRepository.existsById(attendeeId);
-	}
+	return this.attendeeRepository.save(attendee);
+
+    }
+
+    @Override
+    public Collection<Attendee> getAll() {
+
+	return this.attendeeRepository.findAll();
+
+    }
+
+    @Override
+    public boolean existsById(final UUID attendeeId) {
+
+	return this.attendeeRepository.existsById(attendeeId);
+
+    }
 
 }

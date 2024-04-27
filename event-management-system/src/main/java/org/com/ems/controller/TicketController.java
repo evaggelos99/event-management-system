@@ -30,98 +30,113 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/ticket")
 public class TicketController implements ITicketController {
 
-	private final IService<Ticket> ticketService;
-	private final Function<Ticket, TicketDto> ticketToTicketDtoConverter;
-	private final Function<TicketDto, Ticket> ticketDtoToTicketConverter;
+    private final IService<Ticket> ticketService;
+    private final Function<Ticket, TicketDto> ticketToTicketDtoConverter;
+    private final Function<TicketDto, Ticket> ticketDtoToTicketConverter;
 
-	public TicketController(@Autowired final IService<Ticket> ticketService,
-			@Autowired @Qualifier("ticketToTicketDtoConverter") final Function<Ticket, TicketDto> ticketToTicketDtoConverter,
-			@Autowired @Qualifier("ticketDtoToTicketConverter") final Function<TicketDto, Ticket> ticketDtoToTicketConverter) {
+    /**
+     * C-or
+     *
+     * @param ticketService              service responsible for CRUD operations
+     * @param ticketToTicketDtoConverter ticket to DTO
+     * @param ticketDtoToTicketConverter DTO to ticket
+     */
+    public TicketController(@Autowired final IService<Ticket> ticketService,
+			    @Autowired @Qualifier("ticketToTicketDtoConverter") final Function<Ticket,
+				    TicketDto> ticketToTicketDtoConverter,
+			    @Autowired @Qualifier("ticketDtoToTicketConverter") final Function<TicketDto,
+				    Ticket> ticketDtoToTicketConverter) {
 
-		this.ticketService = requireNonNull(ticketService);
-		this.ticketToTicketDtoConverter = requireNonNull(ticketToTicketDtoConverter);
-		this.ticketDtoToTicketConverter = requireNonNull(ticketDtoToTicketConverter);
+	this.ticketService = requireNonNull(ticketService);
+	this.ticketToTicketDtoConverter = requireNonNull(ticketToTicketDtoConverter);
+	this.ticketDtoToTicketConverter = requireNonNull(ticketDtoToTicketConverter);
+
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ResponseEntity<TicketDto> postTicket(final TicketDto ticketDto) {
+
+	final Ticket newTicket = this.ticketService.add(this.ticketDtoToTicketConverter.apply(ticketDto));
+
+	final TicketDto newDto = this.ticketToTicketDtoConverter.apply(newTicket);
+
+	try {
+
+	    return ResponseEntity.created(new URI("/ticket/")).body(newDto);
+	} catch (final URISyntaxException e) {
+
+	    return new ResponseEntity<>(newDto, HttpStatus.CREATED);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public ResponseEntity<TicketDto> postTicket(final TicketDto ticketDto) {
+    }
 
-		final Ticket newTicket = this.ticketService.add(this.ticketDtoToTicketConverter.apply(ticketDto));
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ResponseEntity<TicketDto> getTicket(final UUID ticketId) {
 
-		final TicketDto newDto = this.ticketToTicketDtoConverter.apply(newTicket);
+	final var optionalTicket = this.ticketService.get(ticketId);
 
-		try {
+	final TicketDto ticketDto = this.ticketToTicketDtoConverter
+		.apply(optionalTicket.orElseThrow(() -> new ObjectNotFoundException(ticketId, TicketDto.class)));
 
-			return ResponseEntity.created(new URI("/ticket/")).body(newDto);
-		} catch (final URISyntaxException e) {
+	return ResponseEntity.ok(ticketDto);
 
-			return new ResponseEntity<>(newDto, HttpStatus.CREATED);
-		}
+    }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ResponseEntity<TicketDto> putTicket(final UUID ticketId,
+					       final TicketDto ticketDto) {
+
+	final Ticket newTicket = this.ticketService.edit(ticketId, this.ticketDtoToTicketConverter.apply(ticketDto));
+
+	final TicketDto newDto = this.ticketToTicketDtoConverter.apply(newTicket);
+
+	try {
+
+	    return ResponseEntity.created(new URI("/ticket/" + ticketId)).body(newDto);
+	} catch (final URISyntaxException e) {
+
+	    return new ResponseEntity<>(newDto, HttpStatus.CREATED);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public ResponseEntity<TicketDto> getTicket(final UUID ticketId) {
+    }
 
-		final var optionalTicket = this.ticketService.get(ticketId);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ResponseEntity<?> deleteTicket(final UUID ticketId) {
 
-		final TicketDto ticketDto = this.ticketToTicketDtoConverter
-				.apply(optionalTicket.orElseThrow(() -> new ObjectNotFoundException(ticketId, TicketDto.class)));
+	if (!this.ticketService.existsById(ticketId)) {
 
-		return ResponseEntity.ok(ticketDto);
+	    throw new ObjectNotFoundException(ticketId, Ticket.class);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public ResponseEntity<TicketDto> putTicket(final UUID ticketId, final TicketDto ticketDto) {
+	this.ticketService.delete(ticketId);
 
-		final Ticket newTicket = this.ticketService.edit(ticketId, this.ticketDtoToTicketConverter.apply(ticketDto));
+	return ResponseEntity.noContent().build();
 
-		final TicketDto newDto = this.ticketToTicketDtoConverter.apply(newTicket);
+    }
 
-		try {
-			return ResponseEntity.created(new URI("/ticket/" + ticketId)).body(newDto);
-		} catch (final URISyntaxException e) {
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ResponseEntity<Collection<TicketDto>> getTickets() {
 
-			return new ResponseEntity<>(newDto, HttpStatus.CREATED);
-		}
-	}
+	final List<TicketDto> listOfDtos = this.ticketService.getAll().stream()
+		.map(this.ticketToTicketDtoConverter::apply).toList();
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public ResponseEntity<?> deleteTicket(final UUID ticketId) {
+	return ResponseEntity.ok(listOfDtos);
 
-		if (!this.ticketService.existsById(ticketId)) {
-
-			throw new ObjectNotFoundException(ticketId, Ticket.class);
-		}
-
-		this.ticketService.delete(ticketId);
-
-		return ResponseEntity.noContent().build();
-
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public ResponseEntity<Collection<TicketDto>> getTickets() {
-
-		final List<TicketDto> listOfDtos = this.ticketService.getAll().stream()
-				.map(this.ticketToTicketDtoConverter::apply).toList();
-
-		return ResponseEntity.ok(listOfDtos);
-	}
+    }
 
 }

@@ -12,8 +12,10 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
 @SpringBootApplication
 public class EventManagementSystemApplication extends SpringBootServletInitializer {
 
-	public static void main(final String[] args) {
-		SpringApplication.run(EventManagementSystemApplication.class, args);
-	}
+    public static void main(final String[] args) {
+
+	SpringApplication.run(EventManagementSystemApplication.class, args);
+
+    }
 
 }

@@ -10,11 +10,13 @@ import com.fasterxml.jackson.databind.JsonDeserializer;
 
 public class DurationDeserialzer extends JsonDeserializer<Duration> {
 
-	@Override
-	public Duration deserialize(final JsonParser p, final DeserializationContext ctxt)
-			throws IOException, JacksonException {
+    @Override
+    public Duration deserialize(final JsonParser p,
+				final DeserializationContext ctxt)
+	    throws IOException, JacksonException {
 
-		return Duration.parse(p.getText());
-	}
+	return Duration.parse(p.getText());
+
+    }
 
 }

@@ -9,11 +9,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class SponsorDtoToSponsorConverter implements Function<SponsorDto, Sponsor> {
 
-	@Override
-	public Sponsor apply(final SponsorDto sponsorDto) {
+    @Override
+    public Sponsor apply(final SponsorDto sponsorDto) {
 
-		return new Sponsor(sponsorDto.uuid(), sponsorDto.lastUpdated(), sponsorDto.name(), sponsorDto.website(),
-				sponsorDto.financialContribution(), sponsorDto.contactInformation());
-	}
+	return new Sponsor(sponsorDto.uuid(), sponsorDto.lastUpdated(), sponsorDto.name(), sponsorDto.website(),
+		sponsorDto.financialContribution(), sponsorDto.contactInformation());
+
+    }
 
 }

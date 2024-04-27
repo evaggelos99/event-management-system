@@ -6,17 +6,18 @@ import java.util.UUID;
 
 public interface IService<T> {
 
-	// TODO throw exception when not available
-	T add(T object);
+    // TODO throw exception when not available
+    T add(T object);
 
-	Optional<T> get(UUID uuid);
+    Optional<T> get(UUID uuid);
 
-	void delete(UUID uuid);
+    void delete(UUID uuid);
 
-	T edit(UUID uuid, T object);
+    T edit(UUID uuid,
+	   T object);
 
-	Collection<T> getAll();
+    Collection<T> getAll();
 
-	boolean existsById(UUID objectId);
+    boolean existsById(UUID objectId);
 
 }
