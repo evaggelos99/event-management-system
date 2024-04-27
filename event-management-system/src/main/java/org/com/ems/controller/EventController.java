@@ -30,96 +30,106 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/event")
 public class EventController implements IEventController {
 
-	private final IService<Event> eventService;
-	private final Function<Event, EventDto> eventToEventDtoConverter;
-	private final Function<EventDto, Event> eventDtoToEventConverter;
+    private final IService<Event> eventService;
+    private final Function<Event, EventDto> eventToEventDtoConverter;
+    private final Function<EventDto, Event> eventDtoToEventConverter;
 
-	/**
-	 * C-or responsible for CRUD operations for the Object {@link Event}
-	 *
-	 * @param eventService
-	 */
-	public EventController(@Autowired final IService<Event> eventService,
-			@Autowired @Qualifier("eventToEventDtoConverter") final Function<Event, EventDto> eventToEventDtoConverter,
-			@Autowired @Qualifier("eventDtoToEventConverter") final Function<EventDto, Event> eventDtoToEventConverter) {
+    /**
+     * C-or
+     *
+     * @param eventService             service responsible for CRUD operations
+     * @param eventToEventDtoConverter converts event to DTO
+     * @param eventDtoToEventConverter converts DTO to event
+     */
+    public EventController(@Autowired final IService<Event> eventService,
+			   @Autowired @Qualifier("eventToEventDtoConverter") final Function<Event,
+				   EventDto> eventToEventDtoConverter,
+			   @Autowired @Qualifier("eventDtoToEventConverter") final Function<EventDto,
+				   Event> eventDtoToEventConverter) {
 
-		this.eventService = requireNonNull(eventService);
-		this.eventToEventDtoConverter = requireNonNull(eventToEventDtoConverter);
-		this.eventDtoToEventConverter = requireNonNull(eventDtoToEventConverter);
+	this.eventService = requireNonNull(eventService);
+	this.eventToEventDtoConverter = requireNonNull(eventToEventDtoConverter);
+	this.eventDtoToEventConverter = requireNonNull(eventDtoToEventConverter);
+
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ResponseEntity<EventDto> postEvent(final EventDto eventDto) {
+
+	final Event event = this.eventService.add(this.eventDtoToEventConverter.apply(eventDto));
+	final EventDto newDto = this.eventToEventDtoConverter.apply(event);
+
+	try {
+
+	    return ResponseEntity.created(new URI("/event/")).body(newDto);
+	} catch (final URISyntaxException e) {
+
+	    return new ResponseEntity<>(newDto, HttpStatus.CREATED);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public ResponseEntity<EventDto> postEvent(final EventDto eventDto) {
+    }
 
-		final Event event = this.eventService.add(this.eventDtoToEventConverter.apply(eventDto));
-		final EventDto newDto = this.eventToEventDtoConverter.apply(event);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ResponseEntity<EventDto> getEvent(final UUID eventId) {
 
-		try {
+	final var optionalEvent = this.eventService.get(eventId);
 
-			return ResponseEntity.created(new URI("/event/")).body(newDto);
-		} catch (final URISyntaxException e) {
+	final EventDto eventDto = this.eventToEventDtoConverter
+		.apply(optionalEvent.orElseThrow(() -> new ObjectNotFoundException(eventId, EventDto.class)));
 
-			return new ResponseEntity<>(newDto, HttpStatus.CREATED);
-		}
+	return ResponseEntity.ok(eventDto);
 
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ResponseEntity<EventDto> putEvent(final UUID eventId,
+					     final EventDto eventDto) {
+
+	final Event event = this.eventService.edit(eventId, this.eventDtoToEventConverter.apply(eventDto));
+	final EventDto newDto = this.eventToEventDtoConverter.apply(event);
+
+	try {
+
+	    return ResponseEntity.created(new URI("/event/" + eventId)).body(newDto);
+	} catch (final URISyntaxException e) {
+
+	    return new ResponseEntity<>(newDto, HttpStatus.CREATED);
 	}
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public ResponseEntity<EventDto> getEvent(final UUID eventId) {
+    }
 
-		final var optionalEvent = this.eventService.get(eventId);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ResponseEntity<?> deleteEvent(final UUID eventId) {
 
-		final EventDto eventDto = this.eventToEventDtoConverter
-				.apply(optionalEvent.orElseThrow(() -> new ObjectNotFoundException(eventId, EventDto.class)));
+	this.eventService.delete(eventId);
 
-		return ResponseEntity.ok(eventDto);
-	}
+	return ResponseEntity.noContent().build();
 
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public ResponseEntity<EventDto> putEvent(final UUID eventId, final EventDto eventDto) {
+    }
 
-		final Event event = this.eventService.edit(eventId, this.eventDtoToEventConverter.apply(eventDto));
-		final EventDto newDto = this.eventToEventDtoConverter.apply(event);
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public ResponseEntity<Collection<EventDto>> getEvents() {
 
-		try {
-			return ResponseEntity.created(new URI("/event/" + eventId)).body(newDto);
-		} catch (final URISyntaxException e) {
+	final List<EventDto> listOfDtos = this.eventService.getAll().stream().map(this.eventToEventDtoConverter::apply)
+		.toList();
 
-			return new ResponseEntity<>(newDto, HttpStatus.CREATED);
-		}
+	return ResponseEntity.ok(listOfDtos);
 
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public ResponseEntity<?> deleteEvent(final UUID eventId) {
-
-		this.eventService.delete(eventId);
-
-		return ResponseEntity.noContent().build();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 */
-	@Override
-	public ResponseEntity<Collection<EventDto>> getEvents() {
-
-		final List<EventDto> listOfDtos = this.eventService.getAll().stream().map(this.eventToEventDtoConverter::apply)
-				.toList();
-
-		return ResponseEntity.ok(listOfDtos);
-	}
+    }
 
 }

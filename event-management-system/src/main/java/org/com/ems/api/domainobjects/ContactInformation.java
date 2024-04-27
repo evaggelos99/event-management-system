@@ -19,73 +19,87 @@ import jakarta.validation.constraints.NotNull;
 @Embeddable
 public final class ContactInformation {
 
-	// TODO add regex validation for email
-	@NotNull
-	@Schema(example = "example@domain.com", description = "An email address belonging to an entity")
-	private String email;
-	@NotNull
-	@Schema(example = "70493729392", description = "A phone number belonging to an entity")
-	private Long phoneNumber;
-	@NotNull
-	@Schema(example = "308 Negra Arroyo Lane, Albuquerque, New Mexico.", description = "A phone number belonging to an entity")
-	private String physicalAddress;
+    // TODO add regex validation for email
+    @NotNull
+    @Schema(example = "example@domain.com", description = "An email address belonging to an entity")
+    private String email;
+    @NotNull
+    @Schema(example = "70493729392", description = "A phone number belonging to an entity")
+    private Long phoneNumber;
+    @NotNull
+    @Schema(example = "308 Negra Arroyo Lane, Albuquerque, New Mexico.", description = "A phone number belonging to an entity")
+    private String physicalAddress;
 
-	protected ContactInformation() {
+    protected ContactInformation() {
 
+    }
+
+    public ContactInformation(@NotNull final String email,
+			      @NotNull final Long phoneNumber,
+			      @NotNull final String physicalAddress) {
+
+	this.email = requireNonNull(email);
+	this.phoneNumber = requireNonNull(phoneNumber);
+	this.physicalAddress = requireNonNull(physicalAddress);
+
+    }
+
+    @Override
+    public String toString() {
+
+	return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append(this.email).append(this.phoneNumber)
+		.append(this.physicalAddress).build();
+
+    }
+
+    @Override
+    public int hashCode() {
+
+	return new HashCodeBuilder().append(this.email).append(this.phoneNumber).append(this.physicalAddress).build();
+
+    }
+
+    @Override
+    public boolean equals(final Object object) {
+
+	if (this == object) {
+
+	    return true;
 	}
 
-	public ContactInformation(@NotNull final String email, @NotNull final Long phoneNumber,
-			@NotNull final String physicalAddress) {
+	if (object == null) {
 
-		this.email = requireNonNull(email);
-		this.phoneNumber = requireNonNull(phoneNumber);
-		this.physicalAddress = requireNonNull(physicalAddress);
+	    return false;
 	}
 
-	@Override
-	public String toString() {
+	if (this.getClass() != object.getClass()) {
 
-		return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append(this.email).append(this.phoneNumber)
-				.append(this.physicalAddress).build();
+	    return false;
 	}
 
-	@Override
-	public int hashCode() {
+	final var rhs = (ContactInformation) object;
 
-		return new HashCodeBuilder().append(this.email).append(this.phoneNumber).append(this.physicalAddress).build();
-	}
+	return new EqualsBuilder().append(this.email, rhs.email).append(this.phoneNumber, rhs.phoneNumber)
+		.append(this.physicalAddress, rhs.physicalAddress).build();
 
-	@Override
-	public boolean equals(final Object object) {
+    }
 
-		if (this == object) {
-			return true;
-		}
+    public String getEmail() {
 
-		if (object == null) {
-			return false;
-		}
+	return this.email;
 
-		if (this.getClass() != object.getClass()) {
-			return false;
-		}
+    }
 
-		final var rhs = (ContactInformation) object;
+    public Long getPhoneNumber() {
 
-		return new EqualsBuilder().append(this.email, rhs.email).append(this.phoneNumber, rhs.phoneNumber)
-				.append(this.physicalAddress, rhs.physicalAddress).build();
-	}
+	return this.phoneNumber;
 
-	public String getEmail() {
-		return this.email;
-	}
+    }
 
-	public Long getPhoneNumber() {
-		return this.phoneNumber;
-	}
+    public String getPhysicalAddress() {
 
-	public String getPhysicalAddress() {
-		return this.physicalAddress;
-	}
+	return this.physicalAddress;
+
+    }
 
 }

@@ -27,88 +27,109 @@ import jakarta.validation.constraints.NotNull;
 @Entity
 public class Organizer extends AbstractDomainObject {
 
-	private static final long serialVersionUID = -757558119640858388L;
+    private static final long serialVersionUID = 494919982991394856L;
 
-	@NotNull
-	@NotBlank
-	@Column(unique = true)
-	private String name;
-	@NotNull
-	@NotBlank
-	@Column(unique = true) // TODO add regex validation
-	private String website;
-	@Nullable
-	private String description;
-	@NotNull
-	@ElementCollection(targetClass = EventType.class)
-	@CollectionTable(name = "event_types")
-	@Enumerated(EnumType.STRING)
-	private Collection<EventType> eventTypes;
-	@NotNull
-	private ContactInformation contactInformation;
+    @NotNull
+    @NotBlank
+    @Column(unique = true)
+    private String name;
+    @NotNull
+    @NotBlank
+    @Column(unique = true) // TODO add regex validation
+    private String website;
+    @Nullable
+    private String description;
+    @NotNull
+    @ElementCollection(targetClass = EventType.class)
+    @CollectionTable(name = "event_types")
+    @Enumerated(EnumType.STRING)
+    private Collection<EventType> eventTypes;
+    @NotNull
+    private ContactInformation contactInformation;
 
-	public Organizer(final UUID uuid, final Instant lastUpdated, @NotNull @NotBlank final String name,
-			@NotNull @NotBlank final String website, final String description,
-			@NotNull final Collection<EventType> eventTypes, @NotNull final ContactInformation contactInformation) {
+    public Organizer(final UUID uuid,
+		     final Instant lastUpdated,
+		     @NotNull @NotBlank final String name,
+		     @NotNull @NotBlank final String website,
+		     final String description,
+		     @NotNull final Collection<EventType> eventTypes,
+		     @NotNull final ContactInformation contactInformation) {
 
-		super(uuid, lastUpdated);
-		this.name = name;
-		this.website = website;
-		this.description = description;
-		this.eventTypes = eventTypes;
-		this.contactInformation = contactInformation;
-	}
+	super(uuid, lastUpdated);
+	this.name = name;
+	this.website = website;
+	this.description = description;
+	this.eventTypes = eventTypes;
+	this.contactInformation = contactInformation;
 
-	public Organizer() {
+    }
 
-	}
+    public Organizer() {
 
-	public String getName() {
-		return this.name;
-	}
+    }
 
-	public String getWebsite() {
-		return this.website;
-	}
+    public String getName() {
 
-	public String getDescription() {
-		return this.description;
-	}
+	return this.name;
 
-	public Collection<EventType> getEventTypes() {
-		return this.eventTypes;
-	}
+    }
 
-	public ContactInformation getContactInformation() {
-		return this.contactInformation;
-	}
+    public String getWebsite() {
 
-	@Override
-	public boolean equals(final Object o) {
-		if (this == o)
-			return true;
-		if (o == null || this.getClass() != o.getClass())
-			return false;
+	return this.website;
 
-		final Organizer that = (Organizer) o;
+    }
 
-		return new EqualsBuilder().appendSuper(super.equals(that)).append(this.name, that.name)
-				.append(this.website, that.website).append(this.description, that.description)
-				.append(this.eventTypes, that.eventTypes).append(this.contactInformation, that.contactInformation)
-				.build();
-	}
+    public String getDescription() {
 
-	@Override
-	public int hashCode() {
-		return new HashCodeBuilder(17, 37).appendSuper(super.hashCode()).append(this.name).append(this.website)
-				.append(this.description).append(this.eventTypes).append(this.contactInformation).toHashCode();
-	}
+	return this.description;
 
-	@Override
-	public String toString() {
-		return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).appendSuper(super.toString())
-				.append("name", this.name).append("website", this.website).append("description", this.description)
-				.append("eventTypes", this.eventTypes).append("contactInformation", this.contactInformation).toString();
-	}
+    }
+
+    public Collection<EventType> getEventTypes() {
+
+	return this.eventTypes;
+
+    }
+
+    public ContactInformation getContactInformation() {
+
+	return this.contactInformation;
+
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+
+	if (this == o)
+	    return true;
+	if (o == null || this.getClass() != o.getClass())
+	    return false;
+
+	final Organizer that = (Organizer) o;
+
+	return new EqualsBuilder().appendSuper(super.equals(that)).append(this.name, that.name)
+		.append(this.website, that.website).append(this.description, that.description)
+		.append(this.eventTypes, that.eventTypes).append(this.contactInformation, that.contactInformation)
+		.build();
+
+    }
+
+    @Override
+    public int hashCode() {
+
+	return new HashCodeBuilder(17, 37).appendSuper(super.hashCode()).append(this.name).append(this.website)
+		.append(this.description).append(this.eventTypes).append(this.contactInformation).build();
+
+    }
+
+    @Override
+    public String toString() {
+
+	return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).appendSuper(super.toString())
+		.append("name", this.name).append("website", this.website).append("description", this.description)
+		.append("eventTypes", this.eventTypes).append("contactInformation", this.contactInformation).toString();
+
+    }
 
 }

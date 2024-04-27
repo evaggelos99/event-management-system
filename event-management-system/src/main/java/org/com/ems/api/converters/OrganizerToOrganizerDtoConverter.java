@@ -9,12 +9,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class OrganizerToOrganizerDtoConverter implements Function<Organizer, OrganizerDto> {
 
-	@Override
-	public OrganizerDto apply(final Organizer organizer) {
+    @Override
+    public OrganizerDto apply(final Organizer organizer) {
 
-		return new OrganizerDto(organizer.getUuid(), organizer.getLastUpdated(), organizer.getName(),
-				organizer.getWebsite(), organizer.getDescription(), organizer.getEventTypes(),
-				organizer.getContactInformation());
-	}
+	return new OrganizerDto(organizer.getUuid(), organizer.getLastUpdated(), organizer.getName(),
+		organizer.getWebsite(), organizer.getDescription(), organizer.getEventTypes(),
+		organizer.getContactInformation());
+
+    }
 
 }

@@ -9,11 +9,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class AttendeeToAttendeeDtoConverter implements Function<Attendee, AttendeeDto> {
 
-	@Override
-	public AttendeeDto apply(final Attendee attendee) {
+    @Override
+    public AttendeeDto apply(final Attendee attendee) {
 
-		return new AttendeeDto(attendee.getUuid(), attendee.getLastUpdated(), attendee.getFirstName(),
-				attendee.getLastName(), attendee.getTicketIDs());
-	}
+	return new AttendeeDto(attendee.getUuid(), attendee.getLastUpdated(), attendee.getFirstName(),
+		attendee.getLastName(), attendee.getTicketIDs());
+
+    }
 
 }
