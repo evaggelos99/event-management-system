@@ -30,9 +30,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/attendee")
 public class AttendeeController implements IAttendeeController {
 
-    IService<Attendee> attendeeService;
+    IService<Attendee, AttendeeDto> attendeeService;
     private final Function<Attendee, AttendeeDto> attendeeToAttendeeDtoConverter;
-    private final Function<AttendeeDto, Attendee> attendeeDtoToAttendeeConverter;
 
     /**
      * C-or
@@ -41,15 +40,12 @@ public class AttendeeController implements IAttendeeController {
      * @param attendeeToAttendeeDtoConverter converts attendee to DTO
      * @param attendeeDtoToAttendeeConverter converts DTO to attendee
      */
-    public AttendeeController(@Autowired final IService<Attendee> attendeeService,
+    public AttendeeController(@Autowired final IService<Attendee, AttendeeDto> attendeeService,
 			      @Autowired @Qualifier("attendeeToAttendeeDtoConverter") final Function<Attendee,
-				      AttendeeDto> attendeeToAttendeeDtoConverter,
-			      @Autowired @Qualifier("attendeeDtoToAttendeeConverter") final Function<AttendeeDto,
-				      Attendee> attendeeDtoToAttendeeConverter) {
+				      AttendeeDto> attendeeToAttendeeDtoConverter) {
 
 	this.attendeeService = requireNonNull(attendeeService);
 	this.attendeeToAttendeeDtoConverter = requireNonNull(attendeeToAttendeeDtoConverter);
-	this.attendeeDtoToAttendeeConverter = requireNonNull(attendeeDtoToAttendeeConverter);
 
     }
 
@@ -61,7 +57,7 @@ public class AttendeeController implements IAttendeeController {
     @Override
     public ResponseEntity<AttendeeDto> postAttendee(final AttendeeDto attendeeDto) {
 
-	final Attendee attendee = this.attendeeService.add(this.attendeeDtoToAttendeeConverter.apply(attendeeDto));
+	final Attendee attendee = this.attendeeService.add(attendeeDto);
 	final AttendeeDto newDto = this.attendeeToAttendeeDtoConverter.apply(attendee);
 
 	try {
@@ -97,8 +93,7 @@ public class AttendeeController implements IAttendeeController {
     public ResponseEntity<AttendeeDto> putAttendee(final UUID attendeeId,
 						   final AttendeeDto attendeeDto) {
 
-	final Attendee attendee = this.attendeeService.edit(attendeeId,
-		this.attendeeDtoToAttendeeConverter.apply(attendeeDto));
+	final Attendee attendee = this.attendeeService.edit(attendeeId, attendeeDto);
 	final AttendeeDto newDto = this.attendeeToAttendeeDtoConverter.apply(attendee);
 
 	try {

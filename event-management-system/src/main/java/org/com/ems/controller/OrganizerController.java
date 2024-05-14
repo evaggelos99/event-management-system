@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/organizer")
 public class OrganizerController implements IOrganizerController {
 
-    private final IService<Organizer> organizerService;
+    private final IService<Organizer, OrganizerDto> organizerService;
     private final Function<OrganizerDto, Organizer> organizerDtoToOrganizerConverter;
     private final Function<Organizer, OrganizerDto> organizerToOrganizerDtoConverter;
 
@@ -42,7 +42,7 @@ public class OrganizerController implements IOrganizerController {
      * @param organizerToOrganizerDtoConverter organizer to DTO
      * @param organizerDtoToOrganizerConverter DTO to organizer
      */
-    public OrganizerController(@Autowired final IService<Organizer> organizerService,
+    public OrganizerController(@Autowired final IService<Organizer, OrganizerDto> organizerService,
 			       @Autowired @Qualifier("organizerToOrganizerDtoConverter") final Function<Organizer,
 				       OrganizerDto> organizerToOrganizerDtoConverter,
 			       @Autowired @Qualifier("organizerDtoToOrganizerConverter") final Function<OrganizerDto,
@@ -60,8 +60,7 @@ public class OrganizerController implements IOrganizerController {
     @Override
     public ResponseEntity<OrganizerDto> postOrganizer(final OrganizerDto organizerDto) {
 
-	final Organizer organizer = this.organizerService
-		.add(this.organizerDtoToOrganizerConverter.apply(organizerDto));
+	final Organizer organizer = this.organizerService.add(organizerDto);
 
 	final OrganizerDto newDto = this.organizerToOrganizerDtoConverter.apply(organizer);
 
@@ -97,8 +96,7 @@ public class OrganizerController implements IOrganizerController {
     public ResponseEntity<OrganizerDto> putOrganizer(final UUID organizerId,
 						     final OrganizerDto organizerDto) {
 
-	final Organizer organizer = this.organizerService.edit(organizerId,
-		this.organizerDtoToOrganizerConverter.apply(organizerDto));
+	final Organizer organizer = this.organizerService.edit(organizerId, organizerDto);
 
 	final OrganizerDto newDto = this.organizerToOrganizerDtoConverter.apply(organizer);
 

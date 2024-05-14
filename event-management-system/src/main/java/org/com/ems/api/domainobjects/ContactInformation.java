@@ -8,7 +8,6 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.Embeddable;
 import jakarta.validation.constraints.NotNull;
 
 /**
@@ -16,7 +15,6 @@ import jakarta.validation.constraints.NotNull;
  *
  * @author Evangelos Georgiou
  */
-@Embeddable
 public final class ContactInformation {
 
     // TODO add regex validation for email

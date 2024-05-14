@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/ticket")
 public class TicketController implements ITicketController {
 
-    private final IService<Ticket> ticketService;
+    private final IService<Ticket, TicketDto> ticketService;
     private final Function<Ticket, TicketDto> ticketToTicketDtoConverter;
     private final Function<TicketDto, Ticket> ticketDtoToTicketConverter;
 
@@ -41,7 +41,7 @@ public class TicketController implements ITicketController {
      * @param ticketToTicketDtoConverter ticket to DTO
      * @param ticketDtoToTicketConverter DTO to ticket
      */
-    public TicketController(@Autowired final IService<Ticket> ticketService,
+    public TicketController(@Autowired final IService<Ticket, TicketDto> ticketService,
 			    @Autowired @Qualifier("ticketToTicketDtoConverter") final Function<Ticket,
 				    TicketDto> ticketToTicketDtoConverter,
 			    @Autowired @Qualifier("ticketDtoToTicketConverter") final Function<TicketDto,
@@ -59,7 +59,7 @@ public class TicketController implements ITicketController {
     @Override
     public ResponseEntity<TicketDto> postTicket(final TicketDto ticketDto) {
 
-	final Ticket newTicket = this.ticketService.add(this.ticketDtoToTicketConverter.apply(ticketDto));
+	final Ticket newTicket = this.ticketService.add(ticketDto);
 
 	final TicketDto newDto = this.ticketToTicketDtoConverter.apply(newTicket);
 
@@ -95,7 +95,7 @@ public class TicketController implements ITicketController {
     public ResponseEntity<TicketDto> putTicket(final UUID ticketId,
 					       final TicketDto ticketDto) {
 
-	final Ticket newTicket = this.ticketService.edit(ticketId, this.ticketDtoToTicketConverter.apply(ticketDto));
+	final Ticket newTicket = this.ticketService.edit(ticketId, ticketDto);
 
 	final TicketDto newDto = this.ticketToTicketDtoConverter.apply(newTicket);
 

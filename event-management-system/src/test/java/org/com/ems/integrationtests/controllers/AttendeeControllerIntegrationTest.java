@@ -111,7 +111,7 @@ public class AttendeeControllerIntegrationTest {
 	final AttendeeDto actualEntity = editedResponseEntity.getBody();
 
 	assertEquals(entityDto.uuid(), actualEntity.uuid());
-	assertTrue(actualEntity.lastUpdated().isAfter(entityDto.lastUpdated()));
+	assertTrue(actualEntity.lastUpdated().after(entityDto.lastUpdated()));
 	assertEquals(firstName + lastName, actualEntity.firstName());
 	assertEquals(lastName, actualEntity.lastName());
 	assertNull(actualEntity.ticketIDs());

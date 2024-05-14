@@ -96,7 +96,7 @@ class TicketControllerIntegrationTest {
 	final TicketDto actualEntity = editedResponseEntity.getBody();
 
 	assertEquals(entityDto.uuid(), actualEntity.uuid());
-	assertTrue(actualEntity.lastUpdated().isAfter(entityDto.lastUpdated()));
+	assertTrue(actualEntity.lastUpdated().after(entityDto.lastUpdated()));
 	assertEquals(eventId, actualEntity.eventID());
 	assertEquals(ticketType, actualEntity.ticketType());
 	assertEquals(price + 100, actualEntity.price());

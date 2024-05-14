@@ -97,7 +97,7 @@ class SponsorControllerIntegrationTest {
 	final SponsorDto actualEntity = editedResponseEntity.getBody();
 
 	assertEquals(entityDto.uuid(), actualEntity.uuid());
-	assertTrue(actualEntity.lastUpdated().isAfter(entityDto.lastUpdated()));
+	assertTrue(actualEntity.lastUpdated().after(entityDto.lastUpdated()));
 	assertEquals(name, actualEntity.name());
 	assertEquals(contantInfo, actualEntity.contactInformation());
 	assertEquals(website, actualEntity.website());

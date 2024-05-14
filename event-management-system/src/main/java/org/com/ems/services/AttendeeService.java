@@ -6,12 +6,13 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.com.ems.api.domainobjects.Attendee;
+import org.com.ems.api.dto.AttendeeDto;
 import org.com.ems.db.IAttendeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class AttendeeService implements IService<Attendee> {
+public class AttendeeService implements IService<Attendee, AttendeeDto> {
 
     private final IAttendeeRepository attendeeRepository;
 
@@ -22,7 +23,7 @@ public class AttendeeService implements IService<Attendee> {
     }
 
     @Override
-    public Attendee add(final Attendee attendee) {
+    public Attendee add(final AttendeeDto attendee) {
 
 	return this.attendeeRepository.save(attendee);
 
@@ -44,12 +45,12 @@ public class AttendeeService implements IService<Attendee> {
 
     @Override
     public Attendee edit(final UUID uuid,
-			 final Attendee attendee) {
+			 final AttendeeDto attendee) {
 
 	if (!this.attendeeRepository.existsById(uuid))
 	    throw new NoSuchElementException();
 
-	return this.attendeeRepository.save(attendee);
+	return this.attendeeRepository.edit(attendee);
 
     }
 

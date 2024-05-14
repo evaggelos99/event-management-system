@@ -1,7 +1,7 @@
 package org.com.ems.api.domainobjects;
 
 import java.time.Instant;
-import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -10,12 +10,6 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import jakarta.annotation.Nullable;
-import jakarta.persistence.CollectionTable;
-import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -24,26 +18,19 @@ import jakarta.validation.constraints.NotNull;
  *
  * @author Evangelos Georgiou
  */
-@Entity
 public class Organizer extends AbstractDomainObject {
-
-    private static final long serialVersionUID = 494919982991394856L;
 
     @NotNull
     @NotBlank
-    @Column(unique = true)
     private String name;
     @NotNull
     @NotBlank
-    @Column(unique = true) // TODO add regex validation
+    // TODO add regex validation
     private String website;
     @Nullable
     private String description;
     @NotNull
-    @ElementCollection(targetClass = EventType.class)
-    @CollectionTable(name = "event_types")
-    @Enumerated(EnumType.STRING)
-    private Collection<EventType> eventTypes;
+    private List<EventType> eventTypes;
     @NotNull
     private ContactInformation contactInformation;
 
@@ -52,7 +39,7 @@ public class Organizer extends AbstractDomainObject {
 		     @NotNull @NotBlank final String name,
 		     @NotNull @NotBlank final String website,
 		     final String description,
-		     @NotNull final Collection<EventType> eventTypes,
+		     @NotNull final List<EventType> eventTypes,
 		     @NotNull final ContactInformation contactInformation) {
 
 	super(uuid, lastUpdated);
@@ -86,7 +73,7 @@ public class Organizer extends AbstractDomainObject {
 
     }
 
-    public Collection<EventType> getEventTypes() {
+    public List<EventType> getEventTypes() {
 
 	return this.eventTypes;
 

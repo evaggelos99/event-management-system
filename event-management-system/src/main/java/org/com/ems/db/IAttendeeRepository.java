@@ -1,9 +1,7 @@
 package org.com.ems.db;
 
-import java.util.UUID;
-
 import org.com.ems.api.domainobjects.Attendee;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.com.ems.api.dto.AttendeeDto;
 
 /**
  * Attendee's Repository
@@ -11,6 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author Evangelos Georgiou
  *
  */
-public interface IAttendeeRepository extends JpaRepository<Attendee, UUID> {
+public interface IAttendeeRepository extends IRepository<Attendee, AttendeeDto> {
 
 }

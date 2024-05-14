@@ -5,10 +5,6 @@ import java.util.UUID;
 
 import org.com.ems.api.domainobjects.validators.constraints.NotNegative;
 
-import jakarta.persistence.Embedded;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotNull;
 
 /**
@@ -16,15 +12,11 @@ import jakarta.validation.constraints.NotNull;
  *
  * @author Evangelos Georgiou
  */
-@Entity
 public class Ticket extends AbstractDomainObject {
-
-    private static final long serialVersionUID = 1386924435430719755L;
 
     @NotNull
     private UUID eventID;
     @NotNull
-    @Enumerated(EnumType.STRING)
     private TicketType ticketType;
     @NotNull
     @NotNegative(message = "cannot be negative")
@@ -32,7 +24,6 @@ public class Ticket extends AbstractDomainObject {
     @NotNull
     private Boolean transferable;
     @NotNull
-    @Embedded
     private SeatingInformation seatInfo;
     // TODO create QR code referenceing this ticket
 

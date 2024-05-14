@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/event")
 public class EventController implements IEventController {
 
-    private final IService<Event> eventService;
+    private final IService<Event, EventDto> eventService;
     private final Function<Event, EventDto> eventToEventDtoConverter;
     private final Function<EventDto, Event> eventDtoToEventConverter;
 
@@ -41,7 +41,7 @@ public class EventController implements IEventController {
      * @param eventToEventDtoConverter converts event to DTO
      * @param eventDtoToEventConverter converts DTO to event
      */
-    public EventController(@Autowired final IService<Event> eventService,
+    public EventController(@Autowired final IService<Event, EventDto> eventService,
 			   @Autowired @Qualifier("eventToEventDtoConverter") final Function<Event,
 				   EventDto> eventToEventDtoConverter,
 			   @Autowired @Qualifier("eventDtoToEventConverter") final Function<EventDto,
@@ -59,7 +59,7 @@ public class EventController implements IEventController {
     @Override
     public ResponseEntity<EventDto> postEvent(final EventDto eventDto) {
 
-	final Event event = this.eventService.add(this.eventDtoToEventConverter.apply(eventDto));
+	final Event event = this.eventService.add(eventDto);
 	final EventDto newDto = this.eventToEventDtoConverter.apply(event);
 
 	try {
@@ -94,7 +94,7 @@ public class EventController implements IEventController {
     public ResponseEntity<EventDto> putEvent(final UUID eventId,
 					     final EventDto eventDto) {
 
-	final Event event = this.eventService.edit(eventId, this.eventDtoToEventConverter.apply(eventDto));
+	final Event event = this.eventService.edit(eventId, eventDto);
 	final EventDto newDto = this.eventToEventDtoConverter.apply(event);
 
 	try {

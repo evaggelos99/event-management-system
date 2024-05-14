@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/sponsor")
 public class SponsorController implements ISponsorController {
 
-    private final IService<Sponsor> sponsorService;
+    private final IService<Sponsor, SponsorDto> sponsorService;
     private final Function<Sponsor, SponsorDto> sponsorToSponsorDtoConverter;
     private final Function<SponsorDto, Sponsor> sponsorDtoToSponsorConverter;
 
@@ -40,7 +40,7 @@ public class SponsorController implements ISponsorController {
      * @param sponsorToSponsorDtoConverter sponsor to DTO
      * @param sponsorDtoToSponsorConverter DTO to sponsor
      */
-    public SponsorController(@Autowired final IService<Sponsor> sponsorService,
+    public SponsorController(@Autowired final IService<Sponsor, SponsorDto> sponsorService,
 			     @Autowired @Qualifier("sponsorToSponsorDtoConverter") final Function<Sponsor,
 				     SponsorDto> sponsorToSponsorDtoConverter,
 			     @Autowired @Qualifier("sponsorDtoToSponsorConverter") final Function<SponsorDto,
@@ -58,7 +58,7 @@ public class SponsorController implements ISponsorController {
     @Override
     public ResponseEntity<SponsorDto> postSponsor(final SponsorDto sponsorDto) {
 
-	final Sponsor sponsor = this.sponsorService.add(this.sponsorDtoToSponsorConverter.apply(sponsorDto));
+	final Sponsor sponsor = this.sponsorService.add(sponsorDto);
 	final SponsorDto newSponsorDto = this.sponsorToSponsorDtoConverter.apply(sponsor);
 
 	try {
@@ -93,8 +93,7 @@ public class SponsorController implements ISponsorController {
     public ResponseEntity<SponsorDto> putSponsor(final UUID sponsorId,
 						 final SponsorDto sponsorDto) {
 
-	final Sponsor sponsor = this.sponsorService.edit(sponsorId,
-		this.sponsorDtoToSponsorConverter.apply(sponsorDto));
+	final Sponsor sponsor = this.sponsorService.edit(sponsorId, sponsorDto);
 	final SponsorDto newSponsorDto = this.sponsorToSponsorDtoConverter.apply(sponsor);
 
 	try {

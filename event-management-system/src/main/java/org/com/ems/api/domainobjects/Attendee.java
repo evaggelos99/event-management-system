@@ -1,7 +1,7 @@
 package org.com.ems.api.domainobjects;
 
 import java.time.Instant;
-import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -9,8 +9,6 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
 import jakarta.validation.constraints.NotNull;
 
 /**
@@ -18,25 +16,23 @@ import jakarta.validation.constraints.NotNull;
  *
  * @author Evangelos Georgiou
  */
-@Entity
+//@Entity
 public class Attendee extends AbstractDomainObject {
 
-    private static final long serialVersionUID = -8025410937855782874L;
-
     @NotNull
-    @Column(name = "firstName", unique = false, nullable = false, insertable = true, updatable = true)
+//    @Column(name = "firstName", unique = false, nullable = false, insertable = true, updatable = true)
     private String firstName;
     @NotNull
-    @Column(name = "lastName", unique = false, nullable = false, insertable = true, updatable = true)
+//    @Column(name = "lastName", unique = false, nullable = false, insertable = true, updatable = true)
     private String lastName;
     // OneToMany
-    private Collection<UUID> ticketIDs;
+    private List<UUID> ticketIDs;
 
     public Attendee(final UUID uuid,
 		    final Instant lastUpdated,
 		    @NotNull final String firstName,
 		    @NotNull final String lastName,
-		    final Collection<UUID> ticketIDs) {
+		    final List<UUID> ticketIDs) {
 
 	super(uuid, lastUpdated);
 	this.firstName = firstName;
@@ -61,7 +57,7 @@ public class Attendee extends AbstractDomainObject {
 
     }
 
-    public Collection<UUID> getTicketIDs() {
+    public List<UUID> getTicketIDs() {
 
 	return this.ticketIDs;
 

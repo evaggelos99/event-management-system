@@ -102,7 +102,7 @@ class OrganizerControllerIntegrationTest {
 	final OrganizerDto actualEntity = editedResponseEntity.getBody();
 
 	assertEquals(entityDto.uuid(), actualEntity.uuid());
-	assertTrue(actualEntity.lastUpdated().isAfter(entityDto.lastUpdated()));
+	assertTrue(actualEntity.lastUpdated().after(entityDto.lastUpdated()));
 	assertEquals(name + description, actualEntity.name());
 	assertEquals(contantInfo, actualEntity.contactInformation());
 	assertEquals(website, actualEntity.website());

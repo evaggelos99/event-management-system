@@ -3,7 +3,7 @@ package org.com.ems.api.domainobjects;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
@@ -12,10 +12,6 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import jakarta.annotation.Nullable;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotNull;
 
 /**
@@ -23,22 +19,17 @@ import jakarta.validation.constraints.NotNull;
  *
  * @author Evangelos Georgiou
  */
-@Entity
 public class Event extends AbstractDomainObject {
-
-    private static final long serialVersionUID = 5584194716260249642L;
 
     @NotNull
     private String name;
     @NotNull
     private String place;
     @NotNull
-    @Enumerated(EnumType.STRING)
     private EventType eventType;
     // ManyToMany
     @NotNull
-    @ElementCollection(targetClass = UUID.class)
-    private Collection<UUID> attendeesIDs;
+    private List<UUID> attendeesIDs;
     // ManyToOne
     @NotNull
     private UUID organizerID;
@@ -48,21 +39,21 @@ public class Event extends AbstractDomainObject {
     @Nullable
     private UUID sponsorID;
     @NotNull
-    private LocalDateTime startTimeOfEvent;
+    private LocalDateTime startTime;
     @NotNull
-    private Duration durationOfEvent;
+    private Duration duration;
 
     public Event(final UUID uuid,
 		 final Instant lastUpdated,
 		 @NotNull final String name,
 		 @NotNull final String place,
 		 @NotNull final EventType eventType,
-		 @NotNull final Collection<UUID> attendeesIDs,
+		 @NotNull final List<UUID> attendeesIDs,
 		 @NotNull final UUID organizerID,
 		 @NotNull final Integer limitOfPeople,
 		 final UUID sponsorID,
-		 @NotNull final LocalDateTime startTimeOfEvent,
-		 @NotNull final Duration durationOfEvent) {
+		 @NotNull final LocalDateTime startTime,
+		 @NotNull final Duration duration) {
 
 	super(uuid, lastUpdated);
 	this.name = name;
@@ -72,8 +63,8 @@ public class Event extends AbstractDomainObject {
 	this.organizerID = organizerID;
 	this.limitOfPeople = limitOfPeople;
 	this.sponsorID = sponsorID;
-	this.startTimeOfEvent = startTimeOfEvent;
-	this.durationOfEvent = durationOfEvent;
+	this.startTime = startTime;
+	this.duration = duration;
 
     }
 
@@ -99,7 +90,7 @@ public class Event extends AbstractDomainObject {
 
     }
 
-    public Collection<UUID> getAttendeesIDs() {
+    public List<UUID> getAttendeesIDs() {
 
 	return this.attendeesIDs;
 
@@ -123,15 +114,15 @@ public class Event extends AbstractDomainObject {
 
     }
 
-    public LocalDateTime getStartTimeOfEvent() {
+    public LocalDateTime getStartTime() {
 
-	return this.startTimeOfEvent;
+	return this.startTime;
 
     }
 
-    public Duration getDurationOfEvent() {
+    public Duration getDuration() {
 
-	return this.durationOfEvent;
+	return this.duration;
 
     }
 
@@ -149,8 +140,7 @@ public class Event extends AbstractDomainObject {
 		.append(this.place, that.place).append(this.eventType, that.eventType)
 		.append(this.attendeesIDs, that.attendeesIDs).append(this.organizerID, that.organizerID)
 		.append(this.limitOfPeople, that.limitOfPeople).append(this.sponsorID, that.sponsorID)
-		.append(this.startTimeOfEvent, that.startTimeOfEvent).append(this.durationOfEvent, that.durationOfEvent)
-		.build();
+		.append(this.startTime, that.startTime).append(this.duration, that.duration).build();
 
     }
 
@@ -159,7 +149,7 @@ public class Event extends AbstractDomainObject {
 
 	return new HashCodeBuilder(17, 37).appendSuper(super.hashCode()).append(this.name).append(this.place)
 		.append(this.eventType).append(this.attendeesIDs).append(this.organizerID).append(this.limitOfPeople)
-		.append(this.sponsorID).append(this.startTimeOfEvent).append(this.durationOfEvent).build();
+		.append(this.sponsorID).append(this.startTime).append(this.duration).build();
 
     }
 
@@ -170,8 +160,7 @@ public class Event extends AbstractDomainObject {
 		.append("name", this.name).append("place", this.place).append("eventType", this.eventType)
 		.append("attendeesIDs", this.attendeesIDs).append("organizerID", this.organizerID)
 		.append("limitOfPeople", this.limitOfPeople).append("sponsorID", this.sponsorID)
-		.append("startTimeOfEvent", this.startTimeOfEvent).append("durationOfEvent", this.durationOfEvent)
-		.toString();
+		.append("startTime", this.startTime).append("duration", this.duration).toString();
 
     }
 

@@ -1,9 +1,7 @@
 package org.com.ems.db;
 
-import java.util.UUID;
-
 import org.com.ems.api.domainobjects.Event;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.com.ems.api.dto.EventDto;
 
 /**
  * Event's Repository
@@ -11,6 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author Evangelos Georgiou
  *
  */
-public interface IEventRepository extends JpaRepository<Event, UUID> {
+public interface IEventRepository extends IRepository<Event, EventDto> {
 
 }

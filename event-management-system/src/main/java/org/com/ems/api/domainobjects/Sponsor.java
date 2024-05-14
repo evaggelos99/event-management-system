@@ -9,7 +9,6 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.com.ems.api.domainobjects.validators.constraints.NotNegative;
 
-import jakarta.persistence.Entity;
 import jakarta.validation.constraints.NotNull;
 
 /**
@@ -17,10 +16,7 @@ import jakarta.validation.constraints.NotNull;
  *
  * @author Evangelos Georgiou
  */
-@Entity
 public class Sponsor extends AbstractDomainObject {
-
-    private static final long serialVersionUID = 8574725880728805844L;
 
     @NotNull
     private String name;
