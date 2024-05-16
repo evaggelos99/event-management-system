@@ -8,9 +8,6 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-import jakarta.persistence.Id;
-//import org.springframework.data.annotation.Id;
-
 /**
  * Super class for Entity classes
  *
@@ -18,7 +15,6 @@ import jakarta.persistence.Id;
  */
 public abstract class AbstractDomainObject {
 
-    @Id
     protected UUID uuid;
     protected Instant lastUpdated;
 

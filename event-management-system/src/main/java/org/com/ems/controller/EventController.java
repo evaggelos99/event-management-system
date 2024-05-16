@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping(EventController.EVENT_PATH)
 public class EventController implements IEventController {
 
-    private static final String EVENT_PATH = "/event";
+    static final String EVENT_PATH = "/event";
     private final IService<Event, EventDto> eventService;
     private final Function<Event, EventDto> eventToEventDtoConverter;
 

@@ -49,7 +49,7 @@ class OrganizerControllerIntegrationTest {
 	final String description = "description";
 	final String email = "email";
 	final String addr = "addr";
-	final ContactInformation contantInfo = new ContactInformation(email, 4323432L, addr);
+	final ContactInformation contantInfo = new ContactInformation(email, "4323432", addr);
 
 	final OrganizerDto dto = new OrganizerDto(null, null, name, website, description,
 		List.of(EventType.WEDDING, EventType.NIGHTLIFE), contantInfo);
@@ -79,7 +79,7 @@ class OrganizerControllerIntegrationTest {
 	final String description = "description";
 	final String email = "email2";
 	final String addr = "addr2";
-	final ContactInformation contantInfo = new ContactInformation(email, 4323432L, addr);
+	final ContactInformation contantInfo = new ContactInformation(email, "4323432", addr);
 
 	final List<EventType> eventTypes = List.of(EventType.WEDDING, EventType.NIGHTLIFE);
 
@@ -133,7 +133,7 @@ class OrganizerControllerIntegrationTest {
 	final String description = "description3";
 	final String email = "email3";
 	final String addr = "addr3";
-	final ContactInformation contantInfo = new ContactInformation(email, 4323432L, addr);
+	final ContactInformation contantInfo = new ContactInformation(email, "4323432", addr);
 
 	final List<EventType> eventTypes = List.of(EventType.WEDDING, EventType.NIGHTLIFE);
 
@@ -163,7 +163,7 @@ class OrganizerControllerIntegrationTest {
 	final String description = "description5";
 	final String email = "email5";
 	final String addr = "addr5";
-	final ContactInformation contantInfo = new ContactInformation(email, 4323432L, addr);
+	final ContactInformation contantInfo = new ContactInformation(email, "4323432", addr);
 
 	final List<EventType> eventTypes = List.of(EventType.WEDDING, EventType.NIGHTLIFE);
 

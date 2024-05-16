@@ -47,7 +47,7 @@ class SponsorControllerIntegrationTest {
 	final int financialContribution = 5;
 	final String email = "email";
 	final String addr = "addr";
-	final ContactInformation contantInfo = new ContactInformation(email, 4323432L, addr);
+	final ContactInformation contantInfo = new ContactInformation(email, "4323432", addr);
 
 	final SponsorDto dto = new SponsorDto(null, null, name, website, financialContribution, contantInfo);
 
@@ -77,7 +77,7 @@ class SponsorControllerIntegrationTest {
 	final int financialContribution = 5;
 	final String email = "email";
 	final String addr = "addr";
-	final ContactInformation contantInfo = new ContactInformation(email, 4323432L, addr);
+	final ContactInformation contantInfo = new ContactInformation(email, "4323432", addr);
 
 	final SponsorDto dto = new SponsorDto(null, null, name, website, financialContribution, contantInfo);
 
@@ -127,7 +127,7 @@ class SponsorControllerIntegrationTest {
 	final int financialContribution = 5;
 	final String email = "email";
 	final String addr = "addr";
-	final ContactInformation contantInfo = new ContactInformation(email, 4323432L, addr);
+	final ContactInformation contantInfo = new ContactInformation(email, "4323432", addr);
 
 	final SponsorDto dto = new SponsorDto(null, null, name, website, financialContribution, contantInfo);
 
@@ -155,7 +155,7 @@ class SponsorControllerIntegrationTest {
 	final int financialContribution = 5;
 	final String email = "email";
 	final String addr = "addr";
-	final ContactInformation contantInfo = new ContactInformation(email, 4323432L, addr);
+	final ContactInformation contantInfo = new ContactInformation(email, "4323432", addr);
 
 	final SponsorDto dto = new SponsorDto(null, null, name, website, financialContribution, contantInfo);
 
