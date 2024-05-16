@@ -26,29 +26,25 @@ import org.springframework.web.bind.annotation.RestController;
  * @author Evangelos Georgiou
  */
 @RestController
-@RequestMapping("/sponsor")
+@RequestMapping(SponsorController.SPONSOR_PATH)
 public class SponsorController implements ISponsorController {
 
+    static final String SPONSOR_PATH = "/sponsor";
     private final IService<Sponsor, SponsorDto> sponsorService;
     private final Function<Sponsor, SponsorDto> sponsorToSponsorDtoConverter;
-    private final Function<SponsorDto, Sponsor> sponsorDtoToSponsorConverter;
 
     /**
      * C-or
      *
      * @param sponsorService               service responsible for CRUD operations
      * @param sponsorToSponsorDtoConverter sponsor to DTO
-     * @param sponsorDtoToSponsorConverter DTO to sponsor
      */
     public SponsorController(@Autowired final IService<Sponsor, SponsorDto> sponsorService,
 			     @Autowired @Qualifier("sponsorToSponsorDtoConverter") final Function<Sponsor,
-				     SponsorDto> sponsorToSponsorDtoConverter,
-			     @Autowired @Qualifier("sponsorDtoToSponsorConverter") final Function<SponsorDto,
-				     Sponsor> sponsorDtoToSponsorConverter) {
+				     SponsorDto> sponsorToSponsorDtoConverter) {
 
 	this.sponsorService = requireNonNull(sponsorService);
 	this.sponsorToSponsorDtoConverter = requireNonNull(sponsorToSponsorDtoConverter);
-	this.sponsorDtoToSponsorConverter = requireNonNull(sponsorDtoToSponsorConverter);
 
     }
 
@@ -63,7 +59,7 @@ public class SponsorController implements ISponsorController {
 
 	try {
 
-	    return ResponseEntity.created(new URI("/sponsor/")).body(newSponsorDto);
+	    return ResponseEntity.created(new URI(SPONSOR_PATH)).body(newSponsorDto);
 	} catch (final URISyntaxException e) {
 
 	    return new ResponseEntity<>(newSponsorDto, HttpStatus.CREATED);
@@ -98,7 +94,7 @@ public class SponsorController implements ISponsorController {
 
 	try {
 
-	    return ResponseEntity.created(new URI("/sponsor/" + sponsorId)).body(newSponsorDto);
+	    return ResponseEntity.created(new URI(SPONSOR_PATH + sponsorId)).body(newSponsorDto);
 	} catch (final URISyntaxException e) {
 
 	    return new ResponseEntity<>(newSponsorDto, HttpStatus.CREATED);

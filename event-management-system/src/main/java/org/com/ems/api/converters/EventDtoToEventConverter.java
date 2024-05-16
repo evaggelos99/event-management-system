@@ -13,8 +13,8 @@ public class EventDtoToEventConverter implements Function<EventDto, Event> {
     public Event apply(final EventDto eventDto) {
 
 	return new Event(eventDto.uuid(), eventDto.lastUpdated().toInstant(), eventDto.name(), eventDto.place(),
-		eventDto.eventType(), eventDto.attendeesIDs(), eventDto.organizerID(), eventDto.limitOfPeople(),
-		eventDto.sponsorID(), eventDto.startTimeOfEvent(), eventDto.durationOfEvent());
+		eventDto.eventType(), eventDto.attendeesIds(), eventDto.organizerId(), eventDto.limitOfPeople(),
+		eventDto.sponsorId(), eventDto.startTimeOfEvent(), eventDto.duration());
 
     }
 

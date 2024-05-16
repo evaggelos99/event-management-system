@@ -22,7 +22,7 @@ public class EventToEventDtoConverter implements Function<Event, EventDto> {
 
     private Timestamp convertToTimeStamp(final Instant lastUpdated) {
 
-	return new Timestamp(lastUpdated.getEpochSecond());
+	return Timestamp.from(lastUpdated);
 
     }
 

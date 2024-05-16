@@ -7,12 +7,14 @@ import java.time.Instant;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
+import java.util.Properties;
 import java.util.UUID;
 import java.util.function.Function;
 
 import org.com.ems.api.domainobjects.Attendee;
 import org.com.ems.api.dto.AttendeeDto;
 import org.com.ems.db.IAttendeeRepository;
+import org.com.ems.db.queries.Queries.CrudQueriesOperations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,25 +29,21 @@ public class AttendeeRepository implements IAttendeeRepository {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AttendeeRepository.class);
 
-    private static final String SAVE = "INSERT INTO attendee (uuid, last_updated, first_name, last_name, ticket_ids) values(?,?,?,?,?)";
-    private static final String EDIT = "UPDATE attendee " + "SET uuid = ?, l" + "ast_updated = ?, " + "first_name = ?, "
-	    + "last_name = ?, " + "ticket_ids = ? " + "WHERE uuid = ?";
-    private static final String GET_ALL = "SELECT * FROM attendee";
-    private static final String GET_ID = "SELECT * FROM attendee WHERE uuid = ?";
-    private static final String DELETE_STRING = "DELETE FROM attendee WHERE uuid = ?";
-
     private final JdbcTemplate jdbcTemplate;
     private final RowMapper<Attendee> attendeeRowMapper;
     private final Function<AttendeeDto, Attendee> attendeeDtoToAttendeeConverter;
+    private final Properties attendeeQueriesProperties;
 
     public AttendeeRepository(@Autowired final JdbcTemplate jdbcTemplate,
 			      @Autowired @Qualifier("attendeeRowMapper") final RowMapper<Attendee> attendeeRowMapper,
 			      @Autowired @Qualifier("attendeeDtoToAttendeeConverter") final Function<AttendeeDto,
-				      Attendee> attendeeDtoToAttendeeConverter) {
+				      Attendee> attendeeDtoToAttendeeConverter,
+			      @Autowired @Qualifier("attendeeQueriesProperties") final Properties attendeeQueriesProperties) {
 
 	this.jdbcTemplate = requireNonNull(jdbcTemplate);
 	this.attendeeRowMapper = requireNonNull(attendeeRowMapper);
 	this.attendeeDtoToAttendeeConverter = requireNonNull(attendeeDtoToAttendeeConverter);
+	this.attendeeQueriesProperties = requireNonNull(attendeeQueriesProperties);
 
     }
 
@@ -76,7 +74,9 @@ public class AttendeeRepository implements IAttendeeRepository {
 
 	try {
 
-	    final Attendee attendee = this.jdbcTemplate.queryForObject(GET_ID, this.attendeeRowMapper, uuid);
+	    final Attendee attendee = this.jdbcTemplate.queryForObject(
+		    this.attendeeQueriesProperties.getProperty(CrudQueriesOperations.GET_ID.name()), this.attendeeRowMapper,
+		    uuid);
 	    return Optional.of(attendee);
 	} catch (final EmptyResultDataAccessException e) {
 
@@ -89,7 +89,8 @@ public class AttendeeRepository implements IAttendeeRepository {
     @Override
     public boolean deleteById(final UUID uuid) {
 
-	final int rows = this.jdbcTemplate.update(DELETE_STRING, uuid);
+	final int rows = this.jdbcTemplate
+		.update(this.attendeeQueriesProperties.getProperty(CrudQueriesOperations.DELETE_ID.name()), uuid);
 
 	final boolean deleted = rows == 1 ? true : false;
 
@@ -115,7 +116,8 @@ public class AttendeeRepository implements IAttendeeRepository {
     @Override
     public Collection<Attendee> findAll() {
 
-	return this.jdbcTemplate.query(GET_ALL, this.attendeeRowMapper);
+	return this.jdbcTemplate.query(this.attendeeQueriesProperties.getProperty(CrudQueriesOperations.GET_ALL.name()),
+		this.attendeeRowMapper);
 
     }
 
@@ -129,7 +131,8 @@ public class AttendeeRepository implements IAttendeeRepository {
 	final UUID[] uuids = ticketIds != null ? this.convertToArray(ticketIds) : new UUID[] {};
 	final UUID uuid = attendeeUuid != null ? attendeeUuid : UUID.randomUUID();
 
-	this.jdbcTemplate.update(SAVE, uuid, timestamp, firstName, lastName, uuids);
+	this.jdbcTemplate.update(this.attendeeQueriesProperties.getProperty(CrudQueriesOperations.SAVE.name()), uuid,
+		timestamp, firstName, lastName, uuids);
 
 	return this.attendeeDtoToAttendeeConverter
 		.apply(new AttendeeDto(uuid, timestamp, firstName, lastName, ticketIds));
@@ -145,7 +148,8 @@ public class AttendeeRepository implements IAttendeeRepository {
 	final String lastName = attendee.lastName();
 	final UUID[] uuids = ticketIds != null ? this.convertToArray(ticketIds) : new UUID[] {};
 
-	this.jdbcTemplate.update(EDIT, uuid, timestamp, firstName, lastName, uuids, uuid);
+	this.jdbcTemplate.update(this.attendeeQueriesProperties.getProperty(CrudQueriesOperations.EDIT.name()), uuid,
+		timestamp, firstName, lastName, uuids, uuid);
 
 	return this.attendeeDtoToAttendeeConverter
 		.apply(new AttendeeDto(uuid, timestamp, firstName, lastName, ticketIds));

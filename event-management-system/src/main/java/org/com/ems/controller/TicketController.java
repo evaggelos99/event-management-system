@@ -27,29 +27,25 @@ import org.springframework.web.bind.annotation.RestController;
  * @author Evangelos Georgiou
  */
 @RestController
-@RequestMapping("/ticket")
+@RequestMapping(TicketController.TICKET_PATH)
 public class TicketController implements ITicketController {
 
+    static final String TICKET_PATH = "/ticket";
     private final IService<Ticket, TicketDto> ticketService;
     private final Function<Ticket, TicketDto> ticketToTicketDtoConverter;
-    private final Function<TicketDto, Ticket> ticketDtoToTicketConverter;
 
     /**
      * C-or
      *
      * @param ticketService              service responsible for CRUD operations
      * @param ticketToTicketDtoConverter ticket to DTO
-     * @param ticketDtoToTicketConverter DTO to ticket
      */
     public TicketController(@Autowired final IService<Ticket, TicketDto> ticketService,
 			    @Autowired @Qualifier("ticketToTicketDtoConverter") final Function<Ticket,
-				    TicketDto> ticketToTicketDtoConverter,
-			    @Autowired @Qualifier("ticketDtoToTicketConverter") final Function<TicketDto,
-				    Ticket> ticketDtoToTicketConverter) {
+				    TicketDto> ticketToTicketDtoConverter) {
 
 	this.ticketService = requireNonNull(ticketService);
 	this.ticketToTicketDtoConverter = requireNonNull(ticketToTicketDtoConverter);
-	this.ticketDtoToTicketConverter = requireNonNull(ticketDtoToTicketConverter);
 
     }
 
@@ -65,7 +61,7 @@ public class TicketController implements ITicketController {
 
 	try {
 
-	    return ResponseEntity.created(new URI("/ticket/")).body(newDto);
+	    return ResponseEntity.created(new URI(TICKET_PATH)).body(newDto);
 	} catch (final URISyntaxException e) {
 
 	    return new ResponseEntity<>(newDto, HttpStatus.CREATED);
@@ -101,7 +97,7 @@ public class TicketController implements ITicketController {
 
 	try {
 
-	    return ResponseEntity.created(new URI("/ticket/" + ticketId)).body(newDto);
+	    return ResponseEntity.created(new URI(TICKET_PATH + ticketId)).body(newDto);
 	} catch (final URISyntaxException e) {
 
 	    return new ResponseEntity<>(newDto, HttpStatus.CREATED);

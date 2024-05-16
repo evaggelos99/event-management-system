@@ -23,7 +23,6 @@ public class Organizer extends AbstractDomainObject {
     @NotNull
     @NotBlank
     private String name;
-    @NotNull
     @NotBlank
     // TODO add regex validation
     private String website;
@@ -37,7 +36,7 @@ public class Organizer extends AbstractDomainObject {
     public Organizer(final UUID uuid,
 		     final Instant lastUpdated,
 		     @NotNull @NotBlank final String name,
-		     @NotNull @NotBlank final String website,
+		     @NotBlank final String website,
 		     final String description,
 		     @NotNull final List<EventType> eventTypes,
 		     @NotNull final ContactInformation contactInformation) {

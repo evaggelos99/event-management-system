@@ -27,9 +27,10 @@ import org.springframework.web.bind.annotation.RestController;
  * @author Evangelos Georgiou
  */
 @RestController
-@RequestMapping("/attendee")
+@RequestMapping(AttendeeController.ATTENDEE_PATH)
 public class AttendeeController implements IAttendeeController {
 
+    static final String ATTENDEE_PATH = "/attendee";
     IService<Attendee, AttendeeDto> attendeeService;
     private final Function<Attendee, AttendeeDto> attendeeToAttendeeDtoConverter;
 
@@ -62,7 +63,7 @@ public class AttendeeController implements IAttendeeController {
 
 	try {
 
-	    return ResponseEntity.created(new URI("/attendee/")).body(newDto);
+	    return ResponseEntity.created(new URI(ATTENDEE_PATH)).body(newDto);
 	} catch (final URISyntaxException e) {
 
 	    return new ResponseEntity<>(newDto, HttpStatus.CREATED);
@@ -98,7 +99,7 @@ public class AttendeeController implements IAttendeeController {
 
 	try {
 
-	    return ResponseEntity.created(new URI("/attendee/" + attendeeId)).body(newDto);
+	    return ResponseEntity.created(new URI(ATTENDEE_PATH + attendeeId)).body(newDto);
 	} catch (final URISyntaxException e) {
 
 	    return new ResponseEntity<>(newDto, HttpStatus.CREATED);

@@ -27,11 +27,11 @@ import org.springframework.web.bind.annotation.RestController;
  * @author Evangelos Georgiou
  */
 @RestController
-@RequestMapping("/organizer")
+@RequestMapping(OrganizerController.ORGANIZER_PATH)
 public class OrganizerController implements IOrganizerController {
 
+    static final String ORGANIZER_PATH = "/organizer";
     private final IService<Organizer, OrganizerDto> organizerService;
-    private final Function<OrganizerDto, Organizer> organizerDtoToOrganizerConverter;
     private final Function<Organizer, OrganizerDto> organizerToOrganizerDtoConverter;
 
     /**
@@ -44,12 +44,9 @@ public class OrganizerController implements IOrganizerController {
      */
     public OrganizerController(@Autowired final IService<Organizer, OrganizerDto> organizerService,
 			       @Autowired @Qualifier("organizerToOrganizerDtoConverter") final Function<Organizer,
-				       OrganizerDto> organizerToOrganizerDtoConverter,
-			       @Autowired @Qualifier("organizerDtoToOrganizerConverter") final Function<OrganizerDto,
-				       Organizer> organizerDtoToOrganizerConverter) {
+				       OrganizerDto> organizerToOrganizerDtoConverter) {
 
 	this.organizerService = requireNonNull(organizerService);
-	this.organizerDtoToOrganizerConverter = requireNonNull(organizerDtoToOrganizerConverter);
 	this.organizerToOrganizerDtoConverter = requireNonNull(organizerToOrganizerDtoConverter);
 
     }
@@ -66,7 +63,7 @@ public class OrganizerController implements IOrganizerController {
 
 	try {
 
-	    return ResponseEntity.created(new URI("/attendee/")).body(newDto);
+	    return ResponseEntity.created(new URI(ORGANIZER_PATH)).body(newDto);
 	} catch (final URISyntaxException e) {
 
 	    return new ResponseEntity<>(newDto, HttpStatus.CREATED);

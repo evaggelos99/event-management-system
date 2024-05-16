@@ -22,7 +22,7 @@ public class OrganizerToOrganizerDtoConverter implements Function<Organizer, Org
 
     private Timestamp convertToTimeStamp(final Instant lastUpdated) {
 
-	return new Timestamp(lastUpdated.getEpochSecond());
+	return Timestamp.from(lastUpdated);
 
     }
 }

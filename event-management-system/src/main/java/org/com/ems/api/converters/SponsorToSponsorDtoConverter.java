@@ -21,7 +21,7 @@ public class SponsorToSponsorDtoConverter implements Function<Sponsor, SponsorDt
 
     private Timestamp convertToTimeStamp(final Instant lastUpdated) {
 
-	return new Timestamp(lastUpdated.getEpochSecond());
+	return Timestamp.from(lastUpdated);
 
     }
 }

@@ -29,15 +29,15 @@ public class Event extends AbstractDomainObject {
     private EventType eventType;
     // ManyToMany
     @NotNull
-    private List<UUID> attendeesIDs;
+    private List<UUID> attendeesIds;
     // ManyToOne
     @NotNull
-    private UUID organizerID;
+    private UUID organizerId;
     @NotNull
     private Integer limitOfPeople;
     // ManyToOne
     @Nullable
-    private UUID sponsorID;
+    private UUID sponsorId;
     @NotNull
     private LocalDateTime startTime;
     @NotNull
@@ -48,10 +48,10 @@ public class Event extends AbstractDomainObject {
 		 @NotNull final String name,
 		 @NotNull final String place,
 		 @NotNull final EventType eventType,
-		 @NotNull final List<UUID> attendeesIDs,
-		 @NotNull final UUID organizerID,
+		 @NotNull final List<UUID> attendeesIds,
+		 @NotNull final UUID organizerId,
 		 @NotNull final Integer limitOfPeople,
-		 final UUID sponsorID,
+		 final UUID sponsorId,
 		 @NotNull final LocalDateTime startTime,
 		 @NotNull final Duration duration) {
 
@@ -59,10 +59,10 @@ public class Event extends AbstractDomainObject {
 	this.name = name;
 	this.place = place;
 	this.eventType = eventType;
-	this.attendeesIDs = attendeesIDs;
-	this.organizerID = organizerID;
+	this.attendeesIds = attendeesIds;
+	this.organizerId = organizerId;
 	this.limitOfPeople = limitOfPeople;
-	this.sponsorID = sponsorID;
+	this.sponsorId = sponsorId;
 	this.startTime = startTime;
 	this.duration = duration;
 
@@ -92,13 +92,13 @@ public class Event extends AbstractDomainObject {
 
     public List<UUID> getAttendeesIDs() {
 
-	return this.attendeesIDs;
+	return this.attendeesIds;
 
     }
 
     public UUID getOrganizerID() {
 
-	return this.organizerID;
+	return this.organizerId;
 
     }
 
@@ -110,7 +110,7 @@ public class Event extends AbstractDomainObject {
 
     public UUID getSponsorID() {
 
-	return this.sponsorID;
+	return this.sponsorId;
 
     }
 
@@ -138,8 +138,8 @@ public class Event extends AbstractDomainObject {
 
 	return new EqualsBuilder().appendSuper(super.equals(that)).append(this.name, that.name)
 		.append(this.place, that.place).append(this.eventType, that.eventType)
-		.append(this.attendeesIDs, that.attendeesIDs).append(this.organizerID, that.organizerID)
-		.append(this.limitOfPeople, that.limitOfPeople).append(this.sponsorID, that.sponsorID)
+		.append(this.attendeesIds, that.attendeesIds).append(this.organizerId, that.organizerId)
+		.append(this.limitOfPeople, that.limitOfPeople).append(this.sponsorId, that.sponsorId)
 		.append(this.startTime, that.startTime).append(this.duration, that.duration).build();
 
     }
@@ -148,8 +148,8 @@ public class Event extends AbstractDomainObject {
     public int hashCode() {
 
 	return new HashCodeBuilder(17, 37).appendSuper(super.hashCode()).append(this.name).append(this.place)
-		.append(this.eventType).append(this.attendeesIDs).append(this.organizerID).append(this.limitOfPeople)
-		.append(this.sponsorID).append(this.startTime).append(this.duration).build();
+		.append(this.eventType).append(this.attendeesIds).append(this.organizerId).append(this.limitOfPeople)
+		.append(this.sponsorId).append(this.startTime).append(this.duration).build();
 
     }
 
@@ -158,8 +158,8 @@ public class Event extends AbstractDomainObject {
 
 	return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).appendSuper(super.toString())
 		.append("name", this.name).append("place", this.place).append("eventType", this.eventType)
-		.append("attendeesIDs", this.attendeesIDs).append("organizerID", this.organizerID)
-		.append("limitOfPeople", this.limitOfPeople).append("sponsorID", this.sponsorID)
+		.append("attendeesIDs", this.attendeesIds).append("organizerID", this.organizerId)
+		.append("limitOfPeople", this.limitOfPeople).append("sponsorID", this.sponsorId)
 		.append("startTime", this.startTime).append("duration", this.duration).toString();
 
     }

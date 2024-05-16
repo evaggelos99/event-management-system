@@ -12,10 +12,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
  *
  * @author Evangelos Georgiou
  */
-public record SponsorDto(@Schema(hidden = true) UUID uuid, @Schema(hidden = true) Timestamp lastUpdated,
-	@Schema(example = "RedBull", description = "Name of the Sponsor") String name,
-	@Schema(example = "www.redbull.com", description = "Website of the Sponsor") String website,
-	@Schema(example = "85000", description = "How much money the sponsor gave") Integer financialContribution,
+public record SponsorDto(@Schema(description = "The UUID of the Attendee") UUID uuid, //
+	@Schema(hidden = true) Timestamp lastUpdated, //
+	@Schema(example = "RedBull", description = "Name of the Sponsor") String name, //
+	@Schema(example = "www.redbull.com", description = "Website of the Sponsor") String website, //
+	@Schema(example = "85000", description = "How much money the sponsor gave") Integer financialContribution, //
 	@Schema(description = "The contact information of the Sponsor") ContactInformation contactInformation) {
 
 }

@@ -21,7 +21,7 @@ public class TicketToTicketDtoConverter implements Function<Ticket, TicketDto> {
 
     private Timestamp convertToTimeStamp(final Instant lastUpdated) {
 
-	return new Timestamp(lastUpdated.getEpochSecond());
+	return Timestamp.from(lastUpdated);
 
     }
 

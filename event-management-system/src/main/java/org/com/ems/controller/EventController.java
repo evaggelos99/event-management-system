@@ -27,12 +27,12 @@ import org.springframework.web.bind.annotation.RestController;
  * @author Evangelos Georgiou
  */
 @RestController
-@RequestMapping("/event")
+@RequestMapping(EventController.EVENT_PATH)
 public class EventController implements IEventController {
 
+    private static final String EVENT_PATH = "/event";
     private final IService<Event, EventDto> eventService;
     private final Function<Event, EventDto> eventToEventDtoConverter;
-    private final Function<EventDto, Event> eventDtoToEventConverter;
 
     /**
      * C-or
@@ -43,13 +43,10 @@ public class EventController implements IEventController {
      */
     public EventController(@Autowired final IService<Event, EventDto> eventService,
 			   @Autowired @Qualifier("eventToEventDtoConverter") final Function<Event,
-				   EventDto> eventToEventDtoConverter,
-			   @Autowired @Qualifier("eventDtoToEventConverter") final Function<EventDto,
-				   Event> eventDtoToEventConverter) {
+				   EventDto> eventToEventDtoConverter) {
 
 	this.eventService = requireNonNull(eventService);
 	this.eventToEventDtoConverter = requireNonNull(eventToEventDtoConverter);
-	this.eventDtoToEventConverter = requireNonNull(eventDtoToEventConverter);
 
     }
 
@@ -64,7 +61,7 @@ public class EventController implements IEventController {
 
 	try {
 
-	    return ResponseEntity.created(new URI("/event/")).body(newDto);
+	    return ResponseEntity.created(new URI(EVENT_PATH)).body(newDto);
 	} catch (final URISyntaxException e) {
 
 	    return new ResponseEntity<>(newDto, HttpStatus.CREATED);
@@ -99,7 +96,7 @@ public class EventController implements IEventController {
 
 	try {
 
-	    return ResponseEntity.created(new URI("/event/" + eventId)).body(newDto);
+	    return ResponseEntity.created(new URI(EVENT_PATH + eventId)).body(newDto);
 	} catch (final URISyntaxException e) {
 
 	    return new ResponseEntity<>(newDto, HttpStatus.CREATED);

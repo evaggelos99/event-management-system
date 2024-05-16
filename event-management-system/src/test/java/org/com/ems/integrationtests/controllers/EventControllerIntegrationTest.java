@@ -76,12 +76,12 @@ class EventControllerIntegrationTest {
 	assertEquals(place, actualEntity.place());
 	assertEquals(eventType, actualEntity.eventType());
 
-	assertEquals(List.of(attendeeId), actualEntity.attendeesIDs());
-	assertEquals(organizerId, actualEntity.organizerID());
+	assertEquals(List.of(attendeeId), actualEntity.attendeesIds());
+	assertEquals(organizerId, actualEntity.organizerId());
 	assertEquals(limitOfPeople, actualEntity.limitOfPeople());
-	assertEquals(sponsorId, actualEntity.sponsorID());
+	assertEquals(sponsorId, actualEntity.sponsorId());
 	assertEquals(localDateTime, actualEntity.startTimeOfEvent());
-	assertEquals(duration, actualEntity.durationOfEvent());
+	assertEquals(duration, actualEntity.duration());
 
     }
 
@@ -115,12 +115,12 @@ class EventControllerIntegrationTest {
 	assertEquals(place, actualEntity.place());
 	assertEquals(eventType, actualEntity.eventType());
 
-	assertEquals(List.of(attendeeId), actualEntity.attendeesIDs());
-	assertEquals(organizerId, actualEntity.organizerID());
+	assertEquals(List.of(attendeeId), actualEntity.attendeesIds());
+	assertEquals(organizerId, actualEntity.organizerId());
 	assertEquals(limitOfPeople, actualEntity.limitOfPeople());
-	assertNull(actualEntity.sponsorID());
+	assertNull(actualEntity.sponsorId());
 	assertEquals(localDateTime, actualEntity.startTimeOfEvent());
-	assertEquals(duration, actualEntity.durationOfEvent());
+	assertEquals(duration, actualEntity.duration());
 
     }
 
@@ -162,12 +162,12 @@ class EventControllerIntegrationTest {
 	assertEquals(name + place, actualEntity.name());
 	assertEquals(place + name, actualEntity.place());
 
-	assertEquals(List.of(attendeeId), actualEntity.attendeesIDs());
-	assertEquals(organizerId, actualEntity.organizerID());
+	assertEquals(List.of(attendeeId), actualEntity.attendeesIds());
+	assertEquals(organizerId, actualEntity.organizerId());
 	assertEquals(limitOfPeople, actualEntity.limitOfPeople());
 	assertEquals(localDateTime, actualEntity.startTimeOfEvent());
-	assertEquals(duration, actualEntity.durationOfEvent());
-	assertEquals(sponsorId, actualEntity.sponsorID());
+	assertEquals(duration, actualEntity.duration());
+	assertEquals(sponsorId, actualEntity.sponsorId());
 
     }
 
