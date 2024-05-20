@@ -57,7 +57,6 @@ public class PostgresExceptionHandler {
 	    Map<String, Object>> handleDataIntegrityViolationException(final DataIntegrityViolationException exc) {
 
 	final Map<String, Object> errorResponse = new HashMap<>();
-	System.out.println(exc);
 
 	errorResponse.put("message", exc.getMessage());
 	errorResponse.put("timeStamp", Instant.now());

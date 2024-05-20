@@ -137,8 +137,6 @@ public class OrganizerRepository implements IOrganizerRepository {
 	final String[] eventTypesArray = this.convertToArray(listOfEventTypes);
 	final UUID uuid = organizerUuid != null ? organizerUuid : UUID.randomUUID();
 
-	System.out.println(eventTypesArray);
-
 	this.jdbcTemplate.update(this.organizerQueriesProperties.getProperty(CrudQueriesOperations.SAVE.name()), uuid,
 		timestamp, name, website, description, eventTypesArray, contactInformation.getEmail(),
 		contactInformation.getPhoneNumber(), contactInformation.getPhysicalAddress());

@@ -9,6 +9,7 @@ import java.util.Collection;
 import org.com.ems.EventManagementSystemApplication;
 import org.com.ems.api.domainobjects.ContactInformation;
 import org.com.ems.api.dto.SponsorDto;
+import org.com.ems.util.TestConfiguration;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
@@ -23,9 +24,12 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.ActiveProfiles;
 
 @TestMethodOrder(OrderAnnotation.class)
-@SpringBootTest(classes = EventManagementSystemApplication.class, webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = { EventManagementSystemApplication.class,
+	TestConfiguration.class }, webEnvironment = WebEnvironment.RANDOM_PORT)
+@ActiveProfiles("integration-tests")
 class SponsorControllerIntegrationTest {
 
     private static final String HOSTNAME = "http://localhost";

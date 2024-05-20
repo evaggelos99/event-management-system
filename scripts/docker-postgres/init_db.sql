@@ -67,7 +67,7 @@ DECLARE
 BEGIN
     FOREACH uuid IN ARRAY uuid_array
     LOOP
-        PERFORM 1 FROM tickets WHERE id = uuid;
+        PERFORM FROM tickets WHERE id = uuid;
         IF NOT FOUND THEN
             RETURN FALSE;
         END IF;
@@ -99,7 +99,7 @@ DECLARE
 BEGIN
     FOREACH uuid IN ARRAY uuid_array
     LOOP
-        PERFORM 1 FROM attendees WHERE id = uuid;
+        PERFORM FROM attendees WHERE id = uuid;
         IF NOT FOUND THEN
             RETURN FALSE;
         END IF;

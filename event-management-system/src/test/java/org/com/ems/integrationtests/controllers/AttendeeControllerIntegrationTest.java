@@ -11,7 +11,7 @@ import java.util.UUID;
 
 import org.com.ems.EventManagementSystemApplication;
 import org.com.ems.api.dto.AttendeeDto;
-import org.com.ems.util.DbConfiguration;
+import org.com.ems.util.TestConfiguration;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -29,7 +29,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 @TestMethodOrder(OrderAnnotation.class)
 @SpringBootTest(classes = { EventManagementSystemApplication.class,
-	DbConfiguration.class }, webEnvironment = WebEnvironment.RANDOM_PORT)
+	TestConfiguration.class }, webEnvironment = WebEnvironment.RANDOM_PORT)
 @ActiveProfiles("integration-tests")
 public class AttendeeControllerIntegrationTest {
 
@@ -54,7 +54,6 @@ public class AttendeeControllerIntegrationTest {
 	final ResponseEntity<AttendeeDto> responseEntity = this.restTemplate
 		.postForEntity(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT, dto, AttendeeDto.class);
 
-	System.out.println(responseEntity);
 	assertEquals(201, responseEntity.getStatusCode().value());
 
 	final AttendeeDto actualEntity = responseEntity.getBody();
@@ -63,7 +62,7 @@ public class AttendeeControllerIntegrationTest {
 	assertNotNull(actualEntity.lastUpdated());
 	assertEquals(firstName, actualEntity.firstName());
 	assertEquals(lastName, actualEntity.lastName());
-	assertNull(actualEntity.ticketIDs());
+	assertTrue(actualEntity.ticketIDs().isEmpty());
 
     }
 
@@ -130,8 +129,6 @@ public class AttendeeControllerIntegrationTest {
 	@SuppressWarnings("rawtypes")
 	final ResponseEntity<Collection> responseEntity = this.restTemplate
 		.getForEntity(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT, Collection.class);
-
-	System.out.println(responseEntity);
 
 	assertEquals(3, responseEntity.getBody().size());
 

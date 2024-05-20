@@ -1,9 +1,9 @@
 CREATE TABLE IF NOT EXISTS organizers (
-  id UUID ,
+  id UUID PRIMARY KEY,
   last_updated TIMESTAMP NOT NULL,
-  name VARCHAR UNIQUE NOT NULL,
+  denomination VARCHAR UNIQUE NOT NULL,
   website VARCHAR,
-  description VARCHAR NOT NULL,
+  information VARCHAR NOT NULL,
   event_types VARCHAR ARRAY NOT NULL,
   email VARCHAR NOT NULL,
   phone_number VARCHAR NOT NULL,
@@ -11,9 +11,9 @@ CREATE TABLE IF NOT EXISTS organizers (
 );
 
 CREATE TABLE IF NOT EXISTS sponsors (
-  id UUID ,
+  id UUID PRIMARY KEY,
   last_updated TIMESTAMP NOT NULL,
-  name VARCHAR UNIQUE NOT NULL,
+  denomination VARCHAR UNIQUE NOT NULL,
   website VARCHAR NOT NULL,
   financial_contribution INTEGER,
   email VARCHAR NOT NULL,
@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS sponsors (
 );
 
 CREATE TABLE IF NOT EXISTS attendees (
-  id UUID ,
+  id UUID PRIMARY KEY,
   last_updated TIMESTAMP NOT NULL,
   first_name VARCHAR NOT NULL,
   last_name VARCHAR NOT NULL,
@@ -30,9 +30,9 @@ CREATE TABLE IF NOT EXISTS attendees (
 );
 
 CREATE TABLE IF NOT EXISTS events (
-  id UUID ,
+  id UUID PRIMARY KEY,
   last_updated TIMESTAMP NOT NULL,
-  name VARCHAR NOT NULL,
+  denomination VARCHAR NOT NULL,
   place VARCHAR NOT NULL,
   event_type VARCHAR NOT NULL,
   attendee_id UUID ARRAY NOT NULL,
@@ -44,7 +44,7 @@ CREATE TABLE IF NOT EXISTS events (
 );
 
 CREATE TABLE IF NOT EXISTS tickets (
-  id UUID ,
+  id UUID PRIMARY KEY,
   last_updated TIMESTAMP NOT NULL,
   event_id UUID NOT NULL,
   ticket_type VARCHAR NOT NULL,
@@ -53,14 +53,6 @@ CREATE TABLE IF NOT EXISTS tickets (
   seat VARCHAR NOT NULL,
   section VARCHAR NOT NULL
 );
-
- ALTER TABLE attendees
-    ADD FOREIGN KEY (ticket_ids) 
-    REFERENCES tickets(id);
-
-ALTER TABLE events
-    ADD FOREIGN KEY (attendee_id) 
-    REFERENCES tickets(id);
 
 ALTER TABLE events
     ADD FOREIGN KEY (organizer_id) 
@@ -73,13 +65,3 @@ ALTER TABLE events
 ALTER TABLE tickets
     ADD FOREIGN KEY (event_id) 
     REFERENCES events(id);
-
---ALTER TABLE attendees ADD CONSTRAINT ticket_ids FOREIGN KEY(ticket_ids) REFERENCES ticket(id) NOCHECK;
-
---ALTER TABLE events ADD CONSTRAINT attendee_id FOREIGN KEY(attendee_id) REFERENCES attendee(id) NOCHECK;
-
---ALTER TABLE events ADD CONSTRAINT organizer_id FOREIGN KEY(organizer_id) REFERENCES organizer(id) NOCHECK;
-
---ALTER TABLE events ADD CONSTRAINT sponsor_id FOREIGN KEY(sponsor_id) REFERENCES sponsor(id) NOCHECK;
-
---ALTER TABLE tickets ADD CONSTRAINT event_id FOREIGN KEY(event_id) REFERENCES event_t(id) NOCHECK;

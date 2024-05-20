@@ -32,8 +32,6 @@ public class OrganizerRowMapper implements RowMapper<Organizer> {
 			    final int rowNum)
 	    throws SQLException {
 
-	System.out.println(rs.getArray("event_types"));
-
 	final List<EventType> listOfEventTypes = this.arrayToListOfEventTypes.apply(rs.getArray("event_types"));
 
 	final ContactInformation contactInformation = new ContactInformation(rs.getString("email"),

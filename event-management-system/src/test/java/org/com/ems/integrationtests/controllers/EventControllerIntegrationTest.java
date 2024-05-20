@@ -14,6 +14,7 @@ import java.util.UUID;
 import org.com.ems.EventManagementSystemApplication;
 import org.com.ems.api.domainobjects.EventType;
 import org.com.ems.api.dto.EventDto;
+import org.com.ems.util.TestConfiguration;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -27,9 +28,12 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.ActiveProfiles;
 
 @TestMethodOrder(OrderAnnotation.class)
-@SpringBootTest(classes = EventManagementSystemApplication.class, webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = { EventManagementSystemApplication.class,
+	TestConfiguration.class }, webEnvironment = WebEnvironment.RANDOM_PORT)
+@ActiveProfiles("integration-tests")
 class EventControllerIntegrationTest {
 
     private static final String HOSTNAME = "http://localhost";
@@ -59,12 +63,8 @@ class EventControllerIntegrationTest {
 	final EventDto dto = new EventDto(null, null, name, place, eventType, List.of(attendeeId), organizerId,
 		limitOfPeople, sponsorId, localDateTime, duration);
 
-	System.out.println(this.restTemplate);
-
 	final ResponseEntity<EventDto> responseEntity = this.restTemplate
 		.postForEntity(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT, dto, EventDto.class);
-
-	System.out.println(responseEntity);
 
 	assertEquals(201, responseEntity.getStatusCode().value());
 
