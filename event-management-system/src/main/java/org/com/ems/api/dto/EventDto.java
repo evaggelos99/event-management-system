@@ -20,9 +20,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
  *
  * @author Evangelos Georgiou
  */
-public record EventDto(@Schema(description = "The UUID of the Attendee") UUID uuid, //
+public record EventDto(@Schema(hidden = true, description = "The UUID of the Attendee") UUID uuid, //
 	@Schema(hidden = true) Timestamp lastUpdated, //
-	@Schema(example = "Wedding of Maria and Andreas", description = "Name of the Event") String name, //
+	@Schema(example = "Wedding of Maria and Andreas", description = "Name of the Event") String denomination, //
 	@Schema(example = "Place of Interest", description = "The place of the Event") String place, //
 	@Schema(example = "WEDDING", description = "The type of the Event") EventType eventType, //
 	@Schema(description = "The list of attendees") List<UUID> attendeesIds, //

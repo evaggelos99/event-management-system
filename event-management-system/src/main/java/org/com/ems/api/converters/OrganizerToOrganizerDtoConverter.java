@@ -15,8 +15,8 @@ public class OrganizerToOrganizerDtoConverter implements Function<Organizer, Org
     public OrganizerDto apply(final Organizer organizer) {
 
 	return new OrganizerDto(organizer.getUuid(), this.convertToTimeStamp(organizer.getLastUpdated()),
-		organizer.getName(), organizer.getWebsite(), organizer.getDescription(), organizer.getEventTypes(),
-		organizer.getContactInformation());
+		organizer.getDenomination(), organizer.getWebsite(), organizer.getInformation(),
+		organizer.getEventTypes(), organizer.getContactInformation());
 
     }
 

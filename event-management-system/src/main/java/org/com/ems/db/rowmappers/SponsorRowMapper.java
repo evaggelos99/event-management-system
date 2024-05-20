@@ -17,14 +17,12 @@ public class SponsorRowMapper implements RowMapper<Sponsor> {
 			  final int rowNum)
 	    throws SQLException {
 
-	final ContactInformation contactInformation = rs.getString("email") != null ? // all of them must not be null
-										      // but check just one
-		new ContactInformation(rs.getString("email"), rs.getString("phone_number"),
-			rs.getString("physical_address"))
-		: null;
+	final ContactInformation contactInformation = new ContactInformation(rs.getString("email"),
+		rs.getString("phone_number"), rs.getString("physical_address"));
 
-	return new Sponsor(UUID.fromString(rs.getString("uuid")), rs.getTimestamp("last_updated").toInstant(),
-		rs.getString("name"), rs.getString("website"), rs.getInt("financial_contribution"), contactInformation);
+	return new Sponsor(UUID.fromString(rs.getString("id")), rs.getTimestamp("last_updated").toInstant(),
+		rs.getString("denomination"), rs.getString("website"), rs.getInt("financial_contribution"),
+		contactInformation);
 
     }
 

@@ -16,16 +16,12 @@ import jakarta.validation.constraints.NotNull;
  *
  * @author Evangelos Georgiou
  */
-//@Entity
 public class Attendee extends AbstractDomainObject {
 
     @NotNull
-//    @Column(name = "firstName", unique = false, nullable = false, insertable = true, updatable = true)
     private String firstName;
     @NotNull
-//    @Column(name = "lastName", unique = false, nullable = false, insertable = true, updatable = true)
     private String lastName;
-    // OneToMany
     private List<UUID> ticketIDs;
 
     public Attendee(final UUID uuid,

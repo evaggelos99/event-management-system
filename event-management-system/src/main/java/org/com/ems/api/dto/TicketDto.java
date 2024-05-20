@@ -14,7 +14,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * @author Evangelos Georgiou
  */
 
-public record TicketDto(@Schema(description = "The UUID of the Attendee") UUID uuid,
+public record TicketDto(@Schema(hidden = true, description = "The UUID of the Attendee") UUID uuid,
 	@Schema(hidden = true) Timestamp lastUpdated,
 	@Schema(example = "61ee465a-f3d8-400a-8ae4-5e806b3eba92", description = "The uuid of the event") UUID eventID,
 	@Schema(description = "What kind of ticket type it is") TicketType ticketType,

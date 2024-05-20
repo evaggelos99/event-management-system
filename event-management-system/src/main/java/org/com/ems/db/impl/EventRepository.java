@@ -89,10 +89,10 @@ public class EventRepository implements IEventRepository {
 
 	if (deleted) {
 
-	    LOGGER.trace("Deleted an event with uuid: " + uuid);
+	    LOGGER.trace("Deleted an Event with uuid: " + uuid);
 	} else {
 
-	    LOGGER.trace("Could not delete event with uuid: " + uuid);
+	    LOGGER.trace("Could not delete Event with uuid: " + uuid);
 	}
 
 	return deleted;
@@ -117,10 +117,36 @@ public class EventRepository implements IEventRepository {
     @Override
     public Event edit(final EventDto eventDto) {
 
-	final Event event = this.edit(eventDto);
+	final Event event = this.editEvent(eventDto);
 
-	LOGGER.trace("Saved an Event: " + event);
+	LOGGER.trace("Edited an Event: " + event);
 	return event;
+
+    }
+
+    private Event editEvent(final EventDto dto) {
+
+	final UUID eventUuid = dto.uuid();
+	final Timestamp timestamp = Timestamp.from(Instant.now());
+	final String name = dto.denomination();
+	final String place = dto.place();
+	final EventType eventType = dto.eventType();
+	final List<UUID> attendeesIDs = dto.attendeesIds();
+	final UUID organizerId = dto.organizerId();
+	final Integer limitOfPeople = dto.limitOfPeople();
+	final UUID sponsorId = dto.sponsorId();
+	final LocalDateTime startTimeOfEvent = dto.startTimeOfEvent();
+	final Duration duration = dto.duration();
+	final PGInterval interval = this.convertInterval(duration);
+
+	final UUID[] uuidsOfAttendees = this.convertToArray(attendeesIDs);
+
+	this.jdbcTemplate.update(this.eventQueriesProperties.getProperty(CrudQueriesOperations.EDIT.name()), eventUuid,
+		timestamp, name, place, eventType.name(), uuidsOfAttendees, organizerId, limitOfPeople, sponsorId,
+		startTimeOfEvent, interval);
+
+	return this.eventDtoToEventConverter.apply(new EventDto(eventUuid, timestamp, name, place, eventType,
+		attendeesIDs, organizerId, limitOfPeople, sponsorId, startTimeOfEvent, duration));
 
     }
 
@@ -128,36 +154,41 @@ public class EventRepository implements IEventRepository {
 
 	final UUID eventUuid = dto.uuid();
 	final Timestamp timestamp = Timestamp.from(Instant.now());
-	final String name = dto.name();
+	final String name = dto.denomination();
 	final String place = dto.place();
 	final EventType eventType = dto.eventType();
 	final List<UUID> attendeesIDs = dto.attendeesIds();
-	final UUID organizerIds = dto.organizerId();
+	final UUID organizerId = dto.organizerId();
 	final Integer limitOfPeople = dto.limitOfPeople();
 	final UUID sponsorId = dto.sponsorId();
 	final LocalDateTime startTimeOfEvent = dto.startTimeOfEvent();
 	final Duration duration = dto.duration();
 	final PGInterval interval = this.convertInterval(duration);
 
-	final UUID[] uuidsOfAttendees = attendeesIDs != null ? this.convertToArray(attendeesIDs) : new UUID[] {};
+	final UUID[] uuidsOfAttendees = this.convertToArray(attendeesIDs);
 	final UUID uuid = eventUuid != null ? eventUuid : UUID.randomUUID();
 
 	this.jdbcTemplate.update(this.eventQueriesProperties.getProperty(CrudQueriesOperations.SAVE.name()), uuid,
-		timestamp, name, place, eventType.name(), uuidsOfAttendees, organizerIds, limitOfPeople, sponsorId,
+		timestamp, name, place, eventType.name(), uuidsOfAttendees, organizerId, limitOfPeople, sponsorId,
 		startTimeOfEvent, interval);
 
 	return this.eventDtoToEventConverter.apply(new EventDto(uuid, timestamp, name, place, eventType, attendeesIDs,
-		organizerIds, limitOfPeople, sponsorId, startTimeOfEvent, duration));
+		organizerId, limitOfPeople, sponsorId, startTimeOfEvent, duration));
 
     }
 
     private PGInterval convertInterval(final Duration duration) {
 
-	return new PGInterval(0, 0, 0, (int) duration.toHours(), (int) duration.toMinutes(), duration.getSeconds());
+	return new PGInterval(0, 0, 0, 0, 0, duration.getSeconds());
 
     }
 
     private UUID[] convertToArray(final List<UUID> ticketIds) {
+
+	if (null == ticketIds) {
+
+	    return new UUID[] {};
+	}
 
 	final UUID[] uuids = new UUID[ticketIds.size()];
 

@@ -15,7 +15,8 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 /**
- * TODO must complete
+ * TODO Extract stuff from the message exceptions, suppressed exceptions and the
+ * and make the messages more readable
  *
  * @author Evangelos Georgiou
  *
@@ -30,6 +31,8 @@ public class PostgresExceptionHandler {
 
 	final Map<String, Object> errorResponse = new HashMap<>();
 
+	errorResponse.put("message", exc.getMessage());
+
 	return new ResponseEntity<>(errorResponse, new HttpHeaders(), 500);
 
     }
@@ -41,11 +44,11 @@ public class PostgresExceptionHandler {
 
 	errorResponse.put("message", "The uuid key that was provided already exists.");
 	errorResponse.put("timeStamp", Instant.now());
-	errorResponse.put("status", 500);
+	errorResponse.put("status", 409);
 
 	LOGGER.trace("Duplicate key found: ", exc);
 
-	return new ResponseEntity<>(errorResponse, new HttpHeaders(), 500);
+	return new ResponseEntity<>(errorResponse, new HttpHeaders(), 409);
 
     }
 
@@ -54,6 +57,7 @@ public class PostgresExceptionHandler {
 	    Map<String, Object>> handleDataIntegrityViolationException(final DataIntegrityViolationException exc) {
 
 	final Map<String, Object> errorResponse = new HashMap<>();
+	System.out.println(exc);
 
 	errorResponse.put("message", exc.getMessage());
 	errorResponse.put("timeStamp", Instant.now());

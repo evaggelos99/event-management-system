@@ -19,7 +19,7 @@ import jakarta.validation.constraints.NotNull;
 public class Sponsor extends AbstractDomainObject {
 
     @NotNull
-    private String name;
+    private String denomination;
     @NotNull
     private String website;
     @NotNull
@@ -30,13 +30,13 @@ public class Sponsor extends AbstractDomainObject {
 
     public Sponsor(final UUID uuid,
 		   final Instant lastUpdated,
-		   @NotNull final String name,
+		   @NotNull final String denomination,
 		   @NotNull final String website,
 		   @NotNull @NotNegative final Integer financialContribution,
 		   @NotNull final ContactInformation contactInformation) {
 
 	super(uuid, lastUpdated);
-	this.name = name;
+	this.denomination = denomination;
 	this.website = website;
 	this.financialContribution = financialContribution;
 	this.contactInformation = contactInformation;
@@ -47,9 +47,9 @@ public class Sponsor extends AbstractDomainObject {
 
     }
 
-    public String getName() {
+    public String getDenomination() {
 
-	return this.name;
+	return this.denomination;
 
     }
 
@@ -81,7 +81,7 @@ public class Sponsor extends AbstractDomainObject {
 
 	final Sponsor that = (Sponsor) o;
 
-	return new EqualsBuilder().appendSuper(super.equals(that)).append(this.name, that.name)
+	return new EqualsBuilder().appendSuper(super.equals(that)).append(this.denomination, that.denomination)
 		.append(this.website, that.website).append(this.financialContribution, that.financialContribution)
 		.append(this.contactInformation, that.contactInformation).build();
 
@@ -90,7 +90,7 @@ public class Sponsor extends AbstractDomainObject {
     @Override
     public int hashCode() {
 
-	return new HashCodeBuilder(17, 37).appendSuper(super.hashCode()).append(this.name).append(this.website)
+	return new HashCodeBuilder(17, 37).appendSuper(super.hashCode()).append(this.denomination).append(this.website)
 		.append(this.financialContribution).append(this.contactInformation).build();
 
     }
@@ -99,7 +99,7 @@ public class Sponsor extends AbstractDomainObject {
     public String toString() {
 
 	return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).appendSuper(super.toString())
-		.append("name", this.name).append("website", this.website)
+		.append("denomination", this.denomination).append("website", this.website)
 		.append("financialContribution", this.financialContribution)
 		.append("contactInformation", this.contactInformation).toString();
 

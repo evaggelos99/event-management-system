@@ -60,7 +60,7 @@ class SponsorControllerIntegrationTest {
 
 	assertNotNull(actualEntity.uuid());
 	assertNotNull(actualEntity.lastUpdated());
-	assertEquals(name, actualEntity.name());
+	assertEquals(name, actualEntity.denomination());
 	assertEquals(contantInfo, actualEntity.contactInformation());
 	assertEquals(website, actualEntity.website());
 	assertEquals(financialContribution, actualEntity.financialContribution());
@@ -98,7 +98,7 @@ class SponsorControllerIntegrationTest {
 
 	assertEquals(entityDto.uuid(), actualEntity.uuid());
 	assertTrue(actualEntity.lastUpdated().after(entityDto.lastUpdated()));
-	assertEquals(name, actualEntity.name());
+	assertEquals(name, actualEntity.denomination());
 	assertEquals(contantInfo, actualEntity.contactInformation());
 	assertEquals(website, actualEntity.website());
 	assertEquals(financialContribution, actualEntity.financialContribution());

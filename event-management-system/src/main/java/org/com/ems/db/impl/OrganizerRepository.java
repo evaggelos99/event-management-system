@@ -53,22 +53,22 @@ public class OrganizerRepository implements IOrganizerRepository {
     @Override
     public Organizer save(final OrganizerDto organizerDto) {
 
-	final Organizer attendee = this.saveOrganizer(organizerDto);
+	final Organizer organizer = this.saveOrganizer(organizerDto);
 
-	LOGGER.trace("Saved an Organizer: " + attendee);
+	LOGGER.trace("Saved an Organizer: " + organizer);
 
-	return attendee;
+	return organizer;
 
     }
 
     @Override
     public Organizer edit(final OrganizerDto organizerDto) {
 
-	final Organizer attendee = this.editOrganizer(organizerDto);
+	final Organizer organizer = this.editOrganizer(organizerDto);
 
-	LOGGER.trace("Saved an Organizer: " + attendee);
+	LOGGER.trace("Edited an Organizer: " + organizer);
 
-	return attendee;
+	return organizer;
 
     }
 
@@ -99,10 +99,10 @@ public class OrganizerRepository implements IOrganizerRepository {
 
 	if (deleted) {
 
-	    LOGGER.trace("Deleted attendee with uuid: " + uuid);
+	    LOGGER.trace("Deleted Organizer with uuid: " + uuid);
 	} else {
 
-	    LOGGER.trace("Could not delete attendee with uuid: " + uuid);
+	    LOGGER.trace("Could not delete Organizer with uuid: " + uuid);
 	}
 
 	return deleted;
@@ -129,14 +129,15 @@ public class OrganizerRepository implements IOrganizerRepository {
 
 	final UUID organizerUuid = organizer.uuid();
 	final Timestamp timestamp = Timestamp.from(Instant.now());
-	final String name = organizer.name();
+	final String name = organizer.denomination();
 	final String website = organizer.website();
-	final String description = organizer.description();
+	final String description = organizer.information();
 	final List<EventType> listOfEventTypes = organizer.eventTypes();
 	final ContactInformation contactInformation = organizer.contactInformation();
-	final String[] eventTypesArray = listOfEventTypes != null ? this.convertToArray(listOfEventTypes)
-		: new String[] {};
+	final String[] eventTypesArray = this.convertToArray(listOfEventTypes);
 	final UUID uuid = organizerUuid != null ? organizerUuid : UUID.randomUUID();
+
+	System.out.println(eventTypesArray);
 
 	this.jdbcTemplate.update(this.organizerQueriesProperties.getProperty(CrudQueriesOperations.SAVE.name()), uuid,
 		timestamp, name, website, description, eventTypesArray, contactInformation.getEmail(),
@@ -151,13 +152,12 @@ public class OrganizerRepository implements IOrganizerRepository {
 
 	final UUID uuid = organizer.uuid();
 	final Timestamp timestamp = Timestamp.from(Instant.now());
-	final String name = organizer.name();
+	final String name = organizer.denomination();
 	final String website = organizer.website();
-	final String description = organizer.description();
+	final String description = organizer.information();
 	final List<EventType> listOfEventTypes = organizer.eventTypes();
 	final ContactInformation contactInformation = organizer.contactInformation();
-	final String[] eventTypesArray = listOfEventTypes != null ? this.convertToArray(listOfEventTypes)
-		: new String[] {};
+	final String[] eventTypesArray = this.convertToArray(listOfEventTypes);
 
 	this.jdbcTemplate.update(this.organizerQueriesProperties.getProperty(CrudQueriesOperations.EDIT.name()), uuid,
 		timestamp, name, website, description, eventTypesArray, contactInformation.getEmail(),
@@ -170,13 +170,18 @@ public class OrganizerRepository implements IOrganizerRepository {
 
     private String[] convertToArray(final List<EventType> ticketIds) {
 
-	final String[] uuids = new String[ticketIds.size()];
+	if (null == ticketIds) {
 
-	for (int i = 0; i < uuids.length; i++) {
-
-	    uuids[i] = ticketIds.get(i).name();
+	    return new String[] {};
 	}
-	return uuids;
+
+	final String[] eventTypesArray = new String[ticketIds.size()];
+
+	for (int i = 0; i < eventTypesArray.length; i++) {
+
+	    eventTypesArray[i] = ticketIds.get(i).name();
+	}
+	return eventTypesArray;
 
     }
 

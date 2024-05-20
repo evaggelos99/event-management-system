@@ -35,7 +35,20 @@ public class EventRowMapper implements RowMapper<Event> {
 
 	final List<UUID> attendees = this.arrayToListOfUuid.apply(rs.getArray("attendee_ids"));
 
-	final PGInterval pgInterval = (PGInterval) rs.getObject("duration");
+	final Duration duration = this.extractDuration((PGInterval) rs.getObject("duration"));
+
+	final String sponsorId = rs.getString("sponsor_id");
+
+	final UUID sponsorUuid = sponsorId != null ? UUID.fromString(sponsorId) : null;
+
+	return new Event(UUID.fromString(rs.getString("id")), rs.getTimestamp("last_updated").toInstant(),
+		rs.getString("denomination"), rs.getString("place"), EventType.valueOf(rs.getString("event_type")),
+		attendees, UUID.fromString(rs.getString("organizer_id")), rs.getInt("limit_of_people"), sponsorUuid,
+		rs.getTimestamp("start_time").toLocalDateTime(), duration);
+
+    }
+
+    private Duration extractDuration(final PGInterval pgInterval) {
 
 	final int hours = pgInterval.getHours();
 	final int mins = pgInterval.getMinutes();
@@ -44,10 +57,7 @@ public class EventRowMapper implements RowMapper<Event> {
 
 	final Duration duration = Duration.ofHours(hours).plusMinutes(mins).plusSeconds((long) seconds).plusMillis(ms);
 
-	return new Event(UUID.fromString(rs.getString("uuid")), rs.getTimestamp("last_updated").toInstant(),
-		rs.getString("name"), rs.getString("place"), EventType.valueOf(rs.getString("event_type")), attendees,
-		UUID.fromString(rs.getString("organizer_id")), rs.getInt("limit_of_people"),
-		UUID.fromString(rs.getString("sponsor_id")), rs.getTimestamp("start_time").toLocalDateTime(), duration);
+	return duration;
 
     }
 

@@ -11,6 +11,7 @@ import java.util.UUID;
 
 import org.com.ems.EventManagementSystemApplication;
 import org.com.ems.api.dto.AttendeeDto;
+import org.com.ems.util.DbConfiguration;
 import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -24,9 +25,12 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.ActiveProfiles;
 
 @TestMethodOrder(OrderAnnotation.class)
-@SpringBootTest(classes = EventManagementSystemApplication.class, webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = { EventManagementSystemApplication.class,
+	DbConfiguration.class }, webEnvironment = WebEnvironment.RANDOM_PORT)
+@ActiveProfiles("integration-tests")
 public class AttendeeControllerIntegrationTest {
 
     private static final String HOSTNAME = "http://localhost";
@@ -45,11 +49,12 @@ public class AttendeeControllerIntegrationTest {
 	final String firstName = "first";
 	final String lastName = "last";
 
-	final AttendeeDto dto = new AttendeeDto(null, null, firstName, lastName, null);
+	final AttendeeDto dto = new AttendeeDto(null, null, firstName, lastName, List.of());
 
 	final ResponseEntity<AttendeeDto> responseEntity = this.restTemplate
 		.postForEntity(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT, dto, AttendeeDto.class);
 
+	System.out.println(responseEntity);
 	assertEquals(201, responseEntity.getStatusCode().value());
 
 	final AttendeeDto actualEntity = responseEntity.getBody();
@@ -125,6 +130,8 @@ public class AttendeeControllerIntegrationTest {
 	@SuppressWarnings("rawtypes")
 	final ResponseEntity<Collection> responseEntity = this.restTemplate
 		.getForEntity(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT, Collection.class);
+
+	System.out.println(responseEntity);
 
 	assertEquals(3, responseEntity.getBody().size());
 

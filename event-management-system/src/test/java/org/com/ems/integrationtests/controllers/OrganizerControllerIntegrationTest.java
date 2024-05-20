@@ -63,10 +63,10 @@ class OrganizerControllerIntegrationTest {
 
 	assertNotNull(actualEntity.uuid());
 	assertNotNull(actualEntity.lastUpdated());
-	assertEquals(name, actualEntity.name());
+	assertEquals(name, actualEntity.denomination());
 	assertEquals(contantInfo, actualEntity.contactInformation());
 	assertEquals(website, actualEntity.website());
-	assertEquals(description, actualEntity.description());
+	assertEquals(description, actualEntity.information());
 
     }
 
@@ -103,11 +103,11 @@ class OrganizerControllerIntegrationTest {
 
 	assertEquals(entityDto.uuid(), actualEntity.uuid());
 	assertTrue(actualEntity.lastUpdated().after(entityDto.lastUpdated()));
-	assertEquals(name + description, actualEntity.name());
+	assertEquals(name + description, actualEntity.denomination());
 	assertEquals(contantInfo, actualEntity.contactInformation());
 	assertEquals(website, actualEntity.website());
 	assertEquals(eventTypes, actualEntity.eventTypes());
-	assertEquals(description + name, actualEntity.description());
+	assertEquals(description + name, actualEntity.information());
 
     }
 

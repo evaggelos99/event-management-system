@@ -72,7 +72,7 @@ class EventControllerIntegrationTest {
 
 	assertNotNull(actualEntity.uuid());
 	assertNotNull(actualEntity.lastUpdated());
-	assertEquals(name, actualEntity.name());
+	assertEquals(name, actualEntity.denomination());
 	assertEquals(place, actualEntity.place());
 	assertEquals(eventType, actualEntity.eventType());
 
@@ -111,7 +111,7 @@ class EventControllerIntegrationTest {
 
 	assertNotNull(actualEntity.uuid());
 	assertNotNull(actualEntity.lastUpdated());
-	assertEquals(name, actualEntity.name());
+	assertEquals(name, actualEntity.denomination());
 	assertEquals(place, actualEntity.place());
 	assertEquals(eventType, actualEntity.eventType());
 
@@ -159,7 +159,7 @@ class EventControllerIntegrationTest {
 
 	assertEquals(entityDto.uuid(), actualEntity.uuid());
 	assertTrue(actualEntity.lastUpdated().after(entityDto.lastUpdated()));
-	assertEquals(name + place, actualEntity.name());
+	assertEquals(name + place, actualEntity.denomination());
 	assertEquals(place + name, actualEntity.place());
 
 	assertEquals(List.of(attendeeId), actualEntity.attendeesIds());

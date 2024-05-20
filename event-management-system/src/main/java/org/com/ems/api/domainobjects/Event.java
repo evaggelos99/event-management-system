@@ -22,7 +22,7 @@ import jakarta.validation.constraints.NotNull;
 public class Event extends AbstractDomainObject {
 
     @NotNull
-    private String name;
+    private String denomination;
     @NotNull
     private String place;
     @NotNull
@@ -45,7 +45,7 @@ public class Event extends AbstractDomainObject {
 
     public Event(final UUID uuid,
 		 final Instant lastUpdated,
-		 @NotNull final String name,
+		 @NotNull final String denomination,
 		 @NotNull final String place,
 		 @NotNull final EventType eventType,
 		 @NotNull final List<UUID> attendeesIds,
@@ -56,7 +56,7 @@ public class Event extends AbstractDomainObject {
 		 @NotNull final Duration duration) {
 
 	super(uuid, lastUpdated);
-	this.name = name;
+	this.denomination = denomination;
 	this.place = place;
 	this.eventType = eventType;
 	this.attendeesIds = attendeesIds;
@@ -72,9 +72,9 @@ public class Event extends AbstractDomainObject {
 
     }
 
-    public String getName() {
+    public String getDenomination() {
 
-	return this.name;
+	return this.denomination;
 
     }
 
@@ -136,7 +136,7 @@ public class Event extends AbstractDomainObject {
 
 	final Event that = (Event) o;
 
-	return new EqualsBuilder().appendSuper(super.equals(that)).append(this.name, that.name)
+	return new EqualsBuilder().appendSuper(super.equals(that)).append(this.denomination, that.denomination)
 		.append(this.place, that.place).append(this.eventType, that.eventType)
 		.append(this.attendeesIds, that.attendeesIds).append(this.organizerId, that.organizerId)
 		.append(this.limitOfPeople, that.limitOfPeople).append(this.sponsorId, that.sponsorId)
@@ -147,7 +147,7 @@ public class Event extends AbstractDomainObject {
     @Override
     public int hashCode() {
 
-	return new HashCodeBuilder(17, 37).appendSuper(super.hashCode()).append(this.name).append(this.place)
+	return new HashCodeBuilder(17, 37).appendSuper(super.hashCode()).append(this.denomination).append(this.place)
 		.append(this.eventType).append(this.attendeesIds).append(this.organizerId).append(this.limitOfPeople)
 		.append(this.sponsorId).append(this.startTime).append(this.duration).build();
 
@@ -157,10 +157,11 @@ public class Event extends AbstractDomainObject {
     public String toString() {
 
 	return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).appendSuper(super.toString())
-		.append("name", this.name).append("place", this.place).append("eventType", this.eventType)
-		.append("attendeesIDs", this.attendeesIds).append("organizerID", this.organizerId)
-		.append("limitOfPeople", this.limitOfPeople).append("sponsorID", this.sponsorId)
-		.append("startTime", this.startTime).append("duration", this.duration).toString();
+		.append("denomination", this.denomination).append("place", this.place)
+		.append("eventType", this.eventType).append("attendeesIDs", this.attendeesIds)
+		.append("organizerID", this.organizerId).append("limitOfPeople", this.limitOfPeople)
+		.append("sponsorID", this.sponsorId).append("startTime", this.startTime)
+		.append("duration", this.duration).toString();
 
     }
 

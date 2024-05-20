@@ -63,7 +63,7 @@ public class SponsorRepository implements ISponsorRepository {
 
 	final Sponsor sponsor = this.editOrganizer(organizerDto);
 
-	LOGGER.trace("Saved an Sponsor: " + sponsor);
+	LOGGER.trace("Edited an Sponsor: " + sponsor);
 
 	return sponsor;
 
@@ -96,10 +96,10 @@ public class SponsorRepository implements ISponsorRepository {
 
 	if (deleted) {
 
-	    LOGGER.trace("Deleted sponsor with uuid: " + uuid);
+	    LOGGER.trace("Deleted Sponsor with uuid: " + uuid);
 	} else {
 
-	    LOGGER.trace("Could not delete sponsor with uuid: " + uuid);
+	    LOGGER.trace("Could not delete Sponsor with uuid: " + uuid);
 	}
 
 	return deleted;
@@ -125,7 +125,7 @@ public class SponsorRepository implements ISponsorRepository {
 
 	final UUID sponsorUuid = sponsor.uuid();
 	final Timestamp timestamp = Timestamp.from(Instant.now());
-	final String name = sponsor.name();
+	final String name = sponsor.denomination();
 	final String website = sponsor.website();
 	final Integer financialContribution = sponsor.financialContribution();
 	final ContactInformation contactInformation = sponsor.contactInformation();
@@ -145,7 +145,7 @@ public class SponsorRepository implements ISponsorRepository {
 
 	final UUID uuid = sponsor.uuid();
 	final Timestamp timestamp = Timestamp.from(Instant.now());
-	final String name = sponsor.name();
+	final String name = sponsor.denomination();
 	final String website = sponsor.website();
 	final Integer financialContribution = sponsor.financialContribution();
 	final ContactInformation contactInformation = sponsor.contactInformation();

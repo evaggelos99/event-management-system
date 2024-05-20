@@ -63,7 +63,7 @@ public class AttendeeRepository implements IAttendeeRepository {
 
 	final Attendee attendee = this.editAttendee(attendeeDto);
 
-	LOGGER.trace("Saved an Attendee: " + attendee);
+	LOGGER.trace("Edited an Attendee: " + attendee);
 
 	return attendee;
 
@@ -75,8 +75,8 @@ public class AttendeeRepository implements IAttendeeRepository {
 	try {
 
 	    final Attendee attendee = this.jdbcTemplate.queryForObject(
-		    this.attendeeQueriesProperties.getProperty(CrudQueriesOperations.GET_ID.name()), this.attendeeRowMapper,
-		    uuid);
+		    this.attendeeQueriesProperties.getProperty(CrudQueriesOperations.GET_ID.name()),
+		    this.attendeeRowMapper, uuid);
 	    return Optional.of(attendee);
 	} catch (final EmptyResultDataAccessException e) {
 

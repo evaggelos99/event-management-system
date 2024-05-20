@@ -75,10 +75,10 @@ public class TicketRepository implements ITicketRepository {
 
 	try {
 
-	    final Ticket sponsor = this.jdbcTemplate.queryForObject(
+	    final Ticket ticket = this.jdbcTemplate.queryForObject(
 		    this.ticketQueriesProperties.getProperty(CrudQueriesOperations.GET_ID.name()), this.ticketRowMapper,
 		    uuid);
-	    return Optional.of(sponsor);
+	    return Optional.of(ticket);
 	} catch (final EmptyResultDataAccessException e) {
 
 	    LOGGER.warn("Ticket with UUID: {} was not found", uuid);
@@ -97,10 +97,10 @@ public class TicketRepository implements ITicketRepository {
 
 	if (deleted) {
 
-	    LOGGER.trace("Deleted sponsor with uuid: " + uuid);
+	    LOGGER.trace("Deleted Ticket with uuid: " + uuid);
 	} else {
 
-	    LOGGER.trace("Could not delete sponsor with uuid: " + uuid);
+	    LOGGER.trace("Could not delete Ticket with uuid: " + uuid);
 	}
 
 	return deleted;

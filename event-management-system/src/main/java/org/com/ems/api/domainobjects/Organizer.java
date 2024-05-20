@@ -22,12 +22,12 @@ public class Organizer extends AbstractDomainObject {
 
     @NotNull
     @NotBlank
-    private String name;
+    private String denomination;
     @NotBlank
     // TODO add regex validation
     private String website;
     @Nullable
-    private String description;
+    private String information;
     @NotNull
     private List<EventType> eventTypes;
     @NotNull
@@ -35,16 +35,16 @@ public class Organizer extends AbstractDomainObject {
 
     public Organizer(final UUID uuid,
 		     final Instant lastUpdated,
-		     @NotNull @NotBlank final String name,
+		     @NotNull @NotBlank final String denomination,
 		     @NotBlank final String website,
 		     final String description,
 		     @NotNull final List<EventType> eventTypes,
 		     @NotNull final ContactInformation contactInformation) {
 
 	super(uuid, lastUpdated);
-	this.name = name;
+	this.denomination = denomination;
 	this.website = website;
-	this.description = description;
+	this.information = description;
 	this.eventTypes = eventTypes;
 	this.contactInformation = contactInformation;
 
@@ -54,9 +54,9 @@ public class Organizer extends AbstractDomainObject {
 
     }
 
-    public String getName() {
+    public String getDenomination() {
 
-	return this.name;
+	return this.denomination;
 
     }
 
@@ -66,9 +66,9 @@ public class Organizer extends AbstractDomainObject {
 
     }
 
-    public String getDescription() {
+    public String getInformation() {
 
-	return this.description;
+	return this.information;
 
     }
 
@@ -94,8 +94,8 @@ public class Organizer extends AbstractDomainObject {
 
 	final Organizer that = (Organizer) o;
 
-	return new EqualsBuilder().appendSuper(super.equals(that)).append(this.name, that.name)
-		.append(this.website, that.website).append(this.description, that.description)
+	return new EqualsBuilder().appendSuper(super.equals(that)).append(this.denomination, that.denomination)
+		.append(this.website, that.website).append(this.information, that.information)
 		.append(this.eventTypes, that.eventTypes).append(this.contactInformation, that.contactInformation)
 		.build();
 
@@ -104,8 +104,8 @@ public class Organizer extends AbstractDomainObject {
     @Override
     public int hashCode() {
 
-	return new HashCodeBuilder(17, 37).appendSuper(super.hashCode()).append(this.name).append(this.website)
-		.append(this.description).append(this.eventTypes).append(this.contactInformation).build();
+	return new HashCodeBuilder(17, 37).appendSuper(super.hashCode()).append(this.denomination).append(this.website)
+		.append(this.information).append(this.eventTypes).append(this.contactInformation).build();
 
     }
 
@@ -113,8 +113,9 @@ public class Organizer extends AbstractDomainObject {
     public String toString() {
 
 	return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).appendSuper(super.toString())
-		.append("name", this.name).append("website", this.website).append("description", this.description)
-		.append("eventTypes", this.eventTypes).append("contactInformation", this.contactInformation).toString();
+		.append("denomination", this.denomination).append("website", this.website)
+		.append("information", this.information).append("eventTypes", this.eventTypes)
+		.append("contactInformation", this.contactInformation).toString();
 
     }
 

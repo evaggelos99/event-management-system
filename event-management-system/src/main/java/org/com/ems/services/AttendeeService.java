@@ -11,6 +11,11 @@ import org.com.ems.db.IAttendeeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ *
+ * @author Evangelos Georgiou
+ *
+ */
 @Service
 public class AttendeeService implements IService<Attendee, AttendeeDto> {
 
