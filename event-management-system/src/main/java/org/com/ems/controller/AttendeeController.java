@@ -59,6 +59,7 @@ public class AttendeeController implements IAttendeeController {
     public ResponseEntity<AttendeeDto> postAttendee(final AttendeeDto attendeeDto) {
 
 	final Attendee attendee = this.attendeeService.add(attendeeDto);
+
 	final AttendeeDto newDto = this.attendeeToAttendeeDtoConverter.apply(attendee);
 
 	try {

@@ -51,7 +51,6 @@ public class AttendeeRepository implements IAttendeeRepository {
     public Attendee save(final AttendeeDto attendeeDto) {
 
 	final Attendee attendee = this.saveAttendee(attendeeDto);
-
 	LOGGER.trace("Saved an Attendee: " + attendee);
 
 	return attendee;
@@ -124,11 +123,11 @@ public class AttendeeRepository implements IAttendeeRepository {
     private Attendee saveAttendee(final AttendeeDto attendee) {
 
 	final UUID attendeeUuid = attendee.uuid();
-	final List<UUID> ticketIds = attendee.ticketIDs();
 	final Timestamp timestamp = Timestamp.from(Instant.now());
+	final List<UUID> ticketIds = attendee.ticketIDs() != null ? attendee.ticketIDs() : List.of();
 	final String firstName = attendee.firstName();
 	final String lastName = attendee.lastName();
-	final UUID[] uuids = ticketIds != null ? this.convertToArray(ticketIds) : new UUID[] {};
+	final UUID[] uuids = this.convertToArray(ticketIds);
 	final UUID uuid = attendeeUuid != null ? attendeeUuid : UUID.randomUUID();
 
 	this.jdbcTemplate.update(this.attendeeQueriesProperties.getProperty(CrudQueriesOperations.SAVE.name()), uuid,
@@ -142,11 +141,11 @@ public class AttendeeRepository implements IAttendeeRepository {
     private Attendee editAttendee(final AttendeeDto attendee) {
 
 	final UUID uuid = attendee.uuid();
-	final List<UUID> ticketIds = attendee.ticketIDs();
 	final Timestamp timestamp = Timestamp.from(Instant.now());
+	final List<UUID> ticketIds = attendee.ticketIDs() != null ? attendee.ticketIDs() : List.of();
 	final String firstName = attendee.firstName();
 	final String lastName = attendee.lastName();
-	final UUID[] uuids = ticketIds != null ? this.convertToArray(ticketIds) : new UUID[] {};
+	final UUID[] uuids = this.convertToArray(ticketIds);
 
 	this.jdbcTemplate.update(this.attendeeQueriesProperties.getProperty(CrudQueriesOperations.EDIT.name()), uuid,
 		timestamp, firstName, lastName, uuids, uuid);
@@ -157,6 +156,11 @@ public class AttendeeRepository implements IAttendeeRepository {
     }
 
     private UUID[] convertToArray(final List<UUID> ticketIds) {
+
+	if (null == ticketIds) {
+
+	    return new UUID[] {};
+	}
 
 	final UUID[] uuids = new UUID[ticketIds.size()];
 

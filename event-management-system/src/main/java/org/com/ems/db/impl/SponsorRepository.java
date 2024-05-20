@@ -152,7 +152,7 @@ public class SponsorRepository implements ISponsorRepository {
 
 	this.jdbcTemplate.update(this.sponsorQueriesProperties.getProperty(CrudQueriesOperations.EDIT.name()), uuid,
 		timestamp, name, website, financialContribution, contactInformation.getEmail(),
-		contactInformation.getPhoneNumber(), contactInformation.getPhysicalAddress());
+		contactInformation.getPhoneNumber(), contactInformation.getPhysicalAddress(), uuid);
 
 	return this.sponsDtoToSponsorConverter
 		.apply(new SponsorDto(uuid, timestamp, name, website, financialContribution, contactInformation));

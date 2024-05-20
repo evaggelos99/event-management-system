@@ -159,7 +159,7 @@ public class OrganizerRepository implements IOrganizerRepository {
 
 	this.jdbcTemplate.update(this.organizerQueriesProperties.getProperty(CrudQueriesOperations.EDIT.name()), uuid,
 		timestamp, name, website, description, eventTypesArray, contactInformation.getEmail(),
-		contactInformation.getPhoneNumber(), contactInformation.getPhysicalAddress());
+		contactInformation.getPhoneNumber(), contactInformation.getPhysicalAddress(), uuid);
 
 	return this.organizerDtoToOrganizerConverter.apply(
 		new OrganizerDto(uuid, timestamp, name, website, description, listOfEventTypes, contactInformation));

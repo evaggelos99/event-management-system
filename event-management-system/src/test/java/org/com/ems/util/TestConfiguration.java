@@ -12,6 +12,7 @@ import javax.sql.DataSource;
 
 import org.com.ems.api.domainobjects.Event;
 import org.com.ems.api.domainobjects.EventType;
+import org.com.ems.db.rowmappers.EventRowMapper;
 import org.h2.api.Interval;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -66,6 +67,11 @@ public class TestConfiguration {
 
     }
 
+    /**
+     * Overriding {@link EventRowMapper} because of casting of Arrays
+     *
+     * @return the row mapper
+     */
     @Bean
     @Profile("integration-tests")
     RowMapper<Event> eventRowMapper() {
@@ -86,6 +92,51 @@ public class TestConfiguration {
 		    attendees, UUID.fromString(rs.getString("organizer_id")), rs.getInt("limit_of_people"), sponsorUuid,
 		    rs.getTimestamp("start_time").toLocalDateTime(), duration);
 	};
+
+    }
+
+    /**
+     * Used for the H2 database
+     *
+     * @return function that cast into Object[] instead of UUID[]
+     */
+    @Bean
+    @Profile("integration-tests")
+    Function<Array, List<EventType>> arrayToListOfEventTypes() {
+
+	return array -> {
+
+	    final List<EventType> list = new LinkedList<>();
+
+	    try {
+
+		for (final Object eventType : (Object[]) array.getArray()) {
+
+		    list.add(EventType.valueOf((String) eventType));
+
+		}
+
+	    } catch (final SQLException e) {
+
+	    } catch (final ClassCastException cce) {
+
+	    }
+
+	    return list;
+	};
+
+    }
+
+    /**
+     * Used for the H2 database
+     *
+     * @return function that returns the java object duration instead of interval
+     */
+    @Bean
+    @Profile("integration-tests")
+    Function<Duration, Object> durationToIntervalConverter() {
+
+	return x -> x;
 
     }
 

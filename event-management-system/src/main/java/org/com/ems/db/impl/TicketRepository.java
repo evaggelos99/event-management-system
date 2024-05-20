@@ -155,7 +155,7 @@ public class TicketRepository implements ITicketRepository {
 
 	this.jdbcTemplate.update(this.ticketQueriesProperties.getProperty(CrudQueriesOperations.EDIT.name()), uuid,
 		timestamp, eventId, ticketType.name(), price, isTransferable, seatInformation.getSeat(),
-		seatInformation.getSection());
+		seatInformation.getSection(), uuid);
 
 	return this.ticketDtoToTicketConverter
 		.apply(new TicketDto(uuid, timestamp, eventId, ticketType, price, isTransferable, seatInformation));
