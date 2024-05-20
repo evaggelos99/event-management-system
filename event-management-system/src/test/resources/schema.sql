@@ -35,7 +35,7 @@ CREATE TABLE IF NOT EXISTS events (
   denomination VARCHAR NOT NULL,
   place VARCHAR NOT NULL,
   event_type VARCHAR NOT NULL,
-  attendee_id UUID ARRAY NOT NULL,
+  attendee_ids UUID ARRAY NOT NULL,
   organizer_id UUID NOT NULL,
   limit_of_people INTEGER NOT NULL,
   sponsor_id UUID,

@@ -11,7 +11,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 /**
@@ -21,7 +20,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
  * @author Evangelos Georgiou
  *
  */
-@ControllerAdvice
+//@ControllerAdvice
 public class PostgresExceptionHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PostgresExceptionHandler.class);

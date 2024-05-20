@@ -130,7 +130,7 @@ public class AttendeeControllerIntegrationTest {
 	final ResponseEntity<Collection> responseEntity = this.restTemplate
 		.getForEntity(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT, Collection.class);
 
-	assertEquals(3, responseEntity.getBody().size());
+	assertEquals(4, responseEntity.getBody().size());
 
     }
 
