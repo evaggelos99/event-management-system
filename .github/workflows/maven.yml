@@ -43,8 +43,6 @@ jobs:
          args: >
             -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION_KEY }}
             -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
-            -Dsonar.sources=**/src/main/java/
             -Dsonar.language=java
-            -Dsonar.java.binaries=**/target/classes 
       env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
