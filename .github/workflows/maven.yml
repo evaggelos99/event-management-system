@@ -45,6 +45,7 @@ jobs:
             -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
             -Dsonar.sources=event-management-system/src/main/java/
             -Dsonar.tests=event-management-system/src/test/java/
+            -Dsonar.exclusions=event-management-system/target/**/.java
             -Dsonar.language=java
       env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
