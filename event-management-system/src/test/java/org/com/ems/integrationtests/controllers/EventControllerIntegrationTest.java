@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.Collection;
 import java.util.List;
 import java.util.UUID;
@@ -213,7 +214,9 @@ class EventControllerIntegrationTest {
 	final UUID attendeeId = SqlDataStorage.ATTENDEE_ID;
 	final UUID organizerId = SqlDataStorage.ORGANIZER_ID;
 	final UUID sponsorId = SqlDataStorage.SPONSOR_ID;
-	final LocalDateTime localDateTime = LocalDateTime.now();
+	final LocalDateTime localDateTime = LocalDateTime.now().truncatedTo(ChronoUnit.SECONDS); // work around because
+												 // entity returns a
+												 // less precise version
 	final Duration duration = Duration.ZERO;
 	final int limitOfPeople = 1000;
 
@@ -231,6 +234,8 @@ class EventControllerIntegrationTest {
 		HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + actualEventDto.uuid(), EventDto.class);
 
 	assertEquals(actualEventDto, getEntity.getBody());
+	System.out.println(actualEventDto);
+	System.out.println(getEntity.getBody());
 
     }
 
