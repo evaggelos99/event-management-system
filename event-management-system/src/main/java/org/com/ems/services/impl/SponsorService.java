@@ -1,5 +1,7 @@
 package org.com.ems.services.impl;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.Collection;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -8,6 +10,7 @@ import java.util.UUID;
 import org.com.ems.api.domainobjects.Sponsor;
 import org.com.ems.api.dto.SponsorDto;
 import org.com.ems.db.ISponsorRepository;
+import org.com.ems.db.impl.SponsorRepository;
 import org.com.ems.services.api.IService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,9 +20,15 @@ public class SponsorService implements IService<Sponsor, SponsorDto> {
 
     private final ISponsorRepository sponsorRepository;
 
+    /**
+     * C-or
+     *
+     * @param organizerRepository {@link SponsorRepository} the repository that
+     *                            communicates with the database
+     */
     public SponsorService(@Autowired final ISponsorRepository sponsorRepository) {
 
-	this.sponsorRepository = sponsorRepository;
+	this.sponsorRepository = requireNonNull(sponsorRepository);
 
     }
 

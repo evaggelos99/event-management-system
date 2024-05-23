@@ -4,11 +4,11 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface IService<T, T_DTO> {
+public interface IService<T, T_DTO> extends ILookUpService<T> {
 
-    // TODO throw exception when not available
     T add(T_DTO object);
 
+    @Override
     Optional<T> get(UUID uuid);
 
     void delete(UUID uuid);

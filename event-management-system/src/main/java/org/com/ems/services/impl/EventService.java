@@ -1,5 +1,7 @@
 package org.com.ems.services.impl;
 
+import static java.util.Objects.requireNonNull;
+
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -8,11 +10,13 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Function;
 
+import org.com.ems.api.converters.EventToEventDtoConverter;
 import org.com.ems.api.domainobjects.Event;
 import org.com.ems.api.dto.AttendeeDto;
 import org.com.ems.api.dto.EventDto;
 import org.com.ems.controller.exceptions.ObjectNotFoundException;
 import org.com.ems.db.IEventRepository;
+import org.com.ems.db.impl.EventRepository;
 import org.com.ems.services.api.IEventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -24,12 +28,20 @@ public class EventService implements IEventService {
     private final IEventRepository eventRepository;
     final Function<Event, EventDto> eventToEventDtoConverter;
 
+    /**
+     * C-or
+     *
+     * @param eventRepository          {@link EventRepository} the repository that
+     *                                 communicates with the database
+     * @param eventToEventDtoConverter {@link EventToEventDtoConverter} converts
+     *                                 from Event to EventDto
+     */
     public EventService(@Autowired final IEventRepository eventRepository,
 			@Autowired @Qualifier("eventToEventDtoConverter") final Function<Event,
 				EventDto> eventToEventDtoConverter) {
 
-	this.eventRepository = eventRepository;
-	this.eventToEventDtoConverter = eventToEventDtoConverter;
+	this.eventRepository = requireNonNull(eventRepository);
+	this.eventToEventDtoConverter = requireNonNull(eventToEventDtoConverter);
 
     }
 

@@ -7,12 +7,6 @@ import org.com.ems.api.dto.EventDto;
 
 public interface IEventService extends IService<Event, EventDto> {
 
-    /**
-     * This method does not yet cascade
-     *
-     * @param dto
-     * @return
-     */
     boolean addAttendee(UUID eventId,
 			UUID attendeeId);
 

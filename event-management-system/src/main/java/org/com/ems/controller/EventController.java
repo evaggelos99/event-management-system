@@ -129,20 +129,4 @@ public class EventController implements IEventController {
 
     }
 
-    @Override
-    public ResponseEntity<Boolean> addAttendee(final UUID eventId,
-					       final UUID attendeeId) {
-
-	final boolean wasSucessful = this.eventService.addAttendee(eventId, attendeeId);
-
-	try {
-
-	    return ResponseEntity.created(new URI(EVENT_PATH + eventId)).body(wasSucessful);
-	} catch (final URISyntaxException e) {
-
-	    return new ResponseEntity<>(wasSucessful, HttpStatus.CREATED);
-	}
-
-    }
-
 }
