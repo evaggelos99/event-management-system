@@ -13,7 +13,7 @@ import org.com.ems.api.domainobjects.Attendee;
 import org.com.ems.api.dto.AttendeeDto;
 import org.com.ems.controller.api.IAttendeeController;
 import org.com.ems.controller.exceptions.ObjectNotFoundException;
-import org.com.ems.services.IService;
+import org.com.ems.services.api.IAttendeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -27,12 +27,13 @@ import org.springframework.web.bind.annotation.RestController;
  * @author Evangelos Georgiou
  */
 @RestController
-@RequestMapping("/attendee")
+@RequestMapping(AttendeeController.ATTENDEE_PATH)
 public class AttendeeController implements IAttendeeController {
 
-    IService<Attendee> attendeeService;
+    static final String ATTENDEE_PATH = "/attendee";
+
+    private final IAttendeeService attendeeService;
     private final Function<Attendee, AttendeeDto> attendeeToAttendeeDtoConverter;
-    private final Function<AttendeeDto, Attendee> attendeeDtoToAttendeeConverter;
 
     /**
      * C-or
@@ -41,15 +42,12 @@ public class AttendeeController implements IAttendeeController {
      * @param attendeeToAttendeeDtoConverter converts attendee to DTO
      * @param attendeeDtoToAttendeeConverter converts DTO to attendee
      */
-    public AttendeeController(@Autowired final IService<Attendee> attendeeService,
+    public AttendeeController(@Autowired final IAttendeeService attendeeService,
 			      @Autowired @Qualifier("attendeeToAttendeeDtoConverter") final Function<Attendee,
-				      AttendeeDto> attendeeToAttendeeDtoConverter,
-			      @Autowired @Qualifier("attendeeDtoToAttendeeConverter") final Function<AttendeeDto,
-				      Attendee> attendeeDtoToAttendeeConverter) {
+				      AttendeeDto> attendeeToAttendeeDtoConverter) {
 
 	this.attendeeService = requireNonNull(attendeeService);
 	this.attendeeToAttendeeDtoConverter = requireNonNull(attendeeToAttendeeDtoConverter);
-	this.attendeeDtoToAttendeeConverter = requireNonNull(attendeeDtoToAttendeeConverter);
 
     }
 
@@ -61,12 +59,13 @@ public class AttendeeController implements IAttendeeController {
     @Override
     public ResponseEntity<AttendeeDto> postAttendee(final AttendeeDto attendeeDto) {
 
-	final Attendee attendee = this.attendeeService.add(this.attendeeDtoToAttendeeConverter.apply(attendeeDto));
+	final Attendee attendee = this.attendeeService.add(attendeeDto);
+
 	final AttendeeDto newDto = this.attendeeToAttendeeDtoConverter.apply(attendee);
 
 	try {
 
-	    return ResponseEntity.created(new URI("/attendee/")).body(newDto);
+	    return ResponseEntity.created(new URI(ATTENDEE_PATH)).body(newDto);
 	} catch (final URISyntaxException e) {
 
 	    return new ResponseEntity<>(newDto, HttpStatus.CREATED);
@@ -97,13 +96,12 @@ public class AttendeeController implements IAttendeeController {
     public ResponseEntity<AttendeeDto> putAttendee(final UUID attendeeId,
 						   final AttendeeDto attendeeDto) {
 
-	final Attendee attendee = this.attendeeService.edit(attendeeId,
-		this.attendeeDtoToAttendeeConverter.apply(attendeeDto));
+	final Attendee attendee = this.attendeeService.edit(attendeeId, attendeeDto);
 	final AttendeeDto newDto = this.attendeeToAttendeeDtoConverter.apply(attendee);
 
 	try {
 
-	    return ResponseEntity.created(new URI("/attendee/" + attendeeId)).body(newDto);
+	    return ResponseEntity.created(new URI(ATTENDEE_PATH + attendeeId)).body(newDto);
 	} catch (final URISyntaxException e) {
 
 	    return new ResponseEntity<>(newDto, HttpStatus.CREATED);
@@ -133,6 +131,22 @@ public class AttendeeController implements IAttendeeController {
 		.map(this.attendeeToAttendeeDtoConverter::apply).toList();
 
 	return ResponseEntity.ok(listOfDtos);
+
+    }
+
+    @Override
+    public ResponseEntity<Boolean> addTicket(final UUID attendeeId,
+					     final UUID ticketId) {
+
+	final boolean wasSucessful = this.attendeeService.addTicket(attendeeId, ticketId);
+
+	try {
+
+	    return ResponseEntity.created(new URI(ATTENDEE_PATH + attendeeId)).body(wasSucessful);
+	} catch (final URISyntaxException e) {
+
+	    return new ResponseEntity<>(wasSucessful, HttpStatus.CREATED);
+	}
 
     }
 

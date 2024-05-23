@@ -6,16 +6,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 import org.com.ems.EventManagementSystemApplication;
 import org.com.ems.api.domainobjects.ContactInformation;
 import org.com.ems.api.domainobjects.EventType;
 import org.com.ems.api.dto.OrganizerDto;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
-import org.junit.jupiter.api.Order;
+import org.com.ems.util.TestConfiguration;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
@@ -25,9 +23,11 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.ActiveProfiles;
 
-@TestMethodOrder(OrderAnnotation.class)
-@SpringBootTest(classes = EventManagementSystemApplication.class, webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = { EventManagementSystemApplication.class,
+	TestConfiguration.class }, webEnvironment = WebEnvironment.RANDOM_PORT)
+@ActiveProfiles("integration-tests")
 class OrganizerControllerIntegrationTest {
 
     private static final String HOSTNAME = "http://localhost";
@@ -39,19 +39,18 @@ class OrganizerControllerIntegrationTest {
     @Autowired
     private TestRestTemplate restTemplate;
 
-    @Order(value = 0)
     @Test
-    public void postOrganizerWithNotNullFields_thenExpectFieldsToNotBeNull() {
+    public void postOrganizerWithNonNullFields() {
 
-	final String name = "name";
+	final String name = this.generateString();
 
-	final String website = "website";
-	final String description = "description";
-	final String email = "email";
-	final String addr = "addr";
-	final ContactInformation contantInfo = new ContactInformation(email, 4323432L, addr);
+	final String website = this.generateString();
+	final String description = this.generateString();
+	final String email = this.generateString();
+	final String addr = this.generateString();
+	final ContactInformation contantInfo = new ContactInformation(email, "4323432", addr);
 
-	final OrganizerDto dto = new OrganizerDto(null, null, name, website, description,
+	final OrganizerDto dto = new OrganizerDto(null, null, null, name, website, description,
 		List.of(EventType.WEDDING, EventType.NIGHTLIFE), contantInfo);
 
 	final ResponseEntity<OrganizerDto> responseEntity = this.restTemplate
@@ -59,31 +58,46 @@ class OrganizerControllerIntegrationTest {
 
 	assertEquals(201, responseEntity.getStatusCode().value());
 
-	final OrganizerDto actualEntity = responseEntity.getBody();
+	final OrganizerDto actualOrganizerDto = responseEntity.getBody();
 
-	assertNotNull(actualEntity.uuid());
-	assertNotNull(actualEntity.lastUpdated());
-	assertEquals(name, actualEntity.name());
-	assertEquals(contantInfo, actualEntity.contactInformation());
-	assertEquals(website, actualEntity.website());
-	assertEquals(description, actualEntity.description());
+	assertNotNull(actualOrganizerDto.uuid());
+	assertNotNull(actualOrganizerDto.createdAt());
+	assertNotNull(actualOrganizerDto.lastUpdated());
+	assertEquals(name, actualOrganizerDto.denomination());
+	assertEquals(contantInfo, actualOrganizerDto.contactInformation());
+	assertEquals(website, actualOrganizerDto.website());
+	assertEquals(description, actualOrganizerDto.information());
+
+	@SuppressWarnings("rawtypes")
+	final ResponseEntity<Collection> getResponseEntity = this.restTemplate
+		.getForEntity(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT, Collection.class);
+
+	assertTrue(!getResponseEntity.getBody().isEmpty());
+
+	this.restTemplate.exchange(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + actualOrganizerDto.uuid(),
+		HttpMethod.DELETE, null, Void.class);
+
+	final ResponseEntity<OrganizerDto> getDeletedEntity = this.restTemplate.getForEntity(
+		HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + actualOrganizerDto.uuid(), OrganizerDto.class);
+
+	assertTrue(getDeletedEntity.getStatusCode().isSameCodeAs(HttpStatusCode.valueOf(404)));
 
     }
 
-    @Order(value = 1)
     @Test
-    public void postOrganizerWithNullFieldsThenEditEvent_thenExpectFieldsToNotBeNull() {
+    public void postOrganizerWithNonNullFields_thenPutOrganizerWithUpdatedFields() {
 
 	final String name = "name2";
 	final String website = "website2";
 	final String description = "description";
 	final String email = "email2";
 	final String addr = "addr2";
-	final ContactInformation contantInfo = new ContactInformation(email, 4323432L, addr);
+	final ContactInformation contantInfo = new ContactInformation(email, "4323432", addr);
 
 	final List<EventType> eventTypes = List.of(EventType.WEDDING, EventType.NIGHTLIFE);
 
-	final OrganizerDto dto = new OrganizerDto(null, null, name, website, description, eventTypes, contantInfo);
+	final OrganizerDto dto = new OrganizerDto(null, null, null, name, website, description, eventTypes,
+		contantInfo);
 
 	final ResponseEntity<OrganizerDto> responseEntity = this.restTemplate
 		.postForEntity(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT, dto, OrganizerDto.class);
@@ -92,52 +106,54 @@ class OrganizerControllerIntegrationTest {
 
 	final OrganizerDto entityDto = responseEntity.getBody();
 
-	final ResponseEntity<
-		OrganizerDto> editedResponseEntity = this.restTemplate
+	final String updatedName = this.generateString();
+	final String updatedWebsite = this.generateString();
+	final String updatedDescription = this.generateString();
+
+	final ResponseEntity<OrganizerDto> editedResponseEntity = //
+		this.restTemplate
 			.exchange(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + entityDto.uuid().toString(),
-				HttpMethod.PUT, this.getHttpEntity(new OrganizerDto(entityDto.uuid(), null,
-					name + description, website, description + name, eventTypes, contantInfo)),
+				HttpMethod.PUT,
+				this.getHttpEntity(new OrganizerDto(entityDto.uuid(), null, null, updatedName,
+					updatedWebsite, updatedDescription, eventTypes, contantInfo)),
 				OrganizerDto.class);
 
-	final OrganizerDto actualEntity = editedResponseEntity.getBody();
+	final OrganizerDto actualOrganizerDto = editedResponseEntity.getBody();
 
-	assertEquals(entityDto.uuid(), actualEntity.uuid());
-	assertTrue(actualEntity.lastUpdated().isAfter(entityDto.lastUpdated()));
-	assertEquals(name + description, actualEntity.name());
-	assertEquals(contantInfo, actualEntity.contactInformation());
-	assertEquals(website, actualEntity.website());
-	assertEquals(eventTypes, actualEntity.eventTypes());
-	assertEquals(description + name, actualEntity.description());
+	assertEquals(entityDto.uuid(), actualOrganizerDto.uuid());
+	assertEquals(entityDto.createdAt(), actualOrganizerDto.createdAt());
+	assertTrue(actualOrganizerDto.lastUpdated().after(entityDto.lastUpdated()));
+	assertEquals(updatedName, actualOrganizerDto.denomination());
+	assertEquals(contantInfo, actualOrganizerDto.contactInformation());
+	assertEquals(updatedWebsite, actualOrganizerDto.website());
+	assertEquals(eventTypes, actualOrganizerDto.eventTypes());
+	assertEquals(updatedDescription, actualOrganizerDto.information());
 
-    }
+	this.restTemplate.exchange(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + actualOrganizerDto.uuid(),
+		HttpMethod.DELETE, null, Void.class);
 
-    @Order(value = 2)
-    @Test
-    public void getOrganizers_thenExpectToHave3InTheDb() {
+	final ResponseEntity<OrganizerDto> getDeletedEntity = this.restTemplate.getForEntity(
+		HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + actualOrganizerDto.uuid(), OrganizerDto.class);
 
-	@SuppressWarnings("rawtypes")
-	final ResponseEntity<Collection> responseEntity = this.restTemplate
-		.getForEntity(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT, Collection.class);
-
-	assertEquals(2, responseEntity.getBody().size());
+	assertTrue(getDeletedEntity.getStatusCode().isSameCodeAs(HttpStatusCode.valueOf(404)));
 
     }
 
-    @Order(value = 3)
     @Test
-    public void getOrganizerWithUUID_thenExpectToReturnTheSameExactObject() {
+    public void getOrganizerWithId() {
 
-	final String name = "name3";
+	final String name = this.generateString();
 
-	final String website = "website3";
-	final String description = "description3";
-	final String email = "email3";
-	final String addr = "addr3";
-	final ContactInformation contantInfo = new ContactInformation(email, 4323432L, addr);
+	final String website = this.generateString();
+	final String description = this.generateString();
+	final String email = this.generateString();
+	final String addr = this.generateString();
+	final ContactInformation contantInfo = new ContactInformation(email, "4323432", addr);
 
 	final List<EventType> eventTypes = List.of(EventType.WEDDING, EventType.NIGHTLIFE);
 
-	final OrganizerDto dto = new OrganizerDto(null, null, name, website, description, eventTypes, contantInfo);
+	final OrganizerDto dto = new OrganizerDto(null, null, null, name, website, description, eventTypes,
+		contantInfo);
 
 	final ResponseEntity<OrganizerDto> responseEntity = this.restTemplate
 		.postForEntity(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT, dto, OrganizerDto.class);
@@ -151,38 +167,13 @@ class OrganizerControllerIntegrationTest {
 
 	assertEquals(expectedEntity, getEntity.getBody());
 
-    }
-
-    @Order(value = 4)
-    @Test
-    public void deleteOrganizerWithUUID_thenExpectForTheObjectTobeDeleted() {
-
-	final String name = "name5";
-
-	final String website = "website5";
-	final String description = "description5";
-	final String email = "email5";
-	final String addr = "addr5";
-	final ContactInformation contantInfo = new ContactInformation(email, 4323432L, addr);
-
-	final List<EventType> eventTypes = List.of(EventType.WEDDING, EventType.NIGHTLIFE);
-
-	final OrganizerDto dto = new OrganizerDto(null, null, name, website, description, eventTypes, contantInfo);
-
-	final ResponseEntity<OrganizerDto> responseEntity = this.restTemplate
-		.postForEntity(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT, dto, OrganizerDto.class);
-
-	assertEquals(201, responseEntity.getStatusCode().value());
-
-	final OrganizerDto expectedEntity = responseEntity.getBody();
-
 	this.restTemplate.exchange(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + expectedEntity.uuid(),
 		HttpMethod.DELETE, null, Void.class);
 
-	final ResponseEntity<OrganizerDto> getEntity = this.restTemplate.getForEntity(
+	final ResponseEntity<OrganizerDto> getDeletedEntity = this.restTemplate.getForEntity(
 		HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + expectedEntity.uuid(), OrganizerDto.class);
 
-	Assertions.assertTrue(getEntity.getStatusCode().isSameCodeAs(HttpStatusCode.valueOf(404)));
+	assertTrue(getDeletedEntity.getStatusCode().isSameCodeAs(HttpStatusCode.valueOf(404)));
 
     }
 
@@ -192,4 +183,11 @@ class OrganizerControllerIntegrationTest {
 	return new HttpEntity(body);
 
     }
+
+    private String generateString() {
+
+	return UUID.randomUUID().toString();
+
+    }
+
 }

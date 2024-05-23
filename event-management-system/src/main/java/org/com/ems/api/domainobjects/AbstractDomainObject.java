@@ -1,6 +1,5 @@
 package org.com.ems.api.domainobjects;
 
-import java.io.Serializable;
 import java.time.Instant;
 import java.util.UUID;
 
@@ -8,44 +7,37 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.hibernate.annotations.UpdateTimestamp;
-
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.MappedSuperclass;
 
 /**
- * Super class for Entity classes
+ * Super class for domain object classes
  *
  * @author Evangelos Georgiou
  */
-@MappedSuperclass
-public abstract class AbstractDomainObject implements Serializable {
+public abstract class AbstractDomainObject {
 
-    private static final long serialVersionUID = 2114216090280817221L;
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    protected UUID uuid;
-    @UpdateTimestamp
-    protected Instant lastUpdated;
+    final protected UUID uuid;
+    final protected Instant createdAt;
+    final protected Instant lastUpdated;
 
     public AbstractDomainObject(final UUID uuid,
+				final Instant createdAt,
 				final Instant lastUpdated) {
 
 	this.uuid = uuid;
+	this.createdAt = createdAt;
 	this.lastUpdated = lastUpdated;
-
-    }
-
-    protected AbstractDomainObject() {
 
     }
 
     public UUID getUuid() {
 
 	return this.uuid;
+
+    }
+
+    public Instant getCreatedAt() {
+
+	return this.createdAt;
 
     }
 

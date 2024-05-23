@@ -1,4 +1,6 @@
-package org.com.ems.services;
+package org.com.ems.services.impl;
+
+import static java.util.Objects.requireNonNull;
 
 import java.util.Collection;
 import java.util.NoSuchElementException;
@@ -6,23 +8,32 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.com.ems.api.domainobjects.Ticket;
+import org.com.ems.api.dto.TicketDto;
 import org.com.ems.db.ITicketRepository;
+import org.com.ems.db.impl.TicketRepository;
+import org.com.ems.services.api.IService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class TicketService implements IService<Ticket> {
+public class TicketService implements IService<Ticket, TicketDto> {
 
     private final ITicketRepository ticketRepository;
 
+    /**
+     * C-or
+     *
+     * @param ticketRepository {@link TicketRepository} the repository that
+     *                         communicates with the database
+     */
     public TicketService(@Autowired final ITicketRepository ticketRepository) {
 
-	this.ticketRepository = ticketRepository;
+	this.ticketRepository = requireNonNull(ticketRepository);
 
     }
 
     @Override
-    public Ticket add(final Ticket attendee) {
+    public Ticket add(final TicketDto attendee) {
 
 	return this.ticketRepository.save(attendee);
 
@@ -44,12 +55,12 @@ public class TicketService implements IService<Ticket> {
 
     @Override
     public Ticket edit(final UUID uuid,
-		       final Ticket attendee) {
+		       final TicketDto attendee) {
 
 	if (!this.ticketRepository.existsById(uuid))
 	    throw new NoSuchElementException();
 
-	return this.ticketRepository.save(attendee);
+	return this.ticketRepository.edit(attendee);
 
     }
 

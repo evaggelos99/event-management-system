@@ -1,10 +1,5 @@
 package org.com.ems.api.domainobjects;
 
-/**
- * EventType object
- *
- * @author Evangelos Georgiou
- */
 public enum EventType {
 
     /**

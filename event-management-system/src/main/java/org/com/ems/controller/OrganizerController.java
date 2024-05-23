@@ -13,7 +13,7 @@ import org.com.ems.api.domainobjects.Organizer;
 import org.com.ems.api.dto.OrganizerDto;
 import org.com.ems.controller.api.IOrganizerController;
 import org.com.ems.controller.exceptions.ObjectNotFoundException;
-import org.com.ems.services.IService;
+import org.com.ems.services.api.IService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -27,11 +27,11 @@ import org.springframework.web.bind.annotation.RestController;
  * @author Evangelos Georgiou
  */
 @RestController
-@RequestMapping("/organizer")
+@RequestMapping(OrganizerController.ORGANIZER_PATH)
 public class OrganizerController implements IOrganizerController {
 
-    private final IService<Organizer> organizerService;
-    private final Function<OrganizerDto, Organizer> organizerDtoToOrganizerConverter;
+    static final String ORGANIZER_PATH = "/organizer";
+    private final IService<Organizer, OrganizerDto> organizerService;
     private final Function<Organizer, OrganizerDto> organizerToOrganizerDtoConverter;
 
     /**
@@ -42,14 +42,11 @@ public class OrganizerController implements IOrganizerController {
      * @param organizerToOrganizerDtoConverter organizer to DTO
      * @param organizerDtoToOrganizerConverter DTO to organizer
      */
-    public OrganizerController(@Autowired final IService<Organizer> organizerService,
+    public OrganizerController(@Autowired final IService<Organizer, OrganizerDto> organizerService,
 			       @Autowired @Qualifier("organizerToOrganizerDtoConverter") final Function<Organizer,
-				       OrganizerDto> organizerToOrganizerDtoConverter,
-			       @Autowired @Qualifier("organizerDtoToOrganizerConverter") final Function<OrganizerDto,
-				       Organizer> organizerDtoToOrganizerConverter) {
+				       OrganizerDto> organizerToOrganizerDtoConverter) {
 
 	this.organizerService = requireNonNull(organizerService);
-	this.organizerDtoToOrganizerConverter = requireNonNull(organizerDtoToOrganizerConverter);
 	this.organizerToOrganizerDtoConverter = requireNonNull(organizerToOrganizerDtoConverter);
 
     }
@@ -60,14 +57,13 @@ public class OrganizerController implements IOrganizerController {
     @Override
     public ResponseEntity<OrganizerDto> postOrganizer(final OrganizerDto organizerDto) {
 
-	final Organizer organizer = this.organizerService
-		.add(this.organizerDtoToOrganizerConverter.apply(organizerDto));
+	final Organizer organizer = this.organizerService.add(organizerDto);
 
 	final OrganizerDto newDto = this.organizerToOrganizerDtoConverter.apply(organizer);
 
 	try {
 
-	    return ResponseEntity.created(new URI("/attendee/")).body(newDto);
+	    return ResponseEntity.created(new URI(ORGANIZER_PATH)).body(newDto);
 	} catch (final URISyntaxException e) {
 
 	    return new ResponseEntity<>(newDto, HttpStatus.CREATED);
@@ -97,8 +93,7 @@ public class OrganizerController implements IOrganizerController {
     public ResponseEntity<OrganizerDto> putOrganizer(final UUID organizerId,
 						     final OrganizerDto organizerDto) {
 
-	final Organizer organizer = this.organizerService.edit(organizerId,
-		this.organizerDtoToOrganizerConverter.apply(organizerDto));
+	final Organizer organizer = this.organizerService.edit(organizerId, organizerDto);
 
 	final OrganizerDto newDto = this.organizerToOrganizerDtoConverter.apply(organizer);
 

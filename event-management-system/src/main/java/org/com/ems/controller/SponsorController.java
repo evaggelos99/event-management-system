@@ -12,7 +12,7 @@ import org.com.ems.api.domainobjects.Sponsor;
 import org.com.ems.api.dto.SponsorDto;
 import org.com.ems.controller.api.ISponsorController;
 import org.com.ems.controller.exceptions.ObjectNotFoundException;
-import org.com.ems.services.IService;
+import org.com.ems.services.api.IService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -26,29 +26,25 @@ import org.springframework.web.bind.annotation.RestController;
  * @author Evangelos Georgiou
  */
 @RestController
-@RequestMapping("/sponsor")
+@RequestMapping(SponsorController.SPONSOR_PATH)
 public class SponsorController implements ISponsorController {
 
-    private final IService<Sponsor> sponsorService;
+    static final String SPONSOR_PATH = "/sponsor";
+    private final IService<Sponsor, SponsorDto> sponsorService;
     private final Function<Sponsor, SponsorDto> sponsorToSponsorDtoConverter;
-    private final Function<SponsorDto, Sponsor> sponsorDtoToSponsorConverter;
 
     /**
      * C-or
      *
      * @param sponsorService               service responsible for CRUD operations
      * @param sponsorToSponsorDtoConverter sponsor to DTO
-     * @param sponsorDtoToSponsorConverter DTO to sponsor
      */
-    public SponsorController(@Autowired final IService<Sponsor> sponsorService,
+    public SponsorController(@Autowired final IService<Sponsor, SponsorDto> sponsorService,
 			     @Autowired @Qualifier("sponsorToSponsorDtoConverter") final Function<Sponsor,
-				     SponsorDto> sponsorToSponsorDtoConverter,
-			     @Autowired @Qualifier("sponsorDtoToSponsorConverter") final Function<SponsorDto,
-				     Sponsor> sponsorDtoToSponsorConverter) {
+				     SponsorDto> sponsorToSponsorDtoConverter) {
 
 	this.sponsorService = requireNonNull(sponsorService);
 	this.sponsorToSponsorDtoConverter = requireNonNull(sponsorToSponsorDtoConverter);
-	this.sponsorDtoToSponsorConverter = requireNonNull(sponsorDtoToSponsorConverter);
 
     }
 
@@ -58,12 +54,12 @@ public class SponsorController implements ISponsorController {
     @Override
     public ResponseEntity<SponsorDto> postSponsor(final SponsorDto sponsorDto) {
 
-	final Sponsor sponsor = this.sponsorService.add(this.sponsorDtoToSponsorConverter.apply(sponsorDto));
+	final Sponsor sponsor = this.sponsorService.add(sponsorDto);
 	final SponsorDto newSponsorDto = this.sponsorToSponsorDtoConverter.apply(sponsor);
 
 	try {
 
-	    return ResponseEntity.created(new URI("/sponsor/")).body(newSponsorDto);
+	    return ResponseEntity.created(new URI(SPONSOR_PATH)).body(newSponsorDto);
 	} catch (final URISyntaxException e) {
 
 	    return new ResponseEntity<>(newSponsorDto, HttpStatus.CREATED);
@@ -93,13 +89,12 @@ public class SponsorController implements ISponsorController {
     public ResponseEntity<SponsorDto> putSponsor(final UUID sponsorId,
 						 final SponsorDto sponsorDto) {
 
-	final Sponsor sponsor = this.sponsorService.edit(sponsorId,
-		this.sponsorDtoToSponsorConverter.apply(sponsorDto));
+	final Sponsor sponsor = this.sponsorService.edit(sponsorId, sponsorDto);
 	final SponsorDto newSponsorDto = this.sponsorToSponsorDtoConverter.apply(sponsor);
 
 	try {
 
-	    return ResponseEntity.created(new URI("/sponsor/" + sponsorId)).body(newSponsorDto);
+	    return ResponseEntity.created(new URI(SPONSOR_PATH + sponsorId)).body(newSponsorDto);
 	} catch (final URISyntaxException e) {
 
 	    return new ResponseEntity<>(newSponsorDto, HttpStatus.CREATED);

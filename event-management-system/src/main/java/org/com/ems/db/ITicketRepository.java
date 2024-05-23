@@ -1,9 +1,7 @@
 package org.com.ems.db;
 
-import java.util.UUID;
-
 import org.com.ems.api.domainobjects.Ticket;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.com.ems.api.dto.TicketDto;
 
 /**
  * Ticket's Repository
@@ -11,6 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author Evangelos Georgiou
  *
  */
-public interface ITicketRepository extends JpaRepository<Ticket, UUID> {
+public interface ITicketRepository extends IRepository<Ticket, TicketDto> {
 
 }

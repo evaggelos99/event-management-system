@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -88,5 +89,20 @@ public interface IAttendeeController {
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @DeleteMapping(path = "/{attendeeId}")
     ResponseEntity<?> deleteAttendee(@PathVariable UUID attendeeId);
+
+    /**
+     * Method that updates the Event with that eventId If the id does not match any
+     * Event stored in the DB it will return 404
+     *
+     * @param eventId the UUID of the Event object
+     * @param event   the edited Event object
+     */
+    @Operation(summary = "PUT Operation that adds a ticket to the attendee", description = "Updates the attendee and adds a ticket")
+    @ApiResponses(value = { @ApiResponse(responseCode = "201", description = "successful operation"),
+	    @ApiResponse(responseCode = "404", description = "could not find the object") })
+    @PutMapping("/{attendeeId}/addTicket")
+    @ResponseStatus(value = HttpStatus.CREATED)
+    ResponseEntity<Boolean> addTicket(@PathVariable UUID attendeeId,
+				      @RequestParam UUID ticketId);
 
 }

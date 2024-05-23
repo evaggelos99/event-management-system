@@ -1,9 +1,7 @@
 package org.com.ems.db;
 
-import java.util.UUID;
-
 import org.com.ems.api.domainobjects.Organizer;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.com.ems.api.dto.OrganizerDto;
 
 /**
  * Organizer's Repository
@@ -11,6 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
  * @author Evangelos Georgiou
  *
  */
-public interface IOrganizerRepository extends JpaRepository<Organizer, UUID> {
+public interface IOrganizerRepository extends IRepository<Organizer, OrganizerDto> {
 
 }

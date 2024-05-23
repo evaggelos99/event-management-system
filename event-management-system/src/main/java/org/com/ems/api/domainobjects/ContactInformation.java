@@ -8,15 +8,8 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.Embeddable;
 import jakarta.validation.constraints.NotNull;
 
-/**
- * ContactInformation Embeddable object
- *
- * @author Evangelos Georgiou
- */
-@Embeddable
 public final class ContactInformation {
 
     // TODO add regex validation for email
@@ -25,7 +18,7 @@ public final class ContactInformation {
     private String email;
     @NotNull
     @Schema(example = "70493729392", description = "A phone number belonging to an entity")
-    private Long phoneNumber;
+    private String phoneNumber;
     @NotNull
     @Schema(example = "308 Negra Arroyo Lane, Albuquerque, New Mexico.", description = "A phone number belonging to an entity")
     private String physicalAddress;
@@ -35,7 +28,7 @@ public final class ContactInformation {
     }
 
     public ContactInformation(@NotNull final String email,
-			      @NotNull final Long phoneNumber,
+			      @NotNull final String phoneNumber,
 			      @NotNull final String physicalAddress) {
 
 	this.email = requireNonNull(email);
@@ -90,7 +83,7 @@ public final class ContactInformation {
 
     }
 
-    public Long getPhoneNumber() {
+    public String getPhoneNumber() {
 
 	return this.phoneNumber;
 

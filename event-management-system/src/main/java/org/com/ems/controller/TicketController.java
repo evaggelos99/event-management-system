@@ -13,7 +13,7 @@ import org.com.ems.api.domainobjects.Ticket;
 import org.com.ems.api.dto.TicketDto;
 import org.com.ems.controller.api.ITicketController;
 import org.com.ems.controller.exceptions.ObjectNotFoundException;
-import org.com.ems.services.IService;
+import org.com.ems.services.api.IService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -27,29 +27,25 @@ import org.springframework.web.bind.annotation.RestController;
  * @author Evangelos Georgiou
  */
 @RestController
-@RequestMapping("/ticket")
+@RequestMapping(TicketController.TICKET_PATH)
 public class TicketController implements ITicketController {
 
-    private final IService<Ticket> ticketService;
+    static final String TICKET_PATH = "/ticket";
+    private final IService<Ticket, TicketDto> ticketService;
     private final Function<Ticket, TicketDto> ticketToTicketDtoConverter;
-    private final Function<TicketDto, Ticket> ticketDtoToTicketConverter;
 
     /**
      * C-or
      *
      * @param ticketService              service responsible for CRUD operations
      * @param ticketToTicketDtoConverter ticket to DTO
-     * @param ticketDtoToTicketConverter DTO to ticket
      */
-    public TicketController(@Autowired final IService<Ticket> ticketService,
+    public TicketController(@Autowired final IService<Ticket, TicketDto> ticketService,
 			    @Autowired @Qualifier("ticketToTicketDtoConverter") final Function<Ticket,
-				    TicketDto> ticketToTicketDtoConverter,
-			    @Autowired @Qualifier("ticketDtoToTicketConverter") final Function<TicketDto,
-				    Ticket> ticketDtoToTicketConverter) {
+				    TicketDto> ticketToTicketDtoConverter) {
 
 	this.ticketService = requireNonNull(ticketService);
 	this.ticketToTicketDtoConverter = requireNonNull(ticketToTicketDtoConverter);
-	this.ticketDtoToTicketConverter = requireNonNull(ticketDtoToTicketConverter);
 
     }
 
@@ -59,13 +55,13 @@ public class TicketController implements ITicketController {
     @Override
     public ResponseEntity<TicketDto> postTicket(final TicketDto ticketDto) {
 
-	final Ticket newTicket = this.ticketService.add(this.ticketDtoToTicketConverter.apply(ticketDto));
+	final Ticket newTicket = this.ticketService.add(ticketDto);
 
 	final TicketDto newDto = this.ticketToTicketDtoConverter.apply(newTicket);
 
 	try {
 
-	    return ResponseEntity.created(new URI("/ticket/")).body(newDto);
+	    return ResponseEntity.created(new URI(TICKET_PATH)).body(newDto);
 	} catch (final URISyntaxException e) {
 
 	    return new ResponseEntity<>(newDto, HttpStatus.CREATED);
@@ -95,13 +91,13 @@ public class TicketController implements ITicketController {
     public ResponseEntity<TicketDto> putTicket(final UUID ticketId,
 					       final TicketDto ticketDto) {
 
-	final Ticket newTicket = this.ticketService.edit(ticketId, this.ticketDtoToTicketConverter.apply(ticketDto));
+	final Ticket newTicket = this.ticketService.edit(ticketId, ticketDto);
 
 	final TicketDto newDto = this.ticketToTicketDtoConverter.apply(newTicket);
 
 	try {
 
-	    return ResponseEntity.created(new URI("/ticket/" + ticketId)).body(newDto);
+	    return ResponseEntity.created(new URI(TICKET_PATH + ticketId)).body(newDto);
 	} catch (final URISyntaxException e) {
 
 	    return new ResponseEntity<>(newDto, HttpStatus.CREATED);

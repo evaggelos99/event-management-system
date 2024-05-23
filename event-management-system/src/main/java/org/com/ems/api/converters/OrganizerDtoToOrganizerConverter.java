@@ -12,9 +12,9 @@ public class OrganizerDtoToOrganizerConverter implements Function<OrganizerDto, 
     @Override
     public Organizer apply(final OrganizerDto organizerDto) {
 
-	return new Organizer(organizerDto.uuid(), organizerDto.lastUpdated(), organizerDto.name(),
-		organizerDto.website(), organizerDto.description(), organizerDto.eventTypes(),
-		organizerDto.contactInformation());
+	return new Organizer(organizerDto.uuid(), organizerDto.createdAt().toInstant(),
+		organizerDto.lastUpdated().toInstant(), organizerDto.denomination(), organizerDto.website(),
+		organizerDto.information(), organizerDto.eventTypes(), organizerDto.contactInformation());
 
     }
 

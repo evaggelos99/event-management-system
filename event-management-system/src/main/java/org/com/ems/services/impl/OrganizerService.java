@@ -1,4 +1,6 @@
-package org.com.ems.services;
+package org.com.ems.services.impl;
+
+import static java.util.Objects.requireNonNull;
 
 import java.util.Collection;
 import java.util.NoSuchElementException;
@@ -6,23 +8,32 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.com.ems.api.domainobjects.Organizer;
+import org.com.ems.api.dto.OrganizerDto;
 import org.com.ems.db.IOrganizerRepository;
+import org.com.ems.db.impl.OrganizerRepository;
+import org.com.ems.services.api.IService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class OrganizerService implements IService<Organizer> {
+public class OrganizerService implements IService<Organizer, OrganizerDto> {
 
     private final IOrganizerRepository organizerRepository;
 
+    /**
+     * C-or
+     *
+     * @param organizerRepository {@link OrganizerRepository} the repository that
+     *                            communicates with the database
+     */
     public OrganizerService(@Autowired final IOrganizerRepository organizerRepository) {
 
-	this.organizerRepository = organizerRepository;
+	this.organizerRepository = requireNonNull(organizerRepository);
 
     }
 
     @Override
-    public Organizer add(final Organizer attendee) {
+    public Organizer add(final OrganizerDto attendee) {
 
 	return this.organizerRepository.save(attendee);
 
@@ -44,12 +55,12 @@ public class OrganizerService implements IService<Organizer> {
 
     @Override
     public Organizer edit(final UUID uuid,
-			  final Organizer attendee) {
+			  final OrganizerDto attendee) {
 
 	if (!this.organizerRepository.existsById(uuid))
 	    throw new NoSuchElementException();
 
-	return this.organizerRepository.save(attendee);
+	return this.organizerRepository.edit(attendee);
 
     }
 

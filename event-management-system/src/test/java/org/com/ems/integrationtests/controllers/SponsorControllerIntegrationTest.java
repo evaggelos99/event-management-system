@@ -5,15 +5,14 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Collection;
+import java.util.UUID;
 
 import org.com.ems.EventManagementSystemApplication;
 import org.com.ems.api.domainobjects.ContactInformation;
+import org.com.ems.api.dto.AttendeeDto;
 import org.com.ems.api.dto.SponsorDto;
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
-import org.junit.jupiter.api.Order;
+import org.com.ems.util.TestConfiguration;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
@@ -23,9 +22,11 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.ActiveProfiles;
 
-@TestMethodOrder(OrderAnnotation.class)
-@SpringBootTest(classes = EventManagementSystemApplication.class, webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = { EventManagementSystemApplication.class,
+	TestConfiguration.class }, webEnvironment = WebEnvironment.RANDOM_PORT)
+@ActiveProfiles("integration-tests")
 class SponsorControllerIntegrationTest {
 
     private static final String HOSTNAME = "http://localhost";
@@ -37,49 +38,99 @@ class SponsorControllerIntegrationTest {
     @Autowired
     private TestRestTemplate restTemplate;
 
-    @Order(value = 0)
     @Test
-    public void postSponsorWithNotNullFields_thenExpectFieldsToNotBeNull() {
+    public void postSponsorWithNonNullFields() {
 
-	final String name = "name";
+	final String name = this.generateString();
 
-	final String website = "website";
+	final String website = this.generateString();
 	final int financialContribution = 5;
-	final String email = "email";
-	final String addr = "addr";
-	final ContactInformation contantInfo = new ContactInformation(email, 4323432L, addr);
+	final String email = this.generateString();
+	final String addr = this.generateString();
+	final ContactInformation contantInfo = new ContactInformation(email, "4323432", addr);
 
-	final SponsorDto dto = new SponsorDto(null, null, name, website, financialContribution, contantInfo);
+	final SponsorDto dto = new SponsorDto(null, null, null, name, website, financialContribution, contantInfo);
 
 	final ResponseEntity<SponsorDto> responseEntity = this.restTemplate
 		.postForEntity(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT, dto, SponsorDto.class);
 
 	assertEquals(201, responseEntity.getStatusCode().value());
 
-	final SponsorDto actualEntity = responseEntity.getBody();
+	final SponsorDto actualSponsorDto = responseEntity.getBody();
 
-	assertNotNull(actualEntity.uuid());
-	assertNotNull(actualEntity.lastUpdated());
-	assertEquals(name, actualEntity.name());
-	assertEquals(contantInfo, actualEntity.contactInformation());
-	assertEquals(website, actualEntity.website());
-	assertEquals(financialContribution, actualEntity.financialContribution());
+	assertNotNull(actualSponsorDto.uuid());
+	assertNotNull(actualSponsorDto.lastUpdated());
+	assertEquals(name, actualSponsorDto.denomination());
+	assertEquals(contantInfo, actualSponsorDto.contactInformation());
+	assertEquals(website, actualSponsorDto.website());
+	assertEquals(financialContribution, actualSponsorDto.financialContribution());
+
+	@SuppressWarnings("rawtypes")
+	final ResponseEntity<Collection> getResponseEntity = this.restTemplate
+		.getForEntity(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT, Collection.class);
+
+	assertTrue(!getResponseEntity.getBody().isEmpty());
+
+	this.restTemplate.exchange(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + actualSponsorDto.uuid(),
+		HttpMethod.DELETE, null, Void.class);
+
+	final ResponseEntity<AttendeeDto> getDeletedEntity = this.restTemplate.getForEntity(
+		HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + actualSponsorDto.uuid(), AttendeeDto.class);
+
+	assertTrue(getDeletedEntity.getStatusCode().isSameCodeAs(HttpStatusCode.valueOf(404)));
 
     }
 
-    @Order(value = 2)
     @Test
-    public void postEventWithNullFieldsThenEditEvent_thenExpectFieldsToNotBeNull() {
+    public void postOrganizerWithNonNullFields_then() {
 
-	final String name = "name";
+	final String name = this.generateString();
 
-	final String website = "website";
+	final String website = this.generateString();
 	final int financialContribution = 5;
-	final String email = "email";
-	final String addr = "addr";
-	final ContactInformation contantInfo = new ContactInformation(email, 4323432L, addr);
+	final String email = this.generateString();
+	final String addr = this.generateString();
+	final ContactInformation contantInfo = new ContactInformation(email, "4323432", addr);
 
-	final SponsorDto dto = new SponsorDto(null, null, name, website, financialContribution, contantInfo);
+	final SponsorDto dto = new SponsorDto(null, null, null, name, website, financialContribution, contantInfo);
+
+	final ResponseEntity<SponsorDto> responseEntity = this.restTemplate
+		.postForEntity(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT, dto, SponsorDto.class);
+
+	assertEquals(201, responseEntity.getStatusCode().value());
+
+	final SponsorDto actualSponsorDto = responseEntity.getBody();
+
+	assertNotNull(actualSponsorDto.uuid());
+	assertNotNull(actualSponsorDto.createdAt());
+	assertNotNull(actualSponsorDto.lastUpdated());
+	assertEquals(name, actualSponsorDto.denomination());
+	assertEquals(contantInfo, actualSponsorDto.contactInformation());
+	assertEquals(website, actualSponsorDto.website());
+	assertEquals(financialContribution, actualSponsorDto.financialContribution());
+
+	this.restTemplate.exchange(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + actualSponsorDto.uuid(),
+		HttpMethod.DELETE, null, Void.class);
+
+	final ResponseEntity<SponsorDto> getDeletedEntity = this.restTemplate.getForEntity(
+		HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + actualSponsorDto.uuid(), SponsorDto.class);
+
+	assertTrue(getDeletedEntity.getStatusCode().isSameCodeAs(HttpStatusCode.valueOf(404)));
+
+    }
+
+    @Test
+    public void postSponsorWithNonNullFields_thenEditSponsor() {
+
+	final String name = this.generateString();
+
+	final String website = this.generateString();
+	final int financialContribution = 5;
+	final String email = this.generateString();
+	final String addr = this.generateString();
+	final ContactInformation contantInfo = new ContactInformation(email, "4323432", addr);
+
+	final SponsorDto dto = new SponsorDto(null, null, null, name, website, financialContribution, contantInfo);
 
 	final ResponseEntity<SponsorDto> responseEntity = this.restTemplate
 		.postForEntity(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT, dto, SponsorDto.class);
@@ -88,91 +139,33 @@ class SponsorControllerIntegrationTest {
 
 	final SponsorDto entityDto = responseEntity.getBody();
 
-	final ResponseEntity<SponsorDto> editedResponseEntity = this.restTemplate.exchange(
-		HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + entityDto.uuid().toString(), HttpMethod.PUT,
-		this.getHttpEntity(
-			new SponsorDto(entityDto.uuid(), null, name, website, financialContribution, contantInfo)),
-		SponsorDto.class);
+	final String updatedName = this.generateString();
+	final String updatedWebsite = this.generateString();
+	final Integer updatedFinancialContribution = 4342342;
+	final ResponseEntity<
+		SponsorDto> editedResponseEntity = this.restTemplate
+			.exchange(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + entityDto.uuid().toString(),
+				HttpMethod.PUT, this.getHttpEntity(new SponsorDto(entityDto.uuid(), null, null,
+					updatedName, updatedWebsite, updatedFinancialContribution, contantInfo)),
+				SponsorDto.class);
 
-	final SponsorDto actualEntity = editedResponseEntity.getBody();
+	final SponsorDto actualSponsorDto = editedResponseEntity.getBody();
 
-	assertEquals(entityDto.uuid(), actualEntity.uuid());
-	assertTrue(actualEntity.lastUpdated().isAfter(entityDto.lastUpdated()));
-	assertEquals(name, actualEntity.name());
-	assertEquals(contantInfo, actualEntity.contactInformation());
-	assertEquals(website, actualEntity.website());
-	assertEquals(financialContribution, actualEntity.financialContribution());
+	assertEquals(entityDto.uuid(), actualSponsorDto.uuid());
+	assertEquals(entityDto.createdAt(), actualSponsorDto.createdAt());
+	assertTrue(actualSponsorDto.lastUpdated().after(entityDto.lastUpdated()));
+	assertEquals(updatedName, actualSponsorDto.denomination());
+	assertEquals(contantInfo, actualSponsorDto.contactInformation());
+	assertEquals(updatedWebsite, actualSponsorDto.website());
+	assertEquals(updatedFinancialContribution, actualSponsorDto.financialContribution());
 
-    }
-
-    @Order(value = 3)
-    @Test
-    public void getEvents_thenExpectToHave3InTheDb() {
-
-	@SuppressWarnings("rawtypes")
-	final ResponseEntity<Collection> responseEntity = this.restTemplate
-		.getForEntity(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT, Collection.class);
-
-	assertEquals(2, responseEntity.getBody().size());
-
-    }
-
-    @Order(value = 4)
-    @Test
-    public void getEventWithUUID_thenExpectToReturnTheSameExactObject() {
-
-	final String name = "name";
-
-	final String website = "website";
-	final int financialContribution = 5;
-	final String email = "email";
-	final String addr = "addr";
-	final ContactInformation contantInfo = new ContactInformation(email, 4323432L, addr);
-
-	final SponsorDto dto = new SponsorDto(null, null, name, website, financialContribution, contantInfo);
-
-	final ResponseEntity<SponsorDto> responseEntity = this.restTemplate
-		.postForEntity(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT, dto, SponsorDto.class);
-
-	assertEquals(201, responseEntity.getStatusCode().value());
-
-	final SponsorDto expectedEntity = responseEntity.getBody();
-
-	final ResponseEntity<SponsorDto> getEntity = this.restTemplate.getForEntity(
-		HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + expectedEntity.uuid(), SponsorDto.class);
-
-	assertEquals(expectedEntity, getEntity.getBody());
-
-    }
-
-    @Order(value = 5)
-    @Test
-    public void deleteAttendeeWithUUID_thenExpectForTheObjectTobeDeleted() {
-
-	final String name = "name";
-
-	final String website = "website";
-	final int financialContribution = 5;
-	final String email = "email";
-	final String addr = "addr";
-	final ContactInformation contantInfo = new ContactInformation(email, 4323432L, addr);
-
-	final SponsorDto dto = new SponsorDto(null, null, name, website, financialContribution, contantInfo);
-
-	final ResponseEntity<SponsorDto> responseEntity = this.restTemplate
-		.postForEntity(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT, dto, SponsorDto.class);
-
-	assertEquals(201, responseEntity.getStatusCode().value());
-
-	final SponsorDto expectedEntity = responseEntity.getBody();
-
-	this.restTemplate.exchange(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + expectedEntity.uuid(),
+	this.restTemplate.exchange(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + entityDto.uuid(),
 		HttpMethod.DELETE, null, Void.class);
 
-	final ResponseEntity<SponsorDto> getEntity = this.restTemplate.getForEntity(
-		HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + expectedEntity.uuid(), SponsorDto.class);
+	final ResponseEntity<SponsorDto> getDeletedEntity = this.restTemplate.getForEntity(
+		HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + entityDto.uuid(), SponsorDto.class);
 
-	Assertions.assertTrue(getEntity.getStatusCode().isSameCodeAs(HttpStatusCode.valueOf(404)));
+	assertTrue(getDeletedEntity.getStatusCode().isSameCodeAs(HttpStatusCode.valueOf(404)));
 
     }
 
@@ -180,6 +173,12 @@ class SponsorControllerIntegrationTest {
     private HttpEntity getHttpEntity(final SponsorDto body) {
 
 	return new HttpEntity(body);
+
+    }
+
+    private String generateString() {
+
+	return UUID.randomUUID().toString();
 
     }
 }

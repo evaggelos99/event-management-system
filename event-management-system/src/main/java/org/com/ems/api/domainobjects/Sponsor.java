@@ -9,51 +9,34 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 import org.com.ems.api.domainobjects.validators.constraints.NotNegative;
 
-import jakarta.persistence.Entity;
 import jakarta.validation.constraints.NotNull;
 
-/**
- * Sponsor Entity object
- *
- * @author Evangelos Georgiou
- */
-@Entity
-public class Sponsor extends AbstractDomainObject {
+public final class Sponsor extends AbstractDomainObject {
 
-    private static final long serialVersionUID = 8574725880728805844L;
-
-    @NotNull
-    private String name;
-    @NotNull
-    private String website;
-    @NotNull
-    @NotNegative
-    private Integer financialContribution;
-    @NotNull
-    private ContactInformation contactInformation;
+    private final String denomination;
+    private final String website;
+    private final Integer financialContribution;
+    private final ContactInformation contactInformation;
 
     public Sponsor(final UUID uuid,
+		   final Instant createdAt,
 		   final Instant lastUpdated,
-		   @NotNull final String name,
+		   @NotNull final String denomination,
 		   @NotNull final String website,
 		   @NotNull @NotNegative final Integer financialContribution,
 		   @NotNull final ContactInformation contactInformation) {
 
-	super(uuid, lastUpdated);
-	this.name = name;
+	super(uuid, createdAt, lastUpdated);
+	this.denomination = denomination;
 	this.website = website;
 	this.financialContribution = financialContribution;
 	this.contactInformation = contactInformation;
 
     }
 
-    public Sponsor() {
+    public String getDenomination() {
 
-    }
-
-    public String getName() {
-
-	return this.name;
+	return this.denomination;
 
     }
 
@@ -85,7 +68,7 @@ public class Sponsor extends AbstractDomainObject {
 
 	final Sponsor that = (Sponsor) o;
 
-	return new EqualsBuilder().appendSuper(super.equals(that)).append(this.name, that.name)
+	return new EqualsBuilder().appendSuper(super.equals(that)).append(this.denomination, that.denomination)
 		.append(this.website, that.website).append(this.financialContribution, that.financialContribution)
 		.append(this.contactInformation, that.contactInformation).build();
 
@@ -94,7 +77,7 @@ public class Sponsor extends AbstractDomainObject {
     @Override
     public int hashCode() {
 
-	return new HashCodeBuilder(17, 37).appendSuper(super.hashCode()).append(this.name).append(this.website)
+	return new HashCodeBuilder(17, 37).appendSuper(super.hashCode()).append(this.denomination).append(this.website)
 		.append(this.financialContribution).append(this.contactInformation).build();
 
     }
@@ -103,7 +86,7 @@ public class Sponsor extends AbstractDomainObject {
     public String toString() {
 
 	return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).appendSuper(super.toString())
-		.append("name", this.name).append("website", this.website)
+		.append("denomination", this.denomination).append("website", this.website)
 		.append("financialContribution", this.financialContribution)
 		.append("contactInformation", this.contactInformation).toString();
 

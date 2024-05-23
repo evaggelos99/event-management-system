@@ -13,7 +13,7 @@ import org.com.ems.api.domainobjects.Event;
 import org.com.ems.api.dto.EventDto;
 import org.com.ems.controller.api.IEventController;
 import org.com.ems.controller.exceptions.ObjectNotFoundException;
-import org.com.ems.services.IService;
+import org.com.ems.services.api.IEventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -27,12 +27,12 @@ import org.springframework.web.bind.annotation.RestController;
  * @author Evangelos Georgiou
  */
 @RestController
-@RequestMapping("/event")
+@RequestMapping(EventController.EVENT_PATH)
 public class EventController implements IEventController {
 
-    private final IService<Event> eventService;
+    static final String EVENT_PATH = "/event";
+    private final IEventService eventService;
     private final Function<Event, EventDto> eventToEventDtoConverter;
-    private final Function<EventDto, Event> eventDtoToEventConverter;
 
     /**
      * C-or
@@ -41,15 +41,12 @@ public class EventController implements IEventController {
      * @param eventToEventDtoConverter converts event to DTO
      * @param eventDtoToEventConverter converts DTO to event
      */
-    public EventController(@Autowired final IService<Event> eventService,
+    public EventController(@Autowired final IEventService eventService,
 			   @Autowired @Qualifier("eventToEventDtoConverter") final Function<Event,
-				   EventDto> eventToEventDtoConverter,
-			   @Autowired @Qualifier("eventDtoToEventConverter") final Function<EventDto,
-				   Event> eventDtoToEventConverter) {
+				   EventDto> eventToEventDtoConverter) {
 
 	this.eventService = requireNonNull(eventService);
 	this.eventToEventDtoConverter = requireNonNull(eventToEventDtoConverter);
-	this.eventDtoToEventConverter = requireNonNull(eventDtoToEventConverter);
 
     }
 
@@ -59,12 +56,12 @@ public class EventController implements IEventController {
     @Override
     public ResponseEntity<EventDto> postEvent(final EventDto eventDto) {
 
-	final Event event = this.eventService.add(this.eventDtoToEventConverter.apply(eventDto));
+	final Event event = this.eventService.add(eventDto);
 	final EventDto newDto = this.eventToEventDtoConverter.apply(event);
 
 	try {
 
-	    return ResponseEntity.created(new URI("/event/")).body(newDto);
+	    return ResponseEntity.created(new URI(EVENT_PATH)).body(newDto);
 	} catch (final URISyntaxException e) {
 
 	    return new ResponseEntity<>(newDto, HttpStatus.CREATED);
@@ -94,12 +91,12 @@ public class EventController implements IEventController {
     public ResponseEntity<EventDto> putEvent(final UUID eventId,
 					     final EventDto eventDto) {
 
-	final Event event = this.eventService.edit(eventId, this.eventDtoToEventConverter.apply(eventDto));
+	final Event event = this.eventService.edit(eventId, eventDto);
 	final EventDto newDto = this.eventToEventDtoConverter.apply(event);
 
 	try {
 
-	    return ResponseEntity.created(new URI("/event/" + eventId)).body(newDto);
+	    return ResponseEntity.created(new URI(EVENT_PATH + eventId)).body(newDto);
 	} catch (final URISyntaxException e) {
 
 	    return new ResponseEntity<>(newDto, HttpStatus.CREATED);
