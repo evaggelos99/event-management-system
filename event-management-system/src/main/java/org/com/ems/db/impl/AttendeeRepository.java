@@ -143,8 +143,9 @@ public class AttendeeRepository implements IAttendeeRepository {
     private Attendee saveAttendee(final AttendeeDto attendee) {
 
 	final UUID attendeeUuid = attendee.uuid();
-	final Timestamp createdAt = Timestamp.from(Instant.now());
-	final Timestamp timestamp = Timestamp.from(Instant.now());
+	final Instant now = Instant.now();
+	final Timestamp createdAt = Timestamp.from(now);
+	final Timestamp timestamp = Timestamp.from(now);
 	final List<UUID> ticketIds = attendee.ticketIDs() != null ? attendee.ticketIDs() : List.of();
 	final String firstName = attendee.firstName();
 	final String lastName = attendee.lastName();

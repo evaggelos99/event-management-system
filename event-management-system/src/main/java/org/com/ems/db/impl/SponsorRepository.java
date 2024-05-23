@@ -142,8 +142,9 @@ public class SponsorRepository implements ISponsorRepository {
     private Sponsor saveSponsor(final SponsorDto sponsor) {
 
 	final UUID sponsorUuid = sponsor.uuid();
-	final Timestamp createdAt = Timestamp.from(Instant.now());
-	final Timestamp timestamp = Timestamp.from(Instant.now());
+	Instant now = Instant.now();
+	final Timestamp createdAt = Timestamp.from(now);
+	final Timestamp timestamp = Timestamp.from(now);
 	final String name = sponsor.denomination();
 	final String website = sponsor.website();
 	final Integer financialContribution = sponsor.financialContribution();

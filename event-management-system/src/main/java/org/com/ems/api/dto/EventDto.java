@@ -31,7 +31,7 @@ public record EventDto(@Schema(hidden = true, description = "The UUID of the Att
 	@Schema(description = "The list of attendees") List<UUID> attendeesIds, //
 	@NotNull @Schema(description = "The organizer of the event", example = "61ee265a-f3d8-400a-8ae4-5e806b3eba92") UUID organizerId, //
 	@NotNull @Schema(example = "580", description = "The limit people the event can hold") Integer limitOfPeople, //
-	@Schema(description = "The sponsor of the event") UUID sponsorId, //
+	@Schema(description = "The sponsors of the event") List<UUID> sponsorsIds, //
 	@NotNull @Schema(description = "The start time of the Event") LocalDateTime startTimeOfEvent, //
 	@NotNull @Schema(description = "The duration of the Event", example = "PT5H") //
 	@JsonDeserialize(using = DurationDeserialzer.class) //

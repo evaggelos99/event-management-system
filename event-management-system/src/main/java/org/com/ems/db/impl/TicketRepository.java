@@ -143,8 +143,9 @@ public class TicketRepository implements ITicketRepository {
     private Ticket saveTicket(final TicketDto ticket) {
 
 	final UUID ticketUuid = ticket.uuid();
-	final Timestamp createdAt = Timestamp.from(Instant.now());
-	final Timestamp timestamp = Timestamp.from(Instant.now());
+	final Instant now = Instant.now();
+	final Timestamp createdAt = Timestamp.from(now);
+	final Timestamp timestamp = Timestamp.from(now);
 	final UUID eventId = ticket.eventID();
 	final TicketType ticketType = ticket.ticketType();
 	final Integer price = ticket.price();

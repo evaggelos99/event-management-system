@@ -2,7 +2,6 @@ package org.com.ems.integrationtests.controllers;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.Duration;
@@ -58,7 +57,7 @@ class EventControllerIntegrationTest {
 	final int limitOfPeople = 1000;
 
 	final EventDto dto = new EventDto(null, null, null, name, place, eventType, List.of(attendeeId), organizerId,
-		limitOfPeople, sponsorId, localDateTime, duration);
+		limitOfPeople, List.of(sponsorId), localDateTime, duration);
 
 	final ResponseEntity<EventDto> responseEntity = this.restTemplate
 		.postForEntity(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT, dto, EventDto.class);
@@ -77,7 +76,7 @@ class EventControllerIntegrationTest {
 	assertEquals(List.of(attendeeId), actualEventDto.attendeesIds());
 	assertEquals(organizerId, actualEventDto.organizerId());
 	assertEquals(limitOfPeople, actualEventDto.limitOfPeople());
-	assertEquals(sponsorId, actualEventDto.sponsorId());
+	assertEquals(List.of(sponsorId), actualEventDto.sponsorsIds());
 	assertEquals(localDateTime, actualEventDto.startTimeOfEvent());
 	assertEquals(duration, actualEventDto.duration());
 
@@ -130,7 +129,7 @@ class EventControllerIntegrationTest {
 	assertEquals(List.of(attendeeId), actualEventDto.attendeesIds());
 	assertEquals(organizerId, actualEventDto.organizerId());
 	assertEquals(limitOfPeople, actualEventDto.limitOfPeople());
-	assertNull(actualEventDto.sponsorId());
+	assertNotNull(actualEventDto.sponsorsIds());
 	assertEquals(localDateTime, actualEventDto.startTimeOfEvent());
 	assertEquals(duration, actualEventDto.duration());
 
@@ -175,7 +174,7 @@ class EventControllerIntegrationTest {
 	final ResponseEntity<EventDto> editedResponseEntity = this.restTemplate.exchange(
 		HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + actualEventDto.uuid().toString(), HttpMethod.PUT,
 		this.getHttpEntity(new EventDto(actualEventDto.uuid(), null, null, updatedName, updatedPlace, eventType,
-			List.of(attendeeId), organizerId, updatedLimitOfPeople, sponsorId, localDateTime,
+			List.of(attendeeId), organizerId, updatedLimitOfPeople, List.of(sponsorId), localDateTime,
 			updatedDuration)),
 		EventDto.class);
 
@@ -192,7 +191,7 @@ class EventControllerIntegrationTest {
 	assertEquals(updatedLimitOfPeople, actualEntity.limitOfPeople());
 	assertEquals(localDateTime, actualEntity.startTimeOfEvent());
 	assertEquals(updatedDuration, actualEntity.duration());
-	assertEquals(sponsorId, actualEntity.sponsorId());
+	assertEquals(List.of(sponsorId), actualEntity.sponsorsIds());
 
 	this.restTemplate.exchange(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + actualEntity.uuid(),
 		HttpMethod.DELETE, null, Void.class);
@@ -221,7 +220,7 @@ class EventControllerIntegrationTest {
 	final int limitOfPeople = 1000;
 
 	final EventDto dto = new EventDto(null, null, null, name, place, eventType, List.of(attendeeId), organizerId,
-		limitOfPeople, sponsorId, localDateTime, duration);
+		limitOfPeople, List.of(sponsorId), localDateTime, duration);
 
 	final ResponseEntity<EventDto> responseEntity = this.restTemplate
 		.postForEntity(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT, dto, EventDto.class);
@@ -234,8 +233,6 @@ class EventControllerIntegrationTest {
 		HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + actualEventDto.uuid(), EventDto.class);
 
 	assertEquals(actualEventDto, getEntity.getBody());
-	System.out.println(actualEventDto);
-	System.out.println(getEntity.getBody());
 
     }
 

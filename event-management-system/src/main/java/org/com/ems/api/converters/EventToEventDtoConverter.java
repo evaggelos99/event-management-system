@@ -17,7 +17,7 @@ public class EventToEventDtoConverter implements Function<Event, EventDto> {
 	return new EventDto(event.getUuid(), this.convertToTimeStamp(event.getCreatedAt()),
 		this.convertToTimeStamp(event.getLastUpdated()), event.getDenomination(), event.getPlace(),
 		event.getEventType(), event.getAttendeesIDs(), event.getOrganizerID(), event.getLimitOfPeople(),
-		event.getSponsorID(), event.getStartTime(), event.getDuration());
+		event.getSponsorsIds(), event.getStartTime(), event.getDuration());
 
     }
 

@@ -21,7 +21,7 @@ public final class Event extends AbstractDomainObject {
     private final List<UUID> attendeesIds;
     private final UUID organizerId;
     private final Integer limitOfPeople;
-    private final UUID sponsorId;
+    private final List<UUID> sponsorsIds;
     private final LocalDateTime startTime;
     private final Duration duration;
 
@@ -34,7 +34,7 @@ public final class Event extends AbstractDomainObject {
 		 @NotNull final List<UUID> attendeesIds,
 		 @NotNull final UUID organizerId,
 		 @NotNull final Integer limitOfPeople,
-		 final UUID sponsorId,
+		 final List<UUID> sponsorsIds,
 		 @NotNull final LocalDateTime startTime,
 		 @NotNull final Duration duration) {
 
@@ -45,7 +45,7 @@ public final class Event extends AbstractDomainObject {
 	this.attendeesIds = attendeesIds;
 	this.organizerId = organizerId;
 	this.limitOfPeople = limitOfPeople;
-	this.sponsorId = sponsorId;
+	this.sponsorsIds = sponsorsIds;
 	this.startTime = startTime;
 	this.duration = duration;
 
@@ -87,9 +87,9 @@ public final class Event extends AbstractDomainObject {
 
     }
 
-    public UUID getSponsorID() {
+    public List<UUID> getSponsorsIds() {
 
-	return this.sponsorId;
+	return this.sponsorsIds;
 
     }
 
@@ -118,7 +118,7 @@ public final class Event extends AbstractDomainObject {
 	return new EqualsBuilder().appendSuper(super.equals(that)).append(this.denomination, that.denomination)
 		.append(this.place, that.place).append(this.eventType, that.eventType)
 		.append(this.attendeesIds, that.attendeesIds).append(this.organizerId, that.organizerId)
-		.append(this.limitOfPeople, that.limitOfPeople).append(this.sponsorId, that.sponsorId)
+		.append(this.limitOfPeople, that.limitOfPeople).append(this.sponsorsIds, that.sponsorsIds)
 		.append(this.startTime, that.startTime).append(this.duration, that.duration).build();
 
     }
@@ -128,7 +128,7 @@ public final class Event extends AbstractDomainObject {
 
 	return new HashCodeBuilder(17, 37).appendSuper(super.hashCode()).append(this.denomination).append(this.place)
 		.append(this.eventType).append(this.attendeesIds).append(this.organizerId).append(this.limitOfPeople)
-		.append(this.sponsorId).append(this.startTime).append(this.duration).build();
+		.append(this.sponsorsIds).append(this.startTime).append(this.duration).build();
 
     }
 
@@ -139,7 +139,7 @@ public final class Event extends AbstractDomainObject {
 		.append("denomination", this.denomination).append("place", this.place)
 		.append("eventType", this.eventType).append("attendeesIDs", this.attendeesIds)
 		.append("organizerID", this.organizerId).append("limitOfPeople", this.limitOfPeople)
-		.append("sponsorID", this.sponsorId).append("startTime", this.startTime)
+		.append("sponsorID", this.sponsorsIds).append("startTime", this.startTime)
 		.append("duration", this.duration).toString();
 
     }

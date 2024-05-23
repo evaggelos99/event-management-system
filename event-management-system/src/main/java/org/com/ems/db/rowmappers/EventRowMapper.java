@@ -35,16 +35,14 @@ public class EventRowMapper implements RowMapper<Event> {
 
 	final List<UUID> attendees = this.arrayToListOfUuid.apply(rs.getArray("attendee_ids"));
 
+	final List<UUID> sponsors = this.arrayToListOfUuid.apply(rs.getArray("sponsors_ids"));
+
 	final Duration duration = this.extractDuration((PGInterval) rs.getObject("duration"));
-
-	final String sponsorId = rs.getString("sponsor_id");
-
-	final UUID sponsorUuid = sponsorId != null ? UUID.fromString(sponsorId) : null;
 
 	return new Event(UUID.fromString(rs.getString("id")), rs.getTimestamp("created_at").toInstant(),
 		rs.getTimestamp("last_updated").toInstant(), rs.getString("denomination"), rs.getString("place"),
 		EventType.valueOf(rs.getString("event_type")), attendees, UUID.fromString(rs.getString("organizer_id")),
-		rs.getInt("limit_of_people"), sponsorUuid, rs.getTimestamp("start_time").toLocalDateTime(), duration);
+		rs.getInt("limit_of_people"), sponsors, rs.getTimestamp("start_time").toLocalDateTime(), duration);
 
     }
 

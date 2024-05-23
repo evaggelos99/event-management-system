@@ -106,7 +106,7 @@ public class EventService implements IEventService {
 
 	final Event newEvent = new Event(eventId, event.getCreatedAt(), event.getLastUpdated(), event.getDenomination(),
 		event.getPlace(), event.getEventType(), list, event.getOrganizerID(), event.getLimitOfPeople(),
-		event.getSponsorID(), event.getStartTime(), event.getDuration());
+		event.getSponsorsIds(), event.getStartTime(), event.getDuration());
 
 	final EventDto dto = this.eventToEventDtoConverter.apply(newEvent);
 

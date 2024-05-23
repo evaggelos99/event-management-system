@@ -149,8 +149,9 @@ public class OrganizerRepository implements IOrganizerRepository {
     private Organizer saveOrganizer(final OrganizerDto organizer) {
 
 	final UUID organizerUuid = organizer.uuid();
-	final Timestamp createdAt = Timestamp.from(Instant.now());
-	final Timestamp timestamp = Timestamp.from(Instant.now());
+	final Instant now = Instant.now();
+	final Timestamp createdAt = Timestamp.from(now);
+	final Timestamp timestamp = Timestamp.from(now);
 	final String name = organizer.denomination();
 	final String website = organizer.website();
 	final String description = organizer.information();

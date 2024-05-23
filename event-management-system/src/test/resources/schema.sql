@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS events (
   attendee_ids UUID ARRAY NOT NULL,
   organizer_id UUID NOT NULL,
   limit_of_people INTEGER NOT NULL,
-  sponsor_id UUID,
+  sponsors_ids UUID ARRAY,
   start_time TIMESTAMP WITH TIME ZONE NOT NULL,
   duration INTERVAL DAY TO SECOND NOT NULL
 );
@@ -62,10 +62,6 @@ CREATE TABLE IF NOT EXISTS tickets (
 ALTER TABLE events
     ADD FOREIGN KEY (organizer_id) 
     REFERENCES organizers(id);
-
-ALTER TABLE events
-    ADD FOREIGN KEY (sponsor_id) 
-    REFERENCES sponsors(id);
 
 ALTER TABLE tickets
     ADD FOREIGN KEY (event_id) 

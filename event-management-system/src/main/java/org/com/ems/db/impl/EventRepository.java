@@ -147,6 +147,36 @@ public class EventRepository implements IEventRepository {
 
     }
 
+    private Event saveEvent(final EventDto dto) {
+
+	final UUID eventUuid = dto.uuid();
+	final Instant now = Instant.now();
+	final Timestamp createdAt = Timestamp.from(now);
+	final Timestamp timestamp = Timestamp.from(now);
+	final String name = dto.denomination();
+	final String place = dto.place();
+	final EventType eventType = dto.eventType();
+	final List<UUID> attendeesIDs = dto.attendeesIds() != null ? dto.attendeesIds() : List.of();
+	final UUID organizerId = dto.organizerId();
+	final Integer limitOfPeople = dto.limitOfPeople();
+	final List<UUID> sponsorId = dto.sponsorsIds() != null ? dto.sponsorsIds() : List.of();
+	final LocalDateTime startTimeOfEvent = dto.startTimeOfEvent();
+	final Duration duration = dto.duration();
+	final Object interval = this.durationToIntervalConverter.apply(duration);
+
+	final UUID[] uuidsOfAttendees = this.convertToArray(attendeesIDs);
+	final UUID[] uuidsOfSponsors = this.convertToArray(sponsorId);
+	final UUID uuid = eventUuid != null ? eventUuid : UUID.randomUUID();
+
+	this.jdbcTemplate.update(this.eventQueriesProperties.getProperty(CrudQueriesOperations.SAVE.name()), uuid,
+		createdAt, timestamp, name, place, eventType.name(), uuidsOfAttendees, organizerId, limitOfPeople,
+		uuidsOfSponsors, startTimeOfEvent, interval);
+
+	return this.eventDtoToEventConverter.apply(new EventDto(uuid, createdAt, timestamp, name, place, eventType,
+		attendeesIDs, organizerId, limitOfPeople, sponsorId, startTimeOfEvent, duration));
+
+    }
+
     private Event editEvent(final EventDto dto) {
 
 	final UUID uuid = dto.uuid();
@@ -156,66 +186,39 @@ public class EventRepository implements IEventRepository {
 	final String name = dto.denomination();
 	final String place = dto.place();
 	final EventType eventType = dto.eventType();
-	final List<UUID> attendeesIDs = dto.attendeesIds() != null ? dto.attendeesIds() : List.of();
+	final List<UUID> attendeesIds = dto.attendeesIds() != null ? dto.attendeesIds() : List.of();
 	final UUID organizerId = dto.organizerId();
 	final Integer limitOfPeople = dto.limitOfPeople();
-	final UUID sponsorId = dto.sponsorId();
+	final List<UUID> sponsorIds = dto.sponsorsIds() != null ? dto.sponsorsIds() : List.of();
 	final LocalDateTime startTimeOfEvent = dto.startTimeOfEvent();
 	final Duration duration = dto.duration();
 
 	final Object interval = this.durationToIntervalConverter.apply(duration);
 
-	final UUID[] uuidsOfAttendees = this.convertToArray(attendeesIDs);
+	final UUID[] attendees = this.convertToArray(attendeesIds);
+	final UUID[] sponsors = this.convertToArray(sponsorIds);
 
 	this.jdbcTemplate.update(this.eventQueriesProperties.getProperty(CrudQueriesOperations.EDIT.name()), uuid,
-		createdAt, timestamp, name, place, eventType.name(), uuidsOfAttendees, organizerId, limitOfPeople,
-		sponsorId, startTimeOfEvent, interval, uuid);
+		createdAt, timestamp, name, place, eventType.name(), attendees, organizerId, limitOfPeople, sponsors,
+		startTimeOfEvent, interval, uuid);
 
 	return this.eventDtoToEventConverter.apply(new EventDto(uuid, createdAt, timestamp, name, place, eventType,
-		attendeesIDs, organizerId, limitOfPeople, sponsorId, startTimeOfEvent, duration));
+		attendeesIds, organizerId, limitOfPeople, sponsorIds, startTimeOfEvent, duration));
 
     }
 
-    private Event saveEvent(final EventDto dto) {
+    private UUID[] convertToArray(final List<UUID> ids) {
 
-	final UUID eventUuid = dto.uuid();
-	final Timestamp createdAt = Timestamp.from(Instant.now());
-	final Timestamp timestamp = Timestamp.from(Instant.now());
-	final String name = dto.denomination();
-	final String place = dto.place();
-	final EventType eventType = dto.eventType();
-	final List<UUID> attendeesIDs = dto.attendeesIds() != null ? dto.attendeesIds() : List.of();
-	final UUID organizerId = dto.organizerId();
-	final Integer limitOfPeople = dto.limitOfPeople();
-	final UUID sponsorId = dto.sponsorId();
-	final LocalDateTime startTimeOfEvent = dto.startTimeOfEvent();
-	final Duration duration = dto.duration();
-	final Object interval = this.durationToIntervalConverter.apply(duration);
-
-	final UUID[] uuidsOfAttendees = this.convertToArray(attendeesIDs);
-	final UUID uuid = eventUuid != null ? eventUuid : UUID.randomUUID();
-
-	this.jdbcTemplate.update(this.eventQueriesProperties.getProperty(CrudQueriesOperations.SAVE.name()), uuid,
-		createdAt, timestamp, name, place, eventType.name(), uuidsOfAttendees, organizerId, limitOfPeople,
-		sponsorId, startTimeOfEvent, interval);
-
-	return this.eventDtoToEventConverter.apply(new EventDto(uuid, createdAt, timestamp, name, place, eventType,
-		attendeesIDs, organizerId, limitOfPeople, sponsorId, startTimeOfEvent, duration));
-
-    }
-
-    private UUID[] convertToArray(final List<UUID> ticketIds) {
-
-	if (null == ticketIds) {
+	if (null == ids) {
 
 	    return new UUID[] {};
 	}
 
-	final UUID[] uuids = new UUID[ticketIds.size()];
+	final UUID[] uuids = new UUID[ids.size()];
 
 	for (int i = 0; i < uuids.length; i++) {
 
-	    uuids[i] = ticketIds.get(i);
+	    uuids[i] = ids.get(i);
 	}
 	return uuids;
 
