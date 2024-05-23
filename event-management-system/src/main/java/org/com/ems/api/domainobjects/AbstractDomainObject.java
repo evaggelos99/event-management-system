@@ -9,30 +9,35 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
- * Super class for Entity classes
+ * Super class for domain object classes
  *
  * @author Evangelos Georgiou
  */
 public abstract class AbstractDomainObject {
 
-    protected UUID uuid;
-    protected Instant lastUpdated;
+    final protected UUID uuid;
+    final protected Instant createdAt;
+    final protected Instant lastUpdated;
 
     public AbstractDomainObject(final UUID uuid,
+				final Instant createdAt,
 				final Instant lastUpdated) {
 
 	this.uuid = uuid;
+	this.createdAt = createdAt;
 	this.lastUpdated = lastUpdated;
-
-    }
-
-    protected AbstractDomainObject() {
 
     }
 
     public UUID getUuid() {
 
 	return this.uuid;
+
+    }
+
+    public Instant getCreatedAt() {
+
+	return this.createdAt;
 
     }
 

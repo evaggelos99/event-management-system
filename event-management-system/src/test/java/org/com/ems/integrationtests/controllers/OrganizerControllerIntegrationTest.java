@@ -40,7 +40,7 @@ class OrganizerControllerIntegrationTest {
     private TestRestTemplate restTemplate;
 
     @Test
-    public void postOrganizerWithNotNullFields_thenExpectFieldsToNotBeNull() {
+    public void postOrganizerWithNonNullFields() {
 
 	final String name = this.generateString();
 
@@ -50,7 +50,7 @@ class OrganizerControllerIntegrationTest {
 	final String addr = this.generateString();
 	final ContactInformation contantInfo = new ContactInformation(email, "4323432", addr);
 
-	final OrganizerDto dto = new OrganizerDto(null, null, name, website, description,
+	final OrganizerDto dto = new OrganizerDto(null, null, null, name, website, description,
 		List.of(EventType.WEDDING, EventType.NIGHTLIFE), contantInfo);
 
 	final ResponseEntity<OrganizerDto> responseEntity = this.restTemplate
@@ -61,6 +61,7 @@ class OrganizerControllerIntegrationTest {
 	final OrganizerDto actualOrganizerDto = responseEntity.getBody();
 
 	assertNotNull(actualOrganizerDto.uuid());
+	assertNotNull(actualOrganizerDto.createdAt());
 	assertNotNull(actualOrganizerDto.lastUpdated());
 	assertEquals(name, actualOrganizerDto.denomination());
 	assertEquals(contantInfo, actualOrganizerDto.contactInformation());
@@ -84,7 +85,7 @@ class OrganizerControllerIntegrationTest {
     }
 
     @Test
-    public void postOrganizerWithNullFieldsThenEditEvent_thenExpectFieldsToNotBeNull() {
+    public void postOrganizerWithNonNullFields_thenPutOrganizerWithUpdatedFields() {
 
 	final String name = "name2";
 	final String website = "website2";
@@ -95,7 +96,8 @@ class OrganizerControllerIntegrationTest {
 
 	final List<EventType> eventTypes = List.of(EventType.WEDDING, EventType.NIGHTLIFE);
 
-	final OrganizerDto dto = new OrganizerDto(null, null, name, website, description, eventTypes, contantInfo);
+	final OrganizerDto dto = new OrganizerDto(null, null, null, name, website, description, eventTypes,
+		contantInfo);
 
 	final ResponseEntity<OrganizerDto> responseEntity = this.restTemplate
 		.postForEntity(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT, dto, OrganizerDto.class);
@@ -106,19 +108,20 @@ class OrganizerControllerIntegrationTest {
 
 	final String updatedName = this.generateString();
 	final String updatedWebsite = this.generateString();
-	;
 	final String updatedDescription = this.generateString();
-	;
-	final ResponseEntity<
-		OrganizerDto> editedResponseEntity = this.restTemplate
+
+	final ResponseEntity<OrganizerDto> editedResponseEntity = //
+		this.restTemplate
 			.exchange(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + entityDto.uuid().toString(),
-				HttpMethod.PUT, this.getHttpEntity(new OrganizerDto(entityDto.uuid(), null, updatedName,
+				HttpMethod.PUT,
+				this.getHttpEntity(new OrganizerDto(entityDto.uuid(), null, null, updatedName,
 					updatedWebsite, updatedDescription, eventTypes, contantInfo)),
 				OrganizerDto.class);
 
 	final OrganizerDto actualOrganizerDto = editedResponseEntity.getBody();
 
 	assertEquals(entityDto.uuid(), actualOrganizerDto.uuid());
+	assertEquals(entityDto.createdAt(), actualOrganizerDto.createdAt());
 	assertTrue(actualOrganizerDto.lastUpdated().after(entityDto.lastUpdated()));
 	assertEquals(updatedName, actualOrganizerDto.denomination());
 	assertEquals(contantInfo, actualOrganizerDto.contactInformation());
@@ -137,7 +140,7 @@ class OrganizerControllerIntegrationTest {
     }
 
     @Test
-    public void getOrganizerWithUUID_thenExpectToReturnTheSameExactObject() {
+    public void getOrganizerWithId() {
 
 	final String name = this.generateString();
 
@@ -149,7 +152,8 @@ class OrganizerControllerIntegrationTest {
 
 	final List<EventType> eventTypes = List.of(EventType.WEDDING, EventType.NIGHTLIFE);
 
-	final OrganizerDto dto = new OrganizerDto(null, null, name, website, description, eventTypes, contantInfo);
+	final OrganizerDto dto = new OrganizerDto(null, null, null, name, website, description, eventTypes,
+		contantInfo);
 
 	final ResponseEntity<OrganizerDto> responseEntity = this.restTemplate
 		.postForEntity(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT, dto, OrganizerDto.class);

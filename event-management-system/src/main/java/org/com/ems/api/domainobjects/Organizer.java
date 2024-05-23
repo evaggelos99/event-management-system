@@ -9,31 +9,20 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
-/**
- * Organizer Entity object
- *
- * @author Evangelos Georgiou
- */
-public class Organizer extends AbstractDomainObject {
+public final class Organizer extends AbstractDomainObject {
 
-    @NotNull
-    @NotBlank
-    private String denomination;
-    @NotBlank
+    private final String denomination;
     // TODO add regex validation
-    private String website;
-    @Nullable
-    private String information;
-    @NotNull
-    private List<EventType> eventTypes;
-    @NotNull
-    private ContactInformation contactInformation;
+    private final String website;
+    private final String information;
+    private final List<EventType> eventTypes;
+    private final ContactInformation contactInformation;
 
     public Organizer(final UUID uuid,
+		     final Instant createdAt,
 		     final Instant lastUpdated,
 		     @NotNull @NotBlank final String denomination,
 		     @NotBlank final String website,
@@ -41,16 +30,12 @@ public class Organizer extends AbstractDomainObject {
 		     @NotNull final List<EventType> eventTypes,
 		     @NotNull final ContactInformation contactInformation) {
 
-	super(uuid, lastUpdated);
+	super(uuid, createdAt, lastUpdated);
 	this.denomination = denomination;
 	this.website = website;
 	this.information = description;
 	this.eventTypes = eventTypes;
 	this.contactInformation = contactInformation;
-
-    }
-
-    public Organizer() {
 
     }
 

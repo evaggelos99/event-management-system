@@ -13,7 +13,7 @@ import org.com.ems.api.domainobjects.Event;
 import org.com.ems.api.dto.EventDto;
 import org.com.ems.controller.api.IEventController;
 import org.com.ems.controller.exceptions.ObjectNotFoundException;
-import org.com.ems.services.IService;
+import org.com.ems.services.api.IEventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class EventController implements IEventController {
 
     static final String EVENT_PATH = "/event";
-    private final IService<Event, EventDto> eventService;
+    private final IEventService eventService;
     private final Function<Event, EventDto> eventToEventDtoConverter;
 
     /**
@@ -41,7 +41,7 @@ public class EventController implements IEventController {
      * @param eventToEventDtoConverter converts event to DTO
      * @param eventDtoToEventConverter converts DTO to event
      */
-    public EventController(@Autowired final IService<Event, EventDto> eventService,
+    public EventController(@Autowired final IEventService eventService,
 			   @Autowired @Qualifier("eventToEventDtoConverter") final Function<Event,
 				   EventDto> eventToEventDtoConverter) {
 
@@ -126,6 +126,22 @@ public class EventController implements IEventController {
 		.toList();
 
 	return ResponseEntity.ok(listOfDtos);
+
+    }
+
+    @Override
+    public ResponseEntity<Boolean> addAttendee(final UUID eventId,
+					       final UUID attendeeId) {
+
+	final boolean wasSucessful = this.eventService.addAttendee(eventId, attendeeId);
+
+	try {
+
+	    return ResponseEntity.created(new URI(EVENT_PATH + eventId)).body(wasSucessful);
+	} catch (final URISyntaxException e) {
+
+	    return new ResponseEntity<>(wasSucessful, HttpStatus.CREATED);
+	}
 
     }
 

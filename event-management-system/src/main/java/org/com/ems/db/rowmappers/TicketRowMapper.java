@@ -21,9 +21,10 @@ public class TicketRowMapper implements RowMapper<Ticket> {
 	final SeatingInformation seatingInformation = new SeatingInformation(rs.getString("seat"),
 		rs.getString("section"));
 
-	return new Ticket(UUID.fromString(rs.getString("id")), rs.getTimestamp("last_updated").toInstant(),
-		UUID.fromString(rs.getString("event_id")), TicketType.valueOf(rs.getString("ticket_type")),
-		rs.getInt("price"), rs.getBoolean("transferable"), seatingInformation);
+	return new Ticket(UUID.fromString(rs.getString("id")), rs.getTimestamp("created_at").toInstant(),
+		rs.getTimestamp("last_updated").toInstant(), UUID.fromString(rs.getString("event_id")),
+		TicketType.valueOf(rs.getString("ticket_type")), rs.getInt("price"), rs.getBoolean("transferable"),
+		seatingInformation);
 
     }
 

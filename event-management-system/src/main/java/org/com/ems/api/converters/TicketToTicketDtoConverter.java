@@ -14,8 +14,9 @@ public class TicketToTicketDtoConverter implements Function<Ticket, TicketDto> {
     @Override
     public TicketDto apply(final Ticket ticket) {
 
-	return new TicketDto(ticket.getUuid(), this.convertToTimeStamp(ticket.getLastUpdated()), ticket.getEventID(),
-		ticket.getTicketType(), ticket.getPrice(), ticket.getTransferable(), ticket.getSeatInfo());
+	return new TicketDto(ticket.getUuid(), this.convertToTimeStamp(ticket.getCreatedAt()),
+		this.convertToTimeStamp(ticket.getLastUpdated()), ticket.getEventID(), ticket.getTicketType(),
+		ticket.getPrice(), ticket.getTransferable(), ticket.getSeatInfo());
 
     }
 

@@ -11,27 +11,17 @@ import org.com.ems.api.domainobjects.validators.constraints.NotNegative;
 
 import jakarta.validation.constraints.NotNull;
 
-/**
- * Ticket Entity object
- *
- * @author Evangelos Georgiou
- */
-public class Ticket extends AbstractDomainObject {
+public final class Ticket extends AbstractDomainObject {
 
-    @NotNull
-    private UUID eventID;
-    @NotNull
-    private TicketType ticketType;
-    @NotNull
-    @NotNegative(message = "cannot be negative")
-    private Integer price;
-    @NotNull
-    private Boolean transferable;
-    @NotNull
-    private SeatingInformation seatInfo;
+    private final UUID eventID;
+    private final TicketType ticketType;
+    private final Integer price;
+    private final Boolean transferable;
+    private final SeatingInformation seatInfo;
     // TODO create QR code referenceing this ticket
 
     public Ticket(final UUID uuid,
+		  final Instant createdAt,
 		  final Instant lastUpdated,
 		  @NotNull final UUID eventID,
 		  @NotNull final TicketType ticketType,
@@ -39,16 +29,12 @@ public class Ticket extends AbstractDomainObject {
 		  @NotNull final Boolean transferable,
 		  @NotNull final SeatingInformation seatInfo) {
 
-	super(uuid, lastUpdated);
+	super(uuid, createdAt, lastUpdated);
 	this.eventID = eventID;
 	this.ticketType = ticketType;
 	this.price = price;
 	this.transferable = transferable;
 	this.seatInfo = seatInfo;
-
-    }
-
-    public Ticket() {
 
     }
 

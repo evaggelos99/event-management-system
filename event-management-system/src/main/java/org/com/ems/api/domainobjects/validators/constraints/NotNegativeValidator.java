@@ -19,12 +19,7 @@ public class NotNegativeValidator implements ConstraintValidator<NotNegative, Nu
     public boolean isValid(final Number value,
 			   final ConstraintValidatorContext context) {
 
-	if (null == value) {
-
-	    return false;
-	}
-
-	return value.intValue() >= 0;
+	return (null != value && value.intValue() >= 0);
 
     }
 

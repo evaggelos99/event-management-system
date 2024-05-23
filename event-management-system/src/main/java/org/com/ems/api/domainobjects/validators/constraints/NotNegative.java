@@ -31,7 +31,7 @@ import jakarta.validation.Payload;
 @Constraint(validatedBy = { NotNegativeValidator.class })
 public @interface NotNegative {
 
-    String message() default "";
+    String message() default "Cannot be negative";
 
     Class<?>[] groups() default {};
 

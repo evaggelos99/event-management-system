@@ -10,12 +10,15 @@ import java.util.Properties;
 import java.util.UUID;
 import java.util.function.Function;
 
+import org.com.ems.api.converters.TicketDtoToTicketConverter;
+import org.com.ems.api.domainobjects.AbstractDomainObject;
 import org.com.ems.api.domainobjects.SeatingInformation;
 import org.com.ems.api.domainobjects.Ticket;
 import org.com.ems.api.domainobjects.TicketType;
 import org.com.ems.api.dto.TicketDto;
 import org.com.ems.db.ITicketRepository;
 import org.com.ems.db.queries.Queries.CrudQueriesOperations;
+import org.com.ems.db.rowmappers.TicketRowMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +38,21 @@ public class TicketRepository implements ITicketRepository {
     private final Function<TicketDto, Ticket> ticketDtoToTicketConverter;
     private final Properties ticketQueriesProperties;
 
+    /**
+     * C-or
+     *
+     * @param jdbcTemplate               the {@link JdbcTemplate} used for
+     *                                   connecting to the database for the Ticket
+     *                                   objects
+     * @param ticketRowMapper            the {@link TicketRowMapper} used for
+     *                                   returning Ticket objects from the database
+     * @param ticketDtoToTicketConverter the {@link TicketDtoToTicketConverter} used
+     *                                   for converting {@link TicketDto} to
+     *                                   {@link Ticket}
+     * @param ticketQueriesProperties    the {@link Properties} which are used for
+     *                                   getting the right query CRUD database
+     *                                   operations
+     */
     public TicketRepository(@Autowired final JdbcTemplate jdbcTemplate,
 			    @Autowired @Qualifier("ticketRowMapper") final RowMapper<Ticket> ticketRowMapper,
 			    @Autowired @Qualifier("ticketDtoToTicketConverter") final Function<TicketDto,
@@ -125,6 +143,7 @@ public class TicketRepository implements ITicketRepository {
     private Ticket saveTicket(final TicketDto ticket) {
 
 	final UUID ticketUuid = ticket.uuid();
+	final Timestamp createdAt = Timestamp.from(Instant.now());
 	final Timestamp timestamp = Timestamp.from(Instant.now());
 	final UUID eventId = ticket.eventID();
 	final TicketType ticketType = ticket.ticketType();
@@ -135,17 +154,18 @@ public class TicketRepository implements ITicketRepository {
 	final UUID uuid = ticketUuid != null ? ticketUuid : UUID.randomUUID();
 
 	this.jdbcTemplate.update(this.ticketQueriesProperties.getProperty(CrudQueriesOperations.SAVE.name()), uuid,
-		timestamp, eventId, ticketType.name(), price, isTransferable, seatInformation.getSeat(),
+		createdAt, timestamp, eventId, ticketType.name(), price, isTransferable, seatInformation.getSeat(),
 		seatInformation.getSection());
 
-	return this.ticketDtoToTicketConverter
-		.apply(new TicketDto(uuid, timestamp, eventId, ticketType, price, isTransferable, seatInformation));
+	return this.ticketDtoToTicketConverter.apply(
+		new TicketDto(uuid, createdAt, timestamp, eventId, ticketType, price, isTransferable, seatInformation));
 
     }
 
     private Ticket editTicket(final TicketDto ticket) {
 
 	final UUID uuid = ticket.uuid();
+	final Timestamp createdAt = Timestamp.from(this.getTicket(uuid).getCreatedAt());
 	final Timestamp timestamp = Timestamp.from(Instant.now());
 	final UUID eventId = ticket.eventID();
 	final TicketType ticketType = ticket.ticketType();
@@ -154,11 +174,17 @@ public class TicketRepository implements ITicketRepository {
 	final SeatingInformation seatInformation = ticket.seatInfo();
 
 	this.jdbcTemplate.update(this.ticketQueriesProperties.getProperty(CrudQueriesOperations.EDIT.name()), uuid,
-		timestamp, eventId, ticketType.name(), price, isTransferable, seatInformation.getSeat(),
+		createdAt, timestamp, eventId, ticketType.name(), price, isTransferable, seatInformation.getSeat(),
 		seatInformation.getSection(), uuid);
 
-	return this.ticketDtoToTicketConverter
-		.apply(new TicketDto(uuid, timestamp, eventId, ticketType, price, isTransferable, seatInformation));
+	return this.ticketDtoToTicketConverter.apply(
+		new TicketDto(uuid, createdAt, timestamp, eventId, ticketType, price, isTransferable, seatInformation));
+
+    }
+
+    private AbstractDomainObject getTicket(final UUID id) {
+
+	return this.findById(id).get();
 
     }
 

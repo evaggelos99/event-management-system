@@ -43,7 +43,7 @@ class EventControllerIntegrationTest {
     private TestRestTemplate restTemplate;
 
     @Test
-    public void postEventWithNotNullFields_thenExpectFieldsToNotBeNull() {
+    public void postEventWithoutNullFields() {
 
 	final String name = this.generateString();
 	final String place = this.generateString();
@@ -56,7 +56,7 @@ class EventControllerIntegrationTest {
 	final Duration duration = Duration.ZERO;
 	final int limitOfPeople = 1000;
 
-	final EventDto dto = new EventDto(null, null, name, place, eventType, List.of(attendeeId), organizerId,
+	final EventDto dto = new EventDto(null, null, null, name, place, eventType, List.of(attendeeId), organizerId,
 		limitOfPeople, sponsorId, localDateTime, duration);
 
 	final ResponseEntity<EventDto> responseEntity = this.restTemplate
@@ -67,6 +67,7 @@ class EventControllerIntegrationTest {
 	final EventDto actualEventDto = responseEntity.getBody();
 
 	assertNotNull(actualEventDto.uuid());
+	assertNotNull(actualEventDto.createdAt());
 	assertNotNull(actualEventDto.lastUpdated());
 	assertEquals(name, actualEventDto.denomination());
 	assertEquals(place, actualEventDto.place());
@@ -96,7 +97,7 @@ class EventControllerIntegrationTest {
     }
 
     @Test
-    public void postEventWithNullFields_thenExpectFieldsToNotBeNull() {
+    public void postEventWithNullFields() {
 
 	final String name = this.generateString();
 	final String place = this.generateString();
@@ -108,7 +109,7 @@ class EventControllerIntegrationTest {
 	final Duration duration = Duration.ZERO;
 	final int limitOfPeople = 1000;
 
-	final EventDto dto = new EventDto(null, null, name, place, eventType, List.of(attendeeId), organizerId,
+	final EventDto dto = new EventDto(null, null, null, name, place, eventType, List.of(attendeeId), organizerId,
 		limitOfPeople, null, localDateTime, duration);
 
 	final ResponseEntity<EventDto> responseEntity = this.restTemplate
@@ -119,6 +120,7 @@ class EventControllerIntegrationTest {
 	final EventDto actualEventDto = responseEntity.getBody();
 
 	assertNotNull(actualEventDto.uuid());
+	assertNotNull(actualEventDto.createdAt());
 	assertNotNull(actualEventDto.lastUpdated());
 	assertEquals(name, actualEventDto.denomination());
 	assertEquals(place, actualEventDto.place());
@@ -142,7 +144,7 @@ class EventControllerIntegrationTest {
     }
 
     @Test
-    public void postEventWithNullFieldsThenEditEvent_thenExpectFieldsToNotBeNull() {
+    public void postEventWithoutNullFields_thenPutEventWithUpdatedFields() {
 
 	final String name = this.generateString();
 	final String place = this.generateString();
@@ -155,7 +157,7 @@ class EventControllerIntegrationTest {
 	final Duration duration = Duration.ZERO;
 
 	final int limitOfPeople = 1000;
-	final EventDto dto = new EventDto(null, null, name, place, eventType, List.of(attendeeId), organizerId,
+	final EventDto dto = new EventDto(null, null, null, name, place, eventType, List.of(attendeeId), organizerId,
 		limitOfPeople, null, localDateTime, duration);
 
 	final ResponseEntity<EventDto> responseEntity = this.restTemplate
@@ -169,17 +171,17 @@ class EventControllerIntegrationTest {
 	final String updatedName = this.generateString();
 	final String updatedPlace = this.generateString();
 	final Duration updatedDuration = Duration.ofHours(12);
-	final ResponseEntity<EventDto> editedResponseEntity = this.restTemplate
-		.exchange(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + actualEventDto.uuid().toString(),
-			HttpMethod.PUT,
-			this.getHttpEntity(new EventDto(actualEventDto.uuid(), null, updatedName, updatedPlace, eventType,
-				List.of(attendeeId), organizerId, updatedLimitOfPeople, sponsorId, localDateTime,
-				updatedDuration)),
-			EventDto.class);
+	final ResponseEntity<EventDto> editedResponseEntity = this.restTemplate.exchange(
+		HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + actualEventDto.uuid().toString(), HttpMethod.PUT,
+		this.getHttpEntity(new EventDto(actualEventDto.uuid(), null, null, updatedName, updatedPlace, eventType,
+			List.of(attendeeId), organizerId, updatedLimitOfPeople, sponsorId, localDateTime,
+			updatedDuration)),
+		EventDto.class);
 
 	final EventDto actualEntity = editedResponseEntity.getBody();
 
 	assertEquals(actualEventDto.uuid(), actualEntity.uuid());
+	assertEquals(actualEventDto.createdAt(), actualEntity.createdAt());
 	assertTrue(actualEntity.lastUpdated().after(actualEventDto.lastUpdated()));
 	assertEquals(updatedName, actualEntity.denomination());
 	assertEquals(updatedPlace, actualEntity.place());
@@ -202,7 +204,7 @@ class EventControllerIntegrationTest {
     }
 
     @Test
-    public void getEventWithUUID_thenExpectToReturnTheSameExactObject() {
+    public void getEventWithId() {
 
 	final String name = this.generateString();
 	final String place = this.generateString();
@@ -215,7 +217,7 @@ class EventControllerIntegrationTest {
 	final Duration duration = Duration.ZERO;
 	final int limitOfPeople = 1000;
 
-	final EventDto dto = new EventDto(null, null, name, place, eventType, List.of(attendeeId), organizerId,
+	final EventDto dto = new EventDto(null, null, null, name, place, eventType, List.of(attendeeId), organizerId,
 		limitOfPeople, sponsorId, localDateTime, duration);
 
 	final ResponseEntity<EventDto> responseEntity = this.restTemplate

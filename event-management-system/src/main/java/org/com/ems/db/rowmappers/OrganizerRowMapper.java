@@ -37,9 +37,9 @@ public class OrganizerRowMapper implements RowMapper<Organizer> {
 	final ContactInformation contactInformation = new ContactInformation(rs.getString("email"),
 		rs.getString("phone_number"), rs.getString("physical_address"));
 
-	return new Organizer(UUID.fromString(rs.getString("id")), rs.getTimestamp("last_updated").toInstant(),
-		rs.getString("denomination"), rs.getString("website"), rs.getString("information"), listOfEventTypes,
-		contactInformation);
+	return new Organizer(UUID.fromString(rs.getString("id")), rs.getTimestamp("created_at").toInstant(),
+		rs.getTimestamp("last_updated").toInstant(), rs.getString("denomination"), rs.getString("website"),
+		rs.getString("information"), listOfEventTypes, contactInformation);
 
     }
 

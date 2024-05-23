@@ -20,9 +20,9 @@ public class SponsorRowMapper implements RowMapper<Sponsor> {
 	final ContactInformation contactInformation = new ContactInformation(rs.getString("email"),
 		rs.getString("phone_number"), rs.getString("physical_address"));
 
-	return new Sponsor(UUID.fromString(rs.getString("id")), rs.getTimestamp("last_updated").toInstant(),
-		rs.getString("denomination"), rs.getString("website"), rs.getInt("financial_contribution"),
-		contactInformation);
+	return new Sponsor(UUID.fromString(rs.getString("id")), rs.getTimestamp("created_at").toInstant(),
+		rs.getTimestamp("last_updated").toInstant(), rs.getString("denomination"), rs.getString("website"),
+		rs.getInt("financial_contribution"), contactInformation);
 
     }
 

@@ -39,7 +39,7 @@ class SponsorControllerIntegrationTest {
     private TestRestTemplate restTemplate;
 
     @Test
-    public void postSponsorWithNotNullFields_thenExpectFieldsToNotBeNull() {
+    public void postSponsorWithNonNullFields() {
 
 	final String name = this.generateString();
 
@@ -49,7 +49,7 @@ class SponsorControllerIntegrationTest {
 	final String addr = this.generateString();
 	final ContactInformation contantInfo = new ContactInformation(email, "4323432", addr);
 
-	final SponsorDto dto = new SponsorDto(null, null, name, website, financialContribution, contantInfo);
+	final SponsorDto dto = new SponsorDto(null, null, null, name, website, financialContribution, contantInfo);
 
 	final ResponseEntity<SponsorDto> responseEntity = this.restTemplate
 		.postForEntity(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT, dto, SponsorDto.class);
@@ -82,7 +82,7 @@ class SponsorControllerIntegrationTest {
     }
 
     @Test
-    public void postEventWithNullFieldsThenEditEvent_thenExpectFieldsToNotBeNull() {
+    public void postOrganizerWithNonNullFields_then() {
 
 	final String name = this.generateString();
 
@@ -92,7 +92,7 @@ class SponsorControllerIntegrationTest {
 	final String addr = this.generateString();
 	final ContactInformation contantInfo = new ContactInformation(email, "4323432", addr);
 
-	final SponsorDto dto = new SponsorDto(null, null, name, website, financialContribution, contantInfo);
+	final SponsorDto dto = new SponsorDto(null, null, null, name, website, financialContribution, contantInfo);
 
 	final ResponseEntity<SponsorDto> responseEntity = this.restTemplate
 		.postForEntity(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT, dto, SponsorDto.class);
@@ -102,6 +102,7 @@ class SponsorControllerIntegrationTest {
 	final SponsorDto actualSponsorDto = responseEntity.getBody();
 
 	assertNotNull(actualSponsorDto.uuid());
+	assertNotNull(actualSponsorDto.createdAt());
 	assertNotNull(actualSponsorDto.lastUpdated());
 	assertEquals(name, actualSponsorDto.denomination());
 	assertEquals(contantInfo, actualSponsorDto.contactInformation());
@@ -119,7 +120,7 @@ class SponsorControllerIntegrationTest {
     }
 
     @Test
-    public void put() {
+    public void postSponsorWithNonNullFields_thenEditSponsor() {
 
 	final String name = this.generateString();
 
@@ -129,7 +130,7 @@ class SponsorControllerIntegrationTest {
 	final String addr = this.generateString();
 	final ContactInformation contantInfo = new ContactInformation(email, "4323432", addr);
 
-	final SponsorDto dto = new SponsorDto(null, null, name, website, financialContribution, contantInfo);
+	final SponsorDto dto = new SponsorDto(null, null, null, name, website, financialContribution, contantInfo);
 
 	final ResponseEntity<SponsorDto> responseEntity = this.restTemplate
 		.postForEntity(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT, dto, SponsorDto.class);
@@ -141,15 +142,17 @@ class SponsorControllerIntegrationTest {
 	final String updatedName = this.generateString();
 	final String updatedWebsite = this.generateString();
 	final Integer updatedFinancialContribution = 4342342;
-	final ResponseEntity<SponsorDto> editedResponseEntity = this.restTemplate.exchange(
-		HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + entityDto.uuid().toString(), HttpMethod.PUT,
-		this.getHttpEntity(new SponsorDto(entityDto.uuid(), null, updatedName, updatedWebsite,
-			updatedFinancialContribution, contantInfo)),
-		SponsorDto.class);
+	final ResponseEntity<
+		SponsorDto> editedResponseEntity = this.restTemplate
+			.exchange(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + entityDto.uuid().toString(),
+				HttpMethod.PUT, this.getHttpEntity(new SponsorDto(entityDto.uuid(), null, null,
+					updatedName, updatedWebsite, updatedFinancialContribution, contantInfo)),
+				SponsorDto.class);
 
 	final SponsorDto actualSponsorDto = editedResponseEntity.getBody();
 
 	assertEquals(entityDto.uuid(), actualSponsorDto.uuid());
+	assertEquals(entityDto.createdAt(), actualSponsorDto.createdAt());
 	assertTrue(actualSponsorDto.lastUpdated().after(entityDto.lastUpdated()));
 	assertEquals(updatedName, actualSponsorDto.denomination());
 	assertEquals(contantInfo, actualSponsorDto.contactInformation());

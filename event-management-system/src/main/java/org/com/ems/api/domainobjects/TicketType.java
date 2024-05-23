@@ -1,10 +1,5 @@
 package org.com.ems.api.domainobjects;
 
-/**
- * TicketType object
- *
- * @author Evangelos Georgiou
- */
 public enum TicketType {
 
     /**

@@ -11,33 +11,23 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 
 import jakarta.validation.constraints.NotNull;
 
-/**
- * Attendee Entity object
- *
- * @author Evangelos Georgiou
- */
-public class Attendee extends AbstractDomainObject {
+public final class Attendee extends AbstractDomainObject {
 
-    @NotNull
-    private String firstName;
-    @NotNull
-    private String lastName;
-    private List<UUID> ticketIDs;
+    private final String firstName;
+    private final String lastName;
+    private final List<UUID> ticketIDs;
 
     public Attendee(final UUID uuid,
+		    final Instant createdAt,
 		    final Instant lastUpdated,
 		    @NotNull final String firstName,
 		    @NotNull final String lastName,
 		    final List<UUID> ticketIDs) {
 
-	super(uuid, lastUpdated);
+	super(uuid, createdAt, lastUpdated);
 	this.firstName = firstName;
 	this.lastName = lastName;
 	this.ticketIDs = ticketIDs;
-
-    }
-
-    public Attendee() {
 
     }
 

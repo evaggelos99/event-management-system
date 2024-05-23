@@ -11,39 +11,22 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotNull;
 
-/**
- * Event Entity object
- *
- * @author Evangelos Georgiou
- */
-public class Event extends AbstractDomainObject {
+public final class Event extends AbstractDomainObject {
 
-    @NotNull
-    private String denomination;
-    @NotNull
-    private String place;
-    @NotNull
-    private EventType eventType;
-    // ManyToMany
-    @NotNull
-    private List<UUID> attendeesIds;
-    // ManyToOne
-    @NotNull
-    private UUID organizerId;
-    @NotNull
-    private Integer limitOfPeople;
-    // ManyToOne
-    @Nullable
-    private UUID sponsorId;
-    @NotNull
-    private LocalDateTime startTime;
-    @NotNull
-    private Duration duration;
+    private final String denomination;
+    private final String place;
+    private final EventType eventType;
+    private final List<UUID> attendeesIds;
+    private final UUID organizerId;
+    private final Integer limitOfPeople;
+    private final UUID sponsorId;
+    private final LocalDateTime startTime;
+    private final Duration duration;
 
     public Event(final UUID uuid,
+		 final Instant createdAt,
 		 final Instant lastUpdated,
 		 @NotNull final String denomination,
 		 @NotNull final String place,
@@ -55,7 +38,7 @@ public class Event extends AbstractDomainObject {
 		 @NotNull final LocalDateTime startTime,
 		 @NotNull final Duration duration) {
 
-	super(uuid, lastUpdated);
+	super(uuid, createdAt, lastUpdated);
 	this.denomination = denomination;
 	this.place = place;
 	this.eventType = eventType;
@@ -65,10 +48,6 @@ public class Event extends AbstractDomainObject {
 	this.sponsorId = sponsorId;
 	this.startTime = startTime;
 	this.duration = duration;
-
-    }
-
-    public Event() {
 
     }
 

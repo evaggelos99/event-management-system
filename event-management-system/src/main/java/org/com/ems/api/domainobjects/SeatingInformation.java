@@ -10,11 +10,6 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 
-/**
- * SeatingInformation Embeddable object
- *
- * @author Evangelos Georgiou
- */
 public final class SeatingInformation {
 
     @NotNull

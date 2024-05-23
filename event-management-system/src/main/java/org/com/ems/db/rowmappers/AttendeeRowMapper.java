@@ -32,8 +32,9 @@ public class AttendeeRowMapper implements RowMapper<Attendee> {
 
 	final List<UUID> ticket_ids = this.arrayToListOfUuid.apply(rs.getArray("ticket_ids"));
 
-	return new Attendee(UUID.fromString(rs.getString("id")), rs.getTimestamp("last_updated").toInstant(),
-		rs.getString("first_name"), rs.getString("last_name"), ticket_ids);
+	return new Attendee(UUID.fromString(rs.getString("id")), rs.getTimestamp("created_at").toInstant(),
+		rs.getTimestamp("last_updated").toInstant(), rs.getString("first_name"), rs.getString("last_name"),
+		ticket_ids);
 
     }
 

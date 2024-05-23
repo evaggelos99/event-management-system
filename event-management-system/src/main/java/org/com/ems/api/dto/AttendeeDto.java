@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.UUID;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Null;
 
 /**
  * Attendee Entity object
@@ -12,9 +14,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
  * @author Evangelos Georgiou
  */
 public record AttendeeDto(@Schema(hidden = true, description = "The UUID of the Attendee") UUID uuid,
-	@Schema(hidden = true) Timestamp lastUpdated,
-	@Schema(example = "John", description = "First name of the Attendee") String firstName,
-	@Schema(example = "Smith", description = "Last name of the Attendee") String lastName,
+	@Null @Schema(hidden = true) Timestamp createdAt, //
+	@Null @Schema(hidden = true) Timestamp lastUpdated,
+	@NotBlank @Schema(example = "John", description = "First name of the Attendee") String firstName,
+	@NotBlank @Schema(example = "Smith", description = "Last name of the Attendee") String lastName,
 	@Schema(description = "The UUIDs of tickets of an event belonging to an Attendee") List<UUID> ticketIDs) {
 
 }

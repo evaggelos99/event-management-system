@@ -13,12 +13,15 @@ import java.util.Properties;
 import java.util.UUID;
 import java.util.function.Function;
 
+import org.com.ems.api.converters.EventDtoToEventConverter;
+import org.com.ems.api.domainobjects.AbstractDomainObject;
 import org.com.ems.api.domainobjects.Event;
 import org.com.ems.api.domainobjects.EventType;
 import org.com.ems.api.dto.EventDto;
 import org.com.ems.db.IEventRepository;
 import org.com.ems.db.queries.Queries.CrudQueriesOperations;
-import org.com.ems.db.rowmappers.DurationToIntervalConverter;
+import org.com.ems.db.rowmappers.EventRowMapper;
+import org.com.ems.db.rowmappers.util.DurationToIntervalConverter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,11 +43,19 @@ public class EventRepository implements IEventRepository {
     private final Function<Duration, Object> durationToIntervalConverter;
 
     /**
+     * C-or
      *
-     * @param jdbcTemplate
-     * @param eventRowMapperFunction
-     * @param eventDtoToEventConverter
-     * @param eventQueriesProperties
+     * @param jdbcTemplate                the {@link JdbcTemplate} used for
+     *                                    connecting to the database for the Event
+     *                                    objects
+     * @param eventRowMapperFunction      the {@link EventRowMapper} used for
+     *                                    returning Event objects from the database
+     * @param eventDtoToEventConverter    the {@link EventDtoToEventConverter} used
+     *                                    for converting {@link EventDto} to
+     *                                    {@link Event}
+     * @param eventQueriesProperties      the {@link Properties} which are used for
+     *                                    getting the right query CRUD database
+     *                                    operations
      * @param durationToIntervalConverter {@link DurationToIntervalConverter}
      */
     public EventRepository(@Autowired final JdbcTemplate jdbcTemplate,
@@ -139,6 +150,8 @@ public class EventRepository implements IEventRepository {
     private Event editEvent(final EventDto dto) {
 
 	final UUID uuid = dto.uuid();
+
+	final Timestamp createdAt = Timestamp.from(this.getEvent(uuid).getCreatedAt());
 	final Timestamp timestamp = Timestamp.from(Instant.now());
 	final String name = dto.denomination();
 	final String place = dto.place();
@@ -155,17 +168,18 @@ public class EventRepository implements IEventRepository {
 	final UUID[] uuidsOfAttendees = this.convertToArray(attendeesIDs);
 
 	this.jdbcTemplate.update(this.eventQueriesProperties.getProperty(CrudQueriesOperations.EDIT.name()), uuid,
-		timestamp, name, place, eventType.name(), uuidsOfAttendees, organizerId, limitOfPeople, sponsorId,
-		startTimeOfEvent, interval, uuid);
+		createdAt, timestamp, name, place, eventType.name(), uuidsOfAttendees, organizerId, limitOfPeople,
+		sponsorId, startTimeOfEvent, interval, uuid);
 
-	return this.eventDtoToEventConverter.apply(new EventDto(uuid, timestamp, name, place, eventType, attendeesIDs,
-		organizerId, limitOfPeople, sponsorId, startTimeOfEvent, duration));
+	return this.eventDtoToEventConverter.apply(new EventDto(uuid, createdAt, timestamp, name, place, eventType,
+		attendeesIDs, organizerId, limitOfPeople, sponsorId, startTimeOfEvent, duration));
 
     }
 
     private Event saveEvent(final EventDto dto) {
 
 	final UUID eventUuid = dto.uuid();
+	final Timestamp createdAt = Timestamp.from(Instant.now());
 	final Timestamp timestamp = Timestamp.from(Instant.now());
 	final String name = dto.denomination();
 	final String place = dto.place();
@@ -182,11 +196,11 @@ public class EventRepository implements IEventRepository {
 	final UUID uuid = eventUuid != null ? eventUuid : UUID.randomUUID();
 
 	this.jdbcTemplate.update(this.eventQueriesProperties.getProperty(CrudQueriesOperations.SAVE.name()), uuid,
-		timestamp, name, place, eventType.name(), uuidsOfAttendees, organizerId, limitOfPeople, sponsorId,
-		startTimeOfEvent, interval);
+		createdAt, timestamp, name, place, eventType.name(), uuidsOfAttendees, organizerId, limitOfPeople,
+		sponsorId, startTimeOfEvent, interval);
 
-	return this.eventDtoToEventConverter.apply(new EventDto(uuid, timestamp, name, place, eventType, attendeesIDs,
-		organizerId, limitOfPeople, sponsorId, startTimeOfEvent, duration));
+	return this.eventDtoToEventConverter.apply(new EventDto(uuid, createdAt, timestamp, name, place, eventType,
+		attendeesIDs, organizerId, limitOfPeople, sponsorId, startTimeOfEvent, duration));
 
     }
 
@@ -204,6 +218,12 @@ public class EventRepository implements IEventRepository {
 	    uuids[i] = ticketIds.get(i);
 	}
 	return uuids;
+
+    }
+
+    private AbstractDomainObject getEvent(final UUID uuid) {
+
+	return this.findById(uuid).get();
 
     }
 

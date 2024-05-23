@@ -10,6 +10,7 @@ import java.util.UUID;
 
 import org.com.ems.EventManagementSystemApplication;
 import org.com.ems.api.dto.AttendeeDto;
+import org.com.ems.util.SqlDataStorage;
 import org.com.ems.util.TestConfiguration;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,12 +39,12 @@ public class AttendeeControllerIntegrationTest {
     private TestRestTemplate restTemplate;
 
     @Test
-    public void postAttendeeWithNotNullFields_thenExpectFieldsToNotBeNull() {
+    public void postAttendeeWithTicketIdsNull() {
 
 	final String firstName = this.generateString();
 	final String lastName = this.generateString();
 
-	final AttendeeDto dto = new AttendeeDto(null, null, firstName, lastName, null);
+	final AttendeeDto dto = new AttendeeDto(null, null, null, firstName, lastName, null);
 
 	final ResponseEntity<AttendeeDto> responseEntity = this.restTemplate
 		.postForEntity(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT, dto, AttendeeDto.class);
@@ -53,6 +54,7 @@ public class AttendeeControllerIntegrationTest {
 	final AttendeeDto actualAttendeeDto = responseEntity.getBody();
 
 	assertNotNull(actualAttendeeDto.uuid());
+	assertNotNull(actualAttendeeDto.createdAt());
 	assertNotNull(actualAttendeeDto.lastUpdated());
 	assertEquals(firstName, actualAttendeeDto.firstName());
 	assertEquals(lastName, actualAttendeeDto.lastName());
@@ -75,13 +77,13 @@ public class AttendeeControllerIntegrationTest {
     }
 
     @Test
-    public void postAttendeeWithNullFields_thenExpectFieldsToNotBeNull() {
+    public void postAttendeeWithTicketIds() {
 
-	final String firstName = "first";
-	final String lastName = "last";
-	final UUID expectedUUID = UUID.randomUUID();
+	final String firstName = this.generateString();
+	final String lastName = this.generateString();
+	final UUID expectedUUID = SqlDataStorage.TICKET_ID;
 
-	final AttendeeDto dto = new AttendeeDto(null, null, firstName, lastName, List.of(expectedUUID));
+	final AttendeeDto dto = new AttendeeDto(null, null, null, firstName, lastName, List.of(expectedUUID));
 
 	final ResponseEntity<AttendeeDto> responseEntity = this.restTemplate
 		.postForEntity(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT, dto, AttendeeDto.class);
@@ -91,6 +93,7 @@ public class AttendeeControllerIntegrationTest {
 	final AttendeeDto actualAttendeeDto = responseEntity.getBody();
 
 	assertNotNull(actualAttendeeDto.uuid());
+	assertNotNull(actualAttendeeDto.createdAt());
 	assertNotNull(actualAttendeeDto.lastUpdated());
 	assertEquals(firstName, actualAttendeeDto.firstName());
 	assertEquals(lastName, actualAttendeeDto.lastName());
@@ -107,12 +110,12 @@ public class AttendeeControllerIntegrationTest {
     }
 
     @Test
-    public void postAttendeeWithNullFieldsThenEditAttendee_thenExpectFieldsToNotBeNull() {
+    public void postAttendeeWithNullTicketIds_putAttendeeWithNullTicketIds() {
 
-	final String firstName = "first";
-	final String lastName = "last";
+	final String firstName = this.generateString();
+	final String lastName = this.generateString();
 
-	final AttendeeDto dto = new AttendeeDto(null, null, firstName, lastName, null);
+	final AttendeeDto dto = new AttendeeDto(null, null, null, firstName, lastName, null);
 
 	final ResponseEntity<AttendeeDto> ogResponseEntity = this.restTemplate
 		.postForEntity(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT, dto, AttendeeDto.class);
@@ -121,17 +124,20 @@ public class AttendeeControllerIntegrationTest {
 
 	final AttendeeDto entityDto = ogResponseEntity.getBody();
 
+	final String updatedName = this.generateString();
+	final String updatedLastName = this.generateString();
 	final ResponseEntity<AttendeeDto> editedResponseEntity = this.restTemplate.exchange(
 		HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + entityDto.uuid().toString(), HttpMethod.PUT,
-		this.getHttpEntity(new AttendeeDto(entityDto.uuid(), null, firstName + lastName, lastName, null)),
+		this.getHttpEntity(new AttendeeDto(entityDto.uuid(), null, null, updatedName, updatedLastName, null)),
 		AttendeeDto.class);
 
 	final AttendeeDto actualAttendeeDto = editedResponseEntity.getBody();
 
 	assertEquals(entityDto.uuid(), actualAttendeeDto.uuid());
+	assertEquals(actualAttendeeDto.createdAt(), entityDto.createdAt());
 	assertTrue(actualAttendeeDto.lastUpdated().after(entityDto.lastUpdated()));
-	assertEquals(firstName + lastName, actualAttendeeDto.firstName());
-	assertEquals(lastName, actualAttendeeDto.lastName());
+	assertEquals(updatedName, actualAttendeeDto.firstName());
+	assertEquals(updatedLastName, actualAttendeeDto.lastName());
 	assertNotNull(actualAttendeeDto.ticketIDs());
 
 	this.restTemplate.exchange(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + entityDto.uuid(),
@@ -145,13 +151,13 @@ public class AttendeeControllerIntegrationTest {
     }
 
     @Test
-    public void getAttendeeWithUUID_thenExpectToReturnTheSameExactObject() {
+    public void getAttendeeWithId() {
 
 	final String firstName = this.generateString();
 	final String lastName = this.generateString();
 	final UUID expectedUUID = UUID.randomUUID();
 
-	final AttendeeDto dto = new AttendeeDto(null, null, firstName, lastName, List.of(expectedUUID));
+	final AttendeeDto dto = new AttendeeDto(null, null, null, firstName, lastName, List.of(expectedUUID));
 
 	final ResponseEntity<AttendeeDto> responseEntity = this.restTemplate
 		.postForEntity(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT, dto, AttendeeDto.class);

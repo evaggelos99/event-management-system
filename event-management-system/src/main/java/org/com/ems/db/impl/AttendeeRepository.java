@@ -11,10 +11,13 @@ import java.util.Properties;
 import java.util.UUID;
 import java.util.function.Function;
 
+import org.com.ems.api.converters.AttendeeDtoToAttendeeConverter;
+import org.com.ems.api.domainobjects.AbstractDomainObject;
 import org.com.ems.api.domainobjects.Attendee;
 import org.com.ems.api.dto.AttendeeDto;
 import org.com.ems.db.IAttendeeRepository;
 import org.com.ems.db.queries.Queries.CrudQueriesOperations;
+import org.com.ems.db.rowmappers.AttendeeRowMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +37,23 @@ public class AttendeeRepository implements IAttendeeRepository {
     private final Function<AttendeeDto, Attendee> attendeeDtoToAttendeeConverter;
     private final Properties attendeeQueriesProperties;
 
+    /**
+     * C-or
+     *
+     * @param jdbcTemplate                   the {@link JdbcTemplate} used for
+     *                                       connecting to the database for the
+     *                                       Attendee objects
+     * @param attendeeRowMapper              the {@link AttendeeRowMapper} used for
+     *                                       returning Attendee objects from the
+     *                                       database
+     * @param attendeeDtoToAttendeeConverter the
+     *                                       {@link AttendeeDtoToAttendeeConverter}
+     *                                       used for converting {@link AttendeeDto}
+     *                                       to {@link Attendee}
+     * @param attendeeQueriesProperties      the {@link Properties} which are used
+     *                                       for getting the right query CRUD
+     *                                       database operations
+     */
     public AttendeeRepository(@Autowired final JdbcTemplate jdbcTemplate,
 			      @Autowired @Qualifier("attendeeRowMapper") final RowMapper<Attendee> attendeeRowMapper,
 			      @Autowired @Qualifier("attendeeDtoToAttendeeConverter") final Function<AttendeeDto,
@@ -123,6 +143,7 @@ public class AttendeeRepository implements IAttendeeRepository {
     private Attendee saveAttendee(final AttendeeDto attendee) {
 
 	final UUID attendeeUuid = attendee.uuid();
+	final Timestamp createdAt = Timestamp.from(Instant.now());
 	final Timestamp timestamp = Timestamp.from(Instant.now());
 	final List<UUID> ticketIds = attendee.ticketIDs() != null ? attendee.ticketIDs() : List.of();
 	final String firstName = attendee.firstName();
@@ -131,16 +152,17 @@ public class AttendeeRepository implements IAttendeeRepository {
 	final UUID uuid = attendeeUuid != null ? attendeeUuid : UUID.randomUUID();
 
 	this.jdbcTemplate.update(this.attendeeQueriesProperties.getProperty(CrudQueriesOperations.SAVE.name()), uuid,
-		timestamp, firstName, lastName, uuids);
+		createdAt, timestamp, firstName, lastName, uuids);
 
 	return this.attendeeDtoToAttendeeConverter
-		.apply(new AttendeeDto(uuid, timestamp, firstName, lastName, ticketIds));
+		.apply(new AttendeeDto(uuid, createdAt, timestamp, firstName, lastName, ticketIds));
 
     }
 
     private Attendee editAttendee(final AttendeeDto attendee) {
 
 	final UUID uuid = attendee.uuid();
+	final Timestamp createdAt = Timestamp.from(this.getAttendee(uuid).getCreatedAt());
 	final Timestamp timestamp = Timestamp.from(Instant.now());
 	final List<UUID> ticketIds = attendee.ticketIDs() != null ? attendee.ticketIDs() : List.of();
 	final String firstName = attendee.firstName();
@@ -148,10 +170,10 @@ public class AttendeeRepository implements IAttendeeRepository {
 	final UUID[] uuids = this.convertToArray(ticketIds);
 
 	this.jdbcTemplate.update(this.attendeeQueriesProperties.getProperty(CrudQueriesOperations.EDIT.name()), uuid,
-		timestamp, firstName, lastName, uuids, uuid);
+		createdAt, timestamp, firstName, lastName, uuids, uuid);
 
 	return this.attendeeDtoToAttendeeConverter
-		.apply(new AttendeeDto(uuid, timestamp, firstName, lastName, ticketIds));
+		.apply(new AttendeeDto(uuid, createdAt, timestamp, firstName, lastName, ticketIds));
 
     }
 
@@ -172,4 +194,9 @@ public class AttendeeRepository implements IAttendeeRepository {
 
     }
 
+    private AbstractDomainObject getAttendee(final UUID uuid) {
+
+	return this.findById(uuid).get();
+
+    }
 }

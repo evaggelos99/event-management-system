@@ -10,11 +10,14 @@ import java.util.Properties;
 import java.util.UUID;
 import java.util.function.Function;
 
+import org.com.ems.api.converters.SponsorDtoToSponsorConverter;
+import org.com.ems.api.domainobjects.AbstractDomainObject;
 import org.com.ems.api.domainobjects.ContactInformation;
 import org.com.ems.api.domainobjects.Sponsor;
 import org.com.ems.api.dto.SponsorDto;
 import org.com.ems.db.ISponsorRepository;
 import org.com.ems.db.queries.Queries.CrudQueriesOperations;
+import org.com.ems.db.rowmappers.SponsorRowMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +37,21 @@ public class SponsorRepository implements ISponsorRepository {
     private final Function<SponsorDto, Sponsor> sponsDtoToSponsorConverter;
     private final Properties sponsorQueriesProperties;
 
+    /**
+     * C-or
+     *
+     * @param jdbcTemplate                 the {@link JdbcTemplate} used for
+     *                                     connecting to the database for the
+     *                                     Sponsor objects
+     * @param sponsorRowMapper             the {@link SponsorRowMapper} used for
+     *                                     returning Event objects from the database
+     * @param sponsorDtoToSponsorConverter the {@link SponsorDtoToSponsorConverter}
+     *                                     used for converting {@link SponsorDto} to
+     *                                     {@link Sponsor}
+     * @param sponsorQueriesProperties     the {@link Properties} which are used for
+     *                                     getting the right query CRUD database
+     *                                     operations
+     */
     public SponsorRepository(@Autowired final JdbcTemplate jdbcTemplate,
 			     @Autowired @Qualifier("sponsorRowMapper") final RowMapper<Sponsor> sponsorRowMapper,
 			     @Autowired @Qualifier("sponsorDtoToSponsorConverter") final Function<SponsorDto,
@@ -124,6 +142,7 @@ public class SponsorRepository implements ISponsorRepository {
     private Sponsor saveSponsor(final SponsorDto sponsor) {
 
 	final UUID sponsorUuid = sponsor.uuid();
+	final Timestamp createdAt = Timestamp.from(Instant.now());
 	final Timestamp timestamp = Timestamp.from(Instant.now());
 	final String name = sponsor.denomination();
 	final String website = sponsor.website();
@@ -133,17 +152,18 @@ public class SponsorRepository implements ISponsorRepository {
 	final UUID uuid = sponsorUuid != null ? sponsorUuid : UUID.randomUUID();
 
 	this.jdbcTemplate.update(this.sponsorQueriesProperties.getProperty(CrudQueriesOperations.SAVE.name()), uuid,
-		timestamp, name, website, financialContribution, contactInformation.getEmail(),
+		createdAt, timestamp, name, website, financialContribution, contactInformation.getEmail(),
 		contactInformation.getPhoneNumber(), contactInformation.getPhysicalAddress());
 
-	return this.sponsDtoToSponsorConverter
-		.apply(new SponsorDto(uuid, timestamp, name, website, financialContribution, contactInformation));
+	return this.sponsDtoToSponsorConverter.apply(
+		new SponsorDto(uuid, createdAt, timestamp, name, website, financialContribution, contactInformation));
 
     }
 
     private Sponsor editOrganizer(final SponsorDto sponsor) {
 
 	final UUID uuid = sponsor.uuid();
+	final Timestamp createdAt = Timestamp.from(this.getSponsor(uuid).getCreatedAt());
 	final Timestamp timestamp = Timestamp.from(Instant.now());
 	final String name = sponsor.denomination();
 	final String website = sponsor.website();
@@ -151,11 +171,17 @@ public class SponsorRepository implements ISponsorRepository {
 	final ContactInformation contactInformation = sponsor.contactInformation();
 
 	this.jdbcTemplate.update(this.sponsorQueriesProperties.getProperty(CrudQueriesOperations.EDIT.name()), uuid,
-		timestamp, name, website, financialContribution, contactInformation.getEmail(),
+		createdAt, timestamp, name, website, financialContribution, contactInformation.getEmail(),
 		contactInformation.getPhoneNumber(), contactInformation.getPhysicalAddress(), uuid);
 
-	return this.sponsDtoToSponsorConverter
-		.apply(new SponsorDto(uuid, timestamp, name, website, financialContribution, contactInformation));
+	return this.sponsDtoToSponsorConverter.apply(
+		new SponsorDto(uuid, createdAt, timestamp, name, website, financialContribution, contactInformation));
+
+    }
+
+    private AbstractDomainObject getSponsor(final UUID id) {
+
+	return this.findById(id).get();
 
     }
 

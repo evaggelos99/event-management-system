@@ -11,12 +11,15 @@ import java.util.Properties;
 import java.util.UUID;
 import java.util.function.Function;
 
+import org.com.ems.api.converters.OrganizerDtoToOrganizerConverter;
+import org.com.ems.api.domainobjects.AbstractDomainObject;
 import org.com.ems.api.domainobjects.ContactInformation;
 import org.com.ems.api.domainobjects.EventType;
 import org.com.ems.api.domainobjects.Organizer;
 import org.com.ems.api.dto.OrganizerDto;
 import org.com.ems.db.IOrganizerRepository;
 import org.com.ems.db.queries.Queries.CrudQueriesOperations;
+import org.com.ems.db.rowmappers.OrganizerRowMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +39,24 @@ public class OrganizerRepository implements IOrganizerRepository {
     private final Function<OrganizerDto, Organizer> organizerDtoToOrganizerConverter;
     private final Properties organizerQueriesProperties;
 
+    /**
+     * C-or
+     *
+     * @param jdbcTemplate                     the {@link JdbcTemplate} used for
+     *                                         connecting to the database for the
+     *                                         Organizer objects
+     * @param organizerRowMapper               the {@link OrganizerRowMapper} used
+     *                                         for returning Organizer objects from
+     *                                         the database
+     * @param organizerDtoToOrganizerConverter the
+     *                                         {@link OrganizerDtoToOrganizerConverter}
+     *                                         used for converting
+     *                                         {@link OrganizerDto} to
+     *                                         {@link Organizer}
+     * @param organizerQueriesProperties       the {@link Properties} which are used
+     *                                         for getting the right query CRUD
+     *                                         database operations
+     */
     public OrganizerRepository(@Autowired final JdbcTemplate jdbcTemplate,
 			       @Autowired @Qualifier("organizerRowMapper") final RowMapper<
 				       Organizer> organizerRowMapper,
@@ -77,10 +98,10 @@ public class OrganizerRepository implements IOrganizerRepository {
 
 	try {
 
-	    final Organizer attendee = this.jdbcTemplate.queryForObject(
+	    final Organizer organizer = this.jdbcTemplate.queryForObject(
 		    this.organizerQueriesProperties.getProperty(CrudQueriesOperations.GET_ID.name()),
 		    this.organizerRowMapper, uuid);
-	    return Optional.of(attendee);
+	    return Optional.of(organizer);
 	} catch (final EmptyResultDataAccessException e) {
 
 	    LOGGER.warn("Organizer with UUID: {} was not found", uuid);
@@ -128,6 +149,7 @@ public class OrganizerRepository implements IOrganizerRepository {
     private Organizer saveOrganizer(final OrganizerDto organizer) {
 
 	final UUID organizerUuid = organizer.uuid();
+	final Timestamp createdAt = Timestamp.from(Instant.now());
 	final Timestamp timestamp = Timestamp.from(Instant.now());
 	final String name = organizer.denomination();
 	final String website = organizer.website();
@@ -138,17 +160,18 @@ public class OrganizerRepository implements IOrganizerRepository {
 	final UUID uuid = organizerUuid != null ? organizerUuid : UUID.randomUUID();
 
 	this.jdbcTemplate.update(this.organizerQueriesProperties.getProperty(CrudQueriesOperations.SAVE.name()), uuid,
-		timestamp, name, website, description, eventTypesArray, contactInformation.getEmail(),
+		createdAt, timestamp, name, website, description, eventTypesArray, contactInformation.getEmail(),
 		contactInformation.getPhoneNumber(), contactInformation.getPhysicalAddress());
 
-	return this.organizerDtoToOrganizerConverter.apply(
-		new OrganizerDto(uuid, timestamp, name, website, description, listOfEventTypes, contactInformation));
+	return this.organizerDtoToOrganizerConverter.apply(new OrganizerDto(uuid, createdAt, timestamp, name, website,
+		description, listOfEventTypes, contactInformation));
 
     }
 
     private Organizer editOrganizer(final OrganizerDto organizer) {
 
 	final UUID uuid = organizer.uuid();
+	final Timestamp createdAt = Timestamp.from(this.getOrganizer(uuid).getCreatedAt());
 	final Timestamp timestamp = Timestamp.from(Instant.now());
 	final String name = organizer.denomination();
 	final String website = organizer.website();
@@ -158,11 +181,11 @@ public class OrganizerRepository implements IOrganizerRepository {
 	final String[] eventTypesArray = this.convertToArray(listOfEventTypes);
 
 	this.jdbcTemplate.update(this.organizerQueriesProperties.getProperty(CrudQueriesOperations.EDIT.name()), uuid,
-		timestamp, name, website, description, eventTypesArray, contactInformation.getEmail(),
+		createdAt, timestamp, name, website, description, eventTypesArray, contactInformation.getEmail(),
 		contactInformation.getPhoneNumber(), contactInformation.getPhysicalAddress(), uuid);
 
-	return this.organizerDtoToOrganizerConverter.apply(
-		new OrganizerDto(uuid, timestamp, name, website, description, listOfEventTypes, contactInformation));
+	return this.organizerDtoToOrganizerConverter.apply(new OrganizerDto(uuid, createdAt, timestamp, name, website,
+		description, listOfEventTypes, contactInformation));
 
     }
 
@@ -180,6 +203,12 @@ public class OrganizerRepository implements IOrganizerRepository {
 	    eventTypesArray[i] = ticketIds.get(i).name();
 	}
 	return eventTypesArray;
+
+    }
+
+    private AbstractDomainObject getOrganizer(final UUID id) {
+
+	return this.findById(id).get();
 
     }
 

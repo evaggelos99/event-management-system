@@ -13,7 +13,7 @@ import org.com.ems.api.domainobjects.Ticket;
 import org.com.ems.api.dto.TicketDto;
 import org.com.ems.controller.api.ITicketController;
 import org.com.ems.controller.exceptions.ObjectNotFoundException;
-import org.com.ems.services.IService;
+import org.com.ems.services.api.IService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;

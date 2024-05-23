@@ -13,7 +13,7 @@ import org.com.ems.api.domainobjects.Attendee;
 import org.com.ems.api.dto.AttendeeDto;
 import org.com.ems.controller.api.IAttendeeController;
 import org.com.ems.controller.exceptions.ObjectNotFoundException;
-import org.com.ems.services.IService;
+import org.com.ems.services.api.IAttendeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -31,7 +31,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class AttendeeController implements IAttendeeController {
 
     static final String ATTENDEE_PATH = "/attendee";
-    IService<Attendee, AttendeeDto> attendeeService;
+
+    private final IAttendeeService attendeeService;
     private final Function<Attendee, AttendeeDto> attendeeToAttendeeDtoConverter;
 
     /**
@@ -41,7 +42,7 @@ public class AttendeeController implements IAttendeeController {
      * @param attendeeToAttendeeDtoConverter converts attendee to DTO
      * @param attendeeDtoToAttendeeConverter converts DTO to attendee
      */
-    public AttendeeController(@Autowired final IService<Attendee, AttendeeDto> attendeeService,
+    public AttendeeController(@Autowired final IAttendeeService attendeeService,
 			      @Autowired @Qualifier("attendeeToAttendeeDtoConverter") final Function<Attendee,
 				      AttendeeDto> attendeeToAttendeeDtoConverter) {
 
@@ -130,6 +131,22 @@ public class AttendeeController implements IAttendeeController {
 		.map(this.attendeeToAttendeeDtoConverter::apply).toList();
 
 	return ResponseEntity.ok(listOfDtos);
+
+    }
+
+    @Override
+    public ResponseEntity<Boolean> addTicket(final UUID attendeeId,
+					     final UUID ticketId) {
+
+	final boolean wasSucessful = this.attendeeService.addTicket(attendeeId, ticketId);
+
+	try {
+
+	    return ResponseEntity.created(new URI(ATTENDEE_PATH + attendeeId)).body(wasSucessful);
+	} catch (final URISyntaxException e) {
+
+	    return new ResponseEntity<>(wasSucessful, HttpStatus.CREATED);
+	}
 
     }
 

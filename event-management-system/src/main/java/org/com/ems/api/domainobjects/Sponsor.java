@@ -11,39 +11,26 @@ import org.com.ems.api.domainobjects.validators.constraints.NotNegative;
 
 import jakarta.validation.constraints.NotNull;
 
-/**
- * Sponsor Entity object
- *
- * @author Evangelos Georgiou
- */
-public class Sponsor extends AbstractDomainObject {
+public final class Sponsor extends AbstractDomainObject {
 
-    @NotNull
-    private String denomination;
-    @NotNull
-    private String website;
-    @NotNull
-    @NotNegative
-    private Integer financialContribution;
-    @NotNull
-    private ContactInformation contactInformation;
+    private final String denomination;
+    private final String website;
+    private final Integer financialContribution;
+    private final ContactInformation contactInformation;
 
     public Sponsor(final UUID uuid,
+		   final Instant createdAt,
 		   final Instant lastUpdated,
 		   @NotNull final String denomination,
 		   @NotNull final String website,
 		   @NotNull @NotNegative final Integer financialContribution,
 		   @NotNull final ContactInformation contactInformation) {
 
-	super(uuid, lastUpdated);
+	super(uuid, createdAt, lastUpdated);
 	this.denomination = denomination;
 	this.website = website;
 	this.financialContribution = financialContribution;
 	this.contactInformation = contactInformation;
-
-    }
-
-    public Sponsor() {
 
     }
 

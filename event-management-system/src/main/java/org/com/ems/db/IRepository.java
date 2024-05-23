@@ -6,7 +6,12 @@ import java.util.UUID;
 
 public interface IRepository<T, T_DTO> {
 
-    T save(T_DTO t);
+    /**
+     *
+     * @param dto
+     * @return
+     */
+    T save(T_DTO dto);
 
     Optional<T> findById(UUID uuid);
 
@@ -16,6 +21,6 @@ public interface IRepository<T, T_DTO> {
 
     Collection<T> findAll();
 
-    T edit(T_DTO attendeeDto);
+    T edit(T_DTO dto);
 
 }
