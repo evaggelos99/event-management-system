@@ -108,7 +108,7 @@ public class EventRepository implements IEventRepository {
 	final int rows = this.jdbcTemplate
 		.update(this.eventQueriesProperties.getProperty(CrudQueriesOperations.DELETE_ID.name()), uuid);
 
-	final boolean deleted = rows == 1 ? true : false;
+	final boolean deleted = rows == 1;
 
 	if (deleted) {
 
@@ -181,7 +181,7 @@ public class EventRepository implements IEventRepository {
 
 	final UUID uuid = dto.uuid();
 
-	final Timestamp createdAt = Timestamp.from(this.getEvent(uuid).getCreatedAt());
+	final Timestamp createdAt = this.getCreatedAt(uuid);
 	final Timestamp timestamp = Timestamp.from(Instant.now());
 	final String name = dto.denomination();
 	final String place = dto.place();
@@ -224,10 +224,9 @@ public class EventRepository implements IEventRepository {
 
     }
 
-    private AbstractDomainObject getEvent(final UUID uuid) {
+    private Timestamp getCreatedAt(final UUID uuid) {
 
-	return this.findById(uuid).get();
+	return Timestamp.from(this.findById(uuid).map(AbstractDomainObject::getCreatedAt).orElse(Instant.now()));
 
     }
-
 }

@@ -53,9 +53,7 @@ public class EventRowMapper implements RowMapper<Event> {
 	final double seconds = pgInterval.getSeconds();
 	final int ms = pgInterval.getMicroSeconds();
 
-	final Duration duration = Duration.ofHours(hours).plusMinutes(mins).plusSeconds((long) seconds).plusMillis(ms);
-
-	return duration;
+	return Duration.ofHours(hours).plusMinutes(mins).plusSeconds((long) seconds).plusMillis(ms);
 
     }
 

@@ -116,7 +116,7 @@ public class OrganizerRepository implements IOrganizerRepository {
 	final int rows = this.jdbcTemplate
 		.update(this.organizerQueriesProperties.getProperty(CrudQueriesOperations.DELETE_ID.name()), uuid);
 
-	final boolean deleted = rows == 1 ? true : false;
+	final boolean deleted = rows == 1;
 
 	if (deleted) {
 
@@ -172,7 +172,7 @@ public class OrganizerRepository implements IOrganizerRepository {
     private Organizer editOrganizer(final OrganizerDto organizer) {
 
 	final UUID uuid = organizer.uuid();
-	final Timestamp createdAt = Timestamp.from(this.getOrganizer(uuid).getCreatedAt());
+	final Timestamp createdAt = this.getCreatedAt(uuid);
 	final Timestamp timestamp = Timestamp.from(Instant.now());
 	final String name = organizer.denomination();
 	final String website = organizer.website();
@@ -207,9 +207,9 @@ public class OrganizerRepository implements IOrganizerRepository {
 
     }
 
-    private AbstractDomainObject getOrganizer(final UUID id) {
+    private Timestamp getCreatedAt(final UUID uuid) {
 
-	return this.findById(id).get();
+	return Timestamp.from(this.findById(uuid).map(AbstractDomainObject::getCreatedAt).orElse(Instant.now()));
 
     }
 

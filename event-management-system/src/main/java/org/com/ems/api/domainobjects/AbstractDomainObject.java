@@ -15,13 +15,13 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  */
 public abstract class AbstractDomainObject {
 
-    final protected UUID uuid;
-    final protected Instant createdAt;
-    final protected Instant lastUpdated;
+    private final UUID uuid;
+    private final Instant createdAt;
+    private final Instant lastUpdated;
 
-    public AbstractDomainObject(final UUID uuid,
-				final Instant createdAt,
-				final Instant lastUpdated) {
+    protected AbstractDomainObject(final UUID uuid,
+				   final Instant createdAt,
+				   final Instant lastUpdated) {
 
 	this.uuid = uuid;
 	this.createdAt = createdAt;

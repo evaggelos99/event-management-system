@@ -112,12 +112,7 @@ public class EventService implements IEventService {
 
 	final Event eventFromRepo = this.eventRepository.edit(dto);
 
-	if (!eventFromRepo.getAttendeesIDs().containsAll(list)) {
-
-	    return false;
-	}
-
-	return true;
+	return eventFromRepo.getAttendeesIDs().containsAll(list);
 
     }
 

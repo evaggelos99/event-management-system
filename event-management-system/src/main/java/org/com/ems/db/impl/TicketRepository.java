@@ -111,7 +111,7 @@ public class TicketRepository implements ITicketRepository {
 	final int rows = this.jdbcTemplate
 		.update(this.ticketQueriesProperties.getProperty(CrudQueriesOperations.DELETE_ID.name()), uuid);
 
-	final boolean deleted = rows == 1 ? true : false;
+	final boolean deleted = rows == 1;
 
 	if (deleted) {
 
@@ -166,7 +166,7 @@ public class TicketRepository implements ITicketRepository {
     private Ticket editTicket(final TicketDto ticket) {
 
 	final UUID uuid = ticket.uuid();
-	final Timestamp createdAt = Timestamp.from(this.getTicket(uuid).getCreatedAt());
+	final Timestamp createdAt = this.getCreatedAt(uuid);
 	final Timestamp timestamp = Timestamp.from(Instant.now());
 	final UUID eventId = ticket.eventID();
 	final TicketType ticketType = ticket.ticketType();
@@ -183,9 +183,9 @@ public class TicketRepository implements ITicketRepository {
 
     }
 
-    private AbstractDomainObject getTicket(final UUID id) {
+    private Timestamp getCreatedAt(final UUID uuid) {
 
-	return this.findById(id).get();
+	return Timestamp.from(this.findById(uuid).map(AbstractDomainObject::getCreatedAt).orElse(Instant.now()));
 
     }
 

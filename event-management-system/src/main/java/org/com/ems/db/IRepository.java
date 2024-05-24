@@ -4,14 +4,14 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface IRepository<T, T_DTO> {
+public interface IRepository<T, DTO> {
 
     /**
      *
      * @param dto
      * @return
      */
-    T save(T_DTO dto);
+    T save(DTO dto);
 
     Optional<T> findById(UUID uuid);
 
@@ -21,6 +21,6 @@ public interface IRepository<T, T_DTO> {
 
     Collection<T> findAll();
 
-    T edit(T_DTO dto);
+    T edit(DTO dto);
 
 }

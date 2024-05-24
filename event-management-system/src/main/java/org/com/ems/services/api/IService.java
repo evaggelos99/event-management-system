@@ -4,9 +4,9 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface IService<T, T_DTO> extends ILookUpService<T> {
+public interface IService<T, DTO> extends ILookUpService<T> {
 
-    T add(T_DTO object);
+    T add(DTO object);
 
     @Override
     Optional<T> get(UUID uuid);
@@ -14,7 +14,7 @@ public interface IService<T, T_DTO> extends ILookUpService<T> {
     void delete(UUID uuid);
 
     T edit(UUID uuid,
-	   T_DTO object);
+	   DTO object);
 
     Collection<T> getAll();
 

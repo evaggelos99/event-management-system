@@ -110,7 +110,7 @@ public class SponsorRepository implements ISponsorRepository {
 	final int rows = this.jdbcTemplate
 		.update(this.sponsorQueriesProperties.getProperty(CrudQueriesOperations.DELETE_ID.name()), uuid);
 
-	final boolean deleted = rows == 1 ? true : false;
+	final boolean deleted = rows == 1;
 
 	if (deleted) {
 
@@ -142,7 +142,7 @@ public class SponsorRepository implements ISponsorRepository {
     private Sponsor saveSponsor(final SponsorDto sponsor) {
 
 	final UUID sponsorUuid = sponsor.uuid();
-	Instant now = Instant.now();
+	final Instant now = Instant.now();
 	final Timestamp createdAt = Timestamp.from(now);
 	final Timestamp timestamp = Timestamp.from(now);
 	final String name = sponsor.denomination();
@@ -164,7 +164,7 @@ public class SponsorRepository implements ISponsorRepository {
     private Sponsor editOrganizer(final SponsorDto sponsor) {
 
 	final UUID uuid = sponsor.uuid();
-	final Timestamp createdAt = Timestamp.from(this.getSponsor(uuid).getCreatedAt());
+	final Timestamp createdAt = this.getCreatedAt(uuid);
 	final Timestamp timestamp = Timestamp.from(Instant.now());
 	final String name = sponsor.denomination();
 	final String website = sponsor.website();
@@ -180,10 +180,9 @@ public class SponsorRepository implements ISponsorRepository {
 
     }
 
-    private AbstractDomainObject getSponsor(final UUID id) {
+    private Timestamp getCreatedAt(final UUID uuid) {
 
-	return this.findById(id).get();
+	return Timestamp.from(this.findById(uuid).map(AbstractDomainObject::getCreatedAt).orElse(Instant.now()));
 
     }
-
 }

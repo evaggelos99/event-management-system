@@ -111,7 +111,7 @@ public class AttendeeRepository implements IAttendeeRepository {
 	final int rows = this.jdbcTemplate
 		.update(this.attendeeQueriesProperties.getProperty(CrudQueriesOperations.DELETE_ID.name()), uuid);
 
-	final boolean deleted = rows == 1 ? true : false;
+	final boolean deleted = rows == 1;
 
 	if (deleted) {
 
@@ -163,7 +163,7 @@ public class AttendeeRepository implements IAttendeeRepository {
     private Attendee editAttendee(final AttendeeDto attendee) {
 
 	final UUID uuid = attendee.uuid();
-	final Timestamp createdAt = Timestamp.from(this.getAttendee(uuid).getCreatedAt());
+	final Timestamp createdAt = this.getCreatedAt(uuid);
 	final Timestamp timestamp = Timestamp.from(Instant.now());
 	final List<UUID> ticketIds = attendee.ticketIDs() != null ? attendee.ticketIDs() : List.of();
 	final String firstName = attendee.firstName();
@@ -195,9 +195,10 @@ public class AttendeeRepository implements IAttendeeRepository {
 
     }
 
-    private AbstractDomainObject getAttendee(final UUID uuid) {
+    private Timestamp getCreatedAt(final UUID uuid) {
 
-	return this.findById(uuid).get();
+	return Timestamp.from(this.findById(uuid).map(AbstractDomainObject::getCreatedAt).orElse(Instant.now()));
 
     }
+
 }
