@@ -106,9 +106,11 @@ public final class RandomObjectGenerator {
 
     public static AttendeeDto generateAttendeeDto(final UUID... ticketIds) {
 
+	final List<UUID> listTickets = ticketIds != null ? List.of(ticketIds) : List.of();
+
 	final Timestamp timestamp = Timestamp.from(Instant.now());
 	return new AttendeeDto(UUID.randomUUID(), timestamp, timestamp, UUID.randomUUID().toString(),
-		UUID.randomUUID().toString(), List.of(ticketIds));
+		UUID.randomUUID().toString(), listTickets);
 
     }
 

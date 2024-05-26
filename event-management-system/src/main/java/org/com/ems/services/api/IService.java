@@ -6,16 +6,23 @@ import java.util.UUID;
 
 import org.com.ems.api.domainobjects.AbstractDomainObject;
 
-public interface IService<T extends AbstractDomainObject, DTO> extends ILookUpService<T> {
+/**
+ *
+ * @author Evangelos Georgiou
+ *
+ * @param <T> represents the {@link AbstractDomainObject}
+ * @param <D> represents the DTO object of the {@link AbstractDomainObject}
+ */
+public interface IService<T extends AbstractDomainObject, D> extends ILookUpService<T> {
 
     /**
-     * Adds the corresponding {@link DTO} to the service
+     * Adds the corresponding {@link D} to the service
      *
      * @param dto
      *
      * @return the {@link T} domain object
      */
-    T add(DTO dto);
+    T add(D dto);
 
     /**
      * {@inheritDoc}
@@ -38,7 +45,7 @@ public interface IService<T extends AbstractDomainObject, DTO> extends ILookUpSe
      * @return the {@link T} domain object
      */
     T edit(UUID id,
-	   DTO dto);
+	   D dto);
 
     /**
      * Fetches all the {@link T} objects available

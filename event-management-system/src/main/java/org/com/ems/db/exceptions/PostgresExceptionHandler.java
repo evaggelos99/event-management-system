@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class PostgresExceptionHandler {
 
+    private static final String STATUS = "status";
     private static final String TIME_STAMP = "timeStamp";
     private static final String MESSAGE = "message";
     private static final Logger LOGGER = LoggerFactory.getLogger(PostgresExceptionHandler.class);
@@ -33,7 +34,7 @@ public class PostgresExceptionHandler {
 
 	errorResponse.put(MESSAGE, exc.getMessage().split("  ")[0]);
 	errorResponse.put(TIME_STAMP, Instant.now());
-	errorResponse.put("status", 400);
+	errorResponse.put(STATUS, 400);
 
 	return new ResponseEntity<>(errorResponse, new HttpHeaders(), 400);
 
@@ -46,7 +47,7 @@ public class PostgresExceptionHandler {
 
 	errorResponse.put(MESSAGE, "The uuid key that was provided already exists.");
 	errorResponse.put(TIME_STAMP, Instant.now());
-	errorResponse.put("status", 409);
+	errorResponse.put(STATUS, 409);
 
 	LOGGER.trace("Duplicate key found: ", exc);
 
@@ -62,7 +63,7 @@ public class PostgresExceptionHandler {
 
 	errorResponse.put(MESSAGE, exc.getMessage().split(";")[2]);
 	errorResponse.put(TIME_STAMP, Instant.now());
-	errorResponse.put("status", 400);
+	errorResponse.put(STATUS, 400);
 
 	return new ResponseEntity<>(errorResponse, new HttpHeaders(), 400);
 
