@@ -15,17 +15,13 @@ public final class ContactInformation {
     // TODO add regex validation for email
     @NotNull
     @Schema(example = "example@domain.com", description = "An email address belonging to an entity")
-    private String email;
+    private final String email;
     @NotNull
     @Schema(example = "70493729392", description = "A phone number belonging to an entity")
-    private String phoneNumber;
+    private final String phoneNumber;
     @NotNull
     @Schema(example = "308 Negra Arroyo Lane, Albuquerque, New Mexico.", description = "A phone number belonging to an entity")
-    private String physicalAddress;
-
-    protected ContactInformation() {
-
-    }
+    private final String physicalAddress;
 
     public ContactInformation(@NotNull final String email,
 			      @NotNull final String phoneNumber,

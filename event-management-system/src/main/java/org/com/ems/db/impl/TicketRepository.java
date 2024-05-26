@@ -150,7 +150,7 @@ public class TicketRepository implements ITicketRepository {
 	final TicketType ticketType = ticket.ticketType();
 	final Integer price = ticket.price();
 	final Boolean isTransferable = ticket.transferable();
-	final SeatingInformation seatInformation = ticket.seatInfo();
+	final SeatingInformation seatInformation = ticket.seatInformation();
 
 	final UUID uuid = ticketUuid != null ? ticketUuid : UUID.randomUUID();
 
@@ -172,7 +172,7 @@ public class TicketRepository implements ITicketRepository {
 	final TicketType ticketType = ticket.ticketType();
 	final Integer price = ticket.price();
 	final Boolean isTransferable = ticket.transferable();
-	final SeatingInformation seatInformation = ticket.seatInfo();
+	final SeatingInformation seatInformation = ticket.seatInformation();
 
 	this.jdbcTemplate.update(this.ticketQueriesProperties.getProperty(CrudQueriesOperations.EDIT.name()), uuid,
 		createdAt, timestamp, eventId, ticketType.name(), price, isTransferable, seatInformation.getSeat(),

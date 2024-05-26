@@ -64,7 +64,7 @@ class TicketControllerIntegrationTest {
 	assertEquals(ticketType, actualTicketDto.ticketType());
 	assertEquals(price, actualTicketDto.price());
 	assertEquals(transferable, actualTicketDto.transferable());
-	assertEquals(seatInfo, actualTicketDto.seatInfo());
+	assertEquals(seatInfo, actualTicketDto.seatInformation());
 
 	@SuppressWarnings("rawtypes")
 	final ResponseEntity<Collection> getResponseEntity = this.restTemplate
@@ -116,7 +116,7 @@ class TicketControllerIntegrationTest {
 	assertEquals(ticketType, actualTicketDto.ticketType());
 	assertEquals(updatedPrice, actualTicketDto.price());
 	assertEquals(!transferable, actualTicketDto.transferable());
-	assertEquals(seatInfo, actualTicketDto.seatInfo());
+	assertEquals(seatInfo, actualTicketDto.seatInformation());
 
 	this.restTemplate.exchange(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + actualTicketDto.uuid(),
 		HttpMethod.DELETE, null, Void.class);

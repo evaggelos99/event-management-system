@@ -16,7 +16,7 @@ public class TicketToTicketDtoConverter implements Function<Ticket, TicketDto> {
 
 	return new TicketDto(ticket.getUuid(), this.convertToTimeStamp(ticket.getCreatedAt()),
 		this.convertToTimeStamp(ticket.getLastUpdated()), ticket.getEventID(), ticket.getTicketType(),
-		ticket.getPrice(), ticket.getTransferable(), ticket.getSeatInfo());
+		ticket.getPrice(), ticket.getTransferable(), ticket.getSeatInformation());
 
     }
 

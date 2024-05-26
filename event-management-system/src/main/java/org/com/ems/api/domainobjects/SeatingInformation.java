@@ -14,14 +14,10 @@ public final class SeatingInformation {
 
     @NotNull
     @Schema(example = "A15", description = "The number of the seat")
-    private String seat;
+    private final String seat;
     @NotNull
     @Schema(example = "West", description = "Which section your seat is located in")
-    private String section;
-
-    protected SeatingInformation() {
-
-    }
+    private final String section;
 
     public SeatingInformation(final String seat,
 			      final String section) {

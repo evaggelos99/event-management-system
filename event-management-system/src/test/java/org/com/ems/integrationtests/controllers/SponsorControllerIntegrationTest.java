@@ -9,7 +9,6 @@ import java.util.UUID;
 
 import org.com.ems.EventManagementSystemApplication;
 import org.com.ems.api.domainobjects.ContactInformation;
-import org.com.ems.api.dto.AttendeeDto;
 import org.com.ems.api.dto.SponsorDto;
 import org.com.ems.util.TestConfiguration;
 import org.junit.jupiter.api.Test;
@@ -74,8 +73,8 @@ class SponsorControllerIntegrationTest {
 	this.restTemplate.exchange(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + actualSponsorDto.uuid(),
 		HttpMethod.DELETE, null, Void.class);
 
-	final ResponseEntity<AttendeeDto> getDeletedEntity = this.restTemplate.getForEntity(
-		HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + actualSponsorDto.uuid(), AttendeeDto.class);
+	final ResponseEntity<SponsorDto> getDeletedEntity = this.restTemplate.getForEntity(
+		HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + actualSponsorDto.uuid(), SponsorDto.class);
 
 	assertTrue(getDeletedEntity.getStatusCode().isSameCodeAs(HttpStatusCode.valueOf(404)));
 

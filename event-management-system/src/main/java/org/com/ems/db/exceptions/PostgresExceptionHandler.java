@@ -11,16 +11,15 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 /**
- * TODO Extract stuff from the message exceptions, suppressed exceptions and the
- * and make the messages more readable
  *
  * @author Evangelos Georgiou
  *
  */
-//@ControllerAdvice
+@ControllerAdvice
 public class PostgresExceptionHandler {
 
     private static final String TIME_STAMP = "timeStamp";
@@ -32,10 +31,11 @@ public class PostgresExceptionHandler {
 
 	final Map<String, Object> errorResponse = new HashMap<>();
 
-	errorResponse.put(MESSAGE, exc.getMessage());
+	errorResponse.put(MESSAGE, exc.getMessage().split("  ")[0]);
 	errorResponse.put(TIME_STAMP, Instant.now());
+	errorResponse.put("status", 400);
 
-	return new ResponseEntity<>(errorResponse, new HttpHeaders(), 500);
+	return new ResponseEntity<>(errorResponse, new HttpHeaders(), 400);
 
     }
 
@@ -60,11 +60,11 @@ public class PostgresExceptionHandler {
 
 	final Map<String, Object> errorResponse = new HashMap<>();
 
-	errorResponse.put(MESSAGE, exc.getMessage());
+	errorResponse.put(MESSAGE, exc.getMessage().split(";")[2]);
 	errorResponse.put(TIME_STAMP, Instant.now());
-	errorResponse.put("status", 500);
+	errorResponse.put("status", 400);
 
-	return new ResponseEntity<>(errorResponse, new HttpHeaders(), 500);
+	return new ResponseEntity<>(errorResponse, new HttpHeaders(), 400);
 
     }
 

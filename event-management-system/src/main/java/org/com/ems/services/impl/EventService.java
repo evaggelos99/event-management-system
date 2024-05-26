@@ -45,6 +45,9 @@ public class EventService implements IEventService {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Event add(final EventDto event) {
 
@@ -52,6 +55,9 @@ public class EventService implements IEventService {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Optional<Event> get(final UUID uuid) {
 
@@ -59,6 +65,9 @@ public class EventService implements IEventService {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void delete(final UUID uuid) {
 
@@ -66,17 +75,23 @@ public class EventService implements IEventService {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    public Event edit(final UUID eventId,
+    public Event edit(final UUID uuid,
 		      final EventDto event) {
 
-	if (!this.eventRepository.existsById(eventId))
+	if (!this.eventRepository.existsById(uuid))
 	    throw new NoSuchElementException();
 
 	return this.eventRepository.edit(event);
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Collection<Event> getAll() {
 
@@ -84,6 +99,9 @@ public class EventService implements IEventService {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean existsById(final UUID eventId) {
 
@@ -91,6 +109,9 @@ public class EventService implements IEventService {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean addAttendee(final UUID eventId,
 			       final UUID attendeeId) {

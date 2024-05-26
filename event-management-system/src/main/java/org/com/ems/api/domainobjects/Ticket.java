@@ -62,7 +62,7 @@ public final class Ticket extends AbstractDomainObject {
 
     }
 
-    public SeatingInformation getSeatInfo() {
+    public SeatingInformation getSeatInformation() {
 
 	return this.seatInfo;
 

@@ -4,20 +4,56 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface IService<T, DTO> extends ILookUpService<T> {
+import org.com.ems.api.domainobjects.AbstractDomainObject;
 
-    T add(DTO object);
+public interface IService<T extends AbstractDomainObject, DTO> extends ILookUpService<T> {
 
+    /**
+     * Adds the corresponding {@link DTO} to the service
+     *
+     * @param dto
+     *
+     * @return the {@link T} domain object
+     */
+    T add(DTO dto);
+
+    /**
+     * {@inheritDoc}
+     */
     @Override
-    Optional<T> get(UUID uuid);
+    Optional<T> get(UUID id);
 
-    void delete(UUID uuid);
+    /**
+     * Deletes the {@link T} object that matches the id
+     *
+     * @param id UUID of the object that is about to be deleted
+     */
+    void delete(UUID id);
 
-    T edit(UUID uuid,
-	   DTO object);
+    /**
+     * Edits the {@link T} object
+     *
+     * @param id  the existing {@link T} object's id
+     * @param dto the objects payload
+     * @return the {@link T} domain object
+     */
+    T edit(UUID id,
+	   DTO dto);
 
+    /**
+     * Fetches all the {@link T} objects available
+     *
+     * @return {@link Collection} of all the objects
+     */
     Collection<T> getAll();
 
-    boolean existsById(UUID objectId);
+    /**
+     * Method that tells your if the object with the specified id exists
+     *
+     * @param id of the object
+     * @return {@link Boolean#TRUE} if the object exists otherwise
+     *         {@link Boolean#FALSE}
+     */
+    boolean existsById(UUID id);
 
 }

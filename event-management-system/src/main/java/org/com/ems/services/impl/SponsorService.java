@@ -32,6 +32,9 @@ public class SponsorService implements IService<Sponsor, SponsorDto> {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Sponsor add(final SponsorDto attendee) {
 
@@ -39,6 +42,9 @@ public class SponsorService implements IService<Sponsor, SponsorDto> {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Optional<Sponsor> get(final UUID uuid) {
 
@@ -46,6 +52,9 @@ public class SponsorService implements IService<Sponsor, SponsorDto> {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void delete(final UUID uuid) {
 
@@ -53,6 +62,9 @@ public class SponsorService implements IService<Sponsor, SponsorDto> {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Sponsor edit(final UUID uuid,
 			final SponsorDto attendee) {
@@ -64,6 +76,9 @@ public class SponsorService implements IService<Sponsor, SponsorDto> {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Collection<Sponsor> getAll() {
 
@@ -71,6 +86,9 @@ public class SponsorService implements IService<Sponsor, SponsorDto> {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean existsById(final UUID attendeeId) {
 

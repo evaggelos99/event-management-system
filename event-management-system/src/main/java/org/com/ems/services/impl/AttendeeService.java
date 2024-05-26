@@ -33,6 +33,7 @@ public class AttendeeService implements IAttendeeService {
     private final ILookUpService<Ticket> lookUpTicketService;
 
     /**
+     * C-or
      *
      * @param attendeeRepository             {@link AttendeeRepository} the
      *                                       repository that communicates with the
@@ -58,6 +59,9 @@ public class AttendeeService implements IAttendeeService {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Attendee add(final AttendeeDto attendee) {
 
@@ -65,6 +69,9 @@ public class AttendeeService implements IAttendeeService {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Optional<Attendee> get(final UUID uuid) {
 
@@ -72,6 +79,9 @@ public class AttendeeService implements IAttendeeService {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void delete(final UUID uuid) {
 
@@ -79,6 +89,9 @@ public class AttendeeService implements IAttendeeService {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Attendee edit(final UUID uuid,
 			 final AttendeeDto attendee) {
@@ -90,6 +103,9 @@ public class AttendeeService implements IAttendeeService {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Collection<Attendee> getAll() {
 
@@ -97,6 +113,9 @@ public class AttendeeService implements IAttendeeService {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean existsById(final UUID attendeeId) {
 
@@ -104,6 +123,9 @@ public class AttendeeService implements IAttendeeService {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean addTicket(final UUID attendeeId,
 			     final UUID ticketId) {
@@ -133,9 +155,7 @@ public class AttendeeService implements IAttendeeService {
 	final Ticket ticket = this.lookUpTicketService.get(ticketId)
 		.orElseThrow(() -> new ObjectNotFoundException(ticketId, Ticket.class));
 
-	this.eventService.addAttendee(ticket.getEventID(), attendeeId);
-
-	return true;
+	return this.eventService.addAttendee(ticket.getEventID(), attendeeId);
 
     }
 

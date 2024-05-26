@@ -142,7 +142,7 @@ public class AttendeeRepository implements IAttendeeRepository {
 
     private Attendee saveAttendee(final AttendeeDto attendee) {
 
-	final UUID attendeeUuid = attendee.uuid();
+	final UUID attendeeId = attendee.uuid();
 	final Instant now = Instant.now();
 	final Timestamp createdAt = Timestamp.from(now);
 	final Timestamp timestamp = Timestamp.from(now);
@@ -150,7 +150,7 @@ public class AttendeeRepository implements IAttendeeRepository {
 	final String firstName = attendee.firstName();
 	final String lastName = attendee.lastName();
 	final UUID[] uuids = this.convertToArray(ticketIds);
-	final UUID uuid = attendeeUuid != null ? attendeeUuid : UUID.randomUUID();
+	final UUID uuid = attendeeId != null ? attendeeId : UUID.randomUUID();
 
 	this.jdbcTemplate.update(this.attendeeQueriesProperties.getProperty(CrudQueriesOperations.SAVE.name()), uuid,
 		createdAt, timestamp, firstName, lastName, uuids);

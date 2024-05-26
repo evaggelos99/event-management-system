@@ -32,6 +32,9 @@ public class OrganizerService implements IService<Organizer, OrganizerDto> {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Organizer add(final OrganizerDto attendee) {
 
@@ -39,6 +42,9 @@ public class OrganizerService implements IService<Organizer, OrganizerDto> {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Optional<Organizer> get(final UUID uuid) {
 
@@ -46,6 +52,9 @@ public class OrganizerService implements IService<Organizer, OrganizerDto> {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void delete(final UUID uuid) {
 
@@ -53,6 +62,9 @@ public class OrganizerService implements IService<Organizer, OrganizerDto> {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Organizer edit(final UUID uuid,
 			  final OrganizerDto attendee) {
@@ -64,6 +76,9 @@ public class OrganizerService implements IService<Organizer, OrganizerDto> {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Collection<Organizer> getAll() {
 
@@ -71,6 +86,9 @@ public class OrganizerService implements IService<Organizer, OrganizerDto> {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean existsById(final UUID attendeeId) {
 
