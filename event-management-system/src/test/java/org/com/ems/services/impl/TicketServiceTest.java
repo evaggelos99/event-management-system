@@ -29,7 +29,7 @@ class TicketServiceTest {
     private TicketService service;
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
 
 	this.service = new TicketService(this.ticketRepository);
 

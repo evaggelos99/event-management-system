@@ -29,7 +29,7 @@ class SponsorServiceTest {
     private SponsorService service;
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
 
 	this.service = new SponsorService(this.sponsorRepository);
 

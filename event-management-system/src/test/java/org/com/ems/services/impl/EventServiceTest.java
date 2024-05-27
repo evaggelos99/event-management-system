@@ -32,7 +32,7 @@ class EventServiceTest {
     private EventService service;
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
 
 	this.service = new EventService(this.eventRepository, this.eventToEventDtoConverter);
 

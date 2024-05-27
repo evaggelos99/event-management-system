@@ -29,7 +29,7 @@ class OrganizerServiceTest {
     private OrganizerService service;
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
 
 	this.service = new OrganizerService(this.organizerRepository);
 
