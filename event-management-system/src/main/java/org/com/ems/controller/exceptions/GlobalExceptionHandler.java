@@ -3,7 +3,6 @@ package org.com.ems.controller.exceptions;
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
@@ -11,9 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.ConstraintViolationException;
 
 /**
  * Exception Handler
@@ -23,6 +19,8 @@ import jakarta.validation.ConstraintViolationException;
  */
 @RestControllerAdvice
 public class GlobalExceptionHandler {
+
+    private static final String TIME_STAMP = "timeStamp";
 
     /**
      * Handle JSON responses that are not valid
@@ -42,7 +40,7 @@ public class GlobalExceptionHandler {
 	final String message = fieldError.getDefaultMessage();
 
 	final Map<String, Object> errorResponse = new HashMap<>();
-	errorResponse.put("timeStamp", Instant.now());
+	errorResponse.put(TIME_STAMP, Instant.now());
 	errorResponse.put("status", statusCode.value());
 	errorResponse.put("error",
 		String.format("The field: '%s' %s. Does not accept value: %s", field, message, valueGiven));
@@ -65,26 +63,12 @@ public class GlobalExceptionHandler {
 	final HttpStatusCode statusCode = exception.getStatusCode();
 
 	final Map<String, Object> errorResponse = new HashMap<>();
-	errorResponse.put("timeStamp", Instant.now());
+	errorResponse.put(TIME_STAMP, Instant.now());
 	errorResponse.put("status", statusCode.value());
 	errorResponse.put("error", String.format("The object of class: '%s' with ID: '%s' cannot be found",
 		exception.getClassOfObject(), exception.getUuid()));
 
 	return new ResponseEntity<>(errorResponse, new HttpHeaders(), statusCode);
-
-    }
-
-    @ExceptionHandler(ConstraintViolationException.class) // does not work FIXME
-    protected ResponseEntity<
-	    Map<String, Object>> handleConstraintViolationException(final ConstraintViolationException ex) {
-
-	final Set<ConstraintViolation<?>> set = ex.getConstraintViolations();
-
-	final Map<String, Object> errorResponse = new HashMap<>();
-	errorResponse.put("timeStamp", Instant.now());
-	errorResponse.put("errors", set);
-
-	return new ResponseEntity<>(errorResponse, new HttpHeaders(), 400);
 
     }
 

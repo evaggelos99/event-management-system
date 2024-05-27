@@ -11,18 +11,20 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 /**
- * TODO Extract stuff from the message exceptions, suppressed exceptions and the
- * and make the messages more readable
  *
  * @author Evangelos Georgiou
  *
  */
-//@ControllerAdvice
+@ControllerAdvice
 public class PostgresExceptionHandler {
 
+    private static final String STATUS = "status";
+    private static final String TIME_STAMP = "timeStamp";
+    private static final String MESSAGE = "message";
     private static final Logger LOGGER = LoggerFactory.getLogger(PostgresExceptionHandler.class);
 
     @ExceptionHandler(PSQLException.class)
@@ -30,9 +32,11 @@ public class PostgresExceptionHandler {
 
 	final Map<String, Object> errorResponse = new HashMap<>();
 
-	errorResponse.put("message", exc.getMessage());
+	errorResponse.put(MESSAGE, exc.getMessage().split("\s{2}")[0]);
+	errorResponse.put(TIME_STAMP, Instant.now());
+	errorResponse.put(STATUS, 400);
 
-	return new ResponseEntity<>(errorResponse, new HttpHeaders(), 500);
+	return new ResponseEntity<>(errorResponse, new HttpHeaders(), 400);
 
     }
 
@@ -41,9 +45,9 @@ public class PostgresExceptionHandler {
 
 	final Map<String, Object> errorResponse = new HashMap<>();
 
-	errorResponse.put("message", "The uuid key that was provided already exists.");
-	errorResponse.put("timeStamp", Instant.now());
-	errorResponse.put("status", 409);
+	errorResponse.put(MESSAGE, "The uuid key that was provided already exists.");
+	errorResponse.put(TIME_STAMP, Instant.now());
+	errorResponse.put(STATUS, 409);
 
 	LOGGER.trace("Duplicate key found: ", exc);
 
@@ -57,11 +61,11 @@ public class PostgresExceptionHandler {
 
 	final Map<String, Object> errorResponse = new HashMap<>();
 
-	errorResponse.put("message", exc.getMessage());
-	errorResponse.put("timeStamp", Instant.now());
-	errorResponse.put("status", 500);
+	errorResponse.put(MESSAGE, exc.getMessage().split(";")[2]);
+	errorResponse.put(TIME_STAMP, Instant.now());
+	errorResponse.put(STATUS, 400);
 
-	return new ResponseEntity<>(errorResponse, new HttpHeaders(), 500);
+	return new ResponseEntity<>(errorResponse, new HttpHeaders(), 400);
 
     }
 

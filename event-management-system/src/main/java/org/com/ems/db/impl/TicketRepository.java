@@ -111,7 +111,7 @@ public class TicketRepository implements ITicketRepository {
 	final int rows = this.jdbcTemplate
 		.update(this.ticketQueriesProperties.getProperty(CrudQueriesOperations.DELETE_ID.name()), uuid);
 
-	final boolean deleted = rows == 1 ? true : false;
+	final boolean deleted = rows == 1;
 
 	if (deleted) {
 
@@ -145,47 +145,55 @@ public class TicketRepository implements ITicketRepository {
 	final UUID ticketUuid = ticket.uuid();
 	final Instant now = Instant.now();
 	final Timestamp createdAt = Timestamp.from(now);
-	final Timestamp timestamp = Timestamp.from(now);
-	final UUID eventId = ticket.eventID();
-	final TicketType ticketType = ticket.ticketType();
-	final Integer price = ticket.price();
-	final Boolean isTransferable = ticket.transferable();
-	final SeatingInformation seatInformation = ticket.seatInfo();
-
+	final Timestamp updatedAt = Timestamp.from(now);
 	final UUID uuid = ticketUuid != null ? ticketUuid : UUID.randomUUID();
 
-	this.jdbcTemplate.update(this.ticketQueriesProperties.getProperty(CrudQueriesOperations.SAVE.name()), uuid,
-		createdAt, timestamp, eventId, ticketType.name(), price, isTransferable, seatInformation.getSeat(),
-		seatInformation.getSection());
-
-	return this.ticketDtoToTicketConverter.apply(
-		new TicketDto(uuid, createdAt, timestamp, eventId, ticketType, price, isTransferable, seatInformation));
+	return this.saveOrEditCommand(uuid, createdAt, updatedAt, ticket, true);
 
     }
 
     private Ticket editTicket(final TicketDto ticket) {
 
 	final UUID uuid = ticket.uuid();
-	final Timestamp createdAt = Timestamp.from(this.getTicket(uuid).getCreatedAt());
-	final Timestamp timestamp = Timestamp.from(Instant.now());
+	final Timestamp createdAt = this.getCreatedAt(uuid);
+	final Timestamp updatedAt = Timestamp.from(Instant.now());
+
+	return this.saveOrEditCommand(uuid, createdAt, updatedAt, ticket, false);
+
+    }
+
+    private Ticket saveOrEditCommand(final UUID uuid,
+				     final Timestamp createdAt,
+				     final Timestamp updatedAt,
+				     final TicketDto ticket,
+				     final boolean isSaveOperation) {
+
 	final UUID eventId = ticket.eventID();
 	final TicketType ticketType = ticket.ticketType();
 	final Integer price = ticket.price();
 	final Boolean isTransferable = ticket.transferable();
-	final SeatingInformation seatInformation = ticket.seatInfo();
+	final SeatingInformation seatInformation = ticket.seatInformation();
 
-	this.jdbcTemplate.update(this.ticketQueriesProperties.getProperty(CrudQueriesOperations.EDIT.name()), uuid,
-		createdAt, timestamp, eventId, ticketType.name(), price, isTransferable, seatInformation.getSeat(),
-		seatInformation.getSection(), uuid);
+	if (isSaveOperation) {
+
+	    this.jdbcTemplate.update(this.ticketQueriesProperties.getProperty(CrudQueriesOperations.SAVE.name()), uuid,
+		    createdAt, updatedAt, eventId, ticketType.name(), price, isTransferable, seatInformation.seat(),
+		    seatInformation.section());
+	} else {
+
+	    this.jdbcTemplate.update(this.ticketQueriesProperties.getProperty(CrudQueriesOperations.EDIT.name()), uuid,
+		    createdAt, updatedAt, eventId, ticketType.name(), price, isTransferable, seatInformation.seat(),
+		    seatInformation.section(), uuid);
+	}
 
 	return this.ticketDtoToTicketConverter.apply(
-		new TicketDto(uuid, createdAt, timestamp, eventId, ticketType, price, isTransferable, seatInformation));
+		new TicketDto(uuid, createdAt, updatedAt, eventId, ticketType, price, isTransferable, seatInformation));
 
     }
 
-    private AbstractDomainObject getTicket(final UUID id) {
+    private Timestamp getCreatedAt(final UUID uuid) {
 
-	return this.findById(id).get();
+	return Timestamp.from(this.findById(uuid).map(AbstractDomainObject::getCreatedAt).orElse(Instant.now()));
 
     }
 

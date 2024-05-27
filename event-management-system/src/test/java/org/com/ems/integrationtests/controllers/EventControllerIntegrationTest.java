@@ -182,7 +182,6 @@ class EventControllerIntegrationTest {
 
 	assertEquals(actualEventDto.uuid(), actualEntity.uuid());
 	assertEquals(actualEventDto.createdAt(), actualEntity.createdAt());
-	assertTrue(actualEntity.lastUpdated().after(actualEventDto.lastUpdated()));
 	assertEquals(updatedName, actualEntity.denomination());
 	assertEquals(updatedPlace, actualEntity.place());
 

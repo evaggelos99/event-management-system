@@ -32,6 +32,9 @@ public class TicketService implements IService<Ticket, TicketDto> {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Ticket add(final TicketDto attendee) {
 
@@ -39,6 +42,9 @@ public class TicketService implements IService<Ticket, TicketDto> {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Optional<Ticket> get(final UUID uuid) {
 
@@ -46,6 +52,9 @@ public class TicketService implements IService<Ticket, TicketDto> {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void delete(final UUID uuid) {
 
@@ -53,6 +62,9 @@ public class TicketService implements IService<Ticket, TicketDto> {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Ticket edit(final UUID uuid,
 		       final TicketDto attendee) {
@@ -64,6 +76,9 @@ public class TicketService implements IService<Ticket, TicketDto> {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public Collection<Ticket> getAll() {
 
@@ -71,6 +86,9 @@ public class TicketService implements IService<Ticket, TicketDto> {
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public boolean existsById(final UUID attendeeId) {
 

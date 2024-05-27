@@ -2,6 +2,7 @@ package org.com.ems.db.rowmappers.util;
 
 import java.sql.Array;
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
@@ -23,11 +24,10 @@ public class ArrayToListOfUuid implements Function<Array, List<UUID>> {
 
 	try {
 
-	    for (final UUID uuid : (UUID[]) array.getArray()) {
+	    final UUID[] ss = (UUID[]) array.getArray();
 
-		list.add(uuid);
+	    Collections.addAll(list, ss);
 
-	    }
 	} catch (final SQLException e) {
 
 	    LOGGER.error("Exception occured", e);

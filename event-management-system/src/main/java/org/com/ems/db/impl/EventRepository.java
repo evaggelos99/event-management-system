@@ -108,7 +108,7 @@ public class EventRepository implements IEventRepository {
 	final int rows = this.jdbcTemplate
 		.update(this.eventQueriesProperties.getProperty(CrudQueriesOperations.DELETE_ID.name()), uuid);
 
-	final boolean deleted = rows == 1 ? true : false;
+	final boolean deleted = rows == 1;
 
 	if (deleted) {
 
@@ -147,62 +147,65 @@ public class EventRepository implements IEventRepository {
 
     }
 
-    private Event saveEvent(final EventDto dto) {
+    private Event saveEvent(final EventDto event) {
 
-	final UUID eventUuid = dto.uuid();
+	final UUID eventUuid = event.uuid();
+
 	final Instant now = Instant.now();
 	final Timestamp createdAt = Timestamp.from(now);
-	final Timestamp timestamp = Timestamp.from(now);
-	final String name = dto.denomination();
-	final String place = dto.place();
-	final EventType eventType = dto.eventType();
-	final List<UUID> attendeesIDs = dto.attendeesIds() != null ? dto.attendeesIds() : List.of();
-	final UUID organizerId = dto.organizerId();
-	final Integer limitOfPeople = dto.limitOfPeople();
-	final List<UUID> sponsorId = dto.sponsorsIds() != null ? dto.sponsorsIds() : List.of();
-	final LocalDateTime startTimeOfEvent = dto.startTimeOfEvent();
-	final Duration duration = dto.duration();
-	final Object interval = this.durationToIntervalConverter.apply(duration);
+	final Timestamp updatedAt = Timestamp.from(now);
 
-	final UUID[] uuidsOfAttendees = this.convertToArray(attendeesIDs);
-	final UUID[] uuidsOfSponsors = this.convertToArray(sponsorId);
 	final UUID uuid = eventUuid != null ? eventUuid : UUID.randomUUID();
 
-	this.jdbcTemplate.update(this.eventQueriesProperties.getProperty(CrudQueriesOperations.SAVE.name()), uuid,
-		createdAt, timestamp, name, place, eventType.name(), uuidsOfAttendees, organizerId, limitOfPeople,
-		uuidsOfSponsors, startTimeOfEvent, interval);
-
-	return this.eventDtoToEventConverter.apply(new EventDto(uuid, createdAt, timestamp, name, place, eventType,
-		attendeesIDs, organizerId, limitOfPeople, sponsorId, startTimeOfEvent, duration));
+	return this.saveOrEditCommand(uuid, createdAt, updatedAt, event, true);
 
     }
 
-    private Event editEvent(final EventDto dto) {
+    private Event editEvent(final EventDto event) {
 
-	final UUID uuid = dto.uuid();
+	final UUID uuid = event.uuid();
 
-	final Timestamp createdAt = Timestamp.from(this.getEvent(uuid).getCreatedAt());
-	final Timestamp timestamp = Timestamp.from(Instant.now());
-	final String name = dto.denomination();
-	final String place = dto.place();
-	final EventType eventType = dto.eventType();
-	final List<UUID> attendeesIds = dto.attendeesIds() != null ? dto.attendeesIds() : List.of();
-	final UUID organizerId = dto.organizerId();
-	final Integer limitOfPeople = dto.limitOfPeople();
-	final List<UUID> sponsorIds = dto.sponsorsIds() != null ? dto.sponsorsIds() : List.of();
-	final LocalDateTime startTimeOfEvent = dto.startTimeOfEvent();
-	final Duration duration = dto.duration();
+	final Timestamp createdAt = this.getCreatedAt(uuid);
+	final Timestamp updatedAt = Timestamp.from(Instant.now());
 
+	return this.saveOrEditCommand(uuid, createdAt, updatedAt, event, false);
+
+    }
+
+    private Event saveOrEditCommand(final UUID uuid,
+				    final Timestamp createdAt,
+				    final Timestamp updatedAt,
+				    final EventDto event,
+				    final boolean isSaveOperation) {
+
+	final String name = event.denomination();
+	final String place = event.place();
+	final EventType eventType = event.eventType();
+	final List<UUID> attendeesIds = event.attendeesIds() != null ? event.attendeesIds() : List.of();
+	final UUID organizerId = event.organizerId();
+	final Integer limitOfPeople = event.limitOfPeople();
+	final List<UUID> sponsorIds = event.sponsorsIds() != null ? event.sponsorsIds() : List.of();
+	final LocalDateTime startTimeOfEvent = event.startTimeOfEvent();
+	final Duration duration = event.duration();
 	final Object interval = this.durationToIntervalConverter.apply(duration);
 
 	final UUID[] attendees = this.convertToArray(attendeesIds);
 	final UUID[] sponsors = this.convertToArray(sponsorIds);
 
-	this.jdbcTemplate.update(this.eventQueriesProperties.getProperty(CrudQueriesOperations.EDIT.name()), uuid,
-		createdAt, timestamp, name, place, eventType.name(), attendees, organizerId, limitOfPeople, sponsors,
-		startTimeOfEvent, interval, uuid);
+	if (isSaveOperation) {
 
-	return this.eventDtoToEventConverter.apply(new EventDto(uuid, createdAt, timestamp, name, place, eventType,
+	    this.jdbcTemplate.update(this.eventQueriesProperties.getProperty(CrudQueriesOperations.SAVE.name()), uuid,
+		    createdAt, updatedAt, name, place, eventType.name(), attendees, organizerId, limitOfPeople,
+		    sponsors, startTimeOfEvent, interval);
+
+	} else {
+
+	    this.jdbcTemplate.update(this.eventQueriesProperties.getProperty(CrudQueriesOperations.EDIT.name()), uuid,
+		    createdAt, updatedAt, name, place, eventType.name(), attendees, organizerId, limitOfPeople,
+		    sponsors, startTimeOfEvent, interval, uuid);
+	}
+
+	return this.eventDtoToEventConverter.apply(new EventDto(uuid, createdAt, updatedAt, name, place, eventType,
 		attendeesIds, organizerId, limitOfPeople, sponsorIds, startTimeOfEvent, duration));
 
     }
@@ -224,10 +227,9 @@ public class EventRepository implements IEventRepository {
 
     }
 
-    private AbstractDomainObject getEvent(final UUID uuid) {
+    private Timestamp getCreatedAt(final UUID uuid) {
 
-	return this.findById(uuid).get();
+	return Timestamp.from(this.findById(uuid).map(AbstractDomainObject::getCreatedAt).orElse(Instant.now()));
 
     }
-
 }

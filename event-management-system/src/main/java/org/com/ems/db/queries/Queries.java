@@ -11,7 +11,7 @@ import org.springframework.context.annotation.PropertySource;
 @PropertySource("classpath:properties/queries.properties")
 public class Queries {
 
-    public static enum CrudQueriesOperations {
+    public enum CrudQueriesOperations {
 
 	SAVE, EDIT, GET_ALL, GET_ID, DELETE_ID
 

@@ -23,6 +23,6 @@ public record TicketDto(@Schema(hidden = true, description = "The UUID of the At
 	@NotNull @Schema(description = "What kind of ticket type it is") TicketType ticketType,
 	@NotNegative @Schema(example = "150", description = "The price of the ticket") Integer price,
 	@NotNull @Schema(example = "true", description = "If the ticket is transferable") Boolean transferable,
-	@NotNull @Schema(description = "The SeatingInformation of the ticket") SeatingInformation seatInfo) {
+	@NotNull @Schema(description = "The SeatingInformation of the ticket") SeatingInformation seatInformation) {
 
 }

@@ -32,14 +32,14 @@ public class OrganizerRowMapper implements RowMapper<Organizer> {
 			    final int rowNum)
 	    throws SQLException {
 
-	final List<EventType> listOfEventTypes = this.arrayToListOfEventTypes.apply(rs.getArray("event_types"));
+	final List<EventType> eventsTypes = this.arrayToListOfEventTypes.apply(rs.getArray("event_types"));
 
 	final ContactInformation contactInformation = new ContactInformation(rs.getString("email"),
 		rs.getString("phone_number"), rs.getString("physical_address"));
 
 	return new Organizer(UUID.fromString(rs.getString("id")), rs.getTimestamp("created_at").toInstant(),
 		rs.getTimestamp("last_updated").toInstant(), rs.getString("denomination"), rs.getString("website"),
-		rs.getString("information"), listOfEventTypes, contactInformation);
+		rs.getString("information"), eventsTypes, contactInformation);
 
     }
 
