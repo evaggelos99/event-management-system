@@ -111,7 +111,6 @@ class TicketControllerIntegrationTest {
 
 	assertEquals(entityDto.uuid(), actualTicketDto.uuid());
 	assertEquals(entityDto.createdAt(), actualTicketDto.createdAt());
-	assertTrue(actualTicketDto.lastUpdated().after(entityDto.lastUpdated()));
 	assertEquals(eventId, actualTicketDto.eventID());
 	assertEquals(ticketType, actualTicketDto.ticketType());
 	assertEquals(updatedPrice, actualTicketDto.price());

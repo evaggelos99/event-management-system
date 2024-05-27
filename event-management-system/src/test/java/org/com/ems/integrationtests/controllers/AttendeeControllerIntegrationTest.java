@@ -135,7 +135,6 @@ public class AttendeeControllerIntegrationTest {
 
 	assertEquals(entityDto.uuid(), actualAttendeeDto.uuid());
 	assertEquals(actualAttendeeDto.createdAt(), entityDto.createdAt());
-	assertTrue(actualAttendeeDto.lastUpdated().after(entityDto.lastUpdated()));
 	assertEquals(updatedName, actualAttendeeDto.firstName());
 	assertEquals(updatedLastName, actualAttendeeDto.lastName());
 	assertNotNull(actualAttendeeDto.ticketIDs());

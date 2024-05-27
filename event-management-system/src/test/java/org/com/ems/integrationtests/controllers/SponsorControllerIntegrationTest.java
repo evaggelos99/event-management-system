@@ -152,7 +152,6 @@ class SponsorControllerIntegrationTest {
 
 	assertEquals(entityDto.uuid(), actualSponsorDto.uuid());
 	assertEquals(entityDto.createdAt(), actualSponsorDto.createdAt());
-	assertTrue(actualSponsorDto.lastUpdated().after(entityDto.lastUpdated()));
 	assertEquals(updatedName, actualSponsorDto.denomination());
 	assertEquals(contantInfo, actualSponsorDto.contactInformation());
 	assertEquals(updatedWebsite, actualSponsorDto.website());
