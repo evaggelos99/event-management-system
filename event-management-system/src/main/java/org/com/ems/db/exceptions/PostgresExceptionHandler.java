@@ -32,7 +32,7 @@ public class PostgresExceptionHandler {
 
 	final Map<String, Object> errorResponse = new HashMap<>();
 
-	errorResponse.put(MESSAGE, exc.getMessage().split("{2}")[0]);
+	errorResponse.put(MESSAGE, exc.getMessage().split("\s{2}")[0]);
 	errorResponse.put(TIME_STAMP, Instant.now());
 	errorResponse.put(STATUS, 400);
 
