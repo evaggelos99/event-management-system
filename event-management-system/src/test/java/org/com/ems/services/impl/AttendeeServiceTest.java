@@ -181,26 +181,6 @@ class AttendeeServiceTest {
 
     }
 
-//    @Test
-//    void add_addTicket_delete_whenInvokedWithAttendeeDtoAndInvalidTicket_thenExpectToBeSaved_thenExpectTicketToNotBeAdded_thenDeleteAttendee() {
-//
-//	final String firstName = this.generateString();
-//	final String lastName = this.generateString();
-//	final UUID ticketId = UUID.randomUUID();
-//
-//	final UUID attendeeId = UUID.randomUUID();
-//	final Timestamp createdAt = Timestamp.from(Instant.now());
-//	final AttendeeDto dto = new AttendeeDto(attendeeId, createdAt, createdAt, firstName, lastName, List.of());
-//
-//	Assertions.assertDoesNotThrow(() -> this.service.add(dto));
-//
-//	Mockito.when(this.lookUpTicketServiceMock.get(ticketId)).thenReturn(Optional.empty());
-//	Assertions.assertThrows(ObjectNotFoundException.class, () -> this.service.addTicket(dto.uuid(), ticketId));
-//
-//	Assertions.assertDoesNotThrow(() -> this.service.delete(dto.uuid()));
-//
-//    }
-
     private String generateString() {
 
 	return UUID.randomUUID().toString();

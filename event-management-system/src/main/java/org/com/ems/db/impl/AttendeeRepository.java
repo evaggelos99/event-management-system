@@ -81,7 +81,6 @@ public class AttendeeRepository implements IAttendeeRepository {
     public Attendee edit(final AttendeeDto attendeeDto) {
 
 	final Attendee attendee = this.editAttendee(attendeeDto);
-
 	LOGGER.trace("Edited an Attendee: " + attendee);
 
 	return attendee;
@@ -145,18 +144,10 @@ public class AttendeeRepository implements IAttendeeRepository {
 	final UUID attendeeId = attendee.uuid();
 	final Instant now = Instant.now();
 	final Timestamp createdAt = Timestamp.from(now);
-	final Timestamp timestamp = Timestamp.from(now);
-	final List<UUID> ticketIds = attendee.ticketIDs() != null ? attendee.ticketIDs() : List.of();
-	final String firstName = attendee.firstName();
-	final String lastName = attendee.lastName();
-	final UUID[] uuids = this.convertToArray(ticketIds);
+	final Timestamp updatedAt = Timestamp.from(now);
 	final UUID uuid = attendeeId != null ? attendeeId : UUID.randomUUID();
 
-	this.jdbcTemplate.update(this.attendeeQueriesProperties.getProperty(CrudQueriesOperations.SAVE.name()), uuid,
-		createdAt, timestamp, firstName, lastName, uuids);
-
-	return this.attendeeDtoToAttendeeConverter
-		.apply(new AttendeeDto(uuid, createdAt, timestamp, firstName, lastName, ticketIds));
+	return this.saveOrEditCommand(uuid, createdAt, updatedAt, attendee, true);
 
     }
 
@@ -164,17 +155,34 @@ public class AttendeeRepository implements IAttendeeRepository {
 
 	final UUID uuid = attendee.uuid();
 	final Timestamp createdAt = this.getCreatedAt(uuid);
-	final Timestamp timestamp = Timestamp.from(Instant.now());
+	final Timestamp updatedAt = Timestamp.from(Instant.now());
+
+	return this.saveOrEditCommand(uuid, createdAt, updatedAt, attendee, false);
+
+    }
+
+    private Attendee saveOrEditCommand(final UUID uuid,
+				       final Timestamp createdAt,
+				       final Timestamp timestamp,
+				       final AttendeeDto attendee,
+				       final boolean isSaveOperation) {
+
 	final List<UUID> ticketIds = attendee.ticketIDs() != null ? attendee.ticketIDs() : List.of();
-	final String firstName = attendee.firstName();
-	final String lastName = attendee.lastName();
 	final UUID[] uuids = this.convertToArray(ticketIds);
 
-	this.jdbcTemplate.update(this.attendeeQueriesProperties.getProperty(CrudQueriesOperations.EDIT.name()), uuid,
-		createdAt, timestamp, firstName, lastName, uuids, uuid);
+	if (isSaveOperation) {
 
-	return this.attendeeDtoToAttendeeConverter
-		.apply(new AttendeeDto(uuid, createdAt, timestamp, firstName, lastName, ticketIds));
+	    this.jdbcTemplate.update(this.attendeeQueriesProperties.getProperty(CrudQueriesOperations.SAVE.name()),
+		    uuid, createdAt, timestamp, attendee.firstName(), attendee.lastName(), uuids);
+
+	} else {
+
+	    this.jdbcTemplate.update(this.attendeeQueriesProperties.getProperty(CrudQueriesOperations.EDIT.name()),
+		    uuid, createdAt, timestamp, attendee.firstName(), attendee.lastName(), uuids, uuid);
+	}
+
+	return this.attendeeDtoToAttendeeConverter.apply(
+		new AttendeeDto(uuid, createdAt, timestamp, attendee.firstName(), attendee.lastName(), ticketIds));
 
     }
 

@@ -151,21 +151,10 @@ public class OrganizerRepository implements IOrganizerRepository {
 	final UUID organizerUuid = organizer.uuid();
 	final Instant now = Instant.now();
 	final Timestamp createdAt = Timestamp.from(now);
-	final Timestamp timestamp = Timestamp.from(now);
-	final String name = organizer.denomination();
-	final String website = organizer.website();
-	final String description = organizer.information();
-	final List<EventType> listOfEventTypes = organizer.eventTypes();
-	final ContactInformation contactInformation = organizer.contactInformation();
-	final String[] eventTypesArray = this.convertToArray(listOfEventTypes);
+	final Timestamp updatedAt = Timestamp.from(now);
+
 	final UUID uuid = organizerUuid != null ? organizerUuid : UUID.randomUUID();
-
-	this.jdbcTemplate.update(this.organizerQueriesProperties.getProperty(CrudQueriesOperations.SAVE.name()), uuid,
-		createdAt, timestamp, name, website, description, eventTypesArray, contactInformation.getEmail(),
-		contactInformation.getPhoneNumber(), contactInformation.getPhysicalAddress());
-
-	return this.organizerDtoToOrganizerConverter.apply(new OrganizerDto(uuid, createdAt, timestamp, name, website,
-		description, listOfEventTypes, contactInformation));
+	return this.saveOrEditCommand(uuid, createdAt, updatedAt, organizer, true);
 
     }
 
@@ -173,7 +162,18 @@ public class OrganizerRepository implements IOrganizerRepository {
 
 	final UUID uuid = organizer.uuid();
 	final Timestamp createdAt = this.getCreatedAt(uuid);
-	final Timestamp timestamp = Timestamp.from(Instant.now());
+	final Timestamp updatedAt = Timestamp.from(Instant.now());
+
+	return this.saveOrEditCommand(uuid, createdAt, updatedAt, organizer, false);
+
+    }
+
+    private Organizer saveOrEditCommand(final UUID uuid,
+					final Timestamp createdAt,
+					final Timestamp updatedAt,
+					final OrganizerDto organizer,
+					final boolean isSaveOperation) {
+
 	final String name = organizer.denomination();
 	final String website = organizer.website();
 	final String description = organizer.information();
@@ -181,11 +181,20 @@ public class OrganizerRepository implements IOrganizerRepository {
 	final ContactInformation contactInformation = organizer.contactInformation();
 	final String[] eventTypesArray = this.convertToArray(listOfEventTypes);
 
-	this.jdbcTemplate.update(this.organizerQueriesProperties.getProperty(CrudQueriesOperations.EDIT.name()), uuid,
-		createdAt, timestamp, name, website, description, eventTypesArray, contactInformation.getEmail(),
-		contactInformation.getPhoneNumber(), contactInformation.getPhysicalAddress(), uuid);
+	if (isSaveOperation) {
 
-	return this.organizerDtoToOrganizerConverter.apply(new OrganizerDto(uuid, createdAt, timestamp, name, website,
+	    this.jdbcTemplate.update(this.organizerQueriesProperties.getProperty(CrudQueriesOperations.SAVE.name()),
+		    uuid, createdAt, updatedAt, name, website, description, eventTypesArray, contactInformation.email(),
+		    contactInformation.phoneNumber(), contactInformation.physicalAddress());
+	} else {
+
+	    this.jdbcTemplate.update(this.organizerQueriesProperties.getProperty(CrudQueriesOperations.EDIT.name()),
+		    uuid, createdAt, updatedAt, name, website, description, eventTypesArray, contactInformation.email(),
+		    contactInformation.phoneNumber(), contactInformation.physicalAddress(), uuid);
+
+	}
+
+	return this.organizerDtoToOrganizerConverter.apply(new OrganizerDto(uuid, createdAt, updatedAt, name, website,
 		description, listOfEventTypes, contactInformation));
 
     }

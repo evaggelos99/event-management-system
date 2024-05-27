@@ -144,20 +144,40 @@ public class SponsorRepository implements ISponsorRepository {
 	final UUID sponsorUuid = sponsor.uuid();
 	final Instant now = Instant.now();
 	final Timestamp createdAt = Timestamp.from(now);
-	final Timestamp timestamp = Timestamp.from(now);
+	final Timestamp updatedAt = Timestamp.from(now);
+
+	final UUID uuid = sponsorUuid != null ? sponsorUuid : UUID.randomUUID();
+
+	return this.saveOrEditCommand(uuid, createdAt, updatedAt, sponsor, true);
+
+    }
+
+    private Sponsor saveOrEditCommand(final UUID uuid,
+				      final Timestamp createdAt,
+				      final Timestamp updatedAt,
+				      final SponsorDto sponsor,
+				      final boolean isSaveOperation) {
+
 	final String name = sponsor.denomination();
 	final String website = sponsor.website();
 	final Integer financialContribution = sponsor.financialContribution();
 	final ContactInformation contactInformation = sponsor.contactInformation();
 
-	final UUID uuid = sponsorUuid != null ? sponsorUuid : UUID.randomUUID();
+	if (isSaveOperation) {
 
-	this.jdbcTemplate.update(this.sponsorQueriesProperties.getProperty(CrudQueriesOperations.SAVE.name()), uuid,
-		createdAt, timestamp, name, website, financialContribution, contactInformation.getEmail(),
-		contactInformation.getPhoneNumber(), contactInformation.getPhysicalAddress());
+	    this.jdbcTemplate.update(this.sponsorQueriesProperties.getProperty(CrudQueriesOperations.SAVE.name()), uuid,
+		    createdAt, updatedAt, name, website, financialContribution, contactInformation.email(),
+		    contactInformation.phoneNumber(), contactInformation.physicalAddress());
+
+	} else {
+
+	    this.jdbcTemplate.update(this.sponsorQueriesProperties.getProperty(CrudQueriesOperations.EDIT.name()), uuid,
+		    createdAt, updatedAt, name, website, financialContribution, contactInformation.email(),
+		    contactInformation.phoneNumber(), contactInformation.physicalAddress(), uuid);
+	}
 
 	return this.sponsDtoToSponsorConverter.apply(
-		new SponsorDto(uuid, createdAt, timestamp, name, website, financialContribution, contactInformation));
+		new SponsorDto(uuid, createdAt, createdAt, name, website, financialContribution, contactInformation));
 
     }
 
@@ -165,18 +185,9 @@ public class SponsorRepository implements ISponsorRepository {
 
 	final UUID uuid = sponsor.uuid();
 	final Timestamp createdAt = this.getCreatedAt(uuid);
-	final Timestamp timestamp = Timestamp.from(Instant.now());
-	final String name = sponsor.denomination();
-	final String website = sponsor.website();
-	final Integer financialContribution = sponsor.financialContribution();
-	final ContactInformation contactInformation = sponsor.contactInformation();
+	final Timestamp updatedAt = Timestamp.from(Instant.now());
 
-	this.jdbcTemplate.update(this.sponsorQueriesProperties.getProperty(CrudQueriesOperations.EDIT.name()), uuid,
-		createdAt, timestamp, name, website, financialContribution, contactInformation.getEmail(),
-		contactInformation.getPhoneNumber(), contactInformation.getPhysicalAddress(), uuid);
-
-	return this.sponsDtoToSponsorConverter.apply(
-		new SponsorDto(uuid, createdAt, timestamp, name, website, financialContribution, contactInformation));
+	return this.saveOrEditCommand(uuid, createdAt, updatedAt, sponsor, false);
 
     }
 

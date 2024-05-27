@@ -145,7 +145,8 @@ public final class RandomObjectGenerator {
 
 	return new EventDto(UUID.randomUUID(), timestamp, timestamp, UUID.randomUUID().toString(),
 		UUID.randomUUID().toString(), randomTicketType, listAttendees, organizerId, RANDOM.nextInt(1500),
-		listSponsors, LocalDateTime.now().plus(5, ChronoUnit.DAYS), Duration.ofHours(5));
+		listSponsors, LocalDateTime.now().plus(5, ChronoUnit.DAYS).truncatedTo(ChronoUnit.SECONDS),
+		Duration.ofHours(5));
 
     }
 
