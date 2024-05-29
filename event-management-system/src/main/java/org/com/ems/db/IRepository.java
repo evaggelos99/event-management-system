@@ -4,6 +4,15 @@ import java.util.Collection;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.com.ems.api.domainobjects.AbstractDomainObject;
+
+/**
+ *
+ * @author Evangelos Georgiou
+ *
+ * @param <T> represents the {@link AbstractDomainObject}
+ * @param <D> represents the DTO object of the {@link AbstractDomainObject}
+ */
 public interface IRepository<T, D> {
 
     /**
@@ -17,26 +26,26 @@ public interface IRepository<T, D> {
     /**
      * Finds by id
      *
-     * @param uuid of the {@link T}
+     * @param id of the {@link T}
      * @return Optional wrapped {@link T}
      */
-    Optional<T> findById(UUID uuid);
+    Optional<T> findById(UUID id);
 
     /**
      * Deletes given the UUID
      *
-     * @param uuid of the {@link T}
+     * @param id of the {@link T}
      * @return if the deletion was sucessful
      */
-    boolean deleteById(UUID uuid);
+    boolean deleteById(UUID id);
 
     /**
      * If it exists by id
      *
-     * @param uuid of the {@link T}
+     * @param id of the {@link T}
      * @return if the {@link T} exists
      */
-    boolean existsById(UUID uuid);
+    boolean existsById(UUID id);
 
     /**
      * Returns all of the {@link T} in the Repository

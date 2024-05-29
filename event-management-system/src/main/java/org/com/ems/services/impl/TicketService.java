@@ -46,19 +46,9 @@ public class TicketService implements IService<Ticket, TicketDto> {
      * {@inheritDoc}
      */
     @Override
-    public Optional<Ticket> get(final UUID uuid) {
+    public Optional<Ticket> get(final UUID id) {
 
-	return this.ticketRepository.findById(uuid);
-
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void delete(final UUID uuid) {
-
-	this.ticketRepository.deleteById(uuid);
+	return this.ticketRepository.findById(id);
 
     }
 
@@ -66,10 +56,20 @@ public class TicketService implements IService<Ticket, TicketDto> {
      * {@inheritDoc}
      */
     @Override
-    public Ticket edit(final UUID uuid,
+    public void delete(final UUID id) {
+
+	this.ticketRepository.deleteById(id);
+
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Ticket edit(final UUID id,
 		       final TicketDto attendee) {
 
-	if (!this.ticketRepository.existsById(uuid))
+	if (!this.ticketRepository.existsById(id))
 	    throw new NoSuchElementException();
 
 	return this.ticketRepository.edit(attendee);

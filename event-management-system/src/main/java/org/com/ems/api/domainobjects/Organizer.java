@@ -9,29 +9,26 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-
 public final class Organizer extends AbstractDomainObject {
 
-    private final String denomination;
+    private final String name;
     // TODO add regex validation
     private final String website;
     private final String information;
     private final List<EventType> eventTypes;
     private final ContactInformation contactInformation;
 
-    public Organizer(final UUID uuid,
+    public Organizer(final UUID id,
 		     final Instant createdAt,
 		     final Instant lastUpdated,
-		     @NotNull @NotBlank final String denomination,
-		     @NotBlank final String website,
+		     final String name,
+		     final String website,
 		     final String description,
-		     @NotNull final List<EventType> eventTypes,
-		     @NotNull final ContactInformation contactInformation) {
+		     final List<EventType> eventTypes,
+		     final ContactInformation contactInformation) {
 
-	super(uuid, createdAt, lastUpdated);
-	this.denomination = denomination;
+	super(id, createdAt, lastUpdated);
+	this.name = name;
 	this.website = website;
 	this.information = description;
 	this.eventTypes = eventTypes;
@@ -39,9 +36,9 @@ public final class Organizer extends AbstractDomainObject {
 
     }
 
-    public String getDenomination() {
+    public String getName() {
 
-	return this.denomination;
+	return this.name;
 
     }
 
@@ -79,7 +76,7 @@ public final class Organizer extends AbstractDomainObject {
 
 	final Organizer that = (Organizer) o;
 
-	return new EqualsBuilder().appendSuper(super.equals(that)).append(this.denomination, that.denomination)
+	return new EqualsBuilder().appendSuper(super.equals(that)).append(this.name, that.name)
 		.append(this.website, that.website).append(this.information, that.information)
 		.append(this.eventTypes, that.eventTypes).append(this.contactInformation, that.contactInformation)
 		.build();
@@ -89,7 +86,7 @@ public final class Organizer extends AbstractDomainObject {
     @Override
     public int hashCode() {
 
-	return new HashCodeBuilder(17, 37).appendSuper(super.hashCode()).append(this.denomination).append(this.website)
+	return new HashCodeBuilder(17, 37).appendSuper(super.hashCode()).append(this.name).append(this.website)
 		.append(this.information).append(this.eventTypes).append(this.contactInformation).build();
 
     }
@@ -98,9 +95,8 @@ public final class Organizer extends AbstractDomainObject {
     public String toString() {
 
 	return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).appendSuper(super.toString())
-		.append("denomination", this.denomination).append("website", this.website)
-		.append("information", this.information).append("eventTypes", this.eventTypes)
-		.append("contactInformation", this.contactInformation).toString();
+		.append("name", this.name).append("website", this.website).append("information", this.information)
+		.append("eventTypes", this.eventTypes).append("contactInformation", this.contactInformation).toString();
 
     }
 

@@ -9,22 +9,20 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
-import jakarta.validation.constraints.NotNull;
-
 public final class Attendee extends AbstractDomainObject {
 
     private final String firstName;
     private final String lastName;
     private final List<UUID> ticketIDs;
 
-    public Attendee(final UUID uuid,
+    public Attendee(final UUID id,
 		    final Instant createdAt,
 		    final Instant lastUpdated,
-		    @NotNull final String firstName,
-		    @NotNull final String lastName,
+		    final String firstName,
+		    final String lastName,
 		    final List<UUID> ticketIDs) {
 
-	super(uuid, createdAt, lastUpdated);
+	super(id, createdAt, lastUpdated);
 	this.firstName = firstName;
 	this.lastName = lastName;
 	this.ticketIDs = ticketIDs;

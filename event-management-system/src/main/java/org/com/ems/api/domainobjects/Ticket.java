@@ -7,9 +7,6 @@ import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
-import org.com.ems.api.domainobjects.validators.constraints.NotNegative;
-
-import jakarta.validation.constraints.NotNull;
 
 public final class Ticket extends AbstractDomainObject {
 
@@ -20,16 +17,16 @@ public final class Ticket extends AbstractDomainObject {
     private final SeatingInformation seatInfo;
     // TODO create QR code referenceing this ticket
 
-    public Ticket(final UUID uuid,
+    public Ticket(final UUID id,
 		  final Instant createdAt,
 		  final Instant lastUpdated,
-		  @NotNull final UUID eventID,
-		  @NotNull final TicketType ticketType,
-		  @NotNull @NotNegative(message = "cannot be negative") final Integer price,
-		  @NotNull final Boolean transferable,
-		  @NotNull final SeatingInformation seatInfo) {
+		  final UUID eventID,
+		  final TicketType ticketType,
+		  final Integer price,
+		  final Boolean transferable,
+		  final SeatingInformation seatInfo) {
 
-	super(uuid, createdAt, lastUpdated);
+	super(id, createdAt, lastUpdated);
 	this.eventID = eventID;
 	this.ticketType = ticketType;
 	this.price = price;

@@ -9,11 +9,11 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Null;
 
 /**
- * Attendee Entity object
+ * Attendee data transfer object
  *
  * @author Evangelos Georgiou
  */
-public record AttendeeDto(@Schema(hidden = true, description = "The UUID of the Attendee") UUID uuid,
+public record AttendeeDto(@Schema(hidden = true, description = "The UUID of the Attendee") UUID id,
 	@Null @Schema(hidden = true) Timestamp createdAt, //
 	@Null @Schema(hidden = true) Timestamp lastUpdated,
 	@NotBlank @Schema(example = "John", description = "First name of the Attendee") String firstName,

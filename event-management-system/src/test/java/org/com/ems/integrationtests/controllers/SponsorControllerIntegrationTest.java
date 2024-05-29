@@ -57,9 +57,9 @@ class SponsorControllerIntegrationTest {
 
 	final SponsorDto actualSponsorDto = responseEntity.getBody();
 
-	assertNotNull(actualSponsorDto.uuid());
+	assertNotNull(actualSponsorDto.id());
 	assertNotNull(actualSponsorDto.lastUpdated());
-	assertEquals(name, actualSponsorDto.denomination());
+	assertEquals(name, actualSponsorDto.name());
 	assertEquals(contantInfo, actualSponsorDto.contactInformation());
 	assertEquals(website, actualSponsorDto.website());
 	assertEquals(financialContribution, actualSponsorDto.financialContribution());
@@ -70,11 +70,11 @@ class SponsorControllerIntegrationTest {
 
 	assertTrue(!getResponseEntity.getBody().isEmpty());
 
-	this.restTemplate.exchange(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + actualSponsorDto.uuid(),
+	this.restTemplate.exchange(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + actualSponsorDto.id(),
 		HttpMethod.DELETE, null, Void.class);
 
 	final ResponseEntity<SponsorDto> getDeletedEntity = this.restTemplate.getForEntity(
-		HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + actualSponsorDto.uuid(), SponsorDto.class);
+		HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + actualSponsorDto.id(), SponsorDto.class);
 
 	assertTrue(getDeletedEntity.getStatusCode().isSameCodeAs(HttpStatusCode.valueOf(404)));
 
@@ -100,19 +100,19 @@ class SponsorControllerIntegrationTest {
 
 	final SponsorDto actualSponsorDto = responseEntity.getBody();
 
-	assertNotNull(actualSponsorDto.uuid());
+	assertNotNull(actualSponsorDto.id());
 	assertNotNull(actualSponsorDto.createdAt());
 	assertNotNull(actualSponsorDto.lastUpdated());
-	assertEquals(name, actualSponsorDto.denomination());
+	assertEquals(name, actualSponsorDto.name());
 	assertEquals(contantInfo, actualSponsorDto.contactInformation());
 	assertEquals(website, actualSponsorDto.website());
 	assertEquals(financialContribution, actualSponsorDto.financialContribution());
 
-	this.restTemplate.exchange(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + actualSponsorDto.uuid(),
+	this.restTemplate.exchange(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + actualSponsorDto.id(),
 		HttpMethod.DELETE, null, Void.class);
 
 	final ResponseEntity<SponsorDto> getDeletedEntity = this.restTemplate.getForEntity(
-		HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + actualSponsorDto.uuid(), SponsorDto.class);
+		HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + actualSponsorDto.id(), SponsorDto.class);
 
 	assertTrue(getDeletedEntity.getStatusCode().isSameCodeAs(HttpStatusCode.valueOf(404)));
 
@@ -143,25 +143,25 @@ class SponsorControllerIntegrationTest {
 	final Integer updatedFinancialContribution = 4342342;
 	final ResponseEntity<
 		SponsorDto> editedResponseEntity = this.restTemplate
-			.exchange(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + entityDto.uuid().toString(),
-				HttpMethod.PUT, this.getHttpEntity(new SponsorDto(entityDto.uuid(), null, null,
+			.exchange(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + entityDto.id().toString(),
+				HttpMethod.PUT, this.getHttpEntity(new SponsorDto(entityDto.id(), null, null,
 					updatedName, updatedWebsite, updatedFinancialContribution, contantInfo)),
 				SponsorDto.class);
 
 	final SponsorDto actualSponsorDto = editedResponseEntity.getBody();
 
-	assertEquals(entityDto.uuid(), actualSponsorDto.uuid());
+	assertEquals(entityDto.id(), actualSponsorDto.id());
 	assertEquals(entityDto.createdAt(), actualSponsorDto.createdAt());
-	assertEquals(updatedName, actualSponsorDto.denomination());
+	assertEquals(updatedName, actualSponsorDto.name());
 	assertEquals(contantInfo, actualSponsorDto.contactInformation());
 	assertEquals(updatedWebsite, actualSponsorDto.website());
 	assertEquals(updatedFinancialContribution, actualSponsorDto.financialContribution());
 
-	this.restTemplate.exchange(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + entityDto.uuid(),
+	this.restTemplate.exchange(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + entityDto.id(),
 		HttpMethod.DELETE, null, Void.class);
 
 	final ResponseEntity<SponsorDto> getDeletedEntity = this.restTemplate.getForEntity(
-		HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + entityDto.uuid(), SponsorDto.class);
+		HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + entityDto.id(), SponsorDto.class);
 
 	assertTrue(getDeletedEntity.getStatusCode().isSameCodeAs(HttpStatusCode.valueOf(404)));
 

@@ -12,8 +12,8 @@ public class SponsorDtoToSponsorConverter implements Function<SponsorDto, Sponso
     @Override
     public Sponsor apply(final SponsorDto sponsorDto) {
 
-	return new Sponsor(sponsorDto.uuid(), sponsorDto.createdAt().toInstant(), sponsorDto.lastUpdated().toInstant(),
-		sponsorDto.denomination(), sponsorDto.website(), sponsorDto.financialContribution(),
+	return new Sponsor(sponsorDto.id(), sponsorDto.createdAt().toInstant(), sponsorDto.lastUpdated().toInstant(),
+		sponsorDto.name(), sponsorDto.website(), sponsorDto.financialContribution(),
 		sponsorDto.contactInformation());
 
     }

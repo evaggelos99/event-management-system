@@ -14,7 +14,7 @@ public class AttendeeToAttendeeDtoConverter implements Function<Attendee, Attend
     @Override
     public AttendeeDto apply(final Attendee attendee) {
 
-	return new AttendeeDto(attendee.getUuid(), this.convertToTimeStamp(attendee.getCreatedAt()),
+	return new AttendeeDto(attendee.getId(), this.convertToTimeStamp(attendee.getCreatedAt()),
 		this.convertToTimeStamp(attendee.getLastUpdated()), attendee.getFirstName(), attendee.getLastName(),
 		attendee.getTicketIDs());
 

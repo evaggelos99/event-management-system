@@ -42,22 +42,22 @@ class TicketServiceTest {
 
 	final Ticket ticket = Assertions.assertDoesNotThrow(() -> this.service.add(dto));
 
-	Assertions.assertEquals(dto.uuid(), ticket.getUuid());
+	Assertions.assertEquals(dto.id(), ticket.getId());
 	Assertions.assertEquals(dto.eventID(), ticket.getEventID());
 	Assertions.assertEquals(dto.ticketType(), ticket.getTicketType());
 	Assertions.assertEquals(dto.price(), ticket.getPrice());
 	Assertions.assertEquals(dto.transferable(), ticket.getTransferable());
 	Assertions.assertEquals(dto.seatInformation(), ticket.getSeatInformation());
 
-	final Optional<Ticket> optionalTicket = this.service.get(dto.uuid());
+	final Optional<Ticket> optionalTicket = this.service.get(dto.id());
 
 	Assertions.assertEquals(ticket, optionalTicket.orElseThrow(() -> new AssertionError("Optional is null")));
 
 	Assertions.assertEquals(1, this.service.getAll().size());
 
-	Assertions.assertTrue(() -> this.service.existsById(dto.uuid()));
+	Assertions.assertTrue(() -> this.service.existsById(dto.id()));
 
-	Assertions.assertDoesNotThrow(() -> this.service.delete(dto.uuid()));
+	Assertions.assertDoesNotThrow(() -> this.service.delete(dto.id()));
 
     }
 
@@ -79,11 +79,11 @@ class TicketServiceTest {
 
 	final TicketDto newDto = RandomObjectGenerator.generateTicketDto(UUID.randomUUID());
 
-	final Ticket newTicket = Assertions.assertDoesNotThrow(() -> this.service.edit(dto.uuid(), newDto));
+	final Ticket newTicket = Assertions.assertDoesNotThrow(() -> this.service.edit(dto.id(), newDto));
 
 	Assertions.assertNotEquals(ticket, newTicket);
 
-	Assertions.assertDoesNotThrow(() -> this.service.delete(dto.uuid()));
+	Assertions.assertDoesNotThrow(() -> this.service.delete(dto.id()));
 
     }
 

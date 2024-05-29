@@ -23,27 +23,27 @@ public class ObjectNotFoundException extends GenericRestOperationFailedException
 
     private static final HttpStatusCode STATUS_CODE = HttpStatusCode.valueOf(CODE);
 
-    private final UUID uuid;
+    private final UUID id;
 
     private final Class<?> classOfObject;
 
     /**
      * C-or
      *
-     * @param uuid          cannot be null
+     * @param id          cannot be null
      * @param classOfObject cannot be null
      */
-    public ObjectNotFoundException(final UUID uuid,
+    public ObjectNotFoundException(final UUID id,
 				   final Class<?> classOfObject) {
 
-	this.uuid = requireNonNull(uuid);
+	this.id = requireNonNull(id);
 	this.classOfObject = requireNonNull(classOfObject);
 
     }
 
-    public UUID getUuid() {
+    public UUID getId() {
 
-	return this.uuid;
+	return this.id;
 
     }
 

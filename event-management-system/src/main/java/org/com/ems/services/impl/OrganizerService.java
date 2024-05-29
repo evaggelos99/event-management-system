@@ -46,19 +46,9 @@ public class OrganizerService implements IService<Organizer, OrganizerDto> {
      * {@inheritDoc}
      */
     @Override
-    public Optional<Organizer> get(final UUID uuid) {
+    public Optional<Organizer> get(final UUID id) {
 
-	return this.organizerRepository.findById(uuid);
-
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void delete(final UUID uuid) {
-
-	this.organizerRepository.deleteById(uuid);
+	return this.organizerRepository.findById(id);
 
     }
 
@@ -66,10 +56,20 @@ public class OrganizerService implements IService<Organizer, OrganizerDto> {
      * {@inheritDoc}
      */
     @Override
-    public Organizer edit(final UUID uuid,
+    public void delete(final UUID id) {
+
+	this.organizerRepository.deleteById(id);
+
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Organizer edit(final UUID id,
 			  final OrganizerDto attendee) {
 
-	if (!this.organizerRepository.existsById(uuid))
+	if (!this.organizerRepository.existsById(id))
 	    throw new NoSuchElementException();
 
 	return this.organizerRepository.edit(attendee);

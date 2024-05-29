@@ -46,19 +46,9 @@ public class SponsorService implements IService<Sponsor, SponsorDto> {
      * {@inheritDoc}
      */
     @Override
-    public Optional<Sponsor> get(final UUID uuid) {
+    public Optional<Sponsor> get(final UUID id) {
 
-	return this.sponsorRepository.findById(uuid);
-
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void delete(final UUID uuid) {
-
-	this.sponsorRepository.deleteById(uuid);
+	return this.sponsorRepository.findById(id);
 
     }
 
@@ -66,10 +56,20 @@ public class SponsorService implements IService<Sponsor, SponsorDto> {
      * {@inheritDoc}
      */
     @Override
-    public Sponsor edit(final UUID uuid,
+    public void delete(final UUID id) {
+
+	this.sponsorRepository.deleteById(id);
+
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Sponsor edit(final UUID id,
 			final SponsorDto attendee) {
 
-	if (!this.sponsorRepository.existsById(uuid))
+	if (!this.sponsorRepository.existsById(id))
 	    throw new NoSuchElementException();
 
 	return this.sponsorRepository.edit(attendee);

@@ -89,36 +89,36 @@ public class TicketRepository implements ITicketRepository {
     }
 
     @Override
-    public Optional<Ticket> findById(final UUID uuid) {
+    public Optional<Ticket> findById(final UUID id) {
 
 	try {
 
 	    final Ticket ticket = this.jdbcTemplate.queryForObject(
 		    this.ticketQueriesProperties.getProperty(CrudQueriesOperations.GET_ID.name()), this.ticketRowMapper,
-		    uuid);
+		    id);
 	    return Optional.of(ticket);
 	} catch (final EmptyResultDataAccessException e) {
 
-	    LOGGER.warn("Ticket with UUID: {} was not found", uuid);
+	    LOGGER.warn("Ticket with UUID: {} was not found", id);
 	    return Optional.empty();
 	}
 
     }
 
     @Override
-    public boolean deleteById(final UUID uuid) {
+    public boolean deleteById(final UUID id) {
 
 	final int rows = this.jdbcTemplate
-		.update(this.ticketQueriesProperties.getProperty(CrudQueriesOperations.DELETE_ID.name()), uuid);
+		.update(this.ticketQueriesProperties.getProperty(CrudQueriesOperations.DELETE_ID.name()), id);
 
 	final boolean deleted = rows == 1;
 
 	if (deleted) {
 
-	    LOGGER.trace("Deleted Ticket with uuid: " + uuid);
+	    LOGGER.trace("Deleted Ticket with id: " + id);
 	} else {
 
-	    LOGGER.trace("Could not delete Ticket with uuid: " + uuid);
+	    LOGGER.trace("Could not delete Ticket with id: " + id);
 	}
 
 	return deleted;
@@ -126,9 +126,9 @@ public class TicketRepository implements ITicketRepository {
     }
 
     @Override
-    public boolean existsById(final UUID uuid) {
+    public boolean existsById(final UUID id) {
 
-	return this.findById(uuid).isPresent();
+	return this.findById(id).isPresent();
 
     }
 
@@ -142,27 +142,27 @@ public class TicketRepository implements ITicketRepository {
 
     private Ticket saveTicket(final TicketDto ticket) {
 
-	final UUID ticketUuid = ticket.uuid();
+	final UUID ticketUuid = ticket.id();
 	final Instant now = Instant.now();
 	final Timestamp createdAt = Timestamp.from(now);
 	final Timestamp updatedAt = Timestamp.from(now);
-	final UUID uuid = ticketUuid != null ? ticketUuid : UUID.randomUUID();
+	final UUID id = ticketUuid != null ? ticketUuid : UUID.randomUUID();
 
-	return this.saveOrEditCommand(uuid, createdAt, updatedAt, ticket, true);
+	return this.saveOrEditCommand(id, createdAt, updatedAt, ticket, true);
 
     }
 
     private Ticket editTicket(final TicketDto ticket) {
 
-	final UUID uuid = ticket.uuid();
-	final Timestamp createdAt = this.getCreatedAt(uuid);
+	final UUID id = ticket.id();
+	final Timestamp createdAt = this.getCreatedAt(id);
 	final Timestamp updatedAt = Timestamp.from(Instant.now());
 
-	return this.saveOrEditCommand(uuid, createdAt, updatedAt, ticket, false);
+	return this.saveOrEditCommand(id, createdAt, updatedAt, ticket, false);
 
     }
 
-    private Ticket saveOrEditCommand(final UUID uuid,
+    private Ticket saveOrEditCommand(final UUID id,
 				     final Timestamp createdAt,
 				     final Timestamp updatedAt,
 				     final TicketDto ticket,
@@ -176,24 +176,24 @@ public class TicketRepository implements ITicketRepository {
 
 	if (isSaveOperation) {
 
-	    this.jdbcTemplate.update(this.ticketQueriesProperties.getProperty(CrudQueriesOperations.SAVE.name()), uuid,
+	    this.jdbcTemplate.update(this.ticketQueriesProperties.getProperty(CrudQueriesOperations.SAVE.name()), id,
 		    createdAt, updatedAt, eventId, ticketType.name(), price, isTransferable, seatInformation.seat(),
 		    seatInformation.section());
 	} else {
 
-	    this.jdbcTemplate.update(this.ticketQueriesProperties.getProperty(CrudQueriesOperations.EDIT.name()), uuid,
+	    this.jdbcTemplate.update(this.ticketQueriesProperties.getProperty(CrudQueriesOperations.EDIT.name()), id,
 		    createdAt, updatedAt, eventId, ticketType.name(), price, isTransferable, seatInformation.seat(),
-		    seatInformation.section(), uuid);
+		    seatInformation.section(), id);
 	}
 
 	return this.ticketDtoToTicketConverter.apply(
-		new TicketDto(uuid, createdAt, updatedAt, eventId, ticketType, price, isTransferable, seatInformation));
+		new TicketDto(id, createdAt, updatedAt, eventId, ticketType, price, isTransferable, seatInformation));
 
     }
 
-    private Timestamp getCreatedAt(final UUID uuid) {
+    private Timestamp getCreatedAt(final UUID id) {
 
-	return Timestamp.from(this.findById(uuid).map(AbstractDomainObject::getCreatedAt).orElse(Instant.now()));
+	return Timestamp.from(this.findById(id).map(AbstractDomainObject::getCreatedAt).orElse(Instant.now()));
 
     }
 

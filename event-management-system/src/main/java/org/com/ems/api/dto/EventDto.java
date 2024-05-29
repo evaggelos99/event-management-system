@@ -19,13 +19,13 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Null;
 
 /**
- * Event Entity object
+ * Event data transfer object
  *
  * @author Evangelos Georgiou
  */
-public record EventDto(@Schema(hidden = true, description = "The UUID of the Attendee") UUID uuid, //
+public record EventDto(@Schema(hidden = true, description = "The UUID of the Event") UUID id, //
 	@Null @Schema(hidden = true) Timestamp createdAt, @Null @Schema(hidden = true) Timestamp lastUpdated, //
-	@NotBlank @Schema(example = "Wedding of Maria and Andreas", description = "Name of the Event") String denomination, //
+	@NotBlank @Schema(example = "Wedding of Maria and Andreas", description = "Name of the Event") String name, //
 	@NotBlank @Schema(example = "Place of Interest", description = "The place of the Event") String place, //
 	@NotNull @Schema(example = "WEDDING", description = "The type of the Event") EventType eventType, //
 	@Schema(description = "The list of attendees") List<UUID> attendeesIds, //

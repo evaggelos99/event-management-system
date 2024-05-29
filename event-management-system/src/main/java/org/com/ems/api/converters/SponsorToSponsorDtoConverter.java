@@ -14,8 +14,8 @@ public class SponsorToSponsorDtoConverter implements Function<Sponsor, SponsorDt
     @Override
     public SponsorDto apply(final Sponsor sponsor) {
 
-	return new SponsorDto(sponsor.getUuid(), this.convertToTimeStamp(sponsor.getCreatedAt()),
-		this.convertToTimeStamp(sponsor.getLastUpdated()), sponsor.getDenomination(), sponsor.getWebsite(),
+	return new SponsorDto(sponsor.getId(), this.convertToTimeStamp(sponsor.getCreatedAt()),
+		this.convertToTimeStamp(sponsor.getLastUpdated()), sponsor.getName(), sponsor.getWebsite(),
 		sponsor.getFinancialContribution(), sponsor.getContactInformation());
 
     }

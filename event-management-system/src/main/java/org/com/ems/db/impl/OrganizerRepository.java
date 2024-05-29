@@ -94,36 +94,36 @@ public class OrganizerRepository implements IOrganizerRepository {
     }
 
     @Override
-    public Optional<Organizer> findById(final UUID uuid) {
+    public Optional<Organizer> findById(final UUID id) {
 
 	try {
 
 	    final Organizer organizer = this.jdbcTemplate.queryForObject(
 		    this.organizerQueriesProperties.getProperty(CrudQueriesOperations.GET_ID.name()),
-		    this.organizerRowMapper, uuid);
+		    this.organizerRowMapper, id);
 	    return Optional.of(organizer);
 	} catch (final EmptyResultDataAccessException e) {
 
-	    LOGGER.warn("Organizer with UUID: {} was not found", uuid);
+	    LOGGER.warn("Organizer with UUID: {} was not found", id);
 	    return Optional.empty();
 	}
 
     }
 
     @Override
-    public boolean deleteById(final UUID uuid) {
+    public boolean deleteById(final UUID id) {
 
 	final int rows = this.jdbcTemplate
-		.update(this.organizerQueriesProperties.getProperty(CrudQueriesOperations.DELETE_ID.name()), uuid);
+		.update(this.organizerQueriesProperties.getProperty(CrudQueriesOperations.DELETE_ID.name()), id);
 
 	final boolean deleted = rows == 1;
 
 	if (deleted) {
 
-	    LOGGER.trace("Deleted Organizer with uuid: " + uuid);
+	    LOGGER.trace("Deleted Organizer with id: " + id);
 	} else {
 
-	    LOGGER.trace("Could not delete Organizer with uuid: " + uuid);
+	    LOGGER.trace("Could not delete Organizer with id: " + id);
 	}
 
 	return deleted;
@@ -131,9 +131,9 @@ public class OrganizerRepository implements IOrganizerRepository {
     }
 
     @Override
-    public boolean existsById(final UUID uuid) {
+    public boolean existsById(final UUID id) {
 
-	return this.findById(uuid).isPresent();
+	return this.findById(id).isPresent();
 
     }
 
@@ -148,33 +148,33 @@ public class OrganizerRepository implements IOrganizerRepository {
 
     private Organizer saveOrganizer(final OrganizerDto organizer) {
 
-	final UUID organizerUuid = organizer.uuid();
+	final UUID organizerUuid = organizer.id();
 	final Instant now = Instant.now();
 	final Timestamp createdAt = Timestamp.from(now);
 	final Timestamp updatedAt = Timestamp.from(now);
 
-	final UUID uuid = organizerUuid != null ? organizerUuid : UUID.randomUUID();
-	return this.saveOrEditCommand(uuid, createdAt, updatedAt, organizer, true);
+	final UUID id = organizerUuid != null ? organizerUuid : UUID.randomUUID();
+	return this.saveOrEditCommand(id, createdAt, updatedAt, organizer, true);
 
     }
 
     private Organizer editOrganizer(final OrganizerDto organizer) {
 
-	final UUID uuid = organizer.uuid();
-	final Timestamp createdAt = this.getCreatedAt(uuid);
+	final UUID id = organizer.id();
+	final Timestamp createdAt = this.getCreatedAt(id);
 	final Timestamp updatedAt = Timestamp.from(Instant.now());
 
-	return this.saveOrEditCommand(uuid, createdAt, updatedAt, organizer, false);
+	return this.saveOrEditCommand(id, createdAt, updatedAt, organizer, false);
 
     }
 
-    private Organizer saveOrEditCommand(final UUID uuid,
+    private Organizer saveOrEditCommand(final UUID id,
 					final Timestamp createdAt,
 					final Timestamp updatedAt,
 					final OrganizerDto organizer,
 					final boolean isSaveOperation) {
 
-	final String name = organizer.denomination();
+	final String name = organizer.name();
 	final String website = organizer.website();
 	final String description = organizer.information();
 	final List<EventType> listOfEventTypes = organizer.eventTypes();
@@ -183,18 +183,18 @@ public class OrganizerRepository implements IOrganizerRepository {
 
 	if (isSaveOperation) {
 
-	    this.jdbcTemplate.update(this.organizerQueriesProperties.getProperty(CrudQueriesOperations.SAVE.name()),
-		    uuid, createdAt, updatedAt, name, website, description, eventTypesArray, contactInformation.email(),
+	    this.jdbcTemplate.update(this.organizerQueriesProperties.getProperty(CrudQueriesOperations.SAVE.name()), id,
+		    createdAt, updatedAt, name, website, description, eventTypesArray, contactInformation.email(),
 		    contactInformation.phoneNumber(), contactInformation.physicalAddress());
 	} else {
 
-	    this.jdbcTemplate.update(this.organizerQueriesProperties.getProperty(CrudQueriesOperations.EDIT.name()),
-		    uuid, createdAt, updatedAt, name, website, description, eventTypesArray, contactInformation.email(),
-		    contactInformation.phoneNumber(), contactInformation.physicalAddress(), uuid);
+	    this.jdbcTemplate.update(this.organizerQueriesProperties.getProperty(CrudQueriesOperations.EDIT.name()), id,
+		    createdAt, updatedAt, name, website, description, eventTypesArray, contactInformation.email(),
+		    contactInformation.phoneNumber(), contactInformation.physicalAddress(), id);
 
 	}
 
-	return this.organizerDtoToOrganizerConverter.apply(new OrganizerDto(uuid, createdAt, updatedAt, name, website,
+	return this.organizerDtoToOrganizerConverter.apply(new OrganizerDto(id, createdAt, updatedAt, name, website,
 		description, listOfEventTypes, contactInformation));
 
     }
@@ -216,9 +216,9 @@ public class OrganizerRepository implements IOrganizerRepository {
 
     }
 
-    private Timestamp getCreatedAt(final UUID uuid) {
+    private Timestamp getCreatedAt(final UUID id) {
 
-	return Timestamp.from(this.findById(uuid).map(AbstractDomainObject::getCreatedAt).orElse(Instant.now()));
+	return Timestamp.from(this.findById(id).map(AbstractDomainObject::getCreatedAt).orElse(Instant.now()));
 
     }
 

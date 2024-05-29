@@ -45,8 +45,8 @@ class EventServiceTest {
 
 	final Event event = Assertions.assertDoesNotThrow(() -> this.service.add(dto));
 
-	Assertions.assertEquals(dto.uuid(), event.getUuid());
-	Assertions.assertEquals(dto.denomination(), event.getDenomination());
+	Assertions.assertEquals(dto.id(), event.getId());
+	Assertions.assertEquals(dto.name(), event.getName());
 	Assertions.assertEquals(dto.place(), event.getPlace());
 	Assertions.assertEquals(dto.eventType(), event.getEventType());
 	Assertions.assertEquals(dto.attendeesIds(), event.getAttendeesIDs());
@@ -56,15 +56,15 @@ class EventServiceTest {
 	Assertions.assertEquals(dto.startTimeOfEvent(), event.getStartTime());
 	Assertions.assertEquals(dto.duration(), event.getDuration());
 
-	final Optional<Event> optionalEvent = this.service.get(dto.uuid());
+	final Optional<Event> optionalEvent = this.service.get(dto.id());
 
 	Assertions.assertEquals(event, optionalEvent.orElseThrow(() -> new AssertionError("Optional is null")));
 
 	Assertions.assertEquals(1, this.service.getAll().size());
 
-	Assertions.assertTrue(() -> this.service.existsById(dto.uuid()));
+	Assertions.assertTrue(() -> this.service.existsById(dto.id()));
 
-	Assertions.assertDoesNotThrow(() -> this.service.delete(dto.uuid()));
+	Assertions.assertDoesNotThrow(() -> this.service.delete(dto.id()));
 
     }
 
@@ -76,9 +76,9 @@ class EventServiceTest {
 
 	final UUID attendeeId = UUID.randomUUID();
 
-	Assertions.assertTrue(() -> this.service.addAttendee(dto.uuid(), attendeeId));
+	Assertions.assertTrue(() -> this.service.addAttendee(dto.id(), attendeeId));
 
-	Assertions.assertDoesNotThrow(() -> this.service.delete(dto.uuid()));
+	Assertions.assertDoesNotThrow(() -> this.service.delete(dto.id()));
 
     }
 
@@ -103,11 +103,11 @@ class EventServiceTest {
 
 	final EventDto newDto = RandomObjectGenerator.generateEventDto(null, organizerId, null);
 
-	final Event newEvent = Assertions.assertDoesNotThrow(() -> this.service.edit(dto.uuid(), newDto));
+	final Event newEvent = Assertions.assertDoesNotThrow(() -> this.service.edit(dto.id(), newDto));
 
 	Assertions.assertNotEquals(event, newEvent);
 
-	Assertions.assertDoesNotThrow(() -> this.service.delete(dto.uuid()));
+	Assertions.assertDoesNotThrow(() -> this.service.delete(dto.id()));
 
     }
 

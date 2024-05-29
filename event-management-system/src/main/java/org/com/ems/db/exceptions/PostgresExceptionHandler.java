@@ -45,7 +45,7 @@ public class PostgresExceptionHandler {
 
 	final Map<String, Object> errorResponse = new HashMap<>();
 
-	errorResponse.put(MESSAGE, "The uuid key that was provided already exists.");
+	errorResponse.put(MESSAGE, "The id key that was provided already exists.");
 	errorResponse.put(TIME_STAMP, Instant.now());
 	errorResponse.put(STATUS, 409);
 

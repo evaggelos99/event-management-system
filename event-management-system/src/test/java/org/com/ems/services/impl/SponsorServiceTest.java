@@ -42,21 +42,21 @@ class SponsorServiceTest {
 
 	final Sponsor sponsor = Assertions.assertDoesNotThrow(() -> this.service.add(dto));
 
-	Assertions.assertEquals(dto.uuid(), sponsor.getUuid());
-	Assertions.assertEquals(dto.denomination(), sponsor.getDenomination());
+	Assertions.assertEquals(dto.id(), sponsor.getId());
+	Assertions.assertEquals(dto.name(), sponsor.getName());
 	Assertions.assertEquals(dto.website(), sponsor.getWebsite());
 	Assertions.assertEquals(dto.financialContribution(), sponsor.getFinancialContribution());
 	Assertions.assertEquals(dto.contactInformation(), sponsor.getContactInformation());
 
-	final Optional<Sponsor> optionalSponsor = this.service.get(dto.uuid());
+	final Optional<Sponsor> optionalSponsor = this.service.get(dto.id());
 
 	Assertions.assertEquals(sponsor, optionalSponsor.orElseThrow(() -> new AssertionError("Optional is null")));
 
 	Assertions.assertEquals(1, this.service.getAll().size());
 
-	Assertions.assertTrue(() -> this.service.existsById(dto.uuid()));
+	Assertions.assertTrue(() -> this.service.existsById(dto.id()));
 
-	Assertions.assertDoesNotThrow(() -> this.service.delete(dto.uuid()));
+	Assertions.assertDoesNotThrow(() -> this.service.delete(dto.id()));
 
     }
 
@@ -79,11 +79,11 @@ class SponsorServiceTest {
 
 	final SponsorDto newDto = RandomObjectGenerator.generateSponsorDto();
 
-	final Sponsor newSponsor = Assertions.assertDoesNotThrow(() -> this.service.edit(dto.uuid(), newDto));
+	final Sponsor newSponsor = Assertions.assertDoesNotThrow(() -> this.service.edit(dto.id(), newDto));
 
 	Assertions.assertNotEquals(sponsor, newSponsor);
 
-	Assertions.assertDoesNotThrow(() -> this.service.delete(dto.uuid()));
+	Assertions.assertDoesNotThrow(() -> this.service.delete(dto.id()));
 
     }
 

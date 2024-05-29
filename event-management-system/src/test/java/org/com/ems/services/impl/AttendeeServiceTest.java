@@ -65,12 +65,12 @@ class AttendeeServiceTest {
 
 	final Attendee attendee = Assertions.assertDoesNotThrow(() -> this.service.add(dto));
 
-	Assertions.assertEquals(dto.uuid(), attendee.getUuid());
+	Assertions.assertEquals(dto.id(), attendee.getId());
 	Assertions.assertEquals(dto.firstName(), attendee.getFirstName());
 	Assertions.assertEquals(dto.lastName(), attendee.getLastName());
 	Assertions.assertEquals(dto.ticketIDs(), attendee.getTicketIDs());
 
-	Assertions.assertDoesNotThrow(() -> this.service.delete(dto.uuid()));
+	Assertions.assertDoesNotThrow(() -> this.service.delete(dto.id()));
 	Assertions.assertFalse(this.service.existsById(expectedUUID));
 
     }
@@ -87,8 +87,8 @@ class AttendeeServiceTest {
 
 	final Attendee attendee = Assertions.assertDoesNotThrow(() -> this.service.add(dto));
 
-	Assertions.assertTrue(this.service.get(attendee.getUuid()).isPresent());
-	Assertions.assertDoesNotThrow(() -> this.service.delete(dto.uuid()));
+	Assertions.assertTrue(this.service.get(attendee.getId()).isPresent());
+	Assertions.assertDoesNotThrow(() -> this.service.delete(dto.id()));
 
     }
 
@@ -115,11 +115,11 @@ class AttendeeServiceTest {
 		updatedLastName, List.of(updatedTicketId));
 
 	final Attendee updatedAttendee = Assertions
-		.assertDoesNotThrow(() -> this.service.edit(attendee.getUuid(), newDto));
+		.assertDoesNotThrow(() -> this.service.edit(attendee.getId(), newDto));
 	Assertions.assertEquals(List.of(updatedTicketId), updatedAttendee.getTicketIDs());
 	Assertions.assertEquals(updatedFirstName, updatedAttendee.getFirstName());
 	Assertions.assertEquals(updatedLastName, updatedAttendee.getLastName());
-	Assertions.assertDoesNotThrow(() -> this.service.delete(dto.uuid()));
+	Assertions.assertDoesNotThrow(() -> this.service.delete(dto.id()));
 
     }
 
@@ -150,8 +150,8 @@ class AttendeeServiceTest {
 
 	Assertions.assertEquals(2, allAttendees.size());
 
-	Assertions.assertDoesNotThrow(() -> this.service.delete(dto.uuid()));
-	Assertions.assertDoesNotThrow(() -> this.service.delete(dto2.uuid()));
+	Assertions.assertDoesNotThrow(() -> this.service.delete(dto.id()));
+	Assertions.assertDoesNotThrow(() -> this.service.delete(dto2.id()));
 
     }
 
@@ -175,9 +175,9 @@ class AttendeeServiceTest {
 
 	Mockito.when(this.lookUpTicketServiceMock.get(ticketId)).thenReturn(Optional.of(ticket));
 
-	Assertions.assertTrue(this.service.addTicket(dto.uuid(), ticketId));
+	Assertions.assertTrue(this.service.addTicket(dto.id(), ticketId));
 
-	Assertions.assertDoesNotThrow(() -> this.service.delete(dto.uuid()));
+	Assertions.assertDoesNotThrow(() -> this.service.delete(dto.id()));
 
     }
 

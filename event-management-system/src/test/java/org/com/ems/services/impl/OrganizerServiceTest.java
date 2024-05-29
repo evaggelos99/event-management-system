@@ -42,22 +42,22 @@ class OrganizerServiceTest {
 
 	final Organizer organizer = Assertions.assertDoesNotThrow(() -> this.service.add(dto));
 
-	Assertions.assertEquals(dto.uuid(), organizer.getUuid());
-	Assertions.assertEquals(dto.denomination(), organizer.getDenomination());
+	Assertions.assertEquals(dto.id(), organizer.getId());
+	Assertions.assertEquals(dto.name(), organizer.getName());
 	Assertions.assertEquals(dto.website(), organizer.getWebsite());
 	Assertions.assertEquals(dto.information(), organizer.getInformation());
 	Assertions.assertEquals(dto.eventTypes(), organizer.getEventTypes());
 	Assertions.assertEquals(dto.contactInformation(), organizer.getContactInformation());
 
-	final Optional<Organizer> optionalOrganizer = this.service.get(dto.uuid());
+	final Optional<Organizer> optionalOrganizer = this.service.get(dto.id());
 
 	Assertions.assertEquals(organizer, optionalOrganizer.orElseThrow(() -> new AssertionError("Optional is null")));
 
 	Assertions.assertEquals(1, this.service.getAll().size());
 
-	Assertions.assertTrue(() -> this.service.existsById(dto.uuid()));
+	Assertions.assertTrue(() -> this.service.existsById(dto.id()));
 
-	Assertions.assertDoesNotThrow(() -> this.service.delete(dto.uuid()));
+	Assertions.assertDoesNotThrow(() -> this.service.delete(dto.id()));
 
     }
 
@@ -78,11 +78,11 @@ class OrganizerServiceTest {
 
 	final OrganizerDto newDto = RandomObjectGenerator.generateOrganizerDto(EventType.OTHER);
 
-	final Organizer newOrganizer = Assertions.assertDoesNotThrow(() -> this.service.edit(dto.uuid(), newDto));
+	final Organizer newOrganizer = Assertions.assertDoesNotThrow(() -> this.service.edit(dto.id(), newDto));
 
 	Assertions.assertNotEquals(organizer, newOrganizer);
 
-	Assertions.assertDoesNotThrow(() -> this.service.delete(dto.uuid()));
+	Assertions.assertDoesNotThrow(() -> this.service.delete(dto.id()));
 
     }
 

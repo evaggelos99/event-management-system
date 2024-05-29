@@ -53,9 +53,9 @@ public class TestConfiguration {
 
 		if (array != null) {
 
-		    for (final Object uuid : (Object[]) array.getArray()) {
+		    for (final Object id : (Object[]) array.getArray()) {
 
-			list.add((UUID) uuid);
+			list.add((UUID) id);
 
 		    }
 		}
@@ -89,7 +89,7 @@ public class TestConfiguration {
 	    final Duration duration = this.extractDuration((Interval) rs.getObject("duration"));
 
 	    return new Event(UUID.fromString(rs.getString("id")), rs.getTimestamp("created_at").toInstant(),
-		    rs.getTimestamp("last_updated").toInstant(), rs.getString("denomination"), rs.getString("place"),
+		    rs.getTimestamp("last_updated").toInstant(), rs.getString("name"), rs.getString("place"),
 		    EventType.valueOf(rs.getString("event_type")), attendees,
 		    UUID.fromString(rs.getString("organizer_id")), rs.getInt("limit_of_people"), sponsors,
 		    rs.getTimestamp("start_time").toLocalDateTime(), duration);

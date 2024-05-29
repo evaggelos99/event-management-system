@@ -39,18 +39,18 @@ public class SpringTestConfiguration {
 	    @Override
 	    public Attendee save(final AttendeeDto dto) {
 
-		final Attendee attendee = new Attendee(dto.uuid(), dto.createdAt().toInstant(),
+		final Attendee attendee = new Attendee(dto.id(), dto.createdAt().toInstant(),
 			dto.lastUpdated().toInstant(), dto.firstName(), dto.lastName(), dto.ticketIDs());
-		this.list.put(dto.uuid(), attendee);
+		this.list.put(dto.id(), attendee);
 
 		return attendee;
 
 	    }
 
 	    @Override
-	    public Optional<Attendee> findById(final UUID uuid) {
+	    public Optional<Attendee> findById(final UUID id) {
 
-		return Optional.ofNullable(this.list.get(uuid));
+		return Optional.ofNullable(this.list.get(id));
 
 	    }
 
@@ -62,27 +62,27 @@ public class SpringTestConfiguration {
 	    }
 
 	    @Override
-	    public boolean existsById(final UUID uuid) {
+	    public boolean existsById(final UUID id) {
 
-		return this.list.containsKey(uuid);
+		return this.list.containsKey(id);
 
 	    }
 
 	    @Override
 	    public Attendee edit(final AttendeeDto dto) {
 
-		final Attendee attendee = new Attendee(dto.uuid(), dto.createdAt().toInstant(),
+		final Attendee attendee = new Attendee(dto.id(), dto.createdAt().toInstant(),
 			dto.lastUpdated().toInstant(), dto.firstName(), dto.lastName(), dto.ticketIDs());
 
-		this.list.put(dto.uuid(), attendee);
+		this.list.put(dto.id(), attendee);
 		return attendee;
 
 	    }
 
 	    @Override
-	    public boolean deleteById(final UUID uuid) {
+	    public boolean deleteById(final UUID id) {
 
-		return this.list.remove(uuid) != null;
+		return this.list.remove(id) != null;
 
 	    }
 	};
@@ -99,21 +99,21 @@ public class SpringTestConfiguration {
 	    @Override
 	    public Event save(final EventDto dto) {
 
-		final Event attendee = new Event(dto.uuid(), dto.createdAt().toInstant(), dto.lastUpdated().toInstant(),
-			dto.denomination(), dto.place(), dto.eventType(), dto.attendeesIds(), dto.organizerId(),
+		final Event attendee = new Event(dto.id(), dto.createdAt().toInstant(), dto.lastUpdated().toInstant(),
+			dto.name(), dto.place(), dto.eventType(), dto.attendeesIds(), dto.organizerId(),
 			dto.limitOfPeople(), dto.sponsorsIds(), dto.startTimeOfEvent(), dto.duration()
 
 		);
-		this.list.put(dto.uuid(), attendee);
+		this.list.put(dto.id(), attendee);
 
 		return attendee;
 
 	    }
 
 	    @Override
-	    public Optional<Event> findById(final UUID uuid) {
+	    public Optional<Event> findById(final UUID id) {
 
-		return Optional.ofNullable(this.list.get(uuid));
+		return Optional.ofNullable(this.list.get(id));
 
 	    }
 
@@ -125,30 +125,30 @@ public class SpringTestConfiguration {
 	    }
 
 	    @Override
-	    public boolean existsById(final UUID uuid) {
+	    public boolean existsById(final UUID id) {
 
-		return this.list.containsKey(uuid);
+		return this.list.containsKey(id);
 
 	    }
 
 	    @Override
 	    public Event edit(final EventDto dto) {
 
-		final Event attendee = new Event(dto.uuid(), dto.createdAt().toInstant(), dto.lastUpdated().toInstant(),
-			dto.denomination(), dto.place(), dto.eventType(), dto.attendeesIds(), dto.organizerId(),
+		final Event attendee = new Event(dto.id(), dto.createdAt().toInstant(), dto.lastUpdated().toInstant(),
+			dto.name(), dto.place(), dto.eventType(), dto.attendeesIds(), dto.organizerId(),
 			dto.limitOfPeople(), dto.sponsorsIds(), dto.startTimeOfEvent(), dto.duration()
 
 		);
 
-		this.list.put(dto.uuid(), attendee);
+		this.list.put(dto.id(), attendee);
 		return attendee;
 
 	    }
 
 	    @Override
-	    public boolean deleteById(final UUID uuid) {
+	    public boolean deleteById(final UUID id) {
 
-		return this.list.remove(uuid) != null;
+		return this.list.remove(id) != null;
 
 	    }
 	};
@@ -165,20 +165,20 @@ public class SpringTestConfiguration {
 	    @Override
 	    public Organizer save(final OrganizerDto dto) {
 
-		final Organizer Organizer = new Organizer(dto.uuid(), dto.createdAt().toInstant(),
-			dto.lastUpdated().toInstant(), dto.denomination(), dto.website(), dto.information(),
-			dto.eventTypes(), dto.contactInformation());
+		final Organizer Organizer = new Organizer(dto.id(), dto.createdAt().toInstant(),
+			dto.lastUpdated().toInstant(), dto.name(), dto.website(), dto.information(), dto.eventTypes(),
+			dto.contactInformation());
 
-		this.list.put(dto.uuid(), Organizer);
+		this.list.put(dto.id(), Organizer);
 
 		return Organizer;
 
 	    }
 
 	    @Override
-	    public Optional<Organizer> findById(final UUID uuid) {
+	    public Optional<Organizer> findById(final UUID id) {
 
-		return Optional.ofNullable(this.list.get(uuid));
+		return Optional.ofNullable(this.list.get(id));
 
 	    }
 
@@ -190,28 +190,28 @@ public class SpringTestConfiguration {
 	    }
 
 	    @Override
-	    public boolean existsById(final UUID uuid) {
+	    public boolean existsById(final UUID id) {
 
-		return this.list.containsKey(uuid);
+		return this.list.containsKey(id);
 
 	    }
 
 	    @Override
 	    public Organizer edit(final OrganizerDto dto) {
 
-		final Organizer Organizer = new Organizer(dto.uuid(), dto.createdAt().toInstant(),
-			dto.lastUpdated().toInstant(), dto.denomination(), dto.website(), dto.information(),
-			dto.eventTypes(), dto.contactInformation());
+		final Organizer Organizer = new Organizer(dto.id(), dto.createdAt().toInstant(),
+			dto.lastUpdated().toInstant(), dto.name(), dto.website(), dto.information(), dto.eventTypes(),
+			dto.contactInformation());
 
-		this.list.put(dto.uuid(), Organizer);
+		this.list.put(dto.id(), Organizer);
 		return Organizer;
 
 	    }
 
 	    @Override
-	    public boolean deleteById(final UUID uuid) {
+	    public boolean deleteById(final UUID id) {
 
-		return this.list.remove(uuid) != null;
+		return this.list.remove(id) != null;
 
 	    }
 	};
@@ -228,19 +228,19 @@ public class SpringTestConfiguration {
 	    @Override
 	    public Ticket save(final TicketDto dto) {
 
-		final Ticket Ticket = new Ticket(dto.uuid(), dto.createdAt().toInstant(), dto.lastUpdated().toInstant(),
+		final Ticket Ticket = new Ticket(dto.id(), dto.createdAt().toInstant(), dto.lastUpdated().toInstant(),
 			dto.eventID(), dto.ticketType(), dto.price(), dto.transferable(), dto.seatInformation());
 
-		this.list.put(dto.uuid(), Ticket);
+		this.list.put(dto.id(), Ticket);
 
 		return Ticket;
 
 	    }
 
 	    @Override
-	    public Optional<Ticket> findById(final UUID uuid) {
+	    public Optional<Ticket> findById(final UUID id) {
 
-		return Optional.ofNullable(this.list.get(uuid));
+		return Optional.ofNullable(this.list.get(id));
 
 	    }
 
@@ -252,27 +252,27 @@ public class SpringTestConfiguration {
 	    }
 
 	    @Override
-	    public boolean existsById(final UUID uuid) {
+	    public boolean existsById(final UUID id) {
 
-		return this.list.containsKey(uuid);
+		return this.list.containsKey(id);
 
 	    }
 
 	    @Override
 	    public Ticket edit(final TicketDto dto) {
 
-		final Ticket Ticket = new Ticket(dto.uuid(), dto.createdAt().toInstant(), dto.lastUpdated().toInstant(),
+		final Ticket Ticket = new Ticket(dto.id(), dto.createdAt().toInstant(), dto.lastUpdated().toInstant(),
 			dto.eventID(), dto.ticketType(), dto.price(), dto.transferable(), dto.seatInformation());
 
-		this.list.put(dto.uuid(), Ticket);
+		this.list.put(dto.id(), Ticket);
 		return Ticket;
 
 	    }
 
 	    @Override
-	    public boolean deleteById(final UUID uuid) {
+	    public boolean deleteById(final UUID id) {
 
-		return this.list.remove(uuid) != null;
+		return this.list.remove(id) != null;
 
 	    }
 	};
@@ -289,20 +289,20 @@ public class SpringTestConfiguration {
 	    @Override
 	    public Sponsor save(final SponsorDto dto) {
 
-		final Sponsor attendee = new Sponsor(dto.uuid(), dto.createdAt().toInstant(),
-			dto.lastUpdated().toInstant(), dto.denomination(), dto.website(), dto.financialContribution(),
+		final Sponsor attendee = new Sponsor(dto.id(), dto.createdAt().toInstant(),
+			dto.lastUpdated().toInstant(), dto.name(), dto.website(), dto.financialContribution(),
 			dto.contactInformation());
 
-		this.list.put(dto.uuid(), attendee);
+		this.list.put(dto.id(), attendee);
 
 		return attendee;
 
 	    }
 
 	    @Override
-	    public Optional<Sponsor> findById(final UUID uuid) {
+	    public Optional<Sponsor> findById(final UUID id) {
 
-		return Optional.ofNullable(this.list.get(uuid));
+		return Optional.ofNullable(this.list.get(id));
 
 	    }
 
@@ -314,28 +314,28 @@ public class SpringTestConfiguration {
 	    }
 
 	    @Override
-	    public boolean existsById(final UUID uuid) {
+	    public boolean existsById(final UUID id) {
 
-		return this.list.containsKey(uuid);
+		return this.list.containsKey(id);
 
 	    }
 
 	    @Override
 	    public Sponsor edit(final SponsorDto dto) {
 
-		final Sponsor attendee = new Sponsor(dto.uuid(), dto.createdAt().toInstant(),
-			dto.lastUpdated().toInstant(), dto.denomination(), dto.website(), dto.financialContribution(),
+		final Sponsor attendee = new Sponsor(dto.id(), dto.createdAt().toInstant(),
+			dto.lastUpdated().toInstant(), dto.name(), dto.website(), dto.financialContribution(),
 			dto.contactInformation());
 
-		this.list.put(dto.uuid(), attendee);
+		this.list.put(dto.id(), attendee);
 		return attendee;
 
 	    }
 
 	    @Override
-	    public boolean deleteById(final UUID uuid) {
+	    public boolean deleteById(final UUID id) {
 
-		return this.list.remove(uuid) != null;
+		return this.list.remove(id) != null;
 
 	    }
 	};

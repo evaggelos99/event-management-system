@@ -66,7 +66,7 @@ public class GlobalExceptionHandler {
 	errorResponse.put(TIME_STAMP, Instant.now());
 	errorResponse.put("status", statusCode.value());
 	errorResponse.put("error", String.format("The object of class: '%s' with ID: '%s' cannot be found",
-		exception.getClassOfObject(), exception.getUuid()));
+		exception.getClassOfObject(), exception.getId()));
 
 	return new ResponseEntity<>(errorResponse, new HttpHeaders(), statusCode);
 

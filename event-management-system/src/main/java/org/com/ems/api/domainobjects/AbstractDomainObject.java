@@ -15,23 +15,23 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  */
 public abstract class AbstractDomainObject {
 
-    private final UUID uuid;
+    private final UUID id;
     private final Instant createdAt;
     private final Instant lastUpdated;
 
-    protected AbstractDomainObject(final UUID uuid,
+    protected AbstractDomainObject(final UUID id,
 				   final Instant createdAt,
 				   final Instant lastUpdated) {
 
-	this.uuid = uuid;
+	this.id = id;
 	this.createdAt = createdAt;
 	this.lastUpdated = lastUpdated;
 
     }
 
-    public UUID getUuid() {
+    public UUID getId() {
 
-	return this.uuid;
+	return this.id;
 
     }
 
@@ -57,21 +57,21 @@ public abstract class AbstractDomainObject {
 
 	final AbstractDomainObject that = (AbstractDomainObject) o;
 
-	return new EqualsBuilder().append(this.uuid, that.uuid).build();
+	return new EqualsBuilder().append(this.id, that.id).build();
 
     }
 
     @Override
     public int hashCode() {
 
-	return new HashCodeBuilder(17, 37).append(this.uuid).build();
+	return new HashCodeBuilder(17, 37).append(this.id).build();
 
     }
 
     @Override
     public String toString() {
 
-	return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("uuid", this.uuid).toString();
+	return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("uuid", this.id).toString();
 
     }
 

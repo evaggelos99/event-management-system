@@ -53,7 +53,7 @@ public class AttendeeControllerIntegrationTest {
 
 	final AttendeeDto actualAttendeeDto = responseEntity.getBody();
 
-	assertNotNull(actualAttendeeDto.uuid());
+	assertNotNull(actualAttendeeDto.id());
 	assertNotNull(actualAttendeeDto.createdAt());
 	assertNotNull(actualAttendeeDto.lastUpdated());
 	assertEquals(firstName, actualAttendeeDto.firstName());
@@ -66,11 +66,11 @@ public class AttendeeControllerIntegrationTest {
 
 	assertTrue(!getResponseEntity.getBody().isEmpty());
 
-	this.restTemplate.exchange(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + actualAttendeeDto.uuid(),
+	this.restTemplate.exchange(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + actualAttendeeDto.id(),
 		HttpMethod.DELETE, null, Void.class);
 
 	final ResponseEntity<AttendeeDto> getDeletedEntity = this.restTemplate.getForEntity(
-		HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + actualAttendeeDto.uuid(), AttendeeDto.class);
+		HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + actualAttendeeDto.id(), AttendeeDto.class);
 
 	assertTrue(getDeletedEntity.getStatusCode().isSameCodeAs(HttpStatusCode.valueOf(404)));
 
@@ -92,18 +92,18 @@ public class AttendeeControllerIntegrationTest {
 
 	final AttendeeDto actualAttendeeDto = responseEntity.getBody();
 
-	assertNotNull(actualAttendeeDto.uuid());
+	assertNotNull(actualAttendeeDto.id());
 	assertNotNull(actualAttendeeDto.createdAt());
 	assertNotNull(actualAttendeeDto.lastUpdated());
 	assertEquals(firstName, actualAttendeeDto.firstName());
 	assertEquals(lastName, actualAttendeeDto.lastName());
 	assertEquals(List.of(expectedUUID), actualAttendeeDto.ticketIDs());
 
-	this.restTemplate.exchange(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + actualAttendeeDto.uuid(),
+	this.restTemplate.exchange(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + actualAttendeeDto.id(),
 		HttpMethod.DELETE, null, Void.class);
 
 	final ResponseEntity<AttendeeDto> getDeletedEntity = this.restTemplate.getForEntity(
-		HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + actualAttendeeDto.uuid(), AttendeeDto.class);
+		HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + actualAttendeeDto.id(), AttendeeDto.class);
 
 	assertTrue(getDeletedEntity.getStatusCode().isSameCodeAs(HttpStatusCode.valueOf(404)));
 
@@ -127,23 +127,23 @@ public class AttendeeControllerIntegrationTest {
 	final String updatedName = this.generateString();
 	final String updatedLastName = this.generateString();
 	final ResponseEntity<AttendeeDto> editedResponseEntity = this.restTemplate.exchange(
-		HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + entityDto.uuid().toString(), HttpMethod.PUT,
-		this.getHttpEntity(new AttendeeDto(entityDto.uuid(), null, null, updatedName, updatedLastName, null)),
+		HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + entityDto.id().toString(), HttpMethod.PUT,
+		this.getHttpEntity(new AttendeeDto(entityDto.id(), null, null, updatedName, updatedLastName, null)),
 		AttendeeDto.class);
 
 	final AttendeeDto actualAttendeeDto = editedResponseEntity.getBody();
 
-	assertEquals(entityDto.uuid(), actualAttendeeDto.uuid());
+	assertEquals(entityDto.id(), actualAttendeeDto.id());
 	assertEquals(actualAttendeeDto.createdAt(), entityDto.createdAt());
 	assertEquals(updatedName, actualAttendeeDto.firstName());
 	assertEquals(updatedLastName, actualAttendeeDto.lastName());
 	assertNotNull(actualAttendeeDto.ticketIDs());
 
-	this.restTemplate.exchange(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + entityDto.uuid(),
+	this.restTemplate.exchange(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + entityDto.id(),
 		HttpMethod.DELETE, null, Void.class);
 
 	final ResponseEntity<AttendeeDto> getDeletedEntity = this.restTemplate.getForEntity(
-		HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + entityDto.uuid(), AttendeeDto.class);
+		HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + entityDto.id(), AttendeeDto.class);
 
 	assertTrue(getDeletedEntity.getStatusCode().isSameCodeAs(HttpStatusCode.valueOf(404)));
 
@@ -166,15 +166,15 @@ public class AttendeeControllerIntegrationTest {
 	final AttendeeDto expectedEntity = responseEntity.getBody();
 
 	final ResponseEntity<AttendeeDto> getEntity = this.restTemplate.getForEntity(
-		HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + expectedEntity.uuid(), AttendeeDto.class);
+		HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + expectedEntity.id(), AttendeeDto.class);
 
 	assertEquals(expectedEntity, getEntity.getBody());
 
-	this.restTemplate.exchange(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + expectedEntity.uuid(),
+	this.restTemplate.exchange(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + expectedEntity.id(),
 		HttpMethod.DELETE, null, Void.class);
 
 	final ResponseEntity<AttendeeDto> getDeletedEntity = this.restTemplate.getForEntity(
-		HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + expectedEntity.uuid(), AttendeeDto.class);
+		HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + expectedEntity.id(), AttendeeDto.class);
 
 	assertTrue(getDeletedEntity.getStatusCode().isSameCodeAs(HttpStatusCode.valueOf(404)));
 

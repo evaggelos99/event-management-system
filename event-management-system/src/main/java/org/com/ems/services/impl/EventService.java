@@ -59,19 +59,9 @@ public class EventService implements IEventService {
      * {@inheritDoc}
      */
     @Override
-    public Optional<Event> get(final UUID uuid) {
+    public Optional<Event> get(final UUID id) {
 
-	return this.eventRepository.findById(uuid);
-
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void delete(final UUID uuid) {
-
-	this.eventRepository.deleteById(uuid);
+	return this.eventRepository.findById(id);
 
     }
 
@@ -79,10 +69,20 @@ public class EventService implements IEventService {
      * {@inheritDoc}
      */
     @Override
-    public Event edit(final UUID uuid,
+    public void delete(final UUID id) {
+
+	this.eventRepository.deleteById(id);
+
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Event edit(final UUID id,
 		      final EventDto event) {
 
-	if (!this.eventRepository.existsById(uuid))
+	if (!this.eventRepository.existsById(id))
 	    throw new NoSuchElementException();
 
 	return this.eventRepository.edit(event);
@@ -125,7 +125,7 @@ public class EventService implements IEventService {
 	final LinkedList<UUID> list = new LinkedList<>(ids);
 	list.add(attendeeId);
 
-	final Event newEvent = new Event(eventId, event.getCreatedAt(), event.getLastUpdated(), event.getDenomination(),
+	final Event newEvent = new Event(eventId, event.getCreatedAt(), event.getLastUpdated(), event.getName(),
 		event.getPlace(), event.getEventType(), list, event.getOrganizerID(), event.getLimitOfPeople(),
 		event.getSponsorsIds(), event.getStartTime(), event.getDuration());
 

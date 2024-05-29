@@ -73,19 +73,9 @@ public class AttendeeService implements IAttendeeService {
      * {@inheritDoc}
      */
     @Override
-    public Optional<Attendee> get(final UUID uuid) {
+    public Optional<Attendee> get(final UUID id) {
 
-	return this.attendeeRepository.findById(uuid);
-
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void delete(final UUID uuid) {
-
-	this.attendeeRepository.deleteById(uuid);
+	return this.attendeeRepository.findById(id);
 
     }
 
@@ -93,10 +83,20 @@ public class AttendeeService implements IAttendeeService {
      * {@inheritDoc}
      */
     @Override
-    public Attendee edit(final UUID uuid,
+    public void delete(final UUID id) {
+
+	this.attendeeRepository.deleteById(id);
+
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Attendee edit(final UUID id,
 			 final AttendeeDto attendee) {
 
-	if (!this.attendeeRepository.existsById(uuid))
+	if (!this.attendeeRepository.existsById(id))
 	    throw new NoSuchElementException();
 
 	return this.attendeeRepository.edit(attendee);
@@ -135,12 +135,19 @@ public class AttendeeService implements IAttendeeService {
 	final Attendee attendee = optionalAttendee
 		.orElseThrow(() -> new ObjectNotFoundException(attendeeId, AttendeeDto.class));
 
+	return this.addTicketToAttendee(attendee, ticketId);
+
+    }
+
+    private boolean addTicketToAttendee(final Attendee attendee,
+					final UUID ticketId) {
+
 	final List<UUID> ids = attendee.getTicketIDs();
 
 	final LinkedList<UUID> list = new LinkedList<>(ids);
 	list.add(ticketId);
 
-	final Attendee newEvent = new Attendee(attendee.getUuid(), attendee.getCreatedAt(), attendee.getLastUpdated(),
+	final Attendee newEvent = new Attendee(attendee.getId(), attendee.getCreatedAt(), attendee.getLastUpdated(),
 		attendee.getFirstName(), attendee.getLastName(), list);
 
 	final AttendeeDto dto = this.attendeeToAttendeeDtoConverter.apply(newEvent);
@@ -155,7 +162,7 @@ public class AttendeeService implements IAttendeeService {
 	final Ticket ticket = this.lookUpTicketService.get(ticketId)
 		.orElseThrow(() -> new ObjectNotFoundException(ticketId, Ticket.class));
 
-	return this.eventService.addAttendee(ticket.getEventID(), attendeeId);
+	return this.eventService.addAttendee(ticket.getEventID(), attendee.getId());
 
     }
 

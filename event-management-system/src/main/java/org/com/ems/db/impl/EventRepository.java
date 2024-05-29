@@ -86,36 +86,36 @@ public class EventRepository implements IEventRepository {
     }
 
     @Override
-    public Optional<Event> findById(final UUID uuid) {
+    public Optional<Event> findById(final UUID id) {
 
 	try {
 
 	    final Event event = this.jdbcTemplate.queryForObject(
 		    this.eventQueriesProperties.getProperty(CrudQueriesOperations.GET_ID.name()), this.eventRowMapper,
-		    uuid);
+		    id);
 	    return Optional.of(event);
 	} catch (final EmptyResultDataAccessException e) {
 
-	    LOGGER.warn("Event with UUID: {} was not found", uuid);
+	    LOGGER.warn("Event with UUID: {} was not found", id);
 	    return Optional.empty();
 	}
 
     }
 
     @Override
-    public boolean deleteById(final UUID uuid) {
+    public boolean deleteById(final UUID id) {
 
 	final int rows = this.jdbcTemplate
-		.update(this.eventQueriesProperties.getProperty(CrudQueriesOperations.DELETE_ID.name()), uuid);
+		.update(this.eventQueriesProperties.getProperty(CrudQueriesOperations.DELETE_ID.name()), id);
 
 	final boolean deleted = rows == 1;
 
 	if (deleted) {
 
-	    LOGGER.trace("Deleted an Event with uuid: " + uuid);
+	    LOGGER.trace("Deleted an Event with id: " + id);
 	} else {
 
-	    LOGGER.trace("Could not delete Event with uuid: " + uuid);
+	    LOGGER.trace("Could not delete Event with id: " + id);
 	}
 
 	return deleted;
@@ -123,9 +123,9 @@ public class EventRepository implements IEventRepository {
     }
 
     @Override
-    public boolean existsById(final UUID uuid) {
+    public boolean existsById(final UUID id) {
 
-	return this.findById(uuid).isPresent();
+	return this.findById(id).isPresent();
 
     }
 
@@ -149,36 +149,36 @@ public class EventRepository implements IEventRepository {
 
     private Event saveEvent(final EventDto event) {
 
-	final UUID eventUuid = event.uuid();
+	final UUID eventUuid = event.id();
 
 	final Instant now = Instant.now();
 	final Timestamp createdAt = Timestamp.from(now);
 	final Timestamp updatedAt = Timestamp.from(now);
 
-	final UUID uuid = eventUuid != null ? eventUuid : UUID.randomUUID();
+	final UUID id = eventUuid != null ? eventUuid : UUID.randomUUID();
 
-	return this.saveOrEditCommand(uuid, createdAt, updatedAt, event, true);
+	return this.saveOrEditCommand(id, createdAt, updatedAt, event, true);
 
     }
 
     private Event editEvent(final EventDto event) {
 
-	final UUID uuid = event.uuid();
+	final UUID id = event.id();
 
-	final Timestamp createdAt = this.getCreatedAt(uuid);
+	final Timestamp createdAt = this.getCreatedAt(id);
 	final Timestamp updatedAt = Timestamp.from(Instant.now());
 
-	return this.saveOrEditCommand(uuid, createdAt, updatedAt, event, false);
+	return this.saveOrEditCommand(id, createdAt, updatedAt, event, false);
 
     }
 
-    private Event saveOrEditCommand(final UUID uuid,
+    private Event saveOrEditCommand(final UUID id,
 				    final Timestamp createdAt,
 				    final Timestamp updatedAt,
 				    final EventDto event,
 				    final boolean isSaveOperation) {
 
-	final String name = event.denomination();
+	final String name = event.name();
 	final String place = event.place();
 	final EventType eventType = event.eventType();
 	final List<UUID> attendeesIds = event.attendeesIds() != null ? event.attendeesIds() : List.of();
@@ -189,23 +189,23 @@ public class EventRepository implements IEventRepository {
 	final Duration duration = event.duration();
 	final Object interval = this.durationToIntervalConverter.apply(duration);
 
-	final UUID[] attendees = this.convertToArray(attendeesIds);
-	final UUID[] sponsors = this.convertToArray(sponsorIds);
+	final UUID[] arrAttendeesIds = this.convertToArray(attendeesIds);
+	final UUID[] arrSponsorIds = this.convertToArray(sponsorIds);
 
 	if (isSaveOperation) {
 
-	    this.jdbcTemplate.update(this.eventQueriesProperties.getProperty(CrudQueriesOperations.SAVE.name()), uuid,
-		    createdAt, updatedAt, name, place, eventType.name(), attendees, organizerId, limitOfPeople,
-		    sponsors, startTimeOfEvent, interval);
+	    this.jdbcTemplate.update(this.eventQueriesProperties.getProperty(CrudQueriesOperations.SAVE.name()), id,
+		    createdAt, updatedAt, name, place, eventType.name(), arrAttendeesIds, organizerId, limitOfPeople,
+		    arrSponsorIds, startTimeOfEvent, interval);
 
 	} else {
 
-	    this.jdbcTemplate.update(this.eventQueriesProperties.getProperty(CrudQueriesOperations.EDIT.name()), uuid,
-		    createdAt, updatedAt, name, place, eventType.name(), attendees, organizerId, limitOfPeople,
-		    sponsors, startTimeOfEvent, interval, uuid);
+	    this.jdbcTemplate.update(this.eventQueriesProperties.getProperty(CrudQueriesOperations.EDIT.name()), id,
+		    createdAt, updatedAt, name, place, eventType.name(), arrAttendeesIds, organizerId, limitOfPeople,
+		    arrSponsorIds, startTimeOfEvent, interval, id);
 	}
 
-	return this.eventDtoToEventConverter.apply(new EventDto(uuid, createdAt, updatedAt, name, place, eventType,
+	return this.eventDtoToEventConverter.apply(new EventDto(id, createdAt, updatedAt, name, place, eventType,
 		attendeesIds, organizerId, limitOfPeople, sponsorIds, startTimeOfEvent, duration));
 
     }
@@ -217,19 +217,19 @@ public class EventRepository implements IEventRepository {
 	    return new UUID[] {};
 	}
 
-	final UUID[] uuids = new UUID[ids.size()];
+	final UUID[] arrIds = new UUID[ids.size()];
 
-	for (int i = 0; i < uuids.length; i++) {
+	for (int i = 0; i < arrIds.length; i++) {
 
-	    uuids[i] = ids.get(i);
+	    arrIds[i] = ids.get(i);
 	}
-	return uuids;
+	return arrIds;
 
     }
 
-    private Timestamp getCreatedAt(final UUID uuid) {
+    private Timestamp getCreatedAt(final UUID id) {
 
-	return Timestamp.from(this.findById(uuid).map(AbstractDomainObject::getCreatedAt).orElse(Instant.now()));
+	return Timestamp.from(this.findById(id).map(AbstractDomainObject::getCreatedAt).orElse(Instant.now()));
 
     }
 }

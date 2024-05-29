@@ -60,10 +60,10 @@ class OrganizerControllerIntegrationTest {
 
 	final OrganizerDto actualOrganizerDto = responseEntity.getBody();
 
-	assertNotNull(actualOrganizerDto.uuid());
+	assertNotNull(actualOrganizerDto.id());
 	assertNotNull(actualOrganizerDto.createdAt());
 	assertNotNull(actualOrganizerDto.lastUpdated());
-	assertEquals(name, actualOrganizerDto.denomination());
+	assertEquals(name, actualOrganizerDto.name());
 	assertEquals(contantInfo, actualOrganizerDto.contactInformation());
 	assertEquals(website, actualOrganizerDto.website());
 	assertEquals(description, actualOrganizerDto.information());
@@ -74,11 +74,11 @@ class OrganizerControllerIntegrationTest {
 
 	assertTrue(!getResponseEntity.getBody().isEmpty());
 
-	this.restTemplate.exchange(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + actualOrganizerDto.uuid(),
+	this.restTemplate.exchange(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + actualOrganizerDto.id(),
 		HttpMethod.DELETE, null, Void.class);
 
 	final ResponseEntity<OrganizerDto> getDeletedEntity = this.restTemplate.getForEntity(
-		HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + actualOrganizerDto.uuid(), OrganizerDto.class);
+		HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + actualOrganizerDto.id(), OrganizerDto.class);
 
 	assertTrue(getDeletedEntity.getStatusCode().isSameCodeAs(HttpStatusCode.valueOf(404)));
 
@@ -112,27 +112,27 @@ class OrganizerControllerIntegrationTest {
 
 	final ResponseEntity<OrganizerDto> editedResponseEntity = //
 		this.restTemplate
-			.exchange(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + entityDto.uuid().toString(),
+			.exchange(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + entityDto.id().toString(),
 				HttpMethod.PUT,
-				this.getHttpEntity(new OrganizerDto(entityDto.uuid(), null, null, updatedName,
+				this.getHttpEntity(new OrganizerDto(entityDto.id(), null, null, updatedName,
 					updatedWebsite, updatedDescription, eventTypes, contantInfo)),
 				OrganizerDto.class);
 
 	final OrganizerDto actualOrganizerDto = editedResponseEntity.getBody();
 
-	assertEquals(entityDto.uuid(), actualOrganizerDto.uuid());
+	assertEquals(entityDto.id(), actualOrganizerDto.id());
 	assertEquals(entityDto.createdAt(), actualOrganizerDto.createdAt());
-	assertEquals(updatedName, actualOrganizerDto.denomination());
+	assertEquals(updatedName, actualOrganizerDto.name());
 	assertEquals(contantInfo, actualOrganizerDto.contactInformation());
 	assertEquals(updatedWebsite, actualOrganizerDto.website());
 	assertEquals(eventTypes, actualOrganizerDto.eventTypes());
 	assertEquals(updatedDescription, actualOrganizerDto.information());
 
-	this.restTemplate.exchange(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + actualOrganizerDto.uuid(),
+	this.restTemplate.exchange(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + actualOrganizerDto.id(),
 		HttpMethod.DELETE, null, Void.class);
 
 	final ResponseEntity<OrganizerDto> getDeletedEntity = this.restTemplate.getForEntity(
-		HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + actualOrganizerDto.uuid(), OrganizerDto.class);
+		HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + actualOrganizerDto.id(), OrganizerDto.class);
 
 	assertTrue(getDeletedEntity.getStatusCode().isSameCodeAs(HttpStatusCode.valueOf(404)));
 
@@ -162,15 +162,15 @@ class OrganizerControllerIntegrationTest {
 	final OrganizerDto expectedEntity = responseEntity.getBody();
 
 	final ResponseEntity<OrganizerDto> getEntity = this.restTemplate.getForEntity(
-		HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + expectedEntity.uuid(), OrganizerDto.class);
+		HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + expectedEntity.id(), OrganizerDto.class);
 
 	assertEquals(expectedEntity, getEntity.getBody());
 
-	this.restTemplate.exchange(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + expectedEntity.uuid(),
+	this.restTemplate.exchange(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + expectedEntity.id(),
 		HttpMethod.DELETE, null, Void.class);
 
 	final ResponseEntity<OrganizerDto> getDeletedEntity = this.restTemplate.getForEntity(
-		HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + expectedEntity.uuid(), OrganizerDto.class);
+		HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + expectedEntity.id(), OrganizerDto.class);
 
 	assertTrue(getDeletedEntity.getStatusCode().isSameCodeAs(HttpStatusCode.valueOf(404)));
 

@@ -12,8 +12,8 @@ public class OrganizerDtoToOrganizerConverter implements Function<OrganizerDto, 
     @Override
     public Organizer apply(final OrganizerDto organizerDto) {
 
-	return new Organizer(organizerDto.uuid(), organizerDto.createdAt().toInstant(),
-		organizerDto.lastUpdated().toInstant(), organizerDto.denomination(), organizerDto.website(),
+	return new Organizer(organizerDto.id(), organizerDto.createdAt().toInstant(),
+		organizerDto.lastUpdated().toInstant(), organizerDto.name(), organizerDto.website(),
 		organizerDto.information(), organizerDto.eventTypes(), organizerDto.contactInformation());
 
     }

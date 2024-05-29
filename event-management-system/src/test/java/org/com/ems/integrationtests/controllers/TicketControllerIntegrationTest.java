@@ -57,7 +57,7 @@ class TicketControllerIntegrationTest {
 
 	final TicketDto actualTicketDto = responseEntity.getBody();
 
-	assertNotNull(actualTicketDto.uuid());
+	assertNotNull(actualTicketDto.id());
 	assertNotNull(actualTicketDto.createdAt());
 	assertNotNull(actualTicketDto.lastUpdated());
 	assertEquals(eventId, actualTicketDto.eventID());
@@ -72,11 +72,11 @@ class TicketControllerIntegrationTest {
 
 	assertTrue(!getResponseEntity.getBody().isEmpty());
 
-	this.restTemplate.exchange(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + actualTicketDto.uuid(),
+	this.restTemplate.exchange(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + actualTicketDto.id(),
 		HttpMethod.DELETE, null, Void.class);
 
 	final ResponseEntity<TicketDto> getDeletedEntity = this.restTemplate.getForEntity(
-		HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + actualTicketDto.uuid(), TicketDto.class);
+		HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + actualTicketDto.id(), TicketDto.class);
 
 	assertTrue(getDeletedEntity.getStatusCode().isSameCodeAs(HttpStatusCode.valueOf(404)));
 
@@ -102,14 +102,14 @@ class TicketControllerIntegrationTest {
 
 	final Integer updatedPrice = 2500;
 	final ResponseEntity<TicketDto> editedResponseEntity = this.restTemplate.exchange(
-		HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + entityDto.uuid().toString(), HttpMethod.PUT,
-		this.getHttpEntity(new TicketDto(entityDto.uuid(), null, null, eventId, ticketType, updatedPrice,
+		HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + entityDto.id().toString(), HttpMethod.PUT,
+		this.getHttpEntity(new TicketDto(entityDto.id(), null, null, eventId, ticketType, updatedPrice,
 			!transferable, seatInfo)),
 		TicketDto.class);
 
 	final TicketDto actualTicketDto = editedResponseEntity.getBody();
 
-	assertEquals(entityDto.uuid(), actualTicketDto.uuid());
+	assertEquals(entityDto.id(), actualTicketDto.id());
 	assertEquals(entityDto.createdAt(), actualTicketDto.createdAt());
 	assertEquals(eventId, actualTicketDto.eventID());
 	assertEquals(ticketType, actualTicketDto.ticketType());
@@ -117,11 +117,11 @@ class TicketControllerIntegrationTest {
 	assertEquals(!transferable, actualTicketDto.transferable());
 	assertEquals(seatInfo, actualTicketDto.seatInformation());
 
-	this.restTemplate.exchange(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + actualTicketDto.uuid(),
+	this.restTemplate.exchange(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + actualTicketDto.id(),
 		HttpMethod.DELETE, null, Void.class);
 
 	final ResponseEntity<TicketDto> getDeletedEntity = this.restTemplate.getForEntity(
-		HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + actualTicketDto.uuid(), TicketDto.class);
+		HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + actualTicketDto.id(), TicketDto.class);
 
 	assertTrue(getDeletedEntity.getStatusCode().isSameCodeAs(HttpStatusCode.valueOf(404)));
 

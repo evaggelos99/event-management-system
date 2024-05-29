@@ -88,36 +88,36 @@ public class SponsorRepository implements ISponsorRepository {
     }
 
     @Override
-    public Optional<Sponsor> findById(final UUID uuid) {
+    public Optional<Sponsor> findById(final UUID id) {
 
 	try {
 
 	    final Sponsor sponsor = this.jdbcTemplate.queryForObject(
 		    this.sponsorQueriesProperties.getProperty(CrudQueriesOperations.GET_ID.name()),
-		    this.sponsorRowMapper, uuid);
+		    this.sponsorRowMapper, id);
 	    return Optional.of(sponsor);
 	} catch (final EmptyResultDataAccessException e) {
 
-	    LOGGER.warn("Sponsor with UUID: {} was not found", uuid);
+	    LOGGER.warn("Sponsor with UUID: {} was not found", id);
 	    return Optional.empty();
 	}
 
     }
 
     @Override
-    public boolean deleteById(final UUID uuid) {
+    public boolean deleteById(final UUID id) {
 
 	final int rows = this.jdbcTemplate
-		.update(this.sponsorQueriesProperties.getProperty(CrudQueriesOperations.DELETE_ID.name()), uuid);
+		.update(this.sponsorQueriesProperties.getProperty(CrudQueriesOperations.DELETE_ID.name()), id);
 
 	final boolean deleted = rows == 1;
 
 	if (deleted) {
 
-	    LOGGER.trace("Deleted Sponsor with uuid: " + uuid);
+	    LOGGER.trace("Deleted Sponsor with id: " + id);
 	} else {
 
-	    LOGGER.trace("Could not delete Sponsor with uuid: " + uuid);
+	    LOGGER.trace("Could not delete Sponsor with id: " + id);
 	}
 
 	return deleted;
@@ -125,9 +125,9 @@ public class SponsorRepository implements ISponsorRepository {
     }
 
     @Override
-    public boolean existsById(final UUID uuid) {
+    public boolean existsById(final UUID id) {
 
-	return this.findById(uuid).isPresent();
+	return this.findById(id).isPresent();
 
     }
 
@@ -141,59 +141,59 @@ public class SponsorRepository implements ISponsorRepository {
 
     private Sponsor saveSponsor(final SponsorDto sponsor) {
 
-	final UUID sponsorUuid = sponsor.uuid();
+	final UUID sponsorUuid = sponsor.id();
 	final Instant now = Instant.now();
 	final Timestamp createdAt = Timestamp.from(now);
 	final Timestamp updatedAt = Timestamp.from(now);
 
-	final UUID uuid = sponsorUuid != null ? sponsorUuid : UUID.randomUUID();
+	final UUID id = sponsorUuid != null ? sponsorUuid : UUID.randomUUID();
 
-	return this.saveOrEditCommand(uuid, createdAt, updatedAt, sponsor, true);
+	return this.saveOrEditCommand(id, createdAt, updatedAt, sponsor, true);
 
     }
 
-    private Sponsor saveOrEditCommand(final UUID uuid,
+    private Sponsor saveOrEditCommand(final UUID id,
 				      final Timestamp createdAt,
 				      final Timestamp updatedAt,
 				      final SponsorDto sponsor,
 				      final boolean isSaveOperation) {
 
-	final String name = sponsor.denomination();
+	final String name = sponsor.name();
 	final String website = sponsor.website();
 	final Integer financialContribution = sponsor.financialContribution();
 	final ContactInformation contactInformation = sponsor.contactInformation();
 
 	if (isSaveOperation) {
 
-	    this.jdbcTemplate.update(this.sponsorQueriesProperties.getProperty(CrudQueriesOperations.SAVE.name()), uuid,
+	    this.jdbcTemplate.update(this.sponsorQueriesProperties.getProperty(CrudQueriesOperations.SAVE.name()), id,
 		    createdAt, updatedAt, name, website, financialContribution, contactInformation.email(),
 		    contactInformation.phoneNumber(), contactInformation.physicalAddress());
 
 	} else {
 
-	    this.jdbcTemplate.update(this.sponsorQueriesProperties.getProperty(CrudQueriesOperations.EDIT.name()), uuid,
+	    this.jdbcTemplate.update(this.sponsorQueriesProperties.getProperty(CrudQueriesOperations.EDIT.name()), id,
 		    createdAt, updatedAt, name, website, financialContribution, contactInformation.email(),
-		    contactInformation.phoneNumber(), contactInformation.physicalAddress(), uuid);
+		    contactInformation.phoneNumber(), contactInformation.physicalAddress(), id);
 	}
 
 	return this.sponsDtoToSponsorConverter.apply(
-		new SponsorDto(uuid, createdAt, createdAt, name, website, financialContribution, contactInformation));
+		new SponsorDto(id, createdAt, createdAt, name, website, financialContribution, contactInformation));
 
     }
 
     private Sponsor editOrganizer(final SponsorDto sponsor) {
 
-	final UUID uuid = sponsor.uuid();
-	final Timestamp createdAt = this.getCreatedAt(uuid);
+	final UUID id = sponsor.id();
+	final Timestamp createdAt = this.getCreatedAt(id);
 	final Timestamp updatedAt = Timestamp.from(Instant.now());
 
-	return this.saveOrEditCommand(uuid, createdAt, updatedAt, sponsor, false);
+	return this.saveOrEditCommand(id, createdAt, updatedAt, sponsor, false);
 
     }
 
-    private Timestamp getCreatedAt(final UUID uuid) {
+    private Timestamp getCreatedAt(final UUID id) {
 
-	return Timestamp.from(this.findById(uuid).map(AbstractDomainObject::getCreatedAt).orElse(Instant.now()));
+	return Timestamp.from(this.findById(id).map(AbstractDomainObject::getCreatedAt).orElse(Instant.now()));
 
     }
 }
