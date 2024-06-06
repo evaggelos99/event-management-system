@@ -12,6 +12,30 @@
 	<packaging>war</packaging>
 	<name>event-management-system</name>
 	<description>Main component for ems</description>
+	
+	<properties>
+		<java.version>17</java.version>
+		<maven.compiler.source>17</maven.compiler.source>
+		<maven.compiler.target>17</maven.compiler.target>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<jakarta.persistence.version>3.2.0-M2</jakarta.persistence.version>
+		<jakarta.persistence.validation.version>3.1.0-M2</jakarta.persistence.validation.version>
+		<org.springframework.boot.version>3.2.4</org.springframework.boot.version>
+		<org.apache.commons.version>3.14.0</org.apache.commons.version>
+		<org.apache.commons.version>3.14.0</org.apache.commons.version>
+		<nl.jqno.equalsverifier.version>3.16</nl.jqno.equalsverifier.version>
+		<com.h2database.version>2.2.224</com.h2database.version>
+		<org.hibernate.version>5.6.15.Final</org.hibernate.version>
+		<org.hibernate.validator.version>8.0.1.Final</org.hibernate.validator.version>
+		<springdoc.openapi.starter.webmvc.ui.version>2.5.0</springdoc.openapi.starter.webmvc.ui.version>
+		<org.apache.maven.plugins.version>3.3.1</org.apache.maven.plugins.version>
+		<hibernate.core.version>6.1.7.Final</hibernate.core.version>
+		<org.springframework.security.version>6.3.0</org.springframework.security.version>
+		<org.springframework.version>6.1.8</org.springframework.version>
+		<org.springframework.security.oauth.version>2.5.2.RELEASE</org.springframework.security.oauth.version>
+		<postgres.version>42.7.3</postgres.version>
+	</properties>
+	
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -62,6 +86,63 @@
 			<version>${springdoc.openapi.starter.webmvc.ui.version}</version>
 		</dependency>
 		<dependency>
+		    <groupId>org.springframework.boot</groupId>
+		    <artifactId>spring-boot-starter-security</artifactId>
+		    <version>${spring.boot.starter.security.version}</version> <!--${spring.boot.starter.security.version} -->
+		</dependency>
+		<dependency>
+		    <groupId>org.springframework.security.oauth</groupId>
+		    <artifactId>spring-security-oauth2</artifactId>
+		    <version>${org.springframework.security.oauth.version}</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-core</artifactId>
+		    <version>${org.springframework.version}</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-beans</artifactId>
+		    <version>${org.springframework.version}</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-context</artifactId>
+		    <version>${org.springframework.version}</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.springframework.security</groupId>
+		    <artifactId>spring-security-core</artifactId>
+		    <version>${org.springframework.security.version}</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.springframework.security</groupId>
+		    <artifactId>spring-security-oauth2-resource-server</artifactId>
+		    <version>${org.springframework.security.version}</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.springframework.security</groupId>
+		    <artifactId>spring-security-oauth2-jose</artifactId>
+		    <version>${org.springframework.security.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>${org.apache.commons.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>nl.jqno.equalsverifier</groupId>
+			<artifactId>equalsverifier</artifactId>
+			<version>${nl.jqno.equalsverifier.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+		    <groupId>org.springframework.security</groupId>
+		    <artifactId>spring-security-test</artifactId>
+		    <version>${org.springframework.security.version}</version>
+		    <scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<version>${org.springframework.boot.version}</version>
@@ -73,6 +154,7 @@
 			<version>2.2.224</version>
 			<scope>test</scope>
 		</dependency>
+
 	</dependencies>
 	<build>
 		<plugins>
@@ -89,6 +171,11 @@
 					<compilerArgument>-parameters</compilerArgument>
 				</configuration>
 			</plugin>
+		<plugin>
+          <groupId>org.apache.maven.plugins</groupId>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <version>3.0.0</version>
+        </plugin>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>

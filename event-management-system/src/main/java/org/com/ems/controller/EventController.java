@@ -11,6 +11,7 @@ import java.util.function.Function;
 
 import org.com.ems.api.domainobjects.Event;
 import org.com.ems.api.dto.EventDto;
+import org.com.ems.controller.api.EmsRestController;
 import org.com.ems.controller.api.IEventController;
 import org.com.ems.controller.exceptions.ObjectNotFoundException;
 import org.com.ems.services.api.IEventService;
@@ -19,14 +20,13 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Controller for CRUD operation for the DAO object {@link Event}
  *
  * @author Evangelos Georgiou
  */
-@RestController
+@EmsRestController
 @RequestMapping(EventController.EVENT_PATH)
 public class EventController implements IEventController {
 

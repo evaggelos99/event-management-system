@@ -195,8 +195,8 @@ class EventControllerIntegrationTest {
 	this.restTemplate.exchange(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + actualEntity.id(),
 		HttpMethod.DELETE, null, Void.class);
 
-	final ResponseEntity<EventDto> getDeletedEntity = this.restTemplate.getForEntity(
-		HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + actualEntity.id(), EventDto.class);
+	final ResponseEntity<EventDto> getDeletedEntity = this.restTemplate
+		.getForEntity(HOSTNAME + ":" + this.port + RELATIVE_ENDPOINT + "/" + actualEntity.id(), EventDto.class);
 
 	assertTrue(getDeletedEntity.getStatusCode().isSameCodeAs(HttpStatusCode.valueOf(404)));
 

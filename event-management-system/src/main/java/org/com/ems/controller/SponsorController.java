@@ -10,6 +10,7 @@ import java.util.function.Function;
 
 import org.com.ems.api.domainobjects.Sponsor;
 import org.com.ems.api.dto.SponsorDto;
+import org.com.ems.controller.api.EmsRestController;
 import org.com.ems.controller.api.ISponsorController;
 import org.com.ems.controller.exceptions.ObjectNotFoundException;
 import org.com.ems.services.api.IService;
@@ -18,14 +19,13 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Controller for CRUD operation for the DAO object {@link Sponsor}
  *
  * @author Evangelos Georgiou
  */
-@RestController
+@EmsRestController
 @RequestMapping(SponsorController.SPONSOR_PATH)
 public class SponsorController implements ISponsorController {
 

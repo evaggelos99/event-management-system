@@ -11,6 +11,7 @@ import java.util.function.Function;
 
 import org.com.ems.api.domainobjects.Attendee;
 import org.com.ems.api.dto.AttendeeDto;
+import org.com.ems.controller.api.EmsRestController;
 import org.com.ems.controller.api.IAttendeeController;
 import org.com.ems.controller.exceptions.ObjectNotFoundException;
 import org.com.ems.services.api.IAttendeeService;
@@ -19,14 +20,13 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
 /**
  * Controller for CRUD operation for the DAO object {@link Attendee}
  *
  * @author Evangelos Georgiou
  */
-@RestController
+@EmsRestController
 @RequestMapping(AttendeeController.ATTENDEE_PATH)
 public class AttendeeController implements IAttendeeController {
 

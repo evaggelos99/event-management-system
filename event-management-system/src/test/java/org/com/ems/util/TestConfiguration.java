@@ -21,9 +21,19 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
+@Profile("integration-tests")
 public class TestConfiguration {
+
+    @Bean
+    SecurityFilterChain securityFilterChain(final HttpSecurity http) throws Exception {
+
+	return http.authorizeHttpRequests(x -> x.anyRequest().hasRole("TEST")).build();
+
+    }
 
     @Bean
     @Profile("integration-tests")
