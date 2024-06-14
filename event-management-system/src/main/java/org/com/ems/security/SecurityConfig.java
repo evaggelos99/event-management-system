@@ -10,17 +10,13 @@ import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AuthorizeHttpRequestsConfigurer;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
-
-import com.nimbusds.jose.JOSEObjectType;
-import com.nimbusds.jose.proc.DefaultJOSEObjectTypeVerifier;
-import com.nimbusds.jose.proc.SecurityContext;
-import com.nimbusds.jwt.proc.ConfigurableJWTProcessor;
 
 @EnableWebSecurity
 @Configuration
@@ -31,30 +27,34 @@ public class SecurityConfig {
 
 	http.cors(Customizer.withDefaults());
 
-	http.csrf(Customizer.withDefaults())//
-		.authorizeHttpRequests(x -> x.requestMatchers("/swagger-ui/**").permitAll()//
-			.requestMatchers("/event").hasAnyRole("USER")//
-			.requestMatchers("/sponsor").hasAnyRole("USER")//
-			.requestMatchers("/attendee").hasAnyRole("USER")//
-			.requestMatchers("/organizer").hasAnyRole("USER")//
-			.requestMatchers("/ticket").hasAnyRole("USER")//
-			.requestMatchers("/v3/api-docs/**").permitAll());
+	http.csrf(Customizer.withDefaults());
 
-	http.oauth2ResourceServer(i -> i.jwt(x -> x.jwtAuthenticationConverter(this.converter())));
+	http.authorizeHttpRequests(this::setupRequestMatchers);
+
+	http.oauth2ResourceServer(outhResourceServer -> outhResourceServer
+		.jwt(jwtConfigurer -> jwtConfigurer.jwtAuthenticationConverter(this.converter())));
 
 	return http.build();
 
     }
 
-    JwtDecoder jwtDecoder(@Value("${spring.security.oauth2.resourceserver.jwt.jwk-set-uri}") final String uri) {
+    @Bean
+    JwtDecoder jwtDecoder(@Value("${spring.security.oauth2.resourceserver.jwt.jwk-set-uri}") final String jwkUri) {
 
-	return NimbusJwtDecoder.withJwkSetUri(uri).jwtProcessorCustomizer(this::addJwtTypeVerifier).build();
+	return NimbusJwtDecoder.withJwkSetUri(jwkUri).build();
 
     }
 
-    private void addJwtTypeVerifier(final ConfigurableJWTProcessor<SecurityContext> customizer) {
+    private AuthorizeHttpRequestsConfigurer<
+	    HttpSecurity>.AuthorizationManagerRequestMatcherRegistry setupRequestMatchers(final AuthorizeHttpRequestsConfigurer<HttpSecurity>.AuthorizationManagerRequestMatcherRegistry authorizeHttpConfigurer) {
 
-	customizer.setJWSTypeVerifier(new DefaultJOSEObjectTypeVerifier<>(new JOSEObjectType("jwt")));
+	return authorizeHttpConfigurer.requestMatchers("/swagger-ui/**").permitAll()//
+		.requestMatchers("/event").hasAnyRole("USER")//
+		.requestMatchers("/sponsor").hasAnyRole("USER")//
+		.requestMatchers("/attendee").hasAnyRole("USER")//
+		.requestMatchers("/organizer").hasAnyRole("USER")//
+		.requestMatchers("/ticket").hasAnyRole("USER")//
+		.requestMatchers("/v3/api-docs/**").permitAll();
 
     }
 
