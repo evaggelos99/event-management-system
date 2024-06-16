@@ -2,24 +2,20 @@ package org.com.ems.controller;
 
 import static java.util.Objects.requireNonNull;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Collection;
-import java.util.List;
 import java.util.UUID;
 import java.util.function.Function;
 
 import org.com.ems.api.domainobjects.Event;
 import org.com.ems.api.dto.EventDto;
 import org.com.ems.controller.api.IEventController;
-import org.com.ems.controller.exceptions.ObjectNotFoundException;
 import org.com.ems.services.api.IEventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * Controller for CRUD operation for the DAO object {@link Event}
@@ -54,18 +50,9 @@ public class EventController implements IEventController {
      * {@inheritDoc}
      */
     @Override
-    public ResponseEntity<EventDto> postEvent(final EventDto eventDto) {
+    public Mono<EventDto> postEvent(final EventDto eventDto) {
 
-	final Event event = this.eventService.add(eventDto);
-	final EventDto newDto = this.eventToEventDtoConverter.apply(event);
-
-	try {
-
-	    return ResponseEntity.created(new URI(EVENT_PATH)).body(newDto);
-	} catch (final URISyntaxException e) {
-
-	    return new ResponseEntity<>(newDto, HttpStatus.CREATED);
-	}
+	return this.eventService.add(eventDto).map(this.eventToEventDtoConverter::apply);
 
     }
 
@@ -73,14 +60,9 @@ public class EventController implements IEventController {
      * {@inheritDoc}
      */
     @Override
-    public ResponseEntity<EventDto> getEvent(final UUID eventId) {
+    public Mono<EventDto> getEvent(final UUID eventId) {
 
-	final var optionalEvent = this.eventService.get(eventId);
-
-	final EventDto eventDto = this.eventToEventDtoConverter
-		.apply(optionalEvent.orElseThrow(() -> new ObjectNotFoundException(eventId, EventDto.class)));
-
-	return ResponseEntity.ok(eventDto);
+	return this.eventService.get(eventId).map(this.eventToEventDtoConverter::apply);
 
     }
 
@@ -88,19 +70,10 @@ public class EventController implements IEventController {
      * {@inheritDoc}
      */
     @Override
-    public ResponseEntity<EventDto> putEvent(final UUID eventId,
-					     final EventDto eventDto) {
+    public Mono<EventDto> putEvent(final UUID eventId,
+				   final EventDto eventDto) {
 
-	final Event event = this.eventService.edit(eventId, eventDto);
-	final EventDto newDto = this.eventToEventDtoConverter.apply(event);
-
-	try {
-
-	    return ResponseEntity.created(new URI(EVENT_PATH + eventId)).body(newDto);
-	} catch (final URISyntaxException e) {
-
-	    return new ResponseEntity<>(newDto, HttpStatus.CREATED);
-	}
+	return this.eventService.edit(eventId, eventDto).map(this.eventToEventDtoConverter::apply);
 
     }
 
@@ -108,11 +81,9 @@ public class EventController implements IEventController {
      * {@inheritDoc}
      */
     @Override
-    public ResponseEntity<?> deleteEvent(final UUID eventId) {
+    public Mono<?> deleteEvent(final UUID eventId) {
 
-	this.eventService.delete(eventId);
-
-	return ResponseEntity.noContent().build();
+	return this.eventService.delete(eventId);
 
     }
 
@@ -120,12 +91,9 @@ public class EventController implements IEventController {
      * {@inheritDoc}
      */
     @Override
-    public ResponseEntity<Collection<EventDto>> getEvents() {
+    public Flux<EventDto> getEvents() {
 
-	final List<EventDto> listOfDtos = this.eventService.getAll().stream().map(this.eventToEventDtoConverter::apply)
-		.toList();
-
-	return ResponseEntity.ok(listOfDtos);
+	return this.eventService.getAll().map(this.eventToEventDtoConverter::apply);
 
     }
 

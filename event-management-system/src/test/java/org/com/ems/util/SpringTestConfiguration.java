@@ -1,9 +1,7 @@
 package org.com.ems.util;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.com.ems.api.domainobjects.Attendee;
@@ -25,6 +23,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
 @Configuration
 @Profile("service-tests")
 public class SpringTestConfiguration {
@@ -37,52 +38,52 @@ public class SpringTestConfiguration {
 	    Map<UUID, Attendee> list = new HashMap<>();
 
 	    @Override
-	    public Attendee save(final AttendeeDto dto) {
+	    public Mono<Attendee> save(final AttendeeDto dto) {
 
 		final Attendee attendee = new Attendee(dto.uuid(), dto.createdAt().toInstant(),
 			dto.lastUpdated().toInstant(), dto.firstName(), dto.lastName(), dto.ticketIDs());
 		this.list.put(dto.uuid(), attendee);
 
-		return attendee;
+		return Mono.just(attendee);
 
 	    }
 
 	    @Override
-	    public Optional<Attendee> findById(final UUID uuid) {
+	    public Mono<Attendee> findById(final UUID uuid) {
 
-		return Optional.ofNullable(this.list.get(uuid));
-
-	    }
-
-	    @Override
-	    public Collection<Attendee> findAll() {
-
-		return this.list.values();
+		return Mono.just(this.list.get(uuid));
 
 	    }
 
 	    @Override
-	    public boolean existsById(final UUID uuid) {
+	    public Flux<Attendee> findAll() {
 
-		return this.list.containsKey(uuid);
+		return Flux.fromIterable(this.list.values());
 
 	    }
 
 	    @Override
-	    public Attendee edit(final AttendeeDto dto) {
+	    public Mono<Boolean> existsById(final UUID uuid) {
+
+		return Mono.just(this.list.containsKey(uuid));
+
+	    }
+
+	    @Override
+	    public Mono<Attendee> edit(final AttendeeDto dto) {
 
 		final Attendee attendee = new Attendee(dto.uuid(), dto.createdAt().toInstant(),
 			dto.lastUpdated().toInstant(), dto.firstName(), dto.lastName(), dto.ticketIDs());
 
 		this.list.put(dto.uuid(), attendee);
-		return attendee;
+		return Mono.just(attendee);
 
 	    }
 
 	    @Override
-	    public boolean deleteById(final UUID uuid) {
+	    public Mono<Boolean> deleteById(final UUID uuid) {
 
-		return this.list.remove(uuid) != null;
+		return Mono.just(this.list.remove(uuid) != null);
 
 	    }
 	};
@@ -97,7 +98,7 @@ public class SpringTestConfiguration {
 	    Map<UUID, Event> list = new HashMap<>();
 
 	    @Override
-	    public Event save(final EventDto dto) {
+	    public Mono<Event> save(final EventDto dto) {
 
 		final Event attendee = new Event(dto.uuid(), dto.createdAt().toInstant(), dto.lastUpdated().toInstant(),
 			dto.denomination(), dto.place(), dto.eventType(), dto.attendeesIds(), dto.organizerId(),
@@ -106,33 +107,33 @@ public class SpringTestConfiguration {
 		);
 		this.list.put(dto.uuid(), attendee);
 
-		return attendee;
+		return Mono.just(attendee);
 
 	    }
 
 	    @Override
-	    public Optional<Event> findById(final UUID uuid) {
+	    public Mono<Event> findById(final UUID uuid) {
 
-		return Optional.ofNullable(this.list.get(uuid));
-
-	    }
-
-	    @Override
-	    public Collection<Event> findAll() {
-
-		return this.list.values();
+		return Mono.just(this.list.get(uuid));
 
 	    }
 
 	    @Override
-	    public boolean existsById(final UUID uuid) {
+	    public Flux<Event> findAll() {
 
-		return this.list.containsKey(uuid);
+		return Flux.fromIterable(this.list.values());
 
 	    }
 
 	    @Override
-	    public Event edit(final EventDto dto) {
+	    public Mono<Boolean> existsById(final UUID uuid) {
+
+		return Mono.just(this.list.containsKey(uuid));
+
+	    }
+
+	    @Override
+	    public Mono<Event> edit(final EventDto dto) {
 
 		final Event attendee = new Event(dto.uuid(), dto.createdAt().toInstant(), dto.lastUpdated().toInstant(),
 			dto.denomination(), dto.place(), dto.eventType(), dto.attendeesIds(), dto.organizerId(),
@@ -141,14 +142,14 @@ public class SpringTestConfiguration {
 		);
 
 		this.list.put(dto.uuid(), attendee);
-		return attendee;
+		return Mono.just(attendee);
 
 	    }
 
 	    @Override
-	    public boolean deleteById(final UUID uuid) {
+	    public Mono<Boolean> deleteById(final UUID uuid) {
 
-		return this.list.remove(uuid) != null;
+		return Mono.just(this.list.remove(uuid) != null);
 
 	    }
 	};
@@ -163,55 +164,55 @@ public class SpringTestConfiguration {
 	    Map<UUID, Organizer> list = new HashMap<>();
 
 	    @Override
-	    public Organizer save(final OrganizerDto dto) {
+	    public Mono<Organizer> save(final OrganizerDto dto) {
 
-		final Organizer Organizer = new Organizer(dto.uuid(), dto.createdAt().toInstant(),
+		final Organizer organizer = new Organizer(dto.uuid(), dto.createdAt().toInstant(),
 			dto.lastUpdated().toInstant(), dto.denomination(), dto.website(), dto.information(),
 			dto.eventTypes(), dto.contactInformation());
 
-		this.list.put(dto.uuid(), Organizer);
+		this.list.put(dto.uuid(), organizer);
 
-		return Organizer;
-
-	    }
-
-	    @Override
-	    public Optional<Organizer> findById(final UUID uuid) {
-
-		return Optional.ofNullable(this.list.get(uuid));
+		return Mono.just(organizer);
 
 	    }
 
 	    @Override
-	    public Collection<Organizer> findAll() {
+	    public Mono<Organizer> findById(final UUID uuid) {
 
-		return this.list.values();
-
-	    }
-
-	    @Override
-	    public boolean existsById(final UUID uuid) {
-
-		return this.list.containsKey(uuid);
+		return Mono.just(this.list.get(uuid));
 
 	    }
 
 	    @Override
-	    public Organizer edit(final OrganizerDto dto) {
+	    public Flux<Organizer> findAll() {
 
-		final Organizer Organizer = new Organizer(dto.uuid(), dto.createdAt().toInstant(),
+		return Flux.fromIterable(this.list.values());
+
+	    }
+
+	    @Override
+	    public Mono<Boolean> existsById(final UUID uuid) {
+
+		return Mono.just(this.list.containsKey(uuid));
+
+	    }
+
+	    @Override
+	    public Mono<Organizer> edit(final OrganizerDto dto) {
+
+		final Organizer organizer = new Organizer(dto.uuid(), dto.createdAt().toInstant(),
 			dto.lastUpdated().toInstant(), dto.denomination(), dto.website(), dto.information(),
 			dto.eventTypes(), dto.contactInformation());
 
-		this.list.put(dto.uuid(), Organizer);
-		return Organizer;
+		this.list.put(dto.uuid(), organizer);
+		return Mono.just(organizer);
 
 	    }
 
 	    @Override
-	    public boolean deleteById(final UUID uuid) {
+	    public Mono<Boolean> deleteById(final UUID uuid) {
 
-		return this.list.remove(uuid) != null;
+		return Mono.just(this.list.remove(uuid) != null);
 
 	    }
 	};
@@ -226,53 +227,53 @@ public class SpringTestConfiguration {
 	    Map<UUID, Ticket> list = new HashMap<>();
 
 	    @Override
-	    public Ticket save(final TicketDto dto) {
+	    public Mono<Ticket> save(final TicketDto dto) {
 
-		final Ticket Ticket = new Ticket(dto.uuid(), dto.createdAt().toInstant(), dto.lastUpdated().toInstant(),
+		final Ticket ticket = new Ticket(dto.uuid(), dto.createdAt().toInstant(), dto.lastUpdated().toInstant(),
 			dto.eventID(), dto.ticketType(), dto.price(), dto.transferable(), dto.seatInformation());
 
-		this.list.put(dto.uuid(), Ticket);
+		this.list.put(dto.uuid(), ticket);
 
-		return Ticket;
-
-	    }
-
-	    @Override
-	    public Optional<Ticket> findById(final UUID uuid) {
-
-		return Optional.ofNullable(this.list.get(uuid));
+		return Mono.just(ticket);
 
 	    }
 
 	    @Override
-	    public Collection<Ticket> findAll() {
+	    public Mono<Ticket> findById(final UUID uuid) {
 
-		return this.list.values();
-
-	    }
-
-	    @Override
-	    public boolean existsById(final UUID uuid) {
-
-		return this.list.containsKey(uuid);
+		return Mono.just(this.list.get(uuid));
 
 	    }
 
 	    @Override
-	    public Ticket edit(final TicketDto dto) {
+	    public Flux<Ticket> findAll() {
 
-		final Ticket Ticket = new Ticket(dto.uuid(), dto.createdAt().toInstant(), dto.lastUpdated().toInstant(),
+		return Flux.fromIterable(this.list.values());
+
+	    }
+
+	    @Override
+	    public Mono<Boolean> existsById(final UUID uuid) {
+
+		return Mono.just(this.list.containsKey(uuid));
+
+	    }
+
+	    @Override
+	    public Mono<Ticket> edit(final TicketDto dto) {
+
+		final Ticket ticket = new Ticket(dto.uuid(), dto.createdAt().toInstant(), dto.lastUpdated().toInstant(),
 			dto.eventID(), dto.ticketType(), dto.price(), dto.transferable(), dto.seatInformation());
 
-		this.list.put(dto.uuid(), Ticket);
-		return Ticket;
+		this.list.put(dto.uuid(), ticket);
+		return Mono.just(ticket);
 
 	    }
 
 	    @Override
-	    public boolean deleteById(final UUID uuid) {
+	    public Mono<Boolean> deleteById(final UUID uuid) {
 
-		return this.list.remove(uuid) != null;
+		return Mono.just(this.list.remove(uuid) != null);
 
 	    }
 	};
@@ -287,55 +288,55 @@ public class SpringTestConfiguration {
 	    Map<UUID, Sponsor> list = new HashMap<>();
 
 	    @Override
-	    public Sponsor save(final SponsorDto dto) {
+	    public Mono<Sponsor> save(final SponsorDto dto) {
 
-		final Sponsor attendee = new Sponsor(dto.uuid(), dto.createdAt().toInstant(),
+		final Sponsor sponsor = new Sponsor(dto.uuid(), dto.createdAt().toInstant(),
 			dto.lastUpdated().toInstant(), dto.denomination(), dto.website(), dto.financialContribution(),
 			dto.contactInformation());
 
-		this.list.put(dto.uuid(), attendee);
+		this.list.put(dto.uuid(), sponsor);
 
-		return attendee;
-
-	    }
-
-	    @Override
-	    public Optional<Sponsor> findById(final UUID uuid) {
-
-		return Optional.ofNullable(this.list.get(uuid));
+		return Mono.just(sponsor);
 
 	    }
 
 	    @Override
-	    public Collection<Sponsor> findAll() {
+	    public Mono<Sponsor> findById(final UUID uuid) {
 
-		return this.list.values();
-
-	    }
-
-	    @Override
-	    public boolean existsById(final UUID uuid) {
-
-		return this.list.containsKey(uuid);
+		return Mono.just(this.list.get(uuid));
 
 	    }
 
 	    @Override
-	    public Sponsor edit(final SponsorDto dto) {
+	    public Flux<Sponsor> findAll() {
 
-		final Sponsor attendee = new Sponsor(dto.uuid(), dto.createdAt().toInstant(),
+		return Flux.fromIterable(this.list.values());
+
+	    }
+
+	    @Override
+	    public Mono<Boolean> existsById(final UUID uuid) {
+
+		return Mono.just(this.list.containsKey(uuid));
+
+	    }
+
+	    @Override
+	    public Mono<Sponsor> edit(final SponsorDto dto) {
+
+		final Sponsor sponsor = new Sponsor(dto.uuid(), dto.createdAt().toInstant(),
 			dto.lastUpdated().toInstant(), dto.denomination(), dto.website(), dto.financialContribution(),
 			dto.contactInformation());
 
-		this.list.put(dto.uuid(), attendee);
-		return attendee;
+		this.list.put(dto.uuid(), sponsor);
+		return Mono.just(sponsor);
 
 	    }
 
 	    @Override
-	    public boolean deleteById(final UUID uuid) {
+	    public Mono<Boolean> deleteById(final UUID uuid) {
 
-		return this.list.remove(uuid) != null;
+		return Mono.just(this.list.remove(uuid) != null);
 
 	    }
 	};

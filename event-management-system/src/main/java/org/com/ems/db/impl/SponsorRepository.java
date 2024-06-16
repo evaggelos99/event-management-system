@@ -4,8 +4,7 @@ import static java.util.Objects.requireNonNull;
 
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.util.Collection;
-import java.util.Optional;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.UUID;
 import java.util.function.Function;
@@ -18,29 +17,26 @@ import org.com.ems.api.dto.SponsorDto;
 import org.com.ems.db.ISponsorRepository;
 import org.com.ems.db.queries.Queries.CrudQueriesOperations;
 import org.com.ems.db.rowmappers.SponsorRowMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
+import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.stereotype.Component;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Component
 public class SponsorRepository implements ISponsorRepository {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SponsorRepository.class);
-
-    private final JdbcTemplate jdbcTemplate;
-    private final RowMapper<Sponsor> sponsorRowMapper;
+    private final DatabaseClient databaseClient;
+    private final SponsorRowMapper sponsorRowMapper;
     private final Function<SponsorDto, Sponsor> sponsDtoToSponsorConverter;
     private final Properties sponsorQueriesProperties;
 
     /**
      * C-or
      *
-     * @param jdbcTemplate                 the {@link JdbcTemplate} used for
+     * @param jdbcTemplate                 the {@link DatabaseClient} used for
      *                                     connecting to the database for the
      *                                     Sponsor objects
      * @param sponsorRowMapper             the {@link SponsorRowMapper} used for
@@ -52,13 +48,13 @@ public class SponsorRepository implements ISponsorRepository {
      *                                     getting the right query CRUD database
      *                                     operations
      */
-    public SponsorRepository(@Autowired final JdbcTemplate jdbcTemplate,
-			     @Autowired @Qualifier("sponsorRowMapper") final RowMapper<Sponsor> sponsorRowMapper,
+    public SponsorRepository(@Autowired final DatabaseClient jdbcTemplate,
+			     @Autowired @Qualifier("sponsorRowMapper") final SponsorRowMapper sponsorRowMapper,
 			     @Autowired @Qualifier("sponsorDtoToSponsorConverter") final Function<SponsorDto,
 				     Sponsor> sponsorDtoToSponsorConverter,
 			     @Autowired @Qualifier("sponsorQueriesProperties") final Properties sponsorQueriesProperties) {
 
-	this.jdbcTemplate = requireNonNull(jdbcTemplate);
+	this.databaseClient = requireNonNull(jdbcTemplate);
 	this.sponsorRowMapper = requireNonNull(sponsorRowMapper);
 	this.sponsDtoToSponsorConverter = requireNonNull(sponsorDtoToSponsorConverter);
 	this.sponsorQueriesProperties = requireNonNull(sponsorQueriesProperties);
@@ -66,80 +62,52 @@ public class SponsorRepository implements ISponsorRepository {
     }
 
     @Override
-    public Sponsor save(final SponsorDto organizerDto) {
+    public Mono<Sponsor> save(final SponsorDto organizerDto) {
 
-	final Sponsor sponsor = this.saveSponsor(organizerDto);
-
-	LOGGER.trace("Saved an Sponsor: " + sponsor);
-
-	return sponsor;
+	return this.saveSponsor(organizerDto);
 
     }
 
     @Override
-    public Sponsor edit(final SponsorDto organizerDto) {
+    public Mono<Sponsor> edit(final SponsorDto organizerDto) {
 
-	final Sponsor sponsor = this.editOrganizer(organizerDto);
-
-	LOGGER.trace("Edited an Sponsor: " + sponsor);
-
-	return sponsor;
+	return this.editOrganizer(organizerDto);
 
     }
 
     @Override
-    public Optional<Sponsor> findById(final UUID uuid) {
+    public Mono<Sponsor> findById(final UUID uuid) {
 
-	try {
-
-	    final Sponsor sponsor = this.jdbcTemplate.queryForObject(
-		    this.sponsorQueriesProperties.getProperty(CrudQueriesOperations.GET_ID.name()),
-		    this.sponsorRowMapper, uuid);
-	    return Optional.of(sponsor);
-	} catch (final EmptyResultDataAccessException e) {
-
-	    LOGGER.warn("Sponsor with UUID: {} was not found", uuid);
-	    return Optional.empty();
-	}
+	return this.databaseClient.sql(this.sponsorQueriesProperties.getProperty(CrudQueriesOperations.GET_ID.name()))
+		.bind(0, uuid).map(this.sponsorRowMapper::apply).one();
 
     }
 
     @Override
-    public boolean deleteById(final UUID uuid) {
+    public Mono<Boolean> deleteById(final UUID uuid) {
 
-	final int rows = this.jdbcTemplate
-		.update(this.sponsorQueriesProperties.getProperty(CrudQueriesOperations.DELETE_ID.name()), uuid);
-
-	final boolean deleted = rows == 1;
-
-	if (deleted) {
-
-	    LOGGER.trace("Deleted Sponsor with uuid: " + uuid);
-	} else {
-
-	    LOGGER.trace("Could not delete Sponsor with uuid: " + uuid);
-	}
-
-	return deleted;
+	return this.databaseClient
+		.sql(this.sponsorQueriesProperties.getProperty(CrudQueriesOperations.DELETE_ID.name())).bind(0, uuid)
+		.fetch().rowsUpdated().map(this::rowsAffectedAreMoreThanOne);
 
     }
 
     @Override
-    public boolean existsById(final UUID uuid) {
+    public Mono<Boolean> existsById(final UUID uuid) {
 
-	return this.findById(uuid).isPresent();
+	return this.findById(uuid).map(Objects::nonNull);
 
     }
 
     @Override
-    public Collection<Sponsor> findAll() {
+    public Flux<Sponsor> findAll() {
 
-	return this.jdbcTemplate.query(this.sponsorQueriesProperties.getProperty(CrudQueriesOperations.GET_ALL.name()),
-		this.sponsorRowMapper);
+	return this.databaseClient.sql(this.sponsorQueriesProperties.getProperty(CrudQueriesOperations.GET_ALL.name()))
+		.map(this.sponsorRowMapper::apply).all().log();
 
     }
 
-    private Sponsor saveSponsor(final SponsorDto sponsor) {
+    private Mono<Sponsor> saveSponsor(final SponsorDto sponsor) {
 
 	final UUID sponsorUuid = sponsor.uuid();
 	final Instant now = Instant.now();
@@ -147,53 +115,48 @@ public class SponsorRepository implements ISponsorRepository {
 	final Timestamp updatedAt = Timestamp.from(now);
 
 	final UUID uuid = sponsorUuid != null ? sponsorUuid : UUID.randomUUID();
-
-	return this.saveOrEditCommand(uuid, createdAt, updatedAt, sponsor, true);
-
-    }
-
-    private Sponsor saveOrEditCommand(final UUID uuid,
-				      final Timestamp createdAt,
-				      final Timestamp updatedAt,
-				      final SponsorDto sponsor,
-				      final boolean isSaveOperation) {
-
 	final String name = sponsor.denomination();
 	final String website = sponsor.website();
 	final Integer financialContribution = sponsor.financialContribution();
 	final ContactInformation contactInformation = sponsor.contactInformation();
 
-	if (isSaveOperation) {
+	final Mono<Long> rowsAffected = this.databaseClient
+		.sql(this.sponsorQueriesProperties.getProperty(CrudQueriesOperations.SAVE.name())).bind(0, uuid)
+		.bind(1, createdAt).bind(2, updatedAt).bind(3, name).bind(4, website).bind(5, financialContribution)
+		.bind(6, contactInformation.email()).bind(7, contactInformation.phoneNumber())
+		.bind(8, contactInformation.physicalAddress()).fetch().rowsUpdated();
 
-	    this.jdbcTemplate.update(this.sponsorQueriesProperties.getProperty(CrudQueriesOperations.SAVE.name()), uuid,
-		    createdAt, updatedAt, name, website, financialContribution, contactInformation.email(),
-		    contactInformation.phoneNumber(), contactInformation.physicalAddress());
-
-	} else {
-
-	    this.jdbcTemplate.update(this.sponsorQueriesProperties.getProperty(CrudQueriesOperations.EDIT.name()), uuid,
-		    createdAt, updatedAt, name, website, financialContribution, contactInformation.email(),
-		    contactInformation.phoneNumber(), contactInformation.physicalAddress(), uuid);
-	}
-
-	return this.sponsDtoToSponsorConverter.apply(
-		new SponsorDto(uuid, createdAt, createdAt, name, website, financialContribution, contactInformation));
+	return rowsAffected.filter(this::rowsAffectedAreMoreThanOne).map(n_ -> this.sponsDtoToSponsorConverter.apply(
+		new SponsorDto(uuid, createdAt, updatedAt, name, website, financialContribution, contactInformation)));
 
     }
 
-    private Sponsor editOrganizer(final SponsorDto sponsor) {
+    private Mono<Sponsor> editOrganizer(final SponsorDto sponsor) {
 
 	final UUID uuid = sponsor.uuid();
-	final Timestamp createdAt = this.getCreatedAt(uuid);
 	final Timestamp updatedAt = Timestamp.from(Instant.now());
+	final String name = sponsor.denomination();
+	final String website = sponsor.website();
+	final Integer financialContribution = sponsor.financialContribution();
+	final ContactInformation contactInformation = sponsor.contactInformation();
 
-	return this.saveOrEditCommand(uuid, createdAt, updatedAt, sponsor, false);
+	final Mono<Long> rowsAffected = this.databaseClient
+		.sql(this.sponsorQueriesProperties.getProperty(CrudQueriesOperations.EDIT.name())).bind(0, uuid)
+		.bind(1, updatedAt).bind(2, name).bind(3, website).bind(4, financialContribution)
+		.bind(5, contactInformation.email()).bind(6, contactInformation.phoneNumber())
+		.bind(7, contactInformation.physicalAddress()).bind(8, uuid).fetch().rowsUpdated();
+
+	return rowsAffected.filter(this::rowsAffectedAreMoreThanOne).flatMap(n_ -> this.findById(uuid))
+		.map(AbstractDomainObject::getCreatedAt)
+		.map(monoCreatedAt -> this.sponsDtoToSponsorConverter
+			.apply(new SponsorDto(uuid, Timestamp.from(monoCreatedAt), updatedAt, name, website,
+				financialContribution, contactInformation)));
 
     }
 
-    private Timestamp getCreatedAt(final UUID uuid) {
+    private boolean rowsAffectedAreMoreThanOne(final Long x) {
 
-	return Timestamp.from(this.findById(uuid).map(AbstractDomainObject::getCreatedAt).orElse(Instant.now()));
+	return x >= 1;
 
     }
 }

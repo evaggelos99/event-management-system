@@ -1,10 +1,9 @@
 package org.com.ems.db.rowmappers;
 
-import java.sql.Array;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import org.com.ems.api.domainobjects.ContactInformation;
@@ -12,15 +11,17 @@ import org.com.ems.api.domainobjects.EventType;
 import org.com.ems.api.domainobjects.Organizer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
+import io.r2dbc.spi.Row;
+import io.r2dbc.spi.RowMetadata;
+
 @Component
-public class OrganizerRowMapper implements RowMapper<Organizer> {
+public class OrganizerRowMapper implements BiFunction<Row, RowMetadata, Organizer> {
 
-    private final Function<Array, List<EventType>> arrayToListOfEventTypes;
+    private final Function<EventType[], List<EventType>> arrayToListOfEventTypes;
 
-    public OrganizerRowMapper(@Autowired @Qualifier("arrayToListOfEventTypes") final Function<Array,
+    public OrganizerRowMapper(@Autowired @Qualifier("arrayToListOfEventTypes") final Function<EventType[],
 	    List<EventType>> arrayToListOfEventTypes) {
 
 	this.arrayToListOfEventTypes = arrayToListOfEventTypes;
@@ -28,18 +29,18 @@ public class OrganizerRowMapper implements RowMapper<Organizer> {
     }
 
     @Override
-    public Organizer mapRow(final ResultSet rs,
-			    final int rowNum)
-	    throws SQLException {
+    public Organizer apply(final Row row,
+			   final RowMetadata rmd) {
 
-	final List<EventType> eventsTypes = this.arrayToListOfEventTypes.apply(rs.getArray("event_types"));
+	final List<EventType> eventsTypes = this.arrayToListOfEventTypes.apply((EventType[]) row.get("event_types"));
 
-	final ContactInformation contactInformation = new ContactInformation(rs.getString("email"),
-		rs.getString("phone_number"), rs.getString("physical_address"));
+	final ContactInformation contactInformation = new ContactInformation(row.get("email", String.class),
+		row.get("phone_number", String.class), row.get("physical_address", String.class));
 
-	return new Organizer(UUID.fromString(rs.getString("id")), rs.getTimestamp("created_at").toInstant(),
-		rs.getTimestamp("last_updated").toInstant(), rs.getString("denomination"), rs.getString("website"),
-		rs.getString("information"), eventsTypes, contactInformation);
+	return new Organizer(UUID.fromString(row.get("id", String.class)),
+		row.get("created_at", OffsetDateTime.class).toInstant(),
+		row.get("last_updated", OffsetDateTime.class).toInstant(), row.get("denomination", String.class),
+		row.get("website", String.class), row.get("information", String.class), eventsTypes, contactInformation);
 
     }
 

@@ -2,17 +2,14 @@ package org.com.ems.services.impl;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.Collection;
+import java.time.Instant;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Function;
 
 import org.com.ems.api.converters.EventToEventDtoConverter;
 import org.com.ems.api.domainobjects.Event;
-import org.com.ems.api.dto.AttendeeDto;
 import org.com.ems.api.dto.EventDto;
 import org.com.ems.controller.exceptions.ObjectNotFoundException;
 import org.com.ems.db.IEventRepository;
@@ -21,6 +18,9 @@ import org.com.ems.services.api.IEventService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Service
 public class EventService implements IEventService {
@@ -49,7 +49,7 @@ public class EventService implements IEventService {
      * {@inheritDoc}
      */
     @Override
-    public Event add(final EventDto event) {
+    public Mono<Event> add(final EventDto event) {
 
 	return this.eventRepository.save(event);
 
@@ -59,7 +59,7 @@ public class EventService implements IEventService {
      * {@inheritDoc}
      */
     @Override
-    public Optional<Event> get(final UUID uuid) {
+    public Mono<Event> get(final UUID uuid) {
 
 	return this.eventRepository.findById(uuid);
 
@@ -69,23 +69,9 @@ public class EventService implements IEventService {
      * {@inheritDoc}
      */
     @Override
-    public void delete(final UUID uuid) {
+    public Mono<Boolean> delete(final UUID uuid) {
 
-	this.eventRepository.deleteById(uuid);
-
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Event edit(final UUID uuid,
-		      final EventDto event) {
-
-	if (!this.eventRepository.existsById(uuid))
-	    throw new NoSuchElementException();
-
-	return this.eventRepository.edit(event);
+	return this.eventRepository.deleteById(uuid);
 
     }
 
@@ -93,7 +79,19 @@ public class EventService implements IEventService {
      * {@inheritDoc}
      */
     @Override
-    public Collection<Event> getAll() {
+    public Mono<Event> edit(final UUID uuid,
+			    final EventDto event) {
+
+	return !uuid.equals(event.uuid()) ? Mono.error(() -> new ObjectNotFoundException(uuid, EventDto.class))
+		: this.eventRepository.edit(event);
+
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Flux<Event> getAll() {
 
 	return this.eventRepository.findAll();
 
@@ -103,7 +101,7 @@ public class EventService implements IEventService {
      * {@inheritDoc}
      */
     @Override
-    public boolean existsById(final UUID eventId) {
+    public Mono<Boolean> existsById(final UUID eventId) {
 
 	return this.eventRepository.existsById(eventId);
 
@@ -113,27 +111,27 @@ public class EventService implements IEventService {
      * {@inheritDoc}
      */
     @Override
-    public boolean addAttendee(final UUID eventId,
-			       final UUID attendeeId) {
+    public Mono<Boolean> addAttendee(final UUID eventId,
+				     final UUID attendeeId) {
 
-	final Optional<Event> optionalEvent = this.eventRepository.findById(eventId);
+	return this.eventRepository.findById(eventId)
+		.map(event -> this.addAttendeeIdToExistingList(eventId, attendeeId, event))//
+		.map(this.eventToEventDtoConverter::apply)//
+		.flatMap(this.eventRepository::edit)//
+		.map(x -> x.getAttendeesIDs().contains(attendeeId));
 
-	final Event event = optionalEvent.orElseThrow(() -> new ObjectNotFoundException(eventId, AttendeeDto.class));
+    }
+
+    private Event addAttendeeIdToExistingList(final UUID eventId,
+					      final UUID attendeeId,
+					      final Event event) {
 
 	final List<UUID> ids = event.getAttendeesIDs();
-
 	final LinkedList<UUID> list = new LinkedList<>(ids);
 	list.add(attendeeId);
-
-	final Event newEvent = new Event(eventId, event.getCreatedAt(), event.getLastUpdated(), event.getDenomination(),
-		event.getPlace(), event.getEventType(), list, event.getOrganizerID(), event.getLimitOfPeople(),
-		event.getSponsorsIds(), event.getStartTime(), event.getDuration());
-
-	final EventDto dto = this.eventToEventDtoConverter.apply(newEvent);
-
-	final Event eventFromRepo = this.eventRepository.edit(dto);
-
-	return eventFromRepo.getAttendeesIDs().containsAll(list);
+	return new Event(eventId, event.getCreatedAt(), Instant.now(), event.getDenomination(), event.getPlace(),
+		event.getEventType(), list, event.getOrganizerID(), event.getLimitOfPeople(), event.getSponsorsIds(),
+		event.getStartTime(), event.getDuration());
 
     }
 

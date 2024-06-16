@@ -1,28 +1,30 @@
 package org.com.ems.db.rowmappers;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.time.OffsetDateTime;
 import java.util.UUID;
+import java.util.function.BiFunction;
 
 import org.com.ems.api.domainobjects.ContactInformation;
 import org.com.ems.api.domainobjects.Sponsor;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
+import io.r2dbc.spi.Row;
+import io.r2dbc.spi.RowMetadata;
+
 @Component
-public class SponsorRowMapper implements RowMapper<Sponsor> {
+public class SponsorRowMapper implements BiFunction<Row, RowMetadata, Sponsor> {
 
     @Override
-    public Sponsor mapRow(final ResultSet rs,
-			  final int rowNum)
-	    throws SQLException {
+    public Sponsor apply(final Row row,
+			 final RowMetadata rmd) {
 
-	final ContactInformation contactInformation = new ContactInformation(rs.getString("email"),
-		rs.getString("phone_number"), rs.getString("physical_address"));
+	final ContactInformation contactInformation = new ContactInformation(row.get("email", String.class),
+		row.get("phone_number", String.class), row.get("physical_address", String.class));
 
-	return new Sponsor(UUID.fromString(rs.getString("id")), rs.getTimestamp("created_at").toInstant(),
-		rs.getTimestamp("last_updated").toInstant(), rs.getString("denomination"), rs.getString("website"),
-		rs.getInt("financial_contribution"), contactInformation);
+	return new Sponsor(UUID.fromString(row.get("id", String.class)),
+		row.get("created_at", OffsetDateTime.class).toInstant(),
+		row.get("last_updated", OffsetDateTime.class).toInstant(), row.get("denomination", String.class),
+		row.get("website", String.class), row.get("financial_contribution", Integer.class), contactInformation);
 
     }
 

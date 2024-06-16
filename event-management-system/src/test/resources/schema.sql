@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS organizers (
   id UUID PRIMARY KEY,
-  created_at TIMESTAMP NOT NULL,
-  last_updated TIMESTAMP NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE NOT NULL,
+  last_updated TIMESTAMP WITH TIME ZONE NOT NULL,
   denomination VARCHAR UNIQUE NOT NULL,
   website VARCHAR,
   information VARCHAR NOT NULL,
@@ -13,8 +13,8 @@ CREATE TABLE IF NOT EXISTS organizers (
 
 CREATE TABLE IF NOT EXISTS sponsors (
   id UUID PRIMARY KEY,
-  created_at TIMESTAMP NOT NULL,
-  last_updated TIMESTAMP NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE NOT NULL,
+  last_updated TIMESTAMP WITH TIME ZONE NOT NULL,
   denomination VARCHAR UNIQUE NOT NULL,
   website VARCHAR NOT NULL,
   financial_contribution INTEGER,
@@ -25,8 +25,8 @@ CREATE TABLE IF NOT EXISTS sponsors (
 
 CREATE TABLE IF NOT EXISTS attendees (
   id UUID PRIMARY KEY,
-  created_at TIMESTAMP NOT NULL,
-  last_updated TIMESTAMP NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE NOT NULL,
+  last_updated TIMESTAMP WITH TIME ZONE NOT NULL,
   first_name VARCHAR NOT NULL,
   last_name VARCHAR NOT NULL,
   ticket_ids UUID ARRAY
@@ -34,8 +34,8 @@ CREATE TABLE IF NOT EXISTS attendees (
 
 CREATE TABLE IF NOT EXISTS events (
   id UUID PRIMARY KEY,
-  created_at TIMESTAMP NOT NULL,
-  last_updated TIMESTAMP NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE NOT NULL,
+  last_updated TIMESTAMP WITH TIME ZONE NOT NULL,
   denomination VARCHAR NOT NULL,
   place VARCHAR NOT NULL,
   event_type VARCHAR NOT NULL,
@@ -49,8 +49,8 @@ CREATE TABLE IF NOT EXISTS events (
 
 CREATE TABLE IF NOT EXISTS tickets (
   id UUID PRIMARY KEY,
-  created_at TIMESTAMP NOT NULL,
-  last_updated TIMESTAMP NOT NULL,
+  created_at TIMESTAMP WITH TIME ZONE NOT NULL,
+  last_updated TIMESTAMP WITH TIME ZONE NOT NULL,
   event_id UUID NOT NULL,
   ticket_type VARCHAR NOT NULL,
   price INTEGER NOT NULL,

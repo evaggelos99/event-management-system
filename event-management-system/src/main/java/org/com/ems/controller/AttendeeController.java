@@ -2,24 +2,21 @@ package org.com.ems.controller;
 
 import static java.util.Objects.requireNonNull;
 
-import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.Collection;
-import java.util.List;
 import java.util.UUID;
 import java.util.function.Function;
 
 import org.com.ems.api.domainobjects.Attendee;
 import org.com.ems.api.dto.AttendeeDto;
 import org.com.ems.controller.api.IAttendeeController;
-import org.com.ems.controller.exceptions.ObjectNotFoundException;
 import org.com.ems.services.api.IAttendeeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * Controller for CRUD operation for the DAO object {@link Attendee}
@@ -57,19 +54,9 @@ public class AttendeeController implements IAttendeeController {
      * @throws URISyntaxException
      */
     @Override
-    public ResponseEntity<AttendeeDto> postAttendee(final AttendeeDto attendeeDto) {
+    public Mono<AttendeeDto> postAttendee(final AttendeeDto attendeeDto) {
 
-	final Attendee attendee = this.attendeeService.add(attendeeDto);
-
-	final AttendeeDto newDto = this.attendeeToAttendeeDtoConverter.apply(attendee);
-
-	try {
-
-	    return ResponseEntity.created(new URI(ATTENDEE_PATH)).body(newDto);
-	} catch (final URISyntaxException e) {
-
-	    return new ResponseEntity<>(newDto, HttpStatus.CREATED);
-	}
+	return this.attendeeService.add(attendeeDto).map(this.attendeeToAttendeeDtoConverter::apply);
 
     }
 
@@ -77,14 +64,11 @@ public class AttendeeController implements IAttendeeController {
      * {@inheritDoc}
      */
     @Override
-    public ResponseEntity<AttendeeDto> getAttendee(final UUID attendeeId) {
+    public Mono<AttendeeDto> getAttendee(final UUID attendeeId) {
 
-	final var optionalAttendee = this.attendeeService.get(attendeeId);
+	final Mono<Attendee> attendee = this.attendeeService.get(attendeeId);
 
-	final AttendeeDto attendeeDto = this.attendeeToAttendeeDtoConverter
-		.apply(optionalAttendee.orElseThrow(() -> new ObjectNotFoundException(attendeeId, AttendeeDto.class)));
-
-	return ResponseEntity.ok(attendeeDto);
+	return attendee.map(this.attendeeToAttendeeDtoConverter::apply);
 
     }
 
@@ -93,19 +77,12 @@ public class AttendeeController implements IAttendeeController {
      *
      */
     @Override
-    public ResponseEntity<AttendeeDto> putAttendee(final UUID attendeeId,
-						   final AttendeeDto attendeeDto) {
+    public Mono<AttendeeDto> putAttendee(final UUID attendeeId,
+					 final AttendeeDto attendeeDto) {
 
-	final Attendee attendee = this.attendeeService.edit(attendeeId, attendeeDto);
-	final AttendeeDto newDto = this.attendeeToAttendeeDtoConverter.apply(attendee);
+	final Mono<Attendee> attendee = this.attendeeService.edit(attendeeId, attendeeDto);
 
-	try {
-
-	    return ResponseEntity.created(new URI(ATTENDEE_PATH + attendeeId)).body(newDto);
-	} catch (final URISyntaxException e) {
-
-	    return new ResponseEntity<>(newDto, HttpStatus.CREATED);
-	}
+	return attendee.map(this.attendeeToAttendeeDtoConverter::apply);
 
     }
 
@@ -113,11 +90,9 @@ public class AttendeeController implements IAttendeeController {
      * {@inheritDoc}
      */
     @Override
-    public ResponseEntity<?> deleteAttendee(final UUID attendeeId) {
+    public Mono<?> deleteAttendee(final UUID attendeeId) {
 
-	this.attendeeService.delete(attendeeId);
-
-	return ResponseEntity.noContent().build();
+	return this.attendeeService.delete(attendeeId);
 
     }
 
@@ -125,28 +100,17 @@ public class AttendeeController implements IAttendeeController {
      * {@inheritDoc}
      */
     @Override
-    public ResponseEntity<Collection<AttendeeDto>> getAttendees() {
+    public Flux<AttendeeDto> getAttendees() {
 
-	final List<AttendeeDto> listOfDtos = this.attendeeService.getAll().stream()
-		.map(this.attendeeToAttendeeDtoConverter::apply).toList();
-
-	return ResponseEntity.ok(listOfDtos);
+	return this.attendeeService.getAll().map(this.attendeeToAttendeeDtoConverter::apply);
 
     }
 
     @Override
-    public ResponseEntity<Boolean> addTicket(final UUID attendeeId,
-					     final UUID ticketId) {
+    public Mono<Boolean> addTicket(final UUID attendeeId,
+				   final UUID ticketId) {
 
-	final boolean wasSucessful = this.attendeeService.addTicket(attendeeId, ticketId);
-
-	try {
-
-	    return ResponseEntity.created(new URI(ATTENDEE_PATH + attendeeId)).body(wasSucessful);
-	} catch (final URISyntaxException e) {
-
-	    return new ResponseEntity<>(wasSucessful, HttpStatus.CREATED);
-	}
+	return this.attendeeService.addTicket(attendeeId, ticketId);
 
     }
 

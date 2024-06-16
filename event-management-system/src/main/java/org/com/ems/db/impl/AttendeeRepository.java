@@ -4,9 +4,8 @@ import static java.util.Objects.requireNonNull;
 
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.UUID;
 import java.util.function.Function;
@@ -18,32 +17,29 @@ import org.com.ems.api.dto.AttendeeDto;
 import org.com.ems.db.IAttendeeRepository;
 import org.com.ems.db.queries.Queries.CrudQueriesOperations;
 import org.com.ems.db.rowmappers.AttendeeRowMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
+import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.stereotype.Component;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Component
 public class AttendeeRepository implements IAttendeeRepository {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AttendeeRepository.class);
-
-    private final JdbcTemplate jdbcTemplate;
-    private final RowMapper<Attendee> attendeeRowMapper;
+    private final DatabaseClient databaseClient;
+    private final AttendeeRowMapper attendeeRowMapper;
     private final Function<AttendeeDto, Attendee> attendeeDtoToAttendeeConverter;
     private final Properties attendeeQueriesProperties;
 
     /**
      * C-or
      *
-     * @param jdbcTemplate                   the {@link JdbcTemplate} used for
+     * @param jdbcTemplate                   the {@link DatabaseClient} used for
      *                                       connecting to the database for the
      *                                       Attendee objects
-     * @param attendeeRowMapper              the {@link AttendeeRowMapper} used for
+     * @param databaseClient                 the {@link AttendeeRowMapper} used for
      *                                       returning Attendee objects from the
      *                                       database
      * @param attendeeDtoToAttendeeConverter the
@@ -54,92 +50,65 @@ public class AttendeeRepository implements IAttendeeRepository {
      *                                       for getting the right query CRUD
      *                                       database operations
      */
-    public AttendeeRepository(@Autowired final JdbcTemplate jdbcTemplate,
-			      @Autowired @Qualifier("attendeeRowMapper") final RowMapper<Attendee> attendeeRowMapper,
+    public AttendeeRepository(@Autowired final DatabaseClient jdbcTemplate,
+			      @Autowired @Qualifier("attendeeRowMapper") final AttendeeRowMapper databaseClient,
 			      @Autowired @Qualifier("attendeeDtoToAttendeeConverter") final Function<AttendeeDto,
 				      Attendee> attendeeDtoToAttendeeConverter,
 			      @Autowired @Qualifier("attendeeQueriesProperties") final Properties attendeeQueriesProperties) {
 
-	this.jdbcTemplate = requireNonNull(jdbcTemplate);
-	this.attendeeRowMapper = requireNonNull(attendeeRowMapper);
+	this.databaseClient = requireNonNull(jdbcTemplate);
+	this.attendeeRowMapper = requireNonNull(databaseClient);
 	this.attendeeDtoToAttendeeConverter = requireNonNull(attendeeDtoToAttendeeConverter);
 	this.attendeeQueriesProperties = requireNonNull(attendeeQueriesProperties);
 
     }
 
     @Override
-    public Attendee save(final AttendeeDto attendeeDto) {
+    public Mono<Attendee> save(final AttendeeDto attendeeDto) {
 
-	final Attendee attendee = this.saveAttendee(attendeeDto);
-	LOGGER.trace("Saved an Attendee: " + attendee);
-
-	return attendee;
+	return this.saveAttendee(attendeeDto);
 
     }
 
     @Override
-    public Attendee edit(final AttendeeDto attendeeDto) {
+    public Mono<Attendee> edit(final AttendeeDto attendeeDto) {
 
-	final Attendee attendee = this.editAttendee(attendeeDto);
-	LOGGER.trace("Edited an Attendee: " + attendee);
-
-	return attendee;
+	return this.editAttendee(attendeeDto);
 
     }
 
     @Override
-    public Optional<Attendee> findById(final UUID uuid) {
+    public Mono<Attendee> findById(final UUID uuid) {
 
-	try {
-
-	    final Attendee attendee = this.jdbcTemplate.queryForObject(
-		    this.attendeeQueriesProperties.getProperty(CrudQueriesOperations.GET_ID.name()),
-		    this.attendeeRowMapper, uuid);
-	    return Optional.of(attendee);
-	} catch (final EmptyResultDataAccessException e) {
-
-	    LOGGER.warn("Attendee with UUID: {} was not found", uuid);
-	    return Optional.empty();
-	}
+	return this.databaseClient.sql(this.attendeeQueriesProperties.getProperty(CrudQueriesOperations.GET_ID.name()))
+		.bind(0, uuid).map(this.attendeeRowMapper::apply).one();
 
     }
 
     @Override
-    public boolean deleteById(final UUID uuid) {
+    public Mono<Boolean> deleteById(final UUID uuid) {
 
-	final int rows = this.jdbcTemplate
-		.update(this.attendeeQueriesProperties.getProperty(CrudQueriesOperations.DELETE_ID.name()), uuid);
-
-	final boolean deleted = rows == 1;
-
-	if (deleted) {
-
-	    LOGGER.trace("Deleted attendee with uuid: " + uuid);
-	} else {
-
-	    LOGGER.trace("Could not delete attendee with uuid: " + uuid);
-	}
-
-	return deleted;
+	return this.databaseClient.sql(this.attendeeQueriesProperties.getProperty(CrudQueriesOperations.SAVE.name()))
+		.bind(0, uuid).fetch().rowsUpdated().map(this::rowsAffectedAreMoreThanOne);
 
     }
 
     @Override
-    public boolean existsById(final UUID uuid) {
+    public Mono<Boolean> existsById(final UUID uuid) {
 
-	return this.findById(uuid).isPresent();
+	return this.findById(uuid).map(Objects::nonNull);
 
     }
 
     @Override
-    public Collection<Attendee> findAll() {
+    public Flux<Attendee> findAll() {
 
-	return this.jdbcTemplate.query(this.attendeeQueriesProperties.getProperty(CrudQueriesOperations.GET_ALL.name()),
-		this.attendeeRowMapper);
+	return this.databaseClient.sql(this.attendeeQueriesProperties.getProperty(CrudQueriesOperations.GET_ALL.name()))
+		.map(this.attendeeRowMapper::apply).all();
 
     }
 
-    private Attendee saveAttendee(final AttendeeDto attendee) {
+    private Mono<Attendee> saveAttendee(final AttendeeDto attendee) {
 
 	final UUID attendeeId = attendee.uuid();
 	final Instant now = Instant.now();
@@ -147,42 +116,37 @@ public class AttendeeRepository implements IAttendeeRepository {
 	final Timestamp updatedAt = Timestamp.from(now);
 	final UUID uuid = attendeeId != null ? attendeeId : UUID.randomUUID();
 
-	return this.saveOrEditCommand(uuid, createdAt, updatedAt, attendee, true);
+	final List<UUID> ticketIds = attendee.ticketIDs() != null ? attendee.ticketIDs() : List.of();
+	final UUID[] uuids = this.convertToArray(ticketIds);
+
+	final Mono<Long> rowsAffected = this.databaseClient
+		.sql(this.attendeeQueriesProperties.getProperty(CrudQueriesOperations.SAVE.name())).bind(0, uuid)
+		.bind(1, createdAt).bind(2, updatedAt).bind(3, attendee.firstName()).bind(4, attendee.lastName())
+		.bind(5, uuids).fetch().rowsUpdated();
+
+	return rowsAffected.filter(this::rowsAffectedAreMoreThanOne)
+		.map(n_ -> this.attendeeDtoToAttendeeConverter.apply(new AttendeeDto(uuid, createdAt, updatedAt,
+			attendee.firstName(), attendee.lastName(), ticketIds)));
 
     }
 
-    private Attendee editAttendee(final AttendeeDto attendee) {
+    private Mono<Attendee> editAttendee(final AttendeeDto attendee) {
 
 	final UUID uuid = attendee.uuid();
-	final Timestamp createdAt = this.getCreatedAt(uuid);
 	final Timestamp updatedAt = Timestamp.from(Instant.now());
-
-	return this.saveOrEditCommand(uuid, createdAt, updatedAt, attendee, false);
-
-    }
-
-    private Attendee saveOrEditCommand(final UUID uuid,
-				       final Timestamp createdAt,
-				       final Timestamp timestamp,
-				       final AttendeeDto attendee,
-				       final boolean isSaveOperation) {
 
 	final List<UUID> ticketIds = attendee.ticketIDs() != null ? attendee.ticketIDs() : List.of();
 	final UUID[] uuids = this.convertToArray(ticketIds);
 
-	if (isSaveOperation) {
+	final Mono<Long> rowsAffected = this.databaseClient
+		.sql(this.attendeeQueriesProperties.getProperty(CrudQueriesOperations.EDIT.name())).bind(0, uuid)
+		.bind(1, updatedAt).bind(2, attendee.firstName()).bind(3, attendee.lastName()).bind(4, uuids)
+		.bind(5, uuid).fetch().rowsUpdated();
 
-	    this.jdbcTemplate.update(this.attendeeQueriesProperties.getProperty(CrudQueriesOperations.SAVE.name()),
-		    uuid, createdAt, timestamp, attendee.firstName(), attendee.lastName(), uuids);
-
-	} else {
-
-	    this.jdbcTemplate.update(this.attendeeQueriesProperties.getProperty(CrudQueriesOperations.EDIT.name()),
-		    uuid, createdAt, timestamp, attendee.firstName(), attendee.lastName(), uuids, uuid);
-	}
-
-	return this.attendeeDtoToAttendeeConverter.apply(
-		new AttendeeDto(uuid, createdAt, timestamp, attendee.firstName(), attendee.lastName(), ticketIds));
+	return rowsAffected.filter(this::rowsAffectedAreMoreThanOne).flatMap(n_ -> this.findById(uuid))
+		.map(AbstractDomainObject::getCreatedAt)
+		.map(createdAt -> this.attendeeDtoToAttendeeConverter.apply(new AttendeeDto(uuid,
+			Timestamp.from(createdAt), updatedAt, attendee.firstName(), attendee.lastName(), ticketIds)));
 
     }
 
@@ -203,9 +167,9 @@ public class AttendeeRepository implements IAttendeeRepository {
 
     }
 
-    private Timestamp getCreatedAt(final UUID uuid) {
+    private boolean rowsAffectedAreMoreThanOne(final Long x) {
 
-	return Timestamp.from(this.findById(uuid).map(AbstractDomainObject::getCreatedAt).orElse(Instant.now()));
+	return x >= 1;
 
     }
 

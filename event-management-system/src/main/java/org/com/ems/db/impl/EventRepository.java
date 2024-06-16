@@ -6,9 +6,8 @@ import java.sql.Timestamp;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.UUID;
 import java.util.function.Function;
@@ -22,22 +21,19 @@ import org.com.ems.db.IEventRepository;
 import org.com.ems.db.queries.Queries.CrudQueriesOperations;
 import org.com.ems.db.rowmappers.EventRowMapper;
 import org.com.ems.db.rowmappers.util.DurationToIntervalConverter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
+import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.stereotype.Component;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Component
 public class EventRepository implements IEventRepository {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(EventRepository.class);
-
-    private final JdbcTemplate jdbcTemplate;
-    private final RowMapper<Event> eventRowMapper;
+    private final DatabaseClient databaseClient;
+    private final EventRowMapper eventRowMapper;
     private final Function<EventDto, Event> eventDtoToEventConverter;
     private final Properties eventQueriesProperties;
     private final Function<Duration, Object> durationToIntervalConverter;
@@ -45,7 +41,7 @@ public class EventRepository implements IEventRepository {
     /**
      * C-or
      *
-     * @param jdbcTemplate                the {@link JdbcTemplate} used for
+     * @param databaseClient              the {@link DatabaseClient} used for
      *                                    connecting to the database for the Event
      *                                    objects
      * @param eventRowMapperFunction      the {@link EventRowMapper} used for
@@ -58,15 +54,15 @@ public class EventRepository implements IEventRepository {
      *                                    operations
      * @param durationToIntervalConverter {@link DurationToIntervalConverter}
      */
-    public EventRepository(@Autowired final JdbcTemplate jdbcTemplate,
-			   @Autowired @Qualifier("eventRowMapper") final RowMapper<Event> eventRowMapperFunction,
+    public EventRepository(@Autowired final DatabaseClient databaseClient,
+			   @Autowired @Qualifier("eventRowMapper") final EventRowMapper eventRowMapperFunction,
 			   @Autowired @Qualifier("eventDtoToEventConverter") final Function<EventDto,
 				   Event> eventDtoToEventConverter,
 			   @Autowired @Qualifier("eventQueriesProperties") final Properties eventQueriesProperties,
 			   @Autowired @Qualifier("durationToIntervalConverter") final Function<Duration,
 				   Object> durationToIntervalConverter) {
 
-	this.jdbcTemplate = requireNonNull(jdbcTemplate);
+	this.databaseClient = requireNonNull(databaseClient);
 	this.eventRowMapper = requireNonNull(eventRowMapperFunction);
 	this.eventDtoToEventConverter = requireNonNull(eventDtoToEventConverter);
 	this.eventQueriesProperties = requireNonNull(eventQueriesProperties);
@@ -75,79 +71,50 @@ public class EventRepository implements IEventRepository {
     }
 
     @Override
-    public Event save(final EventDto t) {
+    public Mono<Event> save(final EventDto t) {
 
-	final Event event = this.saveEvent(t);
-
-	LOGGER.trace("Saved an Event: " + event);
-
-	return event;
+	return this.saveEvent(t);
 
     }
 
     @Override
-    public Optional<Event> findById(final UUID uuid) {
+    public Mono<Event> findById(final UUID uuid) {
 
-	try {
-
-	    final Event event = this.jdbcTemplate.queryForObject(
-		    this.eventQueriesProperties.getProperty(CrudQueriesOperations.GET_ID.name()), this.eventRowMapper,
-		    uuid);
-	    return Optional.of(event);
-	} catch (final EmptyResultDataAccessException e) {
-
-	    LOGGER.warn("Event with UUID: {} was not found", uuid);
-	    return Optional.empty();
-	}
+	return this.databaseClient.sql(this.eventQueriesProperties.getProperty(CrudQueriesOperations.GET_ID.name()))
+		.bind(0, uuid).map(this.eventRowMapper::apply).one();
 
     }
 
     @Override
-    public boolean deleteById(final UUID uuid) {
+    public Mono<Boolean> deleteById(final UUID uuid) {
 
-	final int rows = this.jdbcTemplate
-		.update(this.eventQueriesProperties.getProperty(CrudQueriesOperations.DELETE_ID.name()), uuid);
-
-	final boolean deleted = rows == 1;
-
-	if (deleted) {
-
-	    LOGGER.trace("Deleted an Event with uuid: " + uuid);
-	} else {
-
-	    LOGGER.trace("Could not delete Event with uuid: " + uuid);
-	}
-
-	return deleted;
+	return null;
 
     }
 
     @Override
-    public boolean existsById(final UUID uuid) {
+    public Mono<Boolean> existsById(final UUID uuid) {
 
-	return this.findById(uuid).isPresent();
-
-    }
-
-    @Override
-    public Collection<Event> findAll() {
-
-	return this.jdbcTemplate.query(this.eventQueriesProperties.getProperty(CrudQueriesOperations.GET_ALL.name()),
-		this.eventRowMapper);
+	return this.findById(uuid).map(Objects::nonNull);
 
     }
 
     @Override
-    public Event edit(final EventDto eventDto) {
+    public Flux<Event> findAll() {
 
-	final Event event = this.editEvent(eventDto);
-
-	LOGGER.trace("Edited an Event: " + event);
-	return event;
+	return this.databaseClient.sql(this.eventQueriesProperties.getProperty(CrudQueriesOperations.GET_ALL.name()))
+		.map(this.eventRowMapper::apply).all();
 
     }
 
-    private Event saveEvent(final EventDto event) {
+    @Override
+    public Mono<Event> edit(final EventDto eventDto) {
+
+	return this.editEvent(eventDto);
+
+    }
+
+    private Mono<Event> saveEvent(final EventDto event) {
 
 	final UUID eventUuid = event.uuid();
 
@@ -156,27 +123,6 @@ public class EventRepository implements IEventRepository {
 	final Timestamp updatedAt = Timestamp.from(now);
 
 	final UUID uuid = eventUuid != null ? eventUuid : UUID.randomUUID();
-
-	return this.saveOrEditCommand(uuid, createdAt, updatedAt, event, true);
-
-    }
-
-    private Event editEvent(final EventDto event) {
-
-	final UUID uuid = event.uuid();
-
-	final Timestamp createdAt = this.getCreatedAt(uuid);
-	final Timestamp updatedAt = Timestamp.from(Instant.now());
-
-	return this.saveOrEditCommand(uuid, createdAt, updatedAt, event, false);
-
-    }
-
-    private Event saveOrEditCommand(final UUID uuid,
-				    final Timestamp createdAt,
-				    final Timestamp updatedAt,
-				    final EventDto event,
-				    final boolean isSaveOperation) {
 
 	final String name = event.denomination();
 	final String place = event.place();
@@ -192,21 +138,48 @@ public class EventRepository implements IEventRepository {
 	final UUID[] attendees = this.convertToArray(attendeesIds);
 	final UUID[] sponsors = this.convertToArray(sponsorIds);
 
-	if (isSaveOperation) {
+	final Mono<Long> rowsAffected = this.databaseClient
+		.sql(this.eventQueriesProperties.getProperty(CrudQueriesOperations.SAVE.name())).bind(0, uuid)
+		.bind(1, createdAt).bind(2, updatedAt).bind(3, name).bind(4, place).bind(5, eventType)
+		.bind(6, attendees).bind(7, organizerId).bind(8, limitOfPeople).bind(9, sponsors)
+		.bind(10, startTimeOfEvent).bind(11, interval).fetch().rowsUpdated();
 
-	    this.jdbcTemplate.update(this.eventQueriesProperties.getProperty(CrudQueriesOperations.SAVE.name()), uuid,
-		    createdAt, updatedAt, name, place, eventType.name(), attendees, organizerId, limitOfPeople,
-		    sponsors, startTimeOfEvent, interval);
+	return rowsAffected.filter(this::rowsAffectedAreMoreThanOne)
+		.map(m_ -> this.eventDtoToEventConverter.apply(new EventDto(uuid, createdAt, updatedAt, name, place,
+			eventType, attendeesIds, organizerId, limitOfPeople, sponsorIds, startTimeOfEvent, duration)));
 
-	} else {
+    }
 
-	    this.jdbcTemplate.update(this.eventQueriesProperties.getProperty(CrudQueriesOperations.EDIT.name()), uuid,
-		    createdAt, updatedAt, name, place, eventType.name(), attendees, organizerId, limitOfPeople,
-		    sponsors, startTimeOfEvent, interval, uuid);
-	}
+    private Mono<Event> editEvent(final EventDto event) {
 
-	return this.eventDtoToEventConverter.apply(new EventDto(uuid, createdAt, updatedAt, name, place, eventType,
-		attendeesIds, organizerId, limitOfPeople, sponsorIds, startTimeOfEvent, duration));
+	final UUID uuid = event.uuid();
+	final Timestamp updatedAt = Timestamp.from(Instant.now());
+
+	final String name = event.denomination();
+	final String place = event.place();
+	final EventType eventType = event.eventType();
+	final List<UUID> attendeesIds = event.attendeesIds() != null ? event.attendeesIds() : List.of();
+	final UUID organizerId = event.organizerId();
+	final Integer limitOfPeople = event.limitOfPeople();
+	final List<UUID> sponsorIds = event.sponsorsIds() != null ? event.sponsorsIds() : List.of();
+	final LocalDateTime startTimeOfEvent = event.startTimeOfEvent();
+	final Duration duration = event.duration();
+	final Object interval = this.durationToIntervalConverter.apply(duration);
+
+	final UUID[] attendees = this.convertToArray(attendeesIds);
+	final UUID[] sponsors = this.convertToArray(sponsorIds);
+
+	final Mono<Long> rowsAffected = this.databaseClient
+		.sql(this.eventQueriesProperties.getProperty(CrudQueriesOperations.EDIT.name())).bind(0, uuid)
+		.bind(1, updatedAt).bind(2, name).bind(3, place).bind(4, eventType).bind(5, attendees)
+		.bind(6, organizerId).bind(7, limitOfPeople).bind(8, sponsors).bind(9, startTimeOfEvent)
+		.bind(10, interval).bind(11, uuid).fetch().rowsUpdated();
+
+	return rowsAffected.filter(this::rowsAffectedAreMoreThanOne).flatMap(n_ -> this.findById(uuid))
+		.map(AbstractDomainObject::getCreatedAt)
+		.map(createdAt -> this.eventDtoToEventConverter
+			.apply(new EventDto(uuid, Timestamp.from(createdAt), updatedAt, name, place, eventType,
+				attendeesIds, organizerId, limitOfPeople, sponsorIds, startTimeOfEvent, duration)));
 
     }
 
@@ -227,9 +200,9 @@ public class EventRepository implements IEventRepository {
 
     }
 
-    private Timestamp getCreatedAt(final UUID uuid) {
+    private boolean rowsAffectedAreMoreThanOne(final Long x) {
 
-	return Timestamp.from(this.findById(uuid).map(AbstractDomainObject::getCreatedAt).orElse(Instant.now()));
+	return x >= 1;
 
     }
 }

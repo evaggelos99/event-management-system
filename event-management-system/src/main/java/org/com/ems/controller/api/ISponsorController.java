@@ -1,12 +1,10 @@
 package org.com.ems.controller.api;
 
-import java.util.Collection;
 import java.util.UUID;
 
 import org.com.ems.api.domainobjects.Sponsor;
 import org.com.ems.api.dto.SponsorDto;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +18,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * Interface for the {@link Sponsor} Controller
@@ -39,7 +39,7 @@ public interface ISponsorController {
     @ApiResponses(value = { @ApiResponse(responseCode = "201", description = "successful operation") })
     @PostMapping
     @ResponseStatus(value = HttpStatus.CREATED)
-    ResponseEntity<SponsorDto> postSponsor(@Valid @RequestBody SponsorDto sponsorDto);
+    Mono<SponsorDto> postSponsor(@Valid @RequestBody SponsorDto sponsorDto);
 
     /**
      * Method that gets an Sponsor DAO object from the DB
@@ -51,7 +51,7 @@ public interface ISponsorController {
 	    @ApiResponse(responseCode = "404", description = "could not find the object") })
     @ResponseStatus(value = HttpStatus.OK)
     @GetMapping("/{sponsorId}")
-    ResponseEntity<SponsorDto> getSponsor(@PathVariable UUID sponsorId);
+    Mono<SponsorDto> getSponsor(@PathVariable UUID sponsorId);
 
     /**
      * Method that gets all Sponsor objects from the DB
@@ -61,7 +61,7 @@ public interface ISponsorController {
     @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "successful operation") })
     @ResponseStatus(value = HttpStatus.OK)
     @GetMapping()
-    ResponseEntity<Collection<SponsorDto>> getSponsors();
+    Flux<SponsorDto> getSponsors();
 
     /**
      * Method that updates the Sponsor with that SponsorId If the id does not match
@@ -75,8 +75,8 @@ public interface ISponsorController {
 	    @ApiResponse(responseCode = "404", description = "could not find the object") })
     @PutMapping("/{sponsorId}")
     @ResponseStatus(value = HttpStatus.CREATED)
-    ResponseEntity<SponsorDto> putSponsor(@PathVariable UUID sponsorId,
-					  @Valid @RequestBody SponsorDto sponsorDto);
+    Mono<SponsorDto> putSponsor(@PathVariable UUID sponsorId,
+				@Valid @RequestBody SponsorDto sponsorDto);
 
     /**
      * Method that deletes the Sponsor with the specific sponsorId
@@ -87,6 +87,6 @@ public interface ISponsorController {
     @ApiResponses(value = { @ApiResponse(responseCode = "204", description = "successful operation") })
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @DeleteMapping(path = "/{sponsorId}")
-    ResponseEntity<?> deleteSponsor(@PathVariable UUID sponsorId);
+    Mono<?> deleteSponsor(@PathVariable UUID sponsorId);
 
 }

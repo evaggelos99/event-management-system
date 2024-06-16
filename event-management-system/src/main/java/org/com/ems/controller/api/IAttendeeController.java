@@ -1,12 +1,10 @@
 package org.com.ems.controller.api;
 
-import java.util.Collection;
 import java.util.UUID;
 
 import org.com.ems.api.domainobjects.Attendee;
 import org.com.ems.api.dto.AttendeeDto;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,6 +19,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * Interface for the {@link Attendee} Controller
@@ -40,7 +40,7 @@ public interface IAttendeeController {
     @ApiResponses(value = { @ApiResponse(responseCode = "201", description = "successful operation") })
     @PostMapping
     @ResponseStatus(value = HttpStatus.CREATED)
-    ResponseEntity<AttendeeDto> postAttendee(@Valid @RequestBody AttendeeDto attendee);
+    Mono<AttendeeDto> postAttendee(@Valid @RequestBody AttendeeDto attendee);
 
     /**
      * Method that gets an Attendee DAO object from the DB
@@ -52,7 +52,7 @@ public interface IAttendeeController {
 	    @ApiResponse(responseCode = "404", description = "could not find the object") })
     @ResponseStatus(value = HttpStatus.OK)
     @GetMapping("/{attendeeId}")
-    ResponseEntity<AttendeeDto> getAttendee(@PathVariable UUID attendeeId);
+    Mono<AttendeeDto> getAttendee(@PathVariable UUID attendeeId);
 
     /**
      * Method that gets all Attendee objects from the DB
@@ -62,7 +62,7 @@ public interface IAttendeeController {
     @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "successful operation") })
     @ResponseStatus(value = HttpStatus.OK)
     @GetMapping
-    ResponseEntity<Collection<AttendeeDto>> getAttendees();
+    Flux<AttendeeDto> getAttendees();
 
     /**
      * Method that updates the Attendee with that AttendeeId If the id does not
@@ -76,8 +76,8 @@ public interface IAttendeeController {
 	    @ApiResponse(responseCode = "404", description = "could not find the object") })
     @PutMapping("/{attendeeId}")
     @ResponseStatus(value = HttpStatus.CREATED)
-    ResponseEntity<AttendeeDto> putAttendee(@PathVariable UUID attendeeId,
-					    @Valid @RequestBody AttendeeDto attendee);
+    Mono<AttendeeDto> putAttendee(@PathVariable UUID attendeeId,
+				  @Valid @RequestBody AttendeeDto attendee);
 
     /**
      * Method that deletes the Attendee with the specific attendeeId
@@ -88,7 +88,7 @@ public interface IAttendeeController {
     @ApiResponses(value = { @ApiResponse(responseCode = "204", description = "successful operation") })
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @DeleteMapping(path = "/{attendeeId}")
-    ResponseEntity<?> deleteAttendee(@PathVariable UUID attendeeId);
+    Mono<?> deleteAttendee(@PathVariable UUID attendeeId);
 
     /**
      * Method that updates the Event with that eventId If the id does not match any
@@ -102,7 +102,7 @@ public interface IAttendeeController {
 	    @ApiResponse(responseCode = "404", description = "could not find the object") })
     @PutMapping("/{attendeeId}/addTicket")
     @ResponseStatus(value = HttpStatus.CREATED)
-    ResponseEntity<Boolean> addTicket(@PathVariable UUID attendeeId,
-				      @RequestParam UUID ticketId);
+    Mono<Boolean> addTicket(@PathVariable UUID attendeeId,
+			    @RequestParam UUID ticketId);
 
 }

@@ -2,24 +2,20 @@ package org.com.ems.controller;
 
 import static java.util.Objects.requireNonNull;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Collection;
-import java.util.List;
 import java.util.UUID;
 import java.util.function.Function;
 
 import org.com.ems.api.domainobjects.Ticket;
 import org.com.ems.api.dto.TicketDto;
 import org.com.ems.controller.api.ITicketController;
-import org.com.ems.controller.exceptions.ObjectNotFoundException;
 import org.com.ems.services.api.IService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * Controller for CRUD operation for the DAO object {@link Ticket}
@@ -53,19 +49,9 @@ public class TicketController implements ITicketController {
      * {@inheritDoc}
      */
     @Override
-    public ResponseEntity<TicketDto> postTicket(final TicketDto ticketDto) {
+    public Mono<TicketDto> postTicket(final TicketDto ticketDto) {
 
-	final Ticket newTicket = this.ticketService.add(ticketDto);
-
-	final TicketDto newDto = this.ticketToTicketDtoConverter.apply(newTicket);
-
-	try {
-
-	    return ResponseEntity.created(new URI(TICKET_PATH)).body(newDto);
-	} catch (final URISyntaxException e) {
-
-	    return new ResponseEntity<>(newDto, HttpStatus.CREATED);
-	}
+	return this.ticketService.add(ticketDto).map(this.ticketToTicketDtoConverter::apply);
 
     }
 
@@ -73,14 +59,9 @@ public class TicketController implements ITicketController {
      * {@inheritDoc}
      */
     @Override
-    public ResponseEntity<TicketDto> getTicket(final UUID ticketId) {
+    public Mono<TicketDto> getTicket(final UUID ticketId) {
 
-	final var optionalTicket = this.ticketService.get(ticketId);
-
-	final TicketDto ticketDto = this.ticketToTicketDtoConverter
-		.apply(optionalTicket.orElseThrow(() -> new ObjectNotFoundException(ticketId, TicketDto.class)));
-
-	return ResponseEntity.ok(ticketDto);
+	return this.ticketService.get(ticketId).map(this.ticketToTicketDtoConverter::apply);
 
     }
 
@@ -88,20 +69,10 @@ public class TicketController implements ITicketController {
      * {@inheritDoc}
      */
     @Override
-    public ResponseEntity<TicketDto> putTicket(final UUID ticketId,
-					       final TicketDto ticketDto) {
+    public Mono<TicketDto> putTicket(final UUID ticketId,
+				     final TicketDto ticketDto) {
 
-	final Ticket newTicket = this.ticketService.edit(ticketId, ticketDto);
-
-	final TicketDto newDto = this.ticketToTicketDtoConverter.apply(newTicket);
-
-	try {
-
-	    return ResponseEntity.created(new URI(TICKET_PATH + ticketId)).body(newDto);
-	} catch (final URISyntaxException e) {
-
-	    return new ResponseEntity<>(newDto, HttpStatus.CREATED);
-	}
+	return this.ticketService.edit(ticketId, ticketDto).map(this.ticketToTicketDtoConverter::apply);
 
     }
 
@@ -109,16 +80,9 @@ public class TicketController implements ITicketController {
      * {@inheritDoc}
      */
     @Override
-    public ResponseEntity<?> deleteTicket(final UUID ticketId) {
+    public Mono<?> deleteTicket(final UUID ticketId) {
 
-	if (!this.ticketService.existsById(ticketId)) {
-
-	    throw new ObjectNotFoundException(ticketId, Ticket.class);
-	}
-
-	this.ticketService.delete(ticketId);
-
-	return ResponseEntity.noContent().build();
+	return this.ticketService.delete(ticketId);
 
     }
 
@@ -126,12 +90,9 @@ public class TicketController implements ITicketController {
      * {@inheritDoc}
      */
     @Override
-    public ResponseEntity<Collection<TicketDto>> getTickets() {
+    public Flux<TicketDto> getTickets() {
 
-	final List<TicketDto> listOfDtos = this.ticketService.getAll().stream()
-		.map(this.ticketToTicketDtoConverter::apply).toList();
-
-	return ResponseEntity.ok(listOfDtos);
+	return this.ticketService.getAll().map(this.ticketToTicketDtoConverter::apply);
 
     }
 

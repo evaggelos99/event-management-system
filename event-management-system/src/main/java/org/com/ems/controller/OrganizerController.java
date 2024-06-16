@@ -2,24 +2,20 @@ package org.com.ems.controller;
 
 import static java.util.Objects.requireNonNull;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Collection;
-import java.util.List;
 import java.util.UUID;
 import java.util.function.Function;
 
 import org.com.ems.api.domainobjects.Organizer;
 import org.com.ems.api.dto.OrganizerDto;
 import org.com.ems.controller.api.IOrganizerController;
-import org.com.ems.controller.exceptions.ObjectNotFoundException;
 import org.com.ems.services.api.IService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * Controller for CRUD operation for the DAO object {@link Organizer}
@@ -55,19 +51,9 @@ public class OrganizerController implements IOrganizerController {
      * {@inheritDoc}
      */
     @Override
-    public ResponseEntity<OrganizerDto> postOrganizer(final OrganizerDto organizerDto) {
+    public Mono<OrganizerDto> postOrganizer(final OrganizerDto organizerDto) {
 
-	final Organizer organizer = this.organizerService.add(organizerDto);
-
-	final OrganizerDto newDto = this.organizerToOrganizerDtoConverter.apply(organizer);
-
-	try {
-
-	    return ResponseEntity.created(new URI(ORGANIZER_PATH)).body(newDto);
-	} catch (final URISyntaxException e) {
-
-	    return new ResponseEntity<>(newDto, HttpStatus.CREATED);
-	}
+	return this.organizerService.add(organizerDto).map(this.organizerToOrganizerDtoConverter::apply);
 
     }
 
@@ -75,14 +61,9 @@ public class OrganizerController implements IOrganizerController {
      * {@inheritDoc}
      */
     @Override
-    public ResponseEntity<OrganizerDto> getOrganizer(final UUID organizerId) {
+    public Mono<OrganizerDto> getOrganizer(final UUID organizerId) {
 
-	final var optionalOrganizer = this.organizerService.get(organizerId);
-
-	final OrganizerDto organizerDto = this.organizerToOrganizerDtoConverter.apply(
-		optionalOrganizer.orElseThrow(() -> new ObjectNotFoundException(organizerId, OrganizerDto.class)));
-
-	return ResponseEntity.ok(organizerDto);
+	return this.organizerService.get(organizerId).map(this.organizerToOrganizerDtoConverter::apply);
 
     }
 
@@ -90,20 +71,10 @@ public class OrganizerController implements IOrganizerController {
      * {@inheritDoc}
      */
     @Override
-    public ResponseEntity<OrganizerDto> putOrganizer(final UUID organizerId,
-						     final OrganizerDto organizerDto) {
+    public Mono<OrganizerDto> putOrganizer(final UUID organizerId,
+					   final OrganizerDto organizerDto) {
 
-	final Organizer organizer = this.organizerService.edit(organizerId, organizerDto);
-
-	final OrganizerDto newDto = this.organizerToOrganizerDtoConverter.apply(organizer);
-
-	try {
-
-	    return ResponseEntity.created(new URI("/organizer/" + organizerId)).body(newDto);
-	} catch (final URISyntaxException e) {
-
-	    return new ResponseEntity<>(newDto, HttpStatus.CREATED);
-	}
+	return this.organizerService.edit(organizerId, organizerDto).map(this.organizerToOrganizerDtoConverter::apply);
 
     }
 
@@ -111,10 +82,9 @@ public class OrganizerController implements IOrganizerController {
      * {@inheritDoc}
      */
     @Override
-    public ResponseEntity<?> deleteOrganizer(final UUID organizerId) {
+    public Mono<?> deleteOrganizer(final UUID organizerId) {
 
-	this.organizerService.delete(organizerId);
-	return ResponseEntity.noContent().build();
+	return this.organizerService.delete(organizerId);
 
     }
 
@@ -122,12 +92,9 @@ public class OrganizerController implements IOrganizerController {
      * {@inheritDoc}
      */
     @Override
-    public ResponseEntity<Collection<OrganizerDto>> getOrganizers() {
+    public Flux<OrganizerDto> getOrganizers() {
 
-	final List<OrganizerDto> listOfDtos = this.organizerService.getAll().stream()
-		.map(this.organizerToOrganizerDtoConverter::apply).toList();
-
-	return ResponseEntity.ok(listOfDtos);
+	return this.organizerService.getAll().map(this.organizerToOrganizerDtoConverter::apply);
 
     }
 

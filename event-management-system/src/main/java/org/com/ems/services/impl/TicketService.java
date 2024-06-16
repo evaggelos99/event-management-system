@@ -2,18 +2,19 @@ package org.com.ems.services.impl;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.Collection;
-import java.util.NoSuchElementException;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.com.ems.api.domainobjects.Ticket;
 import org.com.ems.api.dto.TicketDto;
+import org.com.ems.controller.exceptions.ObjectNotFoundException;
 import org.com.ems.db.ITicketRepository;
 import org.com.ems.db.impl.TicketRepository;
 import org.com.ems.services.api.IService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Service
 public class TicketService implements IService<Ticket, TicketDto> {
@@ -36,7 +37,7 @@ public class TicketService implements IService<Ticket, TicketDto> {
      * {@inheritDoc}
      */
     @Override
-    public Ticket add(final TicketDto attendee) {
+    public Mono<Ticket> add(final TicketDto attendee) {
 
 	return this.ticketRepository.save(attendee);
 
@@ -46,7 +47,7 @@ public class TicketService implements IService<Ticket, TicketDto> {
      * {@inheritDoc}
      */
     @Override
-    public Optional<Ticket> get(final UUID uuid) {
+    public Mono<Ticket> get(final UUID uuid) {
 
 	return this.ticketRepository.findById(uuid);
 
@@ -56,23 +57,9 @@ public class TicketService implements IService<Ticket, TicketDto> {
      * {@inheritDoc}
      */
     @Override
-    public void delete(final UUID uuid) {
+    public Mono<Boolean> delete(final UUID uuid) {
 
-	this.ticketRepository.deleteById(uuid);
-
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Ticket edit(final UUID uuid,
-		       final TicketDto attendee) {
-
-	if (!this.ticketRepository.existsById(uuid))
-	    throw new NoSuchElementException();
-
-	return this.ticketRepository.edit(attendee);
+	return this.ticketRepository.deleteById(uuid);
 
     }
 
@@ -80,7 +67,19 @@ public class TicketService implements IService<Ticket, TicketDto> {
      * {@inheritDoc}
      */
     @Override
-    public Collection<Ticket> getAll() {
+    public Mono<Ticket> edit(final UUID uuid,
+			     final TicketDto ticket) {
+
+	return !uuid.equals(ticket.uuid()) ? Mono.error(() -> new ObjectNotFoundException(uuid, TicketDto.class))
+		: this.ticketRepository.edit(ticket);
+
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Flux<Ticket> getAll() {
 
 	return this.ticketRepository.findAll();
 
@@ -90,7 +89,7 @@ public class TicketService implements IService<Ticket, TicketDto> {
      * {@inheritDoc}
      */
     @Override
-    public boolean existsById(final UUID attendeeId) {
+    public Mono<Boolean> existsById(final UUID attendeeId) {
 
 	return this.ticketRepository.existsById(attendeeId);
 
