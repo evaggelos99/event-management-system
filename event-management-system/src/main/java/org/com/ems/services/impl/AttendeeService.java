@@ -2,11 +2,9 @@ package org.com.ems.services.impl;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.Collection;
+import java.time.Instant;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Function;
 
@@ -14,6 +12,7 @@ import org.com.ems.api.converters.AttendeeToAttendeeDtoConverter;
 import org.com.ems.api.domainobjects.Attendee;
 import org.com.ems.api.domainobjects.Ticket;
 import org.com.ems.api.dto.AttendeeDto;
+import org.com.ems.controller.exceptions.DuplicateTicketIdInAttendeeException;
 import org.com.ems.controller.exceptions.ObjectNotFoundException;
 import org.com.ems.db.IAttendeeRepository;
 import org.com.ems.db.impl.AttendeeRepository;
@@ -23,6 +22,9 @@ import org.com.ems.services.api.ILookUpService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Service
 public class AttendeeService implements IAttendeeService {
@@ -63,7 +65,7 @@ public class AttendeeService implements IAttendeeService {
      * {@inheritDoc}
      */
     @Override
-    public Attendee add(final AttendeeDto attendee) {
+    public Mono<Attendee> add(final AttendeeDto attendee) {
 
 	return this.attendeeRepository.save(attendee);
 
@@ -73,7 +75,7 @@ public class AttendeeService implements IAttendeeService {
      * {@inheritDoc}
      */
     @Override
-    public Optional<Attendee> get(final UUID uuid) {
+    public Mono<Attendee> get(final UUID uuid) {
 
 	return this.attendeeRepository.findById(uuid);
 
@@ -83,23 +85,9 @@ public class AttendeeService implements IAttendeeService {
      * {@inheritDoc}
      */
     @Override
-    public void delete(final UUID uuid) {
+    public Mono<Boolean> delete(final UUID uuid) {
 
-	this.attendeeRepository.deleteById(uuid);
-
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Attendee edit(final UUID uuid,
-			 final AttendeeDto attendee) {
-
-	if (!this.attendeeRepository.existsById(uuid))
-	    throw new NoSuchElementException();
-
-	return this.attendeeRepository.edit(attendee);
+	return this.attendeeRepository.deleteById(uuid);
 
     }
 
@@ -107,7 +95,19 @@ public class AttendeeService implements IAttendeeService {
      * {@inheritDoc}
      */
     @Override
-    public Collection<Attendee> getAll() {
+    public Mono<Attendee> edit(final UUID uuid,
+			       final AttendeeDto attendee) {
+
+	return !uuid.equals(attendee.uuid()) ? Mono.error(() -> new ObjectNotFoundException(uuid, AttendeeDto.class))
+		: this.attendeeRepository.edit(attendee);
+
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Flux<Attendee> getAll() {
 
 	return this.attendeeRepository.findAll();
 
@@ -117,7 +117,7 @@ public class AttendeeService implements IAttendeeService {
      * {@inheritDoc}
      */
     @Override
-    public boolean existsById(final UUID attendeeId) {
+    public Mono<Boolean> existsById(final UUID attendeeId) {
 
 	return this.attendeeRepository.existsById(attendeeId);
 
@@ -127,35 +127,35 @@ public class AttendeeService implements IAttendeeService {
      * {@inheritDoc}
      */
     @Override
-    public boolean addTicket(final UUID attendeeId,
-			     final UUID ticketId) {
+    public Mono<Boolean> addTicket(final UUID attendeeId,
+				   final UUID ticketId) {
 
-	final Optional<Attendee> optionalAttendee = this.attendeeRepository.findById(attendeeId);
+	final Mono<Attendee> monoAttendee = this.attendeeRepository.findById(attendeeId);
 
-	final Attendee attendee = optionalAttendee
-		.orElseThrow(() -> new ObjectNotFoundException(attendeeId, AttendeeDto.class));
+	return monoAttendee.map(x -> this.addTicketIdToExistingList(attendeeId, ticketId, x))
+		.map(this.attendeeToAttendeeDtoConverter::apply)//
+		.flatMap(this.attendeeRepository::edit)//
+		.flatMap(x -> this.lookUpTicketService.get(ticketId))//
+		.flatMap(x -> this.eventService.addAttendee(x.getEventID(), attendeeId)).onErrorReturn(Boolean.FALSE);
 
-	final List<UUID> ids = attendee.getTicketIDs();
+    }
 
-	final LinkedList<UUID> list = new LinkedList<>(ids);
-	list.add(ticketId);
+    private Attendee addTicketIdToExistingList(final UUID attendeeId,
+					       final UUID ticketId,
+					       final Attendee x) {
 
-	final Attendee newEvent = new Attendee(attendee.getUuid(), attendee.getCreatedAt(), attendee.getLastUpdated(),
-		attendee.getFirstName(), attendee.getLastName(), list);
+//	validateTicketIds();
+	final List<UUID> list = x.getTicketIDs();
 
-	final AttendeeDto dto = this.attendeeToAttendeeDtoConverter.apply(newEvent);
+	if (list.stream().noneMatch(ticketId::equals)) {
 
-	final Attendee attendeeFromRepo = this.attendeeRepository.edit(dto);
-
-	if (!attendeeFromRepo.getTicketIDs().containsAll(list)) {
-
-	    return false;
+	    final LinkedList<UUID> newList = new LinkedList<>(list);
+	    newList.add(ticketId);
+	    return new Attendee(attendeeId, x.getCreatedAt(), Instant.now(), x.getFirstName(), x.getLastName(),
+		    newList);
 	}
 
-	final Ticket ticket = this.lookUpTicketService.get(ticketId)
-		.orElseThrow(() -> new ObjectNotFoundException(ticketId, Ticket.class));
-
-	return this.eventService.addAttendee(ticket.getEventID(), attendeeId);
+	throw new DuplicateTicketIdInAttendeeException(ticketId);
 
     }
 

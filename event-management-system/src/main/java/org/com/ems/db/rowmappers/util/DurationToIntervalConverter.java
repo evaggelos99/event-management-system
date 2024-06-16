@@ -3,8 +3,9 @@ package org.com.ems.db.rowmappers.util;
 import java.time.Duration;
 import java.util.function.Function;
 
-import org.postgresql.util.PGInterval;
 import org.springframework.stereotype.Component;
+
+import io.r2dbc.postgresql.codec.Interval;
 
 @Component
 public class DurationToIntervalConverter implements Function<Duration, Object> {
@@ -12,7 +13,7 @@ public class DurationToIntervalConverter implements Function<Duration, Object> {
     @Override
     public Object apply(final Duration duration) {
 
-	return new PGInterval(0, 0, 0, 0, 0, duration.getSeconds());
+	return Interval.of(duration);
 
     }
 

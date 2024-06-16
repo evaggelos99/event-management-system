@@ -6,6 +6,8 @@ import org.com.ems.api.domainobjects.Event;
 import org.com.ems.api.dto.EventDto;
 import org.com.ems.services.impl.AttendeeService;
 
+import reactor.core.publisher.Mono;
+
 public interface IEventService extends IService<Event, EventDto> {
 
     /**
@@ -18,7 +20,7 @@ public interface IEventService extends IService<Event, EventDto> {
      * @return {@link Boolean#TRUE} if the action succeeded else
      *         {@link Boolean#FALSE}
      */
-    boolean addAttendee(UUID eventId,
-			UUID attendeeId);
+    Mono<Boolean> addAttendee(UUID eventId,
+			      UUID attendeeId);
 
 }

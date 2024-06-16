@@ -2,18 +2,19 @@ package org.com.ems.services.impl;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.Collection;
-import java.util.NoSuchElementException;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.com.ems.api.domainobjects.Sponsor;
 import org.com.ems.api.dto.SponsorDto;
+import org.com.ems.controller.exceptions.ObjectNotFoundException;
 import org.com.ems.db.ISponsorRepository;
 import org.com.ems.db.impl.SponsorRepository;
 import org.com.ems.services.api.IService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Service
 public class SponsorService implements IService<Sponsor, SponsorDto> {
@@ -36,7 +37,7 @@ public class SponsorService implements IService<Sponsor, SponsorDto> {
      * {@inheritDoc}
      */
     @Override
-    public Sponsor add(final SponsorDto attendee) {
+    public Mono<Sponsor> add(final SponsorDto attendee) {
 
 	return this.sponsorRepository.save(attendee);
 
@@ -46,7 +47,7 @@ public class SponsorService implements IService<Sponsor, SponsorDto> {
      * {@inheritDoc}
      */
     @Override
-    public Optional<Sponsor> get(final UUID uuid) {
+    public Mono<Sponsor> get(final UUID uuid) {
 
 	return this.sponsorRepository.findById(uuid);
 
@@ -56,23 +57,9 @@ public class SponsorService implements IService<Sponsor, SponsorDto> {
      * {@inheritDoc}
      */
     @Override
-    public void delete(final UUID uuid) {
+    public Mono<Boolean> delete(final UUID uuid) {
 
-	this.sponsorRepository.deleteById(uuid);
-
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Sponsor edit(final UUID uuid,
-			final SponsorDto attendee) {
-
-	if (!this.sponsorRepository.existsById(uuid))
-	    throw new NoSuchElementException();
-
-	return this.sponsorRepository.edit(attendee);
+	return this.sponsorRepository.deleteById(uuid);
 
     }
 
@@ -80,7 +67,19 @@ public class SponsorService implements IService<Sponsor, SponsorDto> {
      * {@inheritDoc}
      */
     @Override
-    public Collection<Sponsor> getAll() {
+    public Mono<Sponsor> edit(final UUID uuid,
+			      final SponsorDto sponsor) {
+
+	return !uuid.equals(sponsor.uuid()) ? Mono.error(() -> new ObjectNotFoundException(uuid, SponsorDto.class))
+		: this.sponsorRepository.edit(sponsor);
+
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Flux<Sponsor> getAll() {
 
 	return this.sponsorRepository.findAll();
 
@@ -90,7 +89,7 @@ public class SponsorService implements IService<Sponsor, SponsorDto> {
      * {@inheritDoc}
      */
     @Override
-    public boolean existsById(final UUID attendeeId) {
+    public Mono<Boolean> existsById(final UUID attendeeId) {
 
 	return this.sponsorRepository.existsById(attendeeId);
 

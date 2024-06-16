@@ -47,6 +47,16 @@
 			<version>${org.springframework.boot.version}</version>
 		</dependency>
 		<dependency>
+		    <groupId>org.postgresql</groupId>
+		    <artifactId>r2dbc-postgresql</artifactId>
+		    <version>1.0.5.RELEASE</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.springframework</groupId>
+		    <artifactId>spring-r2dbc</artifactId>
+		    <version>6.1.9</version>
+		</dependency>
+		<dependency>
 			<groupId>jakarta.validation</groupId>
 			<artifactId>jakarta.validation-api</artifactId>
 			<version>${jakarta.persistence.validation.version}</version>
@@ -62,9 +72,20 @@
 			<version>${springdoc.openapi.starter.webmvc.ui.version}</version>
 		</dependency>
 		<dependency>
+		    <groupId>org.springframework.boot</groupId>
+		    <artifactId>spring-boot-starter-webflux</artifactId>
+		    <version>${org.springframework.boot.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<version>${org.springframework.boot.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.projectreactor</groupId>
+			<artifactId>reactor-test</artifactId>
+			<version>3.6.4</version> 
 			<scope>test</scope>
 		</dependency>
 		<dependency>

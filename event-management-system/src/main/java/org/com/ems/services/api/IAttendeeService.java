@@ -5,6 +5,8 @@ import java.util.UUID;
 import org.com.ems.api.domainobjects.Attendee;
 import org.com.ems.api.dto.AttendeeDto;
 
+import reactor.core.publisher.Mono;
+
 public interface IAttendeeService extends IService<Attendee, AttendeeDto> {
 
     /**
@@ -17,6 +19,6 @@ public interface IAttendeeService extends IService<Attendee, AttendeeDto> {
      * @return {@link Boolean#TRUE} if the action succeeded else
      *         {@link Boolean#FALSE}
      */
-    boolean addTicket(UUID attendeeId,
-		      UUID ticketId);
+    Mono<Boolean> addTicket(UUID attendeeId,
+			    UUID ticketId);
 }

@@ -2,23 +2,20 @@ package org.com.ems.controller;
 
 import static java.util.Objects.requireNonNull;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Collection;
 import java.util.UUID;
 import java.util.function.Function;
 
 import org.com.ems.api.domainobjects.Sponsor;
 import org.com.ems.api.dto.SponsorDto;
 import org.com.ems.controller.api.ISponsorController;
-import org.com.ems.controller.exceptions.ObjectNotFoundException;
 import org.com.ems.services.api.IService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * Controller for CRUD operation for the DAO object {@link Sponsor}
@@ -52,18 +49,9 @@ public class SponsorController implements ISponsorController {
      * {@inheritDoc}
      */
     @Override
-    public ResponseEntity<SponsorDto> postSponsor(final SponsorDto sponsorDto) {
+    public Mono<SponsorDto> postSponsor(final SponsorDto sponsorDto) {
 
-	final Sponsor sponsor = this.sponsorService.add(sponsorDto);
-	final SponsorDto newSponsorDto = this.sponsorToSponsorDtoConverter.apply(sponsor);
-
-	try {
-
-	    return ResponseEntity.created(new URI(SPONSOR_PATH)).body(newSponsorDto);
-	} catch (final URISyntaxException e) {
-
-	    return new ResponseEntity<>(newSponsorDto, HttpStatus.CREATED);
-	}
+	return this.sponsorService.add(sponsorDto).map(this.sponsorToSponsorDtoConverter::apply);
 
     }
 
@@ -71,14 +59,9 @@ public class SponsorController implements ISponsorController {
      * {@inheritDoc}
      */
     @Override
-    public ResponseEntity<SponsorDto> getSponsor(final UUID sponsorId) {
+    public Mono<SponsorDto> getSponsor(final UUID sponsorId) {
 
-	final var optionalSponsor = this.sponsorService.get(sponsorId);
-
-	final SponsorDto sponsorDto = this.sponsorToSponsorDtoConverter
-		.apply(optionalSponsor.orElseThrow(() -> new ObjectNotFoundException(sponsorId, SponsorDto.class)));
-
-	return ResponseEntity.ok(sponsorDto);
+	return this.sponsorService.get(sponsorId).map(this.sponsorToSponsorDtoConverter::apply);
 
     }
 
@@ -86,19 +69,10 @@ public class SponsorController implements ISponsorController {
      * {@inheritDoc}
      */
     @Override
-    public ResponseEntity<SponsorDto> putSponsor(final UUID sponsorId,
-						 final SponsorDto sponsorDto) {
+    public Mono<SponsorDto> putSponsor(final UUID sponsorId,
+				       final SponsorDto sponsorDto) {
 
-	final Sponsor sponsor = this.sponsorService.edit(sponsorId, sponsorDto);
-	final SponsorDto newSponsorDto = this.sponsorToSponsorDtoConverter.apply(sponsor);
-
-	try {
-
-	    return ResponseEntity.created(new URI(SPONSOR_PATH + sponsorId)).body(newSponsorDto);
-	} catch (final URISyntaxException e) {
-
-	    return new ResponseEntity<>(newSponsorDto, HttpStatus.CREATED);
-	}
+	return this.sponsorService.edit(sponsorId, sponsorDto).map(this.sponsorToSponsorDtoConverter::apply);
 
     }
 
@@ -106,11 +80,9 @@ public class SponsorController implements ISponsorController {
      * {@inheritDoc}
      */
     @Override
-    public ResponseEntity<?> deleteSponsor(final UUID sponsorId) {
+    public Mono<?> deleteSponsor(final UUID sponsorId) {
 
-	this.sponsorService.delete(sponsorId);
-
-	return ResponseEntity.noContent().build();
+	return this.sponsorService.delete(sponsorId);
 
     }
 
@@ -118,12 +90,9 @@ public class SponsorController implements ISponsorController {
      * {@inheritDoc}
      */
     @Override
-    public ResponseEntity<Collection<SponsorDto>> getSponsors() {
+    public Flux<SponsorDto> getSponsors() {
 
-	final var listOfDtos = this.sponsorService.getAll().stream().map(this.sponsorToSponsorDtoConverter::apply)
-		.toList();
-
-	return ResponseEntity.ok(listOfDtos);
+	return this.sponsorService.getAll().map(this.sponsorToSponsorDtoConverter::apply);
 
     }
 

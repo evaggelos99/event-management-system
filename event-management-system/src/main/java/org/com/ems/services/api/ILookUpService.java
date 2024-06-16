@@ -5,6 +5,8 @@ import java.util.UUID;
 
 import org.com.ems.api.domainobjects.AbstractDomainObject;
 
+import reactor.core.publisher.Mono;
+
 public interface ILookUpService<T extends AbstractDomainObject> {
 
     /**
@@ -14,6 +16,6 @@ public interface ILookUpService<T extends AbstractDomainObject> {
      *
      * @return {@link Optional} of the {@link T} object
      */
-    Optional<T> get(UUID id);
+    Mono<T> get(UUID id);
 
 }

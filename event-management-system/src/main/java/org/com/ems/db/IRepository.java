@@ -1,8 +1,9 @@
 package org.com.ems.db;
 
-import java.util.Collection;
-import java.util.Optional;
 import java.util.UUID;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 public interface IRepository<T, D> {
 
@@ -12,7 +13,7 @@ public interface IRepository<T, D> {
      * @param dto of the object
      * @return the object {@link T}
      */
-    T save(D dto);
+    Mono<T> save(D dto);
 
     /**
      * Finds by id
@@ -20,7 +21,7 @@ public interface IRepository<T, D> {
      * @param uuid of the {@link T}
      * @return Optional wrapped {@link T}
      */
-    Optional<T> findById(UUID uuid);
+    Mono<T> findById(UUID uuid);
 
     /**
      * Deletes given the UUID
@@ -28,7 +29,7 @@ public interface IRepository<T, D> {
      * @param uuid of the {@link T}
      * @return if the deletion was sucessful
      */
-    boolean deleteById(UUID uuid);
+    Mono<Boolean> deleteById(UUID uuid);
 
     /**
      * If it exists by id
@@ -36,14 +37,14 @@ public interface IRepository<T, D> {
      * @param uuid of the {@link T}
      * @return if the {@link T} exists
      */
-    boolean existsById(UUID uuid);
+    Mono<Boolean> existsById(UUID uuid);
 
     /**
      * Returns all of the {@link T} in the Repository
      *
      * @return
      */
-    Collection<T> findAll();
+    Flux<T> findAll();
 
     /**
      * Edits the dto and returns the domain object
@@ -51,6 +52,6 @@ public interface IRepository<T, D> {
      * @param dto of the object
      * @return the object {@link T}
      */
-    T edit(D dto);
+    Mono<T> edit(D dto);
 
 }

@@ -4,9 +4,8 @@ import static java.util.Objects.requireNonNull;
 
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.util.Collection;
 import java.util.List;
-import java.util.Optional;
+import java.util.Objects;
 import java.util.Properties;
 import java.util.UUID;
 import java.util.function.Function;
@@ -20,29 +19,26 @@ import org.com.ems.api.dto.OrganizerDto;
 import org.com.ems.db.IOrganizerRepository;
 import org.com.ems.db.queries.Queries.CrudQueriesOperations;
 import org.com.ems.db.rowmappers.OrganizerRowMapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
+import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.stereotype.Component;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Component
 public class OrganizerRepository implements IOrganizerRepository {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(OrganizerRepository.class);
-
-    private final JdbcTemplate jdbcTemplate;
-    private final RowMapper<Organizer> organizerRowMapper;
+    private final DatabaseClient databaseClient;
+    private final OrganizerRowMapper organizerRowMapper;
     private final Function<OrganizerDto, Organizer> organizerDtoToOrganizerConverter;
     private final Properties organizerQueriesProperties;
 
     /**
      * C-or
      *
-     * @param jdbcTemplate                     the {@link JdbcTemplate} used for
+     * @param databaseClient                   the {@link DatabaseClient} used for
      *                                         connecting to the database for the
      *                                         Organizer objects
      * @param organizerRowMapper               the {@link OrganizerRowMapper} used
@@ -57,14 +53,13 @@ public class OrganizerRepository implements IOrganizerRepository {
      *                                         for getting the right query CRUD
      *                                         database operations
      */
-    public OrganizerRepository(@Autowired final JdbcTemplate jdbcTemplate,
-			       @Autowired @Qualifier("organizerRowMapper") final RowMapper<
-				       Organizer> organizerRowMapper,
+    public OrganizerRepository(@Autowired final DatabaseClient databaseClient,
+			       @Autowired @Qualifier("organizerRowMapper") final OrganizerRowMapper organizerRowMapper,
 			       @Autowired @Qualifier("organizerDtoToOrganizerConverter") final Function<OrganizerDto,
 				       Organizer> organizerDtoToOrganizerConverter,
 			       @Autowired @Qualifier("organizerQueriesProperties") final Properties organizerQueriesProperties) {
 
-	this.jdbcTemplate = requireNonNull(jdbcTemplate);
+	this.databaseClient = requireNonNull(databaseClient);
 	this.organizerRowMapper = requireNonNull(organizerRowMapper);
 	this.organizerDtoToOrganizerConverter = requireNonNull(organizerDtoToOrganizerConverter);
 	this.organizerQueriesProperties = requireNonNull(organizerQueriesProperties);
@@ -72,153 +67,126 @@ public class OrganizerRepository implements IOrganizerRepository {
     }
 
     @Override
-    public Organizer save(final OrganizerDto organizerDto) {
+    public Mono<Organizer> save(final OrganizerDto organizerDto) {
 
-	final Organizer organizer = this.saveOrganizer(organizerDto);
-
-	LOGGER.trace("Saved an Organizer: " + organizer);
-
-	return organizer;
+	return this.saveOrganizer(organizerDto);
 
     }
 
     @Override
-    public Organizer edit(final OrganizerDto organizerDto) {
+    public Mono<Organizer> edit(final OrganizerDto organizerDto) {
 
-	final Organizer organizer = this.editOrganizer(organizerDto);
-
-	LOGGER.trace("Edited an Organizer: " + organizer);
-
-	return organizer;
+	return this.editOrganizer(organizerDto);
 
     }
 
     @Override
-    public Optional<Organizer> findById(final UUID uuid) {
+    public Mono<Organizer> findById(final UUID uuid) {
 
-	try {
-
-	    final Organizer organizer = this.jdbcTemplate.queryForObject(
-		    this.organizerQueriesProperties.getProperty(CrudQueriesOperations.GET_ID.name()),
-		    this.organizerRowMapper, uuid);
-	    return Optional.of(organizer);
-	} catch (final EmptyResultDataAccessException e) {
-
-	    LOGGER.warn("Organizer with UUID: {} was not found", uuid);
-	    return Optional.empty();
-	}
+	return this.databaseClient.sql(this.organizerQueriesProperties.getProperty(CrudQueriesOperations.GET_ID.name()))
+		.bind(0, uuid).map(this.organizerRowMapper::apply).one();
 
     }
 
     @Override
-    public boolean deleteById(final UUID uuid) {
+    public Mono<Boolean> deleteById(final UUID uuid) {
 
-	final int rows = this.jdbcTemplate
-		.update(this.organizerQueriesProperties.getProperty(CrudQueriesOperations.DELETE_ID.name()), uuid);
-
-	final boolean deleted = rows == 1;
-
-	if (deleted) {
-
-	    LOGGER.trace("Deleted Organizer with uuid: " + uuid);
-	} else {
-
-	    LOGGER.trace("Could not delete Organizer with uuid: " + uuid);
-	}
-
-	return deleted;
+	return this.databaseClient
+		.sql(this.organizerQueriesProperties.getProperty(CrudQueriesOperations.DELETE_ID.name())).bind(0, uuid)
+		.fetch().rowsUpdated().map(this::rowsAffectedAreMoreThanOne);
 
     }
 
     @Override
-    public boolean existsById(final UUID uuid) {
+    public Mono<Boolean> existsById(final UUID uuid) {
 
-	return this.findById(uuid).isPresent();
+	return this.findById(uuid).map(Objects::nonNull);
 
     }
 
     @Override
-    public Collection<Organizer> findAll() {
+    public Flux<Organizer> findAll() {
 
-	return this.jdbcTemplate.query(
-		this.organizerQueriesProperties.getProperty(CrudQueriesOperations.GET_ALL.name()),
-		this.organizerRowMapper);
+	return this.databaseClient
+		.sql(this.organizerQueriesProperties.getProperty(CrudQueriesOperations.GET_ALL.name()))
+		.map(this.organizerRowMapper::apply).all();
 
     }
 
-    private Organizer saveOrganizer(final OrganizerDto organizer) {
+    private Mono<Organizer> saveOrganizer(final OrganizerDto organizer) {
 
 	final UUID organizerUuid = organizer.uuid();
+	final UUID uuid = organizerUuid != null ? organizerUuid : UUID.randomUUID();
+
 	final Instant now = Instant.now();
 	final Timestamp createdAt = Timestamp.from(now);
 	final Timestamp updatedAt = Timestamp.from(now);
-
-	final UUID uuid = organizerUuid != null ? organizerUuid : UUID.randomUUID();
-	return this.saveOrEditCommand(uuid, createdAt, updatedAt, organizer, true);
-
-    }
-
-    private Organizer editOrganizer(final OrganizerDto organizer) {
-
-	final UUID uuid = organizer.uuid();
-	final Timestamp createdAt = this.getCreatedAt(uuid);
-	final Timestamp updatedAt = Timestamp.from(Instant.now());
-
-	return this.saveOrEditCommand(uuid, createdAt, updatedAt, organizer, false);
-
-    }
-
-    private Organizer saveOrEditCommand(final UUID uuid,
-					final Timestamp createdAt,
-					final Timestamp updatedAt,
-					final OrganizerDto organizer,
-					final boolean isSaveOperation) {
 
 	final String name = organizer.denomination();
 	final String website = organizer.website();
 	final String description = organizer.information();
 	final List<EventType> listOfEventTypes = organizer.eventTypes();
 	final ContactInformation contactInformation = organizer.contactInformation();
-	final String[] eventTypesArray = this.convertToArray(listOfEventTypes);
+	final EventType[] eventTypesArray = this.convertToArray(listOfEventTypes);
 
-	if (isSaveOperation) {
+	final Mono<Long> rowsAffected = this.databaseClient
+		.sql(this.organizerQueriesProperties.getProperty(CrudQueriesOperations.SAVE.name())).bind(0, uuid)
+		.bind(1, createdAt).bind(2, updatedAt).bind(3, name).bind(4, website).bind(5, description)
+		.bind(6, eventTypesArray).bind(7, contactInformation.email()).bind(8, contactInformation.phoneNumber())
+		.bind(9, contactInformation.physicalAddress()).fetch().rowsUpdated();
 
-	    this.jdbcTemplate.update(this.organizerQueriesProperties.getProperty(CrudQueriesOperations.SAVE.name()),
-		    uuid, createdAt, updatedAt, name, website, description, eventTypesArray, contactInformation.email(),
-		    contactInformation.phoneNumber(), contactInformation.physicalAddress());
-	} else {
-
-	    this.jdbcTemplate.update(this.organizerQueriesProperties.getProperty(CrudQueriesOperations.EDIT.name()),
-		    uuid, createdAt, updatedAt, name, website, description, eventTypesArray, contactInformation.email(),
-		    contactInformation.phoneNumber(), contactInformation.physicalAddress(), uuid);
-
-	}
-
-	return this.organizerDtoToOrganizerConverter.apply(new OrganizerDto(uuid, createdAt, updatedAt, name, website,
-		description, listOfEventTypes, contactInformation));
+	return rowsAffected.filter(this::rowsAffectedAreMoreThanOne)
+		.map(n_ -> this.organizerDtoToOrganizerConverter.apply(new OrganizerDto(uuid, createdAt, updatedAt,
+			name, website, description, listOfEventTypes, contactInformation)));
 
     }
 
-    private String[] convertToArray(final List<EventType> ticketIds) {
+    private Mono<Organizer> editOrganizer(final OrganizerDto organizer) {
+
+	final UUID uuid = organizer.uuid();
+	final Timestamp updatedAt = Timestamp.from(Instant.now());
+
+	final String name = organizer.denomination();
+	final String website = organizer.website();
+	final String description = organizer.information();
+	final List<EventType> listOfEventTypes = organizer.eventTypes();
+	final ContactInformation contactInformation = organizer.contactInformation();
+	final EventType[] eventTypesArray = this.convertToArray(listOfEventTypes);
+
+	final Mono<Long> rowsAffected = this.databaseClient
+		.sql(this.organizerQueriesProperties.getProperty(CrudQueriesOperations.EDIT.name())).bind(0, uuid)
+		.bind(1, updatedAt).bind(2, name).bind(3, website).bind(4, description).bind(5, eventTypesArray)
+		.bind(6, contactInformation.email()).bind(7, contactInformation.phoneNumber())
+		.bind(8, contactInformation.physicalAddress()).bind(9, uuid).fetch().rowsUpdated();
+
+	return rowsAffected.filter(this::rowsAffectedAreMoreThanOne).flatMap(n_ -> this.findById(uuid))
+		.map(AbstractDomainObject::getCreatedAt)
+		.map(createdAt -> this.organizerDtoToOrganizerConverter
+			.apply(new OrganizerDto(uuid, Timestamp.from(createdAt), updatedAt, name, website, description,
+				listOfEventTypes, contactInformation)));
+
+    }
+
+    private EventType[] convertToArray(final List<EventType> ticketIds) {
 
 	if (null == ticketIds) {
 
-	    return new String[] {};
+	    return new EventType[] {};
 	}
 
-	final String[] eventTypesArray = new String[ticketIds.size()];
+	final EventType[] eventTypesArray = new EventType[ticketIds.size()];
 
 	for (int i = 0; i < eventTypesArray.length; i++) {
 
-	    eventTypesArray[i] = ticketIds.get(i).name();
+	    eventTypesArray[i] = ticketIds.get(i);
 	}
 	return eventTypesArray;
 
     }
 
-    private Timestamp getCreatedAt(final UUID uuid) {
+    private boolean rowsAffectedAreMoreThanOne(final Long x) {
 
-	return Timestamp.from(this.findById(uuid).map(AbstractDomainObject::getCreatedAt).orElse(Instant.now()));
+	return x >= 1;
 
     }
 

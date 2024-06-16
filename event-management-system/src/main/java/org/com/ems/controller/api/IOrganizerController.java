@@ -1,12 +1,10 @@
 package org.com.ems.controller.api;
 
-import java.util.Collection;
 import java.util.UUID;
 
 import org.com.ems.api.domainobjects.Organizer;
 import org.com.ems.api.dto.OrganizerDto;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +18,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * Interface for the {@link Organizer} Controller
@@ -39,7 +39,7 @@ public interface IOrganizerController {
     @ApiResponses(value = { @ApiResponse(responseCode = "201", description = "successful operation") })
     @ResponseStatus(value = HttpStatus.CREATED)
     @PostMapping
-    ResponseEntity<OrganizerDto> postOrganizer(@Valid @RequestBody OrganizerDto organizerDto);
+    Mono<OrganizerDto> postOrganizer(@Valid @RequestBody OrganizerDto organizerDto);
 
     /**
      * Method that gets an Organizer DAO object from the DB
@@ -51,7 +51,7 @@ public interface IOrganizerController {
 	    @ApiResponse(responseCode = "404", description = "could not find the object") })
     @ResponseStatus(value = HttpStatus.OK)
     @GetMapping("/{organizerId}")
-    ResponseEntity<OrganizerDto> getOrganizer(@PathVariable UUID organizerId);
+    Mono<OrganizerDto> getOrganizer(@PathVariable UUID organizerId);
 
     /**
      * Method that gets all Organizer objects from the DB
@@ -61,7 +61,7 @@ public interface IOrganizerController {
     @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "successful operation") })
     @ResponseStatus(value = HttpStatus.OK)
     @GetMapping()
-    ResponseEntity<Collection<OrganizerDto>> getOrganizers();
+    Flux<OrganizerDto> getOrganizers();
 
     /**
      * Method that updates the Organizer with that organizerId If the id does not
@@ -75,8 +75,8 @@ public interface IOrganizerController {
 	    @ApiResponse(responseCode = "404", description = "could not find the object") })
     @ResponseStatus(value = HttpStatus.CREATED)
     @PutMapping("/{organizerId}")
-    ResponseEntity<OrganizerDto> putOrganizer(@PathVariable UUID organizerId,
-					      @Valid @RequestBody OrganizerDto organizerDto);
+    Mono<OrganizerDto> putOrganizer(@PathVariable UUID organizerId,
+				    @Valid @RequestBody OrganizerDto organizerDto);
 
     /**
      * Method that deletes the Organizer with the specific organizerId
@@ -87,6 +87,6 @@ public interface IOrganizerController {
     @ApiResponses(value = { @ApiResponse(responseCode = "204", description = "successful operation") })
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @DeleteMapping(path = "/{organizerId}")
-    ResponseEntity<?> deleteOrganizer(@PathVariable UUID organizerId);
+    Mono<?> deleteOrganizer(@PathVariable UUID organizerId);
 
 }

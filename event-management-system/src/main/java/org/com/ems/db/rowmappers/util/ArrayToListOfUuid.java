@@ -1,40 +1,22 @@
 package org.com.ems.db.rowmappers.util;
 
-import java.sql.Array;
-import java.sql.SQLException;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Function;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ArrayToListOfUuid implements Function<Array, List<UUID>> {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(ArrayToListOfUuid.class);
+public class ArrayToListOfUuid implements Function<UUID[], List<UUID>> {
 
     @Override
-    public List<UUID> apply(final Array array) {
+    public List<UUID> apply(final UUID[] array) {
 
 	final List<UUID> list = new LinkedList<>();
 
-	try {
-
-	    final UUID[] ss = (UUID[]) array.getArray();
-
-	    Collections.addAll(list, ss);
-
-	} catch (final SQLException e) {
-
-	    LOGGER.error("Exception occured", e);
-	} catch (final ClassCastException cce) {
-
-	    LOGGER.error("The array was not of type UUID", cce);
-	}
+	Collections.addAll(list, array);
 
 	return list;
 

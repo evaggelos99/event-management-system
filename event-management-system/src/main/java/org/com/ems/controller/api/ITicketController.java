@@ -1,12 +1,10 @@
 package org.com.ems.controller.api;
 
-import java.util.Collection;
 import java.util.UUID;
 
 import org.com.ems.api.domainobjects.Ticket;
 import org.com.ems.api.dto.TicketDto;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +18,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * Interface for the {@link Ticket} Controller
@@ -39,7 +39,7 @@ public interface ITicketController {
     @ApiResponses(value = { @ApiResponse(responseCode = "201", description = "successful operation") })
     @ResponseStatus(value = HttpStatus.CREATED)
     @PostMapping
-    ResponseEntity<TicketDto> postTicket(@Valid @RequestBody TicketDto ticketDto);
+    Mono<TicketDto> postTicket(@Valid @RequestBody TicketDto ticketDto);
 
     /**
      * Method that gets an Ticket DAO object from the DB
@@ -51,7 +51,7 @@ public interface ITicketController {
 	    @ApiResponse(responseCode = "404", description = "could not find the object") })
     @ResponseStatus(value = HttpStatus.OK)
     @GetMapping("/{ticketId}")
-    ResponseEntity<TicketDto> getTicket(@PathVariable UUID ticketId);
+    Mono<TicketDto> getTicket(@PathVariable UUID ticketId);
 
     /**
      * Method that returns all Ticket objects from the DB
@@ -61,7 +61,7 @@ public interface ITicketController {
     @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "successful operation") })
     @ResponseStatus(value = HttpStatus.OK)
     @GetMapping()
-    ResponseEntity<Collection<TicketDto>> getTickets();
+    Flux<TicketDto> getTickets();
 
     /**
      * Method that updates the Ticket with that AttendeeId If the id does not match
@@ -75,8 +75,8 @@ public interface ITicketController {
 	    @ApiResponse(responseCode = "404", description = "could not find the object") })
     @ResponseStatus(value = HttpStatus.CREATED)
     @PutMapping("/{ticketId}")
-    ResponseEntity<TicketDto> putTicket(@PathVariable UUID ticketId,
-					@Valid @RequestBody TicketDto ticketDto);
+    Mono<TicketDto> putTicket(@PathVariable UUID ticketId,
+			      @Valid @RequestBody TicketDto ticketDto);
 
     /**
      * Method that deletes the Ticket with the specific AttendeeId
@@ -87,6 +87,6 @@ public interface ITicketController {
     @ApiResponses(value = { @ApiResponse(responseCode = "204", description = "successful operation") })
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @DeleteMapping("/{ticketId}")
-    ResponseEntity<?> deleteTicket(@PathVariable UUID ticketId);
+    Mono<?> deleteTicket(@PathVariable UUID ticketId);
 
 }

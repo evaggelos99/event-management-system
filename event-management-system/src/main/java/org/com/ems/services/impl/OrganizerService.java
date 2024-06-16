@@ -2,18 +2,19 @@ package org.com.ems.services.impl;
 
 import static java.util.Objects.requireNonNull;
 
-import java.util.Collection;
-import java.util.NoSuchElementException;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.com.ems.api.domainobjects.Organizer;
 import org.com.ems.api.dto.OrganizerDto;
+import org.com.ems.controller.exceptions.ObjectNotFoundException;
 import org.com.ems.db.IOrganizerRepository;
 import org.com.ems.db.impl.OrganizerRepository;
 import org.com.ems.services.api.IService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 @Service
 public class OrganizerService implements IService<Organizer, OrganizerDto> {
@@ -36,7 +37,7 @@ public class OrganizerService implements IService<Organizer, OrganizerDto> {
      * {@inheritDoc}
      */
     @Override
-    public Organizer add(final OrganizerDto attendee) {
+    public Mono<Organizer> add(final OrganizerDto attendee) {
 
 	return this.organizerRepository.save(attendee);
 
@@ -46,7 +47,7 @@ public class OrganizerService implements IService<Organizer, OrganizerDto> {
      * {@inheritDoc}
      */
     @Override
-    public Optional<Organizer> get(final UUID uuid) {
+    public Mono<Organizer> get(final UUID uuid) {
 
 	return this.organizerRepository.findById(uuid);
 
@@ -56,23 +57,9 @@ public class OrganizerService implements IService<Organizer, OrganizerDto> {
      * {@inheritDoc}
      */
     @Override
-    public void delete(final UUID uuid) {
+    public Mono<Boolean> delete(final UUID uuid) {
 
-	this.organizerRepository.deleteById(uuid);
-
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Organizer edit(final UUID uuid,
-			  final OrganizerDto attendee) {
-
-	if (!this.organizerRepository.existsById(uuid))
-	    throw new NoSuchElementException();
-
-	return this.organizerRepository.edit(attendee);
+	return this.organizerRepository.deleteById(uuid);
 
     }
 
@@ -80,7 +67,19 @@ public class OrganizerService implements IService<Organizer, OrganizerDto> {
      * {@inheritDoc}
      */
     @Override
-    public Collection<Organizer> getAll() {
+    public Mono<Organizer> edit(final UUID uuid,
+				final OrganizerDto organizer) {
+
+	return !uuid.equals(organizer.uuid()) ? Mono.error(() -> new ObjectNotFoundException(uuid, OrganizerDto.class))
+		: this.organizerRepository.edit(organizer);
+
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Flux<Organizer> getAll() {
 
 	return this.organizerRepository.findAll();
 
@@ -90,7 +89,7 @@ public class OrganizerService implements IService<Organizer, OrganizerDto> {
      * {@inheritDoc}
      */
     @Override
-    public boolean existsById(final UUID attendeeId) {
+    public Mono<Boolean> existsById(final UUID attendeeId) {
 
 	return this.organizerRepository.existsById(attendeeId);
 

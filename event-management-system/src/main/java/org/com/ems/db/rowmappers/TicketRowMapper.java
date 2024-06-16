@@ -1,30 +1,33 @@
 package org.com.ems.db.rowmappers;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.time.OffsetDateTime;
 import java.util.UUID;
+import java.util.function.BiFunction;
 
 import org.com.ems.api.domainobjects.SeatingInformation;
 import org.com.ems.api.domainobjects.Ticket;
 import org.com.ems.api.domainobjects.TicketType;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
+import io.r2dbc.spi.Row;
+import io.r2dbc.spi.RowMetadata;
+
 @Component
-public class TicketRowMapper implements RowMapper<Ticket> {
+public class TicketRowMapper implements BiFunction<Row, RowMetadata, Ticket> {
 
     @Override
-    public Ticket mapRow(final ResultSet rs,
-			 final int rowNum)
-	    throws SQLException {
+    public Ticket apply(final Row row,
+			final RowMetadata rmd) {
 
-	final SeatingInformation seatingInformation = new SeatingInformation(rs.getString("seat"),
-		rs.getString("section"));
+	final SeatingInformation seatingInformation = new SeatingInformation(row.get("seat", String.class),
+		row.get("section", String.class));
 
-	return new Ticket(UUID.fromString(rs.getString("id")), rs.getTimestamp("created_at").toInstant(),
-		rs.getTimestamp("last_updated").toInstant(), UUID.fromString(rs.getString("event_id")),
-		TicketType.valueOf(rs.getString("ticket_type")), rs.getInt("price"), rs.getBoolean("transferable"),
-		seatingInformation);
+	return new Ticket(UUID.fromString(row.get("id", String.class)),
+		row.get("created_at", OffsetDateTime.class).toInstant(),
+		row.get("last_updated", OffsetDateTime.class).toInstant(),
+		UUID.fromString(row.get("event_id", String.class)),
+		TicketType.valueOf(row.get("ticket_type", String.class)), row.get("price", Integer.class),
+		row.get("transferable", Boolean.class), seatingInformation);
 
     }
 

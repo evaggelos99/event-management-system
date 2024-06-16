@@ -1,10 +1,12 @@
 package org.com.ems.services.api;
 
 import java.util.Collection;
-import java.util.Optional;
 import java.util.UUID;
 
 import org.com.ems.api.domainobjects.AbstractDomainObject;
+
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  *
@@ -22,20 +24,20 @@ public interface IService<T extends AbstractDomainObject, D> extends ILookUpServ
      *
      * @return the {@link T} domain object
      */
-    T add(D dto);
+    Mono<T> add(D dto);
 
     /**
      * {@inheritDoc}
      */
     @Override
-    Optional<T> get(UUID id);
+    Mono<T> get(UUID id);
 
     /**
      * Deletes the {@link T} object that matches the id
      *
      * @param id UUID of the object that is about to be deleted
      */
-    void delete(UUID id);
+    Mono<Boolean> delete(UUID id);
 
     /**
      * Edits the {@link T} object
@@ -44,15 +46,15 @@ public interface IService<T extends AbstractDomainObject, D> extends ILookUpServ
      * @param dto the objects payload
      * @return the {@link T} domain object
      */
-    T edit(UUID id,
-	   D dto);
+    Mono<T> edit(UUID id,
+		 D dto);
 
     /**
      * Fetches all the {@link T} objects available
      *
      * @return {@link Collection} of all the objects
      */
-    Collection<T> getAll();
+    Flux<T> getAll();
 
     /**
      * Method that tells your if the object with the specified id exists
@@ -61,6 +63,6 @@ public interface IService<T extends AbstractDomainObject, D> extends ILookUpServ
      * @return {@link Boolean#TRUE} if the object exists otherwise
      *         {@link Boolean#FALSE}
      */
-    boolean existsById(UUID id);
+    Mono<Boolean> existsById(UUID id);
 
 }

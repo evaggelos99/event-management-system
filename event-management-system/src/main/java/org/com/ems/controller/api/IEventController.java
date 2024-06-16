@@ -1,12 +1,10 @@
 package org.com.ems.controller.api;
 
-import java.util.Collection;
 import java.util.UUID;
 
 import org.com.ems.api.domainobjects.Event;
 import org.com.ems.api.dto.EventDto;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +18,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 /**
  * Interface for the {@link Event} Controller
@@ -39,7 +39,7 @@ public interface IEventController {
     @ApiResponses(value = { @ApiResponse(responseCode = "201", description = "successful operation") })
     @PostMapping
     @ResponseStatus(value = HttpStatus.CREATED)
-    ResponseEntity<EventDto> postEvent(@Valid @RequestBody EventDto eventDto);
+    Mono<EventDto> postEvent(@Valid @RequestBody EventDto eventDto);
 
     /**
      * Method that gets an Event DAO object from the DB
@@ -51,7 +51,7 @@ public interface IEventController {
 	    @ApiResponse(responseCode = "404", description = "could not find the object") })
     @ResponseStatus(value = HttpStatus.OK)
     @GetMapping("/{eventId}")
-    ResponseEntity<EventDto> getEvent(@PathVariable UUID eventId);
+    Mono<EventDto> getEvent(@PathVariable UUID eventId);
 
     /**
      * Method that gets all Event objects from the DB
@@ -61,7 +61,7 @@ public interface IEventController {
     @ApiResponses(value = { @ApiResponse(responseCode = "200", description = "successful operation") })
     @ResponseStatus(value = HttpStatus.OK)
     @GetMapping
-    ResponseEntity<Collection<EventDto>> getEvents();
+    Flux<EventDto> getEvents();
 
     /**
      * Method that updates the Event with that eventId If the id does not match any
@@ -75,8 +75,8 @@ public interface IEventController {
 	    @ApiResponse(responseCode = "404", description = "could not find the object") })
     @PutMapping("/{eventId}")
     @ResponseStatus(value = HttpStatus.CREATED)
-    ResponseEntity<EventDto> putEvent(@PathVariable UUID eventId,
-				      @Valid @RequestBody EventDto eventDto);
+    Mono<EventDto> putEvent(@PathVariable UUID eventId,
+			    @Valid @RequestBody EventDto eventDto);
 
     /**
      * Method that deletes the event with the specific eventId
@@ -87,6 +87,6 @@ public interface IEventController {
     @ApiResponses(value = { @ApiResponse(responseCode = "204", description = "successful operation") })
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @DeleteMapping(path = "/{eventId}")
-    ResponseEntity<?> deleteEvent(@PathVariable UUID eventId);
+    Mono<?> deleteEvent(@PathVariable UUID eventId);
 
 }

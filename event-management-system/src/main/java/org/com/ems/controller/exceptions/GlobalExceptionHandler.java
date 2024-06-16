@@ -72,4 +72,28 @@ public class GlobalExceptionHandler {
 
     }
 
+    /**
+     * Handle duplicate ticketIds in the same list
+     *
+     * @param exception
+     *
+     * @return {@link ResponseEntity} of a JSON response
+     */
+    @ExceptionHandler(DuplicateTicketIdInAttendeeException.class)
+    protected ResponseEntity<Map<String,
+	    Object>> handleDuplicateTicketIdInAttendeeException(final DuplicateTicketIdInAttendeeException exception) {
+
+	final HttpStatusCode statusCode = exception.getStatusCode();
+
+	final Map<String, Object> errorResponse = new HashMap<>();
+	errorResponse.put(TIME_STAMP, Instant.now());
+	errorResponse.put("status", statusCode.value());
+	errorResponse.put("error",
+		String.format("The ticket id with ID: '%s' cannot be inserted twice in the attendee's ticketIds",
+			exception.getUuid()));
+
+	return new ResponseEntity<>(errorResponse, new HttpHeaders(), statusCode);
+
+    }
+
 }

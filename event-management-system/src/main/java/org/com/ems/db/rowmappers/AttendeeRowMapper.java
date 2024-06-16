@@ -1,24 +1,25 @@
 package org.com.ems.db.rowmappers;
 
-import java.sql.Array;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 import org.com.ems.api.domainobjects.Attendee;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
+import io.r2dbc.spi.Row;
+import io.r2dbc.spi.RowMetadata;
+
 @Component
-public class AttendeeRowMapper implements RowMapper<Attendee> {
+public class AttendeeRowMapper implements BiFunction<Row, RowMetadata, Attendee> {
 
-    private final Function<Array, List<UUID>> arrayToListOfUuid;
+    private final Function<UUID[], List<UUID>> arrayToListOfUuid;
 
-    public AttendeeRowMapper(@Autowired @Qualifier("arrayToListOfUuid") final Function<Array,
+    public AttendeeRowMapper(@Autowired @Qualifier("arrayToListOfUuid") final Function<UUID[],
 	    List<UUID>> arrayToListOfUuid) {
 
 	this.arrayToListOfUuid = arrayToListOfUuid;
@@ -26,15 +27,15 @@ public class AttendeeRowMapper implements RowMapper<Attendee> {
     }
 
     @Override
-    public Attendee mapRow(final ResultSet rs,
-			   final int rowNum)
-	    throws SQLException {
+    public Attendee apply(final Row row,
+			  final RowMetadata u) {
 
-	final List<UUID> ticketIds = this.arrayToListOfUuid.apply(rs.getArray("ticket_ids"));
+	final List<UUID> ticketIds = this.arrayToListOfUuid.apply((UUID[]) row.get("ticket_ids"));
 
-	return new Attendee(UUID.fromString(rs.getString("id")), rs.getTimestamp("created_at").toInstant(),
-		rs.getTimestamp("last_updated").toInstant(), rs.getString("first_name"), rs.getString("last_name"),
-		ticketIds);
+	return new Attendee(UUID.fromString(row.get("id", String.class)),
+		row.get("created_at", OffsetDateTime.class).toInstant(),
+		row.get("last_updated", OffsetDateTime.class).toInstant(), row.get("first_name", String.class),
+		row.get("last_name", String.class), ticketIds);
 
     }
 
