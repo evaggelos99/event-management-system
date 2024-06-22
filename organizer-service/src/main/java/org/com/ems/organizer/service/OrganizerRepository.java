@@ -122,7 +122,7 @@ public class OrganizerRepository implements IOrganizerRepository {
 	final Timestamp createdAt = Timestamp.from(now);
 	final Timestamp updatedAt = Timestamp.from(now);
 
-	final String name = organizer.denomination();
+	final String name = organizer.name();
 	final String website = organizer.website();
 	final String description = organizer.information();
 	final List<EventType> listOfEventTypes = organizer.eventTypes();
@@ -146,7 +146,7 @@ public class OrganizerRepository implements IOrganizerRepository {
 	final UUID uuid = organizer.uuid();
 	final Timestamp updatedAt = Timestamp.from(Instant.now());
 
-	final String name = organizer.denomination();
+	final String name = organizer.name();
 	final String website = organizer.website();
 	final String description = organizer.information();
 	final List<EventType> listOfEventTypes = organizer.eventTypes();

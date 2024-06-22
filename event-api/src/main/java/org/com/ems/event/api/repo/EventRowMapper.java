@@ -41,7 +41,7 @@ public class EventRowMapper implements BiFunction<Row, RowMetadata, Event> {
 
 	return new Event(UUID.fromString(rs.get("id", String.class)),
 		rs.get("created_at", OffsetDateTime.class).toInstant(),
-		rs.get("last_updated", OffsetDateTime.class).toInstant(), rs.get("denomination", String.class),
+		rs.get("last_updated", OffsetDateTime.class).toInstant(), rs.get("name", String.class),
 		rs.get("place", String.class), EventType.valueOf(rs.get("event_type", String.class)), attendees,
 		UUID.fromString(rs.get("organizer_id", String.class)), rs.get("limit_of_people", Integer.class),
 		sponsors, rs.get("start_time", OffsetDateTime.class).toLocalDateTime(), duration);

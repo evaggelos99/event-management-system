@@ -13,7 +13,7 @@ public class OrganizerDtoToOrganizerConverter implements Function<OrganizerDto, 
     public Organizer apply(final OrganizerDto organizerDto) {
 
 	return new Organizer(organizerDto.uuid(), organizerDto.createdAt().toInstant(),
-		organizerDto.lastUpdated().toInstant(), organizerDto.denomination(), organizerDto.website(),
+		organizerDto.lastUpdated().toInstant(), organizerDto.name(), organizerDto.website(),
 		organizerDto.information(), organizerDto.eventTypes(), organizerDto.contactInformation());
 
     }

@@ -115,7 +115,7 @@ public class SponsorRepository implements ISponsorRepository {
 	final Timestamp updatedAt = Timestamp.from(now);
 
 	final UUID uuid = sponsorUuid != null ? sponsorUuid : UUID.randomUUID();
-	final String name = sponsor.denomination();
+	final String name = sponsor.name();
 	final String website = sponsor.website();
 	final Integer financialContribution = sponsor.financialContribution();
 	final ContactInformation contactInformation = sponsor.contactInformation();
@@ -135,7 +135,7 @@ public class SponsorRepository implements ISponsorRepository {
 
 	final UUID uuid = sponsor.uuid();
 	final Timestamp updatedAt = Timestamp.from(Instant.now());
-	final String name = sponsor.denomination();
+	final String name = sponsor.name();
 	final String website = sponsor.website();
 	final Integer financialContribution = sponsor.financialContribution();
 	final ContactInformation contactInformation = sponsor.contactInformation();

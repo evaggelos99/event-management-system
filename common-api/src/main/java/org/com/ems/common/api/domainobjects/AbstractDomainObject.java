@@ -71,7 +71,8 @@ public abstract class AbstractDomainObject {
     @Override
     public String toString() {
 
-	return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("uuid", this.uuid).toString();
+	return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("uuid", this.uuid)
+		.append("createdAt", this.createdAt).append("lastUpdated", this.lastUpdated).toString();
 
     }
 

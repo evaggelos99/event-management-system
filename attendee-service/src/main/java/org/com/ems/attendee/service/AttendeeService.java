@@ -13,6 +13,8 @@ import org.com.ems.attendee.api.AttendeeDto;
 import org.com.ems.attendee.api.converters.AttendeeToAttendeeDtoConverter;
 import org.com.ems.attendee.api.repo.IAttendeeRepository;
 import org.com.ems.attendee.api.service.IAttendeeService;
+import org.com.ems.attendee.service.remote.EventWebService;
+import org.com.ems.attendee.service.remote.TicketLookUpWebService;
 import org.com.ems.common.api.controller.exceptions.DuplicateTicketIdInAttendeeException;
 import org.com.ems.common.api.controller.exceptions.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;

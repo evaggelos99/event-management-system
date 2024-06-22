@@ -39,7 +39,7 @@ public class OrganizerRowMapper implements BiFunction<Row, RowMetadata, Organize
 
 	return new Organizer(UUID.fromString(row.get("id", String.class)),
 		row.get("created_at", OffsetDateTime.class).toInstant(),
-		row.get("last_updated", OffsetDateTime.class).toInstant(), row.get("denomination", String.class),
+		row.get("last_updated", OffsetDateTime.class).toInstant(), row.get("name", String.class),
 		row.get("website", String.class), row.get("information", String.class), eventsTypes,
 		contactInformation);
 

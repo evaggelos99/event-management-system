@@ -13,7 +13,7 @@ public class SponsorDtoToSponsorConverter implements Function<SponsorDto, Sponso
     public Sponsor apply(final SponsorDto sponsorDto) {
 
 	return new Sponsor(sponsorDto.uuid(), sponsorDto.createdAt().toInstant(), sponsorDto.lastUpdated().toInstant(),
-		sponsorDto.denomination(), sponsorDto.website(), sponsorDto.financialContribution(),
+		sponsorDto.name(), sponsorDto.website(), sponsorDto.financialContribution(),
 		sponsorDto.contactInformation());
 
     }

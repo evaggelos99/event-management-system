@@ -124,7 +124,7 @@ public class EventRepository implements IEventRepository {
 
 	final UUID uuid = eventUuid != null ? eventUuid : UUID.randomUUID();
 
-	final String name = event.denomination();
+	final String name = event.name();
 	final String place = event.place();
 	final EventType eventType = event.eventType();
 	final List<UUID> attendeesIds = event.attendeesIds() != null ? event.attendeesIds() : List.of();
@@ -155,7 +155,7 @@ public class EventRepository implements IEventRepository {
 	final UUID uuid = event.uuid();
 	final Timestamp updatedAt = Timestamp.from(Instant.now());
 
-	final String name = event.denomination();
+	final String name = event.name();
 	final String place = event.place();
 	final EventType eventType = event.eventType();
 	final List<UUID> attendeesIds = event.attendeesIds() != null ? event.attendeesIds() : List.of();

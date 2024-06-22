@@ -20,7 +20,7 @@ public final class Ticket extends AbstractDomainObject {
     private final TicketType ticketType;
     private final Integer price;
     private final Boolean transferable;
-    private final SeatingInformation seatInfo;
+    private final SeatingInformation seatingInformation;
     // TODO create QR code referenceing this ticket
 
     public Ticket(final UUID uuid,
@@ -37,7 +37,7 @@ public final class Ticket extends AbstractDomainObject {
 	this.ticketType = ticketType;
 	this.price = price;
 	this.transferable = transferable;
-	this.seatInfo = seatInfo;
+	this.seatingInformation = seatInfo;
 
     }
 
@@ -65,9 +65,9 @@ public final class Ticket extends AbstractDomainObject {
 
     }
 
-    public SeatingInformation getSeatInformation() {
+    public SeatingInformation getSeatingInformation() {
 
-	return this.seatInfo;
+	return this.seatingInformation;
 
     }
 
@@ -83,7 +83,7 @@ public final class Ticket extends AbstractDomainObject {
 
 	return new EqualsBuilder().appendSuper(super.equals(that)).append(this.eventID, that.eventID)
 		.append(this.ticketType, that.ticketType).append(this.price, that.price)
-		.append(this.transferable, that.transferable).append(this.seatInfo, that.seatInfo).build();
+		.append(this.transferable, that.transferable).append(this.seatingInformation, that.seatingInformation).build();
 
     }
 
@@ -91,7 +91,7 @@ public final class Ticket extends AbstractDomainObject {
     public int hashCode() {
 
 	return new HashCodeBuilder(17, 37).appendSuper(super.hashCode()).append(this.eventID).append(this.ticketType)
-		.append(this.price).append(this.transferable).build();
+		.append(this.price).append(this.transferable).append(this.seatingInformation).build();
 
     }
 
@@ -100,7 +100,7 @@ public final class Ticket extends AbstractDomainObject {
 
 	return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).appendSuper(super.toString())
 		.append("eventID", this.eventID).append("ticketType", this.ticketType).append("price", this.price)
-		.append("transferable", this.transferable).append("seat information", this.seatInfo).toString();
+		.append("transferable", this.transferable).append("seat information", this.seatingInformation).toString();
 
     }
 

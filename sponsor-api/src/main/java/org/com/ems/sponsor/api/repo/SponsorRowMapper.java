@@ -23,7 +23,7 @@ public class SponsorRowMapper implements BiFunction<Row, RowMetadata, Sponsor> {
 
 	return new Sponsor(UUID.fromString(row.get("id", String.class)),
 		row.get("created_at", OffsetDateTime.class).toInstant(),
-		row.get("last_updated", OffsetDateTime.class).toInstant(), row.get("denomination", String.class),
+		row.get("last_updated", OffsetDateTime.class).toInstant(), row.get("name", String.class),
 		row.get("website", String.class), row.get("financial_contribution", Integer.class), contactInformation);
 
     }
