@@ -42,7 +42,7 @@ CREATE TABLE IF NOT EXISTS ems_attendee.attendees (
   last_updated TIMESTAMP WITH TIME ZONE NOT NULL,
   first_name TEXT NOT NULL,
   last_name TEXT NOT NULL,
-  ticket_ids UUID[]
+  ticket_ids UUID[] NOT NULL --check
 );
 
 CREATE TABLE IF NOT EXISTS ems_event.events (
@@ -73,7 +73,7 @@ CREATE TABLE IF NOT EXISTS ems_ticket.tickets (
 );
 
 -- functions that check if the uuid requested is in the corresponding tables
-CREATE OR REPLACE FUNCTION check_uuids_exist(uuid_array UUID[])
+CREATE OR REPLACE FUNCTION ems_ticket.check_uuids_exist_tickets(uuid_array UUID[])
 RETURNS BOOLEAN AS $$
 DECLARE
     uuid UUID;
@@ -89,7 +89,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION check_uuids_exist_events(uuid_array UUID[])
+CREATE OR REPLACE FUNCTION ems_event.check_uuids_exist_events(uuid_array UUID[])
 RETURNS BOOLEAN AS $$
 DECLARE
     uuid UUID;
@@ -105,7 +105,7 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION check_uuids_exist_sponsors(uuid_array uuid[])
+CREATE OR REPLACE FUNCTION ems_sponsor.check_uuids_exist_sponsors(uuid_array uuid[])
 RETURNS BOOLEAN as $$
 DECLARE
   uuid UUID;
@@ -122,30 +122,30 @@ END;
 $$ LANGUAGE plpgsql;
 
 -- functions returning the triggers
-CREATE OR REPLACE FUNCTION before_insert_trigger()
+CREATE OR REPLACE FUNCTION ems_attendee.before_insert_trigger_attendees()
 RETURNS TRIGGER AS $$
 BEGIN
-    IF NOT check_uuids_exist(NEW.ticket_ids) THEN
+    IF NOT ems_ticket.check_uuids_exist_tickets(NEW.ticket_ids) THEN
         RAISE EXCEPTION 'One or more UUIDs do not exist in the tickets table';
     END IF;
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION before_insert_trigger_events()
+CREATE OR REPLACE FUNCTION ems_event.before_insert_trigger_events()
 RETURNS TRIGGER AS $$
 BEGIN
-    IF NOT check_uuids_exist_events(NEW.attendee_ids) THEN
+    IF NOT ems_event.check_uuids_exist_events(NEW.attendee_ids) THEN
         RAISE EXCEPTION 'One or more UUIDs do not exist in the attendees table';
     END IF;
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION before_insert_trigger_sponsors()
+CREATE OR REPLACE FUNCTION ems_event.before_insert_trigger_sponsors()
 RETURNS TRIGGER AS $$
 BEGIN
-    IF NOT check_uuids_exist_sponsors(NEW.sponsors_ids) THEN
+    IF NOT ems_sponsor.check_uuids_exist_sponsors(NEW.sponsors_ids) THEN
         RAISE EXCEPTION 'One or more UUIDs do not exist in the sponsors table';
     END IF;
     RETURN NEW;
@@ -156,17 +156,17 @@ $$ LANGUAGE plpgsql;
 CREATE OR REPLACE TRIGGER check_uuids_before_insert_sponsors
   BEFORE INSERT OR UPDATE ON ems_event.events
   FOR EACH ROW 
-  EXECUTE FUNCTION before_insert_trigger_sponsors();
+  EXECUTE FUNCTION ems_event.before_insert_trigger_sponsors();
 
 CREATE OR REPLACE TRIGGER check_uuids_before_insert_events
   BEFORE INSERT OR UPDATE ON ems_event.events
   FOR EACH ROW
-  EXECUTE FUNCTION before_insert_trigger_events();
+  EXECUTE FUNCTION ems_event.before_insert_trigger_events();
 
-CREATE OR REPLACE TRIGGER check_uuids_before_insert
+CREATE OR REPLACE TRIGGER check_uuids_before_insert_attendees
   BEFORE INSERT OR UPDATE ON ems_attendee.attendees
   FOR EACH ROW
-  EXECUTE FUNCTION before_insert_trigger();
+  EXECUTE FUNCTION ems_attendee.before_insert_trigger_attendees();
 
 ALTER TABLE IF EXISTS ems_event.events
     ADD CONSTRAINT fk_organizer_id
@@ -237,3 +237,29 @@ FROM
   information_schema.columns 
 WHERE 
   table_name = 'tickets';
+
+
+-- used for tests
+CREATE OR REPLACE FUNCTION gen_text()
+returns TEXT AS
+$$
+BEGIN
+    RETURN gen_random_uuid()::TEXT;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION gen_interval()
+returns INTERVAL AS
+$$
+BEGIN
+    RETURN make_interval(hours => floor(random() * 10 + 1)::int);
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION gen_number()
+returns INTEGER AS
+$$
+BEGIN
+    RETURN floor(random() * 150001)::int;
+END;
+$$ LANGUAGE plpgsql;

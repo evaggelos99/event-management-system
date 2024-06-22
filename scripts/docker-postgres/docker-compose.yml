@@ -1,6 +1,9 @@
 services:
-  postgres:
-    image: postgres
+  db:
+    image: db
+    build: 
+      context: .
+      target: db
     ports:
       - 5433:5432
     environment:
@@ -9,13 +12,4 @@ services:
       - POSTGRES_DB=event-management-system
     volumes:
       - ./init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
-  pgadmin:
-    image: dpage/pgadmin4
-    environment:
-      - PGADMIN_DEFAULT_EMAIL=admin@pgadmin.com
-      - PGADMIN_DEFAULT_PASSWORD=admin
-      - PGADMIN_LISTEN_PORT=80
-    ports:
-      - 3131:80
-    depends_on:
-      - postgres
+      # - ./data.sql:/tmp/seed.sql

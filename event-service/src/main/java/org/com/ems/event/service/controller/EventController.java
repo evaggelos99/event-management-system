@@ -97,4 +97,12 @@ public class EventController implements IEventController {
 
     }
 
+    @Override
+    public Mono<Boolean> addAttendee(final UUID eventId,
+				     final UUID attendeeId) {
+
+	return this.eventService.addAttendee(eventId, attendeeId);
+
+    }
+
 }

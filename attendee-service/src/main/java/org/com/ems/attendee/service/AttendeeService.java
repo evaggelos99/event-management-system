@@ -15,9 +15,6 @@ import org.com.ems.attendee.api.repo.IAttendeeRepository;
 import org.com.ems.attendee.api.service.IAttendeeService;
 import org.com.ems.common.api.controller.exceptions.DuplicateTicketIdInAttendeeException;
 import org.com.ems.common.api.controller.exceptions.ObjectNotFoundException;
-import org.com.ems.common.api.service.ILookUpService;
-import org.com.ems.event.api.service.IEventService;
-import org.com.ems.ticket.api.Ticket;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -30,8 +27,8 @@ public class AttendeeService implements IAttendeeService {
 
     private final IAttendeeRepository attendeeRepository;
     private final Function<Attendee, AttendeeDto> attendeeToAttendeeDtoConverter;
-    private final IEventService eventService;
-    private final ILookUpService<Ticket> lookUpTicketService;
+    private final EventWebService eventService;
+    private final TicketLookUpWebService lookUpTicketService;
 
     /**
      * C-or
@@ -50,8 +47,8 @@ public class AttendeeService implements IAttendeeService {
     public AttendeeService(@Autowired final IAttendeeRepository attendeeRepository,
 			   @Autowired @Qualifier("attendeeToAttendeeDtoConverter") final Function<Attendee,
 				   AttendeeDto> attendeeToAttendeeDtoConverter,
-			   @Autowired final IEventService eventService,
-			   @Autowired @Qualifier("ticketService") final ILookUpService<Ticket> lookUpTicketService) {
+			   @Autowired final EventWebService eventService,
+			   @Autowired final TicketLookUpWebService lookUpTicketService) {
 
 	this.attendeeRepository = requireNonNull(attendeeRepository);
 	this.attendeeToAttendeeDtoConverter = requireNonNull(attendeeToAttendeeDtoConverter);
@@ -134,8 +131,8 @@ public class AttendeeService implements IAttendeeService {
 	return monoAttendee.map(x -> this.addTicketIdToExistingList(attendeeId, ticketId, x))
 		.map(this.attendeeToAttendeeDtoConverter::apply)//
 		.flatMap(this.attendeeRepository::edit)//
-		.flatMap(x -> this.lookUpTicketService.get(ticketId))//
-		.flatMap(x -> this.eventService.addAttendee(x.getEventID(), attendeeId)).onErrorReturn(Boolean.FALSE);
+		.flatMap(x -> this.lookUpTicketService.lookUpTicket(ticketId))//
+		.flatMap(x -> this.eventService.addAttendee(x.eventID(), attendeeId)).log();
 
     }
 
