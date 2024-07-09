@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.stereotype.Component;
 
+import io.r2dbc.postgresql.codec.Interval;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -36,7 +37,7 @@ public class EventRepository implements IEventRepository {
     private final EventRowMapper eventRowMapper;
     private final Function<EventDto, Event> eventDtoToEventConverter;
     private final Properties eventQueriesProperties;
-    private final Function<Duration, Object> durationToIntervalConverter;
+    private final Function<Duration, Interval> durationToIntervalConverter;
 
     /**
      * C-or
@@ -60,7 +61,7 @@ public class EventRepository implements IEventRepository {
 				   Event> eventDtoToEventConverter,
 			   @Autowired @Qualifier("queriesProperties") final Properties eventQueriesProperties,
 			   @Autowired @Qualifier("durationToIntervalConverter") final Function<Duration,
-				   Object> durationToIntervalConverter) {
+				   Interval> durationToIntervalConverter) {
 
 	this.databaseClient = requireNonNull(databaseClient);
 	this.eventRowMapper = requireNonNull(eventRowMapperFunction);

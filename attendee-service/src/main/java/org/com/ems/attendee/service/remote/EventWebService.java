@@ -29,12 +29,12 @@ public class EventWebService {
 
     }
 
-    public Mono<Boolean> addAttendee(final UUID id,
+    public Mono<Boolean> addAttendee(final UUID eventId,
 				     final UUID attendeeId) {
 
-	return this.webClient.put()
-		.uri(uriBuilder -> uriBuilder.path("/{id}/addAttendee").queryParam("attendeeId", attendeeId).build(id))
-		.retrieve().bodyToMono(Boolean.class).doOnError(this::log);
+	return this.webClient.put().uri(
+		uriBuilder -> uriBuilder.path("/{id}/addAttendee").queryParam("attendeeId", attendeeId).build(eventId))
+		.retrieve().bodyToMono(Boolean.class).doOnError(this::log).onErrorReturn(false);
 
     }
 

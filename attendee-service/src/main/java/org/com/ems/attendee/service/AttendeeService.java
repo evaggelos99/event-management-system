@@ -134,7 +134,7 @@ public class AttendeeService implements IAttendeeService {
 		.map(this.attendeeToAttendeeDtoConverter::apply)//
 		.flatMap(this.attendeeRepository::edit)//
 		.flatMap(x -> this.lookUpTicketService.lookUpTicket(ticketId))//
-		.flatMap(x -> this.eventService.addAttendee(x.eventID(), attendeeId)).log();
+		.flatMap(x -> this.eventService.addAttendee(x.eventID(), attendeeId)).log().defaultIfEmpty(false);
 
     }
 

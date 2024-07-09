@@ -8,7 +8,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 
-public class DurationDeserialzer extends JsonDeserializer<Duration> {
+public final class DurationDeserializer extends JsonDeserializer<Duration> {
 
     @Override
     public Duration deserialize(final JsonParser p,

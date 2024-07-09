@@ -9,12 +9,15 @@ import java.util.function.Function;
 import org.springframework.stereotype.Component;
 
 @Component
-public class ArrayToListOfUuid implements Function<UUID[], List<UUID>> {
+public class ArrayToListOfUuidConverter implements Function<UUID[], List<UUID>> {
 
     @Override
     public List<UUID> apply(final UUID[] array) {
 
 	final List<UUID> list = new LinkedList<>();
+
+	if (array == null)
+	    return list;
 
 	Collections.addAll(list, array);
 

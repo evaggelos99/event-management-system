@@ -100,6 +100,12 @@
 			<artifactId>ticket-api</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<scope>runtime</scope>
+			<optional>true</optional>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
@@ -109,6 +115,14 @@
 				<version>3.13.0</version>
 				<configuration>
 					<compilerArgument>-parameters</compilerArgument>
+					
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<finalName>${project.name}</finalName>
 				</configuration>
 			</plugin>
 		</plugins>

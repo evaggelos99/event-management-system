@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.com.ems.common.api.domainobjects.EventType;
-import org.com.ems.common.api.domainobjects.json.DurationDeserialzer;
+import org.com.ems.common.api.domainobjects.json.DurationDeserializer;
 import org.com.ems.common.api.domainobjects.json.DurationSerialzer;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
@@ -34,7 +34,7 @@ public record EventDto(@Schema(hidden = true, description = "The UUID of the Att
 	@Schema(description = "The sponsors of the event") List<UUID> sponsorsIds, //
 	@NotNull @Schema(description = "The start time of the Event") LocalDateTime startTimeOfEvent, //
 	@NotNull @Schema(description = "The duration of the Event", example = "PT5H") //
-	@JsonDeserialize(using = DurationDeserialzer.class) //
+	@JsonDeserialize(using = DurationDeserializer.class) //
 	@JsonSerialize(using = DurationSerialzer.class) Duration duration) {
 
 }
