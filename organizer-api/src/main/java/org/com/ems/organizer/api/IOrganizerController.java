@@ -29,7 +29,7 @@ import reactor.core.publisher.Mono;
 public interface IOrganizerController {
 
     /**
-     * Method that creates an Organizer DAO object and saves it in the DB
+     * Method that creates an Organizer object and saves it in the DB
      *
      * @param organizer
      */
@@ -40,7 +40,7 @@ public interface IOrganizerController {
     Mono<OrganizerDto> postOrganizer(@Valid @RequestBody OrganizerDto organizerDto);
 
     /**
-     * Method that gets an Organizer DAO object from the DB
+     * Method that gets an Organizer object from the DB
      *
      * @param organizerId the UUID that will be used to search for the Organizer
      */

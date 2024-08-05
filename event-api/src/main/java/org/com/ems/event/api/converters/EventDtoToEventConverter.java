@@ -9,14 +9,13 @@ import org.springframework.stereotype.Component;
 @Component
 public class EventDtoToEventConverter implements Function<EventDto, Event> {
 
-    @Override
-    public Event apply(final EventDto eventDto) {
+	@Override
+	public Event apply(final EventDto eventDto) {
 
-	return new Event(eventDto.uuid(), eventDto.createdAt().toInstant(), eventDto.lastUpdated().toInstant(),
-		eventDto.name(), eventDto.place(), eventDto.eventType(), eventDto.attendeesIds(),
-		eventDto.organizerId(), eventDto.limitOfPeople(), eventDto.sponsorsIds(), eventDto.startTimeOfEvent(),
-		eventDto.duration());
+		return new Event(eventDto.uuid(), eventDto.createdAt(), eventDto.lastUpdated(), eventDto.name(),
+				eventDto.place(), eventDto.eventType(), eventDto.attendeesIds(), eventDto.organizerId(),
+				eventDto.limitOfPeople(), eventDto.sponsorsIds(), eventDto.startTimeOfEvent(), eventDto.duration());
 
-    }
+	}
 
 }

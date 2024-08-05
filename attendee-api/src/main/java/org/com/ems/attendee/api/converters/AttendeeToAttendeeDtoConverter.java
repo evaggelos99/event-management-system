@@ -1,7 +1,5 @@
 package org.com.ems.attendee.api.converters;
 
-import java.sql.Timestamp;
-import java.time.Instant;
 import java.util.function.Function;
 
 import org.com.ems.attendee.api.Attendee;
@@ -11,19 +9,12 @@ import org.springframework.stereotype.Component;
 @Component
 public class AttendeeToAttendeeDtoConverter implements Function<Attendee, AttendeeDto> {
 
-    @Override
-    public AttendeeDto apply(final Attendee attendee) {
+	@Override
+	public AttendeeDto apply(final Attendee attendee) {
 
-	return new AttendeeDto(attendee.getUuid(), this.convertToTimeStamp(attendee.getCreatedAt()),
-		this.convertToTimeStamp(attendee.getLastUpdated()), attendee.getFirstName(), attendee.getLastName(),
-		attendee.getTicketIDs());
+		return new AttendeeDto(attendee.getUuid(), attendee.getCreatedAt(), attendee.getLastUpdated(),
+				attendee.getFirstName(), attendee.getLastName(), attendee.getTicketIDs());
 
-    }
-
-    private Timestamp convertToTimeStamp(final Instant lastUpdated) {
-
-	return Timestamp.from(lastUpdated);
-
-    }
+	}
 
 }

@@ -11,32 +11,32 @@ import org.com.ems.sponsor.api.SponsorDto;
 
 public final class SponsorObjectGenerator {
 
-    private static final Random RANDOM = new Random();
+	private static final Random RANDOM = new Random();
 
-    private SponsorObjectGenerator() {
+	private SponsorObjectGenerator() {
 
-    }
+	}
 
-    public static SponsorDto generateSponsorDto() {
+	public static SponsorDto generateSponsorDto() {
 
-	final Timestamp timestamp = Timestamp.from(Instant.now());
-	return new SponsorDto(UUID.randomUUID(), timestamp, timestamp, UUID.randomUUID().toString(),
-		UUID.randomUUID().toString(), RANDOM.nextInt(500), generateContactInformation());
+		final Timestamp timestamp = Timestamp.from(Instant.now());
+		return new SponsorDto(UUID.randomUUID(), Instant.now(), Instant.now(), UUID.randomUUID().toString(),
+				UUID.randomUUID().toString(), RANDOM.nextInt(500), generateContactInformation());
 
-    }
+	}
 
-    public static Sponsor generateSponsor() {
+	public static Sponsor generateSponsor() {
 
-	final Instant now = Instant.now();
-	return new Sponsor(UUID.randomUUID(), now, now, UUID.randomUUID().toString(), UUID.randomUUID().toString(),
-		RANDOM.nextInt(500), generateContactInformation());
+		final Instant now = Instant.now();
+		return new Sponsor(UUID.randomUUID(), now, now, UUID.randomUUID().toString(), UUID.randomUUID().toString(),
+				RANDOM.nextInt(500), generateContactInformation());
 
-    }
+	}
 
-    public static ContactInformation generateContactInformation() {
+	public static ContactInformation generateContactInformation() {
 
-	return new ContactInformation(UUID.randomUUID().toString(), UUID.randomUUID().toString(),
-		UUID.randomUUID().toString());
+		return new ContactInformation(UUID.randomUUID().toString(), UUID.randomUUID().toString(),
+				UUID.randomUUID().toString());
 
-    }
+	}
 }

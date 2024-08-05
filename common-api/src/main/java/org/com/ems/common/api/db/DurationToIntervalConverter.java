@@ -10,11 +10,11 @@ import io.r2dbc.postgresql.codec.Interval;
 @Component
 public class DurationToIntervalConverter implements Function<Duration, Object> {
 
-    @Override
-    public Interval apply(final Duration duration) {
+	@Override
+	public Interval apply(final Duration duration) {
 
-	return Interval.of(duration);
+		return Interval.of(duration);
 
-    }
+	}
 
 }

@@ -1,6 +1,6 @@
 package org.com.ems.organizer.api;
 
-import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,12 +18,11 @@ import jakarta.validation.constraints.Null;
  * @author Evangelos Georgiou
  */
 public record OrganizerDto(@Schema(hidden = true, description = "The UUID of the Attendee") UUID uuid, //
-	@Null @Schema(hidden = true) Timestamp createdAt, //
-	@Null @Schema(hidden = true) Timestamp lastUpdated, //
-	@NotBlank @Schema(example = "SpecialWeddings", description = "The limit of the event") String name, //
-	@NotBlank @Schema(example = "www.google.com", description = "The website of the organizer") String website, //
-	@NotNull @Schema(example = "Organizer specialized in weddings taking place in the country or even outside!", description = "The description of the organizer") String information, //
-	@NotNull @Schema(description = "The event types that organizer has specializes in") List<EventType> eventTypes, //
-	@NotNull @Schema(description = "The contact information of the Organizer") ContactInformation contactInformation) {
-
+		@Null @Schema(hidden = true) Instant createdAt, //
+		@Null @Schema(hidden = true) Instant lastUpdated, //
+		@NotBlank @Schema(example = "Duis aute irure", description = "The limit of the event") String name, //
+		@NotBlank @Schema(example = "www.seddoeiusmod.com", description = "The website of the organizer") String website, //
+		@NotNull @Schema(example = "quis nostrud exercitation", description = "The description of the organizer") String information, //
+		@NotNull @Schema(description = "The event types that organizer has specializes in") List<EventType> eventTypes, //
+		@NotNull @Schema(description = "The contact information of the Organizer") ContactInformation contactInformation) {
 }

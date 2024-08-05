@@ -12,18 +12,22 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 @Service
-public class TicketLookUpWebService {
+public class TicketLookUpServiceClient implements ITicketLookUpServiceClient {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(TicketLookUpWebService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TicketLookUpServiceClient.class);
 
     private final WebClient webClient;
 
-    public TicketLookUpWebService(@Autowired final WebClient.Builder webClientBuilder) {
+    public TicketLookUpServiceClient(@Autowired final WebClient.Builder webClientBuilder) {
 
 	this.webClient = webClientBuilder.baseUrl("http://ticket-service/ticket").build();
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Mono<TicketDto> lookUpTicket(final UUID id) {
 
 	return this.webClient.get().uri(uriBuilder -> uriBuilder.path("/{id}").build(id)).retrieve()

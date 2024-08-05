@@ -30,7 +30,7 @@ import reactor.core.publisher.Mono;
 public interface IEventController {
 
     /**
-     * Method that creates an Event DAO object and saves it in the DB
+     * Method that creates an Event object and saves it in the DB
      *
      * @param event
      */
@@ -41,7 +41,7 @@ public interface IEventController {
     Mono<EventDto> postEvent(@Valid @RequestBody EventDto eventDto);
 
     /**
-     * Method that gets an Event DAO object from the DB
+     * Method that gets an Event object from the DB
      *
      * @param eventId the UUID that will be used to search for the Event
      */

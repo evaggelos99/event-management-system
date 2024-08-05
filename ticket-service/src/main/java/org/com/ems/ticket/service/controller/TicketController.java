@@ -18,7 +18,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
- * Controller for CRUD operation for the DAO object {@link Ticket}
+ * Controller for CRUD operation for the object {@link Ticket}
  *
  * @author Evangelos Georgiou
  */

@@ -20,32 +20,29 @@ import io.r2dbc.spi.RowMetadata;
 @Component
 public class EventRowMapper implements BiFunction<Row, RowMetadata, Event> {
 
-    private final Function<UUID[], List<UUID>> arrayToListOfUuid;
+	private final Function<UUID[], List<UUID>> arrayToListOfUuidConverter;
 
-    public EventRowMapper(@Autowired @Qualifier("arrayToListOfUuidConverter") final Function<UUID[],
-	    List<UUID>> arrayToListOfUuid) {
+	public EventRowMapper(
+			@Autowired @Qualifier("arrayToListOfUuidConverter") final Function<UUID[], List<UUID>> arrayToListOfUuid) {
 
-	this.arrayToListOfUuid = arrayToListOfUuid;
+		this.arrayToListOfUuidConverter = arrayToListOfUuid;
+	}
 
-    }
+	@Override
+	public Event apply(final Row rs, final RowMetadata rmd) {
 
-    @Override
-    public Event apply(final Row rs,
-		       final RowMetadata rmd) {
+		final List<UUID> attendees = arrayToListOfUuidConverter.apply((UUID[]) rs.get("attendee_ids"));
 
-	final List<UUID> attendees = this.arrayToListOfUuid.apply((UUID[]) rs.get("attendee_ids"));
+		final List<UUID> sponsors = arrayToListOfUuidConverter.apply((UUID[]) rs.get("sponsors_ids"));
 
-	final List<UUID> sponsors = this.arrayToListOfUuid.apply((UUID[]) rs.get("sponsors_ids"));
+		final Duration duration = rs.get("duration", Interval.class).getDuration();
 
-	final Duration duration = rs.get("duration", Interval.class).getDuration();
+		return new Event(rs.get("id", UUID.class), rs.get("created_at", OffsetDateTime.class).toInstant(),
+				rs.get("last_updated", OffsetDateTime.class).toInstant(), rs.get("name", String.class),
+				rs.get("place", String.class), EventType.valueOf(rs.get("event_type", String.class)), attendees,
+				rs.get("organizer_id", UUID.class), rs.get("limit_of_people", Integer.class), sponsors,
+				rs.get("start_time", OffsetDateTime.class).toLocalDateTime(), duration);
 
-	return new Event(UUID.fromString(rs.get("id", String.class)),
-		rs.get("created_at", OffsetDateTime.class).toInstant(),
-		rs.get("last_updated", OffsetDateTime.class).toInstant(), rs.get("name", String.class),
-		rs.get("place", String.class), EventType.valueOf(rs.get("event_type", String.class)), attendees,
-		UUID.fromString(rs.get("organizer_id", String.class)), rs.get("limit_of_people", Integer.class),
-		sponsors, rs.get("start_time", OffsetDateTime.class).toLocalDateTime(), duration);
-
-    }
+	}
 
 }

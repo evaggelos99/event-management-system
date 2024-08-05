@@ -29,7 +29,7 @@ import reactor.core.publisher.Mono;
 public interface ITicketController {
 
     /**
-     * Method that creates an Ticket DAO object and saves it in the DB
+     * Method that creates an Ticket object and saves it in the DB
      *
      * @param ticket
      */
@@ -40,7 +40,7 @@ public interface ITicketController {
     Mono<TicketDto> postTicket(@Valid @RequestBody TicketDto ticketDto);
 
     /**
-     * Method that gets an Ticket DAO object from the DB
+     * Method that gets an Ticket object from the DB
      *
      * @param ticketId the UUID that will be used to search for the Attendee
      */

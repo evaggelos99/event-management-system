@@ -13,8 +13,8 @@ import org.com.ems.attendee.api.AttendeeDto;
 import org.com.ems.attendee.api.converters.AttendeeToAttendeeDtoConverter;
 import org.com.ems.attendee.api.repo.IAttendeeRepository;
 import org.com.ems.attendee.api.service.IAttendeeService;
-import org.com.ems.attendee.service.remote.EventWebService;
-import org.com.ems.attendee.service.remote.TicketLookUpWebService;
+import org.com.ems.attendee.service.remote.EventServiceClient;
+import org.com.ems.attendee.service.remote.TicketLookUpServiceClient;
 import org.com.ems.common.api.controller.exceptions.DuplicateTicketIdInAttendeeException;
 import org.com.ems.common.api.controller.exceptions.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +29,8 @@ public class AttendeeService implements IAttendeeService {
 
     private final IAttendeeRepository attendeeRepository;
     private final Function<Attendee, AttendeeDto> attendeeToAttendeeDtoConverter;
-    private final EventWebService eventService;
-    private final TicketLookUpWebService lookUpTicketService;
+    private final EventServiceClient eventService;
+    private final TicketLookUpServiceClient lookUpTicketService;
 
     /**
      * C-or
@@ -49,14 +49,13 @@ public class AttendeeService implements IAttendeeService {
     public AttendeeService(@Autowired final IAttendeeRepository attendeeRepository,
 			   @Autowired @Qualifier("attendeeToAttendeeDtoConverter") final Function<Attendee,
 				   AttendeeDto> attendeeToAttendeeDtoConverter,
-			   @Autowired final EventWebService eventService,
-			   @Autowired final TicketLookUpWebService lookUpTicketService) {
+			   @Autowired final EventServiceClient eventService,
+			   @Autowired final TicketLookUpServiceClient lookUpTicketService) {
 
 	this.attendeeRepository = requireNonNull(attendeeRepository);
 	this.attendeeToAttendeeDtoConverter = requireNonNull(attendeeToAttendeeDtoConverter);
 	this.eventService = requireNonNull(eventService);
 	this.lookUpTicketService = requireNonNull(lookUpTicketService);
-
     }
 
     /**
@@ -66,7 +65,6 @@ public class AttendeeService implements IAttendeeService {
     public Mono<Attendee> add(final AttendeeDto attendee) {
 
 	return this.attendeeRepository.save(attendee);
-
     }
 
     /**
@@ -76,7 +74,6 @@ public class AttendeeService implements IAttendeeService {
     public Mono<Attendee> get(final UUID uuid) {
 
 	return this.attendeeRepository.findById(uuid);
-
     }
 
     /**
@@ -86,7 +83,6 @@ public class AttendeeService implements IAttendeeService {
     public Mono<Boolean> delete(final UUID uuid) {
 
 	return this.attendeeRepository.deleteById(uuid);
-
     }
 
     /**
@@ -98,7 +94,6 @@ public class AttendeeService implements IAttendeeService {
 
 	return !uuid.equals(attendee.uuid()) ? Mono.error(() -> new ObjectNotFoundException(uuid, AttendeeDto.class))
 		: this.attendeeRepository.edit(attendee);
-
     }
 
     /**
@@ -108,7 +103,6 @@ public class AttendeeService implements IAttendeeService {
     public Flux<Attendee> getAll() {
 
 	return this.attendeeRepository.findAll();
-
     }
 
     /**
@@ -118,7 +112,6 @@ public class AttendeeService implements IAttendeeService {
     public Mono<Boolean> existsById(final UUID attendeeId) {
 
 	return this.attendeeRepository.existsById(attendeeId);
-
     }
 
     /**
@@ -129,13 +122,11 @@ public class AttendeeService implements IAttendeeService {
 				   final UUID ticketId) {
 
 	final Mono<Attendee> monoAttendee = this.attendeeRepository.findById(attendeeId);
-
 	return monoAttendee.map(x -> this.addTicketIdToExistingList(attendeeId, ticketId, x))
 		.map(this.attendeeToAttendeeDtoConverter::apply)//
 		.flatMap(this.attendeeRepository::edit)//
 		.flatMap(x -> this.lookUpTicketService.lookUpTicket(ticketId))//
 		.flatMap(x -> this.eventService.addAttendee(x.eventID(), attendeeId)).log().defaultIfEmpty(false);
-
     }
 
     private Attendee addTicketIdToExistingList(final UUID attendeeId,
@@ -146,15 +137,11 @@ public class AttendeeService implements IAttendeeService {
 	final List<UUID> list = x.getTicketIDs();
 
 	if (list.stream().noneMatch(ticketId::equals)) {
-
 	    final LinkedList<UUID> newList = new LinkedList<>(list);
 	    newList.add(ticketId);
 	    return new Attendee(attendeeId, x.getCreatedAt(), Instant.now(), x.getFirstName(), x.getLastName(),
 		    newList);
 	}
-
 	throw new DuplicateTicketIdInAttendeeException(ticketId);
-
     }
-
 }

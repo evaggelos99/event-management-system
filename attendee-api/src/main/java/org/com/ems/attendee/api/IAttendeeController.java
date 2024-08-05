@@ -30,7 +30,7 @@ import reactor.core.publisher.Mono;
 public interface IAttendeeController {
 
     /**
-     * Method that creates an Attendee DAO object and saves it in the DB
+     * Method that creates an Attendee object and saves it in the DB
      *
      * @param attendee
      */
@@ -41,7 +41,7 @@ public interface IAttendeeController {
     Mono<AttendeeDto> postAttendee(@Valid @RequestBody AttendeeDto attendee);
 
     /**
-     * Method that gets an Attendee DAO object from the DB
+     * Method that gets an Attendee object from the DB
      *
      * @param attendeeId the UUID that will be used to search for the Attendee
      */

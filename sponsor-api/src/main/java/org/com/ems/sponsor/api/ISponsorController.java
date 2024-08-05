@@ -30,7 +30,7 @@ import reactor.core.publisher.Mono;
 public interface ISponsorController {
 
     /**
-     * Method that creates an Sponsor DAO object and saves it in the DB
+     * Method that creates an Sponsor object and saves it in the DB
      *
      * @param sponsor
      */
@@ -41,7 +41,7 @@ public interface ISponsorController {
     Mono<SponsorDto> postSponsor(@Valid @RequestBody SponsorDto sponsorDto);
 
     /**
-     * Method that gets an Sponsor DAO object from the DB
+     * Method that gets an Sponsor object from the DB
      *
      * @param sponsorId the UUID that will be used to search for the Sponsor
      */

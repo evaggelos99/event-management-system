@@ -17,18 +17,22 @@ import reactor.core.publisher.Mono;
  *
  */
 @Service
-public class EventWebService {
+public class EventServiceClient implements IEventServiceClient {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(EventWebService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(EventServiceClient.class);
 
     private final WebClient webClient;
 
-    public EventWebService(@Autowired final WebClient.Builder webClientBuilder) {
+    public EventServiceClient(@Autowired final WebClient.Builder webClientBuilder) {
 
 	this.webClient = webClientBuilder.baseUrl("http://event-service/event").build();
 
     }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public Mono<Boolean> addAttendee(final UUID eventId,
 				     final UUID attendeeId) {
 

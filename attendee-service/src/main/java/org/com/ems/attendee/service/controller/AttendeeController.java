@@ -2,7 +2,6 @@ package org.com.ems.attendee.service.controller;
 
 import static java.util.Objects.requireNonNull;
 
-import java.net.URISyntaxException;
 import java.util.UUID;
 import java.util.function.Function;
 
@@ -19,7 +18,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
- * Controller for CRUD operation for the DAO object {@link Attendee}
+ * Controller for CRUD operation for the object {@link Attendee}
  *
  * @author Evangelos Georgiou
  */
@@ -28,7 +27,6 @@ import reactor.core.publisher.Mono;
 public class AttendeeController implements IAttendeeController {
 
     static final String ATTENDEE_PATH = "/attendee";
-
     private final IAttendeeService attendeeService;
     private final Function<Attendee, AttendeeDto> attendeeToAttendeeDtoConverter;
 
@@ -45,19 +43,16 @@ public class AttendeeController implements IAttendeeController {
 
 	this.attendeeService = requireNonNull(attendeeService);
 	this.attendeeToAttendeeDtoConverter = requireNonNull(attendeeToAttendeeDtoConverter);
-
     }
 
     /**
      * {@inheritDoc}
      *
-     * @throws URISyntaxException
      */
     @Override
     public Mono<AttendeeDto> postAttendee(final AttendeeDto attendeeDto) {
 
 	return this.attendeeService.add(attendeeDto).map(this.attendeeToAttendeeDtoConverter::apply);
-
     }
 
     /**
@@ -67,9 +62,7 @@ public class AttendeeController implements IAttendeeController {
     public Mono<AttendeeDto> getAttendee(final UUID attendeeId) {
 
 	final Mono<Attendee> attendee = this.attendeeService.get(attendeeId);
-
-	return attendee.map(this.attendeeToAttendeeDtoConverter::apply);
-
+	return attendee.map(this.attendeeToAttendeeDtoConverter::apply).switchIfEmpty(Mono.empty());
     }
 
     /**
@@ -81,9 +74,7 @@ public class AttendeeController implements IAttendeeController {
 					 final AttendeeDto attendeeDto) {
 
 	final Mono<Attendee> attendee = this.attendeeService.edit(attendeeId, attendeeDto);
-
 	return attendee.map(this.attendeeToAttendeeDtoConverter::apply);
-
     }
 
     /**
@@ -93,7 +84,6 @@ public class AttendeeController implements IAttendeeController {
     public Mono<?> deleteAttendee(final UUID attendeeId) {
 
 	return this.attendeeService.delete(attendeeId);
-
     }
 
     /**
@@ -103,15 +93,16 @@ public class AttendeeController implements IAttendeeController {
     public Flux<AttendeeDto> getAttendees() {
 
 	return this.attendeeService.getAll().map(this.attendeeToAttendeeDtoConverter::apply);
-
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     */
     @Override
     public Mono<Boolean> addTicket(final UUID attendeeId,
 				   final UUID ticketId) {
 
 	return this.attendeeService.addTicket(attendeeId, ticketId);
-
     }
-
 }
