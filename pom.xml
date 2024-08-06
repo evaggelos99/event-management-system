@@ -41,7 +41,7 @@
 		<module>event-service</module>
 		<module>ticket-api</module>
 		<module>ticket-service</module>
-		<module>event-producer</module>
+		<!-- <module>event-producer</module>-->
 		<module>eureka-server</module>
 	</modules>
 
