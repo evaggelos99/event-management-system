@@ -1,0 +1,28 @@
+package com.github.evaggelos99.ems.sponsor.api.converters;
+
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.util.function.Function;
+
+import org.springframework.stereotype.Component;
+
+import com.github.evaggelos99.ems.sponsor.api.Sponsor;
+import com.github.evaggelos99.ems.sponsor.api.SponsorDto;
+
+@Component
+public class SponsorToSponsorDtoConverter implements Function<Sponsor, SponsorDto> {
+
+	@Override
+	public SponsorDto apply(final Sponsor sponsor) {
+
+		return new SponsorDto(sponsor.getUuid(), sponsor.getCreatedAt(), (sponsor.getLastUpdated()), sponsor.getName(),
+				sponsor.getWebsite(), sponsor.getFinancialContribution(), sponsor.getContactInformation());
+
+	}
+
+	private Timestamp convertToTimeStamp(final Instant lastUpdated) {
+
+		return Timestamp.from(lastUpdated);
+
+	}
+}

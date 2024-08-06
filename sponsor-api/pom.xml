@@ -10,7 +10,7 @@
 	<name>sponsor-api</name>
 
 	<parent>
-		<groupId>org.com.ems</groupId>
+		<groupId>com.github.evaggelos99.ems</groupId>
 		<artifactId>parent</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
@@ -18,7 +18,7 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.com.ems</groupId>
+			<groupId>com.github.evaggelos99.ems</groupId>
 			<artifactId>common-api</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
