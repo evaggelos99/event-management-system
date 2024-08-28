@@ -67,47 +67,45 @@ public class OrganizerRepository implements IOrganizerRepository {
 	@Override
 	public Mono<Organizer> save(final OrganizerDto organizerDto) {
 
-		return this.saveOrganizer(organizerDto);
+		return saveOrganizer(organizerDto);
 
 	}
 
 	@Override
 	public Mono<Organizer> edit(final OrganizerDto organizerDto) {
 
-		return this.editOrganizer(organizerDto);
+		return editOrganizer(organizerDto);
 
 	}
 
 	@Override
 	public Mono<Organizer> findById(final UUID uuid) {
 
-		return this.databaseClient.sql(this.organizerQueriesProperties.getProperty(CrudQueriesOperations.GET_ID.name()))
-				.bind(0, uuid).map(this.organizerRowMapper::apply).one();
+		return databaseClient.sql(organizerQueriesProperties.getProperty(CrudQueriesOperations.GET_ID.name()))
+				.bind(0, uuid).map(organizerRowMapper::apply).one();
 
 	}
 
 	@Override
 	public Mono<Boolean> deleteById(final UUID uuid) {
 
-		return this.databaseClient
-				.sql(this.organizerQueriesProperties.getProperty(CrudQueriesOperations.DELETE_ID.name())).bind(0, uuid)
-				.fetch().rowsUpdated().map(this::rowsAffectedAreMoreThanOne);
+		return databaseClient.sql(organizerQueriesProperties.getProperty(CrudQueriesOperations.DELETE_ID.name()))
+				.bind(0, uuid).fetch().rowsUpdated().map(this::rowsAffectedAreMoreThanOne);
 
 	}
 
 	@Override
 	public Mono<Boolean> existsById(final UUID uuid) {
 
-		return this.findById(uuid).map(Objects::nonNull);
+		return findById(uuid).map(Objects::nonNull);
 
 	}
 
 	@Override
 	public Flux<Organizer> findAll() {
 
-		return this.databaseClient
-				.sql(this.organizerQueriesProperties.getProperty(CrudQueriesOperations.GET_ALL.name()))
-				.map(this.organizerRowMapper::apply).all();
+		return databaseClient.sql(organizerQueriesProperties.getProperty(CrudQueriesOperations.GET_ALL.name()))
+				.map(organizerRowMapper::apply).all();
 
 	}
 
@@ -123,17 +121,17 @@ public class OrganizerRepository implements IOrganizerRepository {
 		final String description = organizer.information();
 		final List<EventType> listOfEventTypes = organizer.eventTypes();
 		final ContactInformation contactInformation = organizer.contactInformation();
-		final EventType[] eventTypesArray = this.convertToArray(listOfEventTypes);
+		final EventType[] eventTypesArray = convertToArray(listOfEventTypes);
 
-		final Mono<Long> rowsAffected = this.databaseClient
-				.sql(this.organizerQueriesProperties.getProperty(CrudQueriesOperations.SAVE.name())).bind(0, uuid)
+		final Mono<Long> rowsAffected = databaseClient
+				.sql(organizerQueriesProperties.getProperty(CrudQueriesOperations.SAVE.name())).bind(0, uuid)
 				.bind(1, instantNow).bind(2, instantNow).bind(3, name).bind(4, website).bind(5, description)
 				.bind(6, eventTypesArray).bind(7, contactInformation.email()).bind(8, contactInformation.phoneNumber())
 				.bind(9, contactInformation.physicalAddress()).fetch().rowsUpdated();
 
 		return rowsAffected.filter(this::rowsAffectedAreMoreThanOne)
-				.map(n_ -> this.organizerDtoToOrganizerConverter.apply(new OrganizerDto(uuid, instantNow, instantNow,
-						name, website, description, listOfEventTypes, contactInformation)));
+				.map(n_ -> organizerDtoToOrganizerConverter.apply(new OrganizerDto(uuid, instantNow, instantNow, name,
+						website, description, listOfEventTypes, contactInformation)));
 
 	}
 
@@ -147,18 +145,18 @@ public class OrganizerRepository implements IOrganizerRepository {
 		final String description = organizer.information();
 		final List<EventType> listOfEventTypes = organizer.eventTypes();
 		final ContactInformation contactInformation = organizer.contactInformation();
-		final EventType[] eventTypesArray = this.convertToArray(listOfEventTypes);
+		final EventType[] eventTypesArray = convertToArray(listOfEventTypes);
 
-		final Mono<Long> rowsAffected = this.databaseClient
-				.sql(this.organizerQueriesProperties.getProperty(CrudQueriesOperations.EDIT.name())).bind(0, uuid)
+		final Mono<Long> rowsAffected = databaseClient
+				.sql(organizerQueriesProperties.getProperty(CrudQueriesOperations.EDIT.name())).bind(0, uuid)
 				.bind(1, updatedAt).bind(2, name).bind(3, website).bind(4, description).bind(5, eventTypesArray)
 				.bind(6, contactInformation.email()).bind(7, contactInformation.phoneNumber())
 				.bind(8, contactInformation.physicalAddress()).bind(9, uuid).fetch().rowsUpdated();
 
-		return rowsAffected.filter(this::rowsAffectedAreMoreThanOne).flatMap(n_ -> this.findById(uuid))
+		return rowsAffected.filter(this::rowsAffectedAreMoreThanOne).flatMap(n_ -> findById(uuid))
 				.map(AbstractDomainObject::getCreatedAt)
-				.map(createdAt -> this.organizerDtoToOrganizerConverter.apply(new OrganizerDto(uuid, createdAt,
-						updatedAt, name, website, description, listOfEventTypes, contactInformation)));
+				.map(createdAt -> organizerDtoToOrganizerConverter.apply(new OrganizerDto(uuid, createdAt, updatedAt,
+						name, website, description, listOfEventTypes, contactInformation)));
 
 	}
 
@@ -182,7 +180,6 @@ public class OrganizerRepository implements IOrganizerRepository {
 	private boolean rowsAffectedAreMoreThanOne(final Long x) {
 
 		return x >= 1;
-
 	}
 
 }

@@ -70,9 +70,9 @@ public class EventRepository implements IEventRepository {
 	}
 
 	@Override
-	public Mono<Event> save(final EventDto t) {
+	public Mono<Event> save(final EventDto eventDto) {
 
-		return saveEvent(t);
+		return saveEvent(eventDto);
 	}
 
 	@Override
@@ -130,6 +130,7 @@ public class EventRepository implements IEventRepository {
 				.bind(2, now).bind(3, name).bind(4, place).bind(5, eventType).bind(6, attendees).bind(7, organizerId)
 				.bind(8, limitOfPeople).bind(9, sponsors).bind(10, startTimeOfEvent).bind(11, interval).fetch()
 				.rowsUpdated();
+
 		return rowsAffected.filter(this::rowsAffectedAreMoreThanOne)
 				.map(m_ -> eventDtoToEventConverter.apply(new EventDto(uuid, now, now, name, place, eventType,
 						attendeesIds, organizerId, limitOfPeople, sponsorIds, startTimeOfEvent, duration)));
@@ -156,6 +157,7 @@ public class EventRepository implements IEventRepository {
 				.bind(1, updatedAt).bind(2, name).bind(3, place).bind(4, eventType).bind(5, attendees)
 				.bind(6, organizerId).bind(7, limitOfPeople).bind(8, sponsors).bind(9, startTimeOfEvent)
 				.bind(10, interval).bind(11, uuid).fetch().rowsUpdated();
+
 		return rowsAffected.filter(this::rowsAffectedAreMoreThanOne).flatMap(n_ -> findById(uuid))
 				.map(AbstractDomainObject::getCreatedAt)
 				.map(createdAt -> eventDtoToEventConverter.apply(new EventDto(uuid, createdAt, updatedAt, name, place,

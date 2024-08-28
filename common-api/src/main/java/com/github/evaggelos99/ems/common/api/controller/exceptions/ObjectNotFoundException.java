@@ -17,46 +17,45 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "No such Object found")
 public class ObjectNotFoundException extends GenericRestOperationFailedException {
 
-    private static final int CODE = 404;
+	private static final int CODE = 404;
 
-    private static final long serialVersionUID = -4696167699698324726L;
+	private static final long serialVersionUID = -4696167699698324726L;
 
-    private static final HttpStatusCode STATUS_CODE = HttpStatusCode.valueOf(CODE);
+	private static final HttpStatusCode STATUS_CODE = HttpStatusCode.valueOf(CODE);
 
-    private final UUID uuid;
+	private final UUID uuid;
 
-    private final Class<?> classOfObject;
+	private final Class<?> classOfObject;
 
-    /**
-     * C-or
-     *
-     * @param uuid          cannot be null
-     * @param classOfObject cannot be null
-     */
-    public ObjectNotFoundException(final UUID uuid,
-				   final Class<?> classOfObject) {
+	/**
+	 * C-or
+	 *
+	 * @param uuid          cannot be null
+	 * @param classOfObject cannot be null
+	 */
+	public ObjectNotFoundException(final UUID uuid, final Class<?> classOfObject) {
 
-	this.uuid = requireNonNull(uuid);
-	this.classOfObject = requireNonNull(classOfObject);
+		this.uuid = requireNonNull(uuid);
+		this.classOfObject = requireNonNull(classOfObject);
 
-    }
+	}
 
-    public UUID getUuid() {
+	public UUID getUuid() {
 
-	return this.uuid;
+		return uuid;
 
-    }
+	}
 
-    public String getClassOfObject() {
+	public String getClassOfObject() {
 
-	return this.classOfObject.getSimpleName();
+		return classOfObject.getSimpleName();
 
-    }
+	}
 
-    public HttpStatusCode getStatusCode() {
+	public HttpStatusCode getStatusCode() {
 
-	return STATUS_CODE;
+		return STATUS_CODE;
 
-    }
+	}
 
 }

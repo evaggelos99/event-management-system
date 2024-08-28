@@ -36,7 +36,7 @@ public class SponsorRepository implements ISponsorRepository {
 	/**
 	 * C-or
 	 *
-	 * @param jdbcTemplate                 the {@link DatabaseClient} used for
+	 * @param databaseClient               the {@link DatabaseClient} used for
 	 *                                     connecting to the database for the
 	 *                                     Sponsor objects
 	 * @param sponsorRowMapper             the {@link SponsorRowMapper} used for
@@ -48,16 +48,15 @@ public class SponsorRepository implements ISponsorRepository {
 	 *                                     getting the right query CRUD database
 	 *                                     operations
 	 */
-	public SponsorRepository(@Autowired final DatabaseClient jdbcTemplate,
+	public SponsorRepository(@Autowired final DatabaseClient databaseClient,
 			@Autowired @Qualifier("sponsorRowMapper") final SponsorRowMapper sponsorRowMapper,
 			@Autowired @Qualifier("sponsorDtoToSponsorConverter") final Function<SponsorDto, Sponsor> sponsorDtoToSponsorConverter,
 			@Autowired @Qualifier("queriesProperties") final Properties sponsorQueriesProperties) {
 
-		this.databaseClient = requireNonNull(jdbcTemplate);
+		this.databaseClient = requireNonNull(databaseClient);
 		this.sponsorRowMapper = requireNonNull(sponsorRowMapper);
 		this.sponsorDtoToSponsorConverter = requireNonNull(sponsorDtoToSponsorConverter);
 		this.sponsorQueriesProperties = requireNonNull(sponsorQueriesProperties);
-
 	}
 
 	@Override
@@ -70,7 +69,7 @@ public class SponsorRepository implements ISponsorRepository {
 	@Override
 	public Mono<Sponsor> edit(final SponsorDto organizerDto) {
 
-		return editOrganizer(organizerDto);
+		return editSponsor(organizerDto);
 
 	}
 
@@ -128,7 +127,7 @@ public class SponsorRepository implements ISponsorRepository {
 
 	}
 
-	private Mono<Sponsor> editOrganizer(final SponsorDto sponsor) {
+	private Mono<Sponsor> editSponsor(final SponsorDto sponsor) {
 
 		final UUID uuid = sponsor.uuid();
 		final Instant updatedAt = Instant.now();

@@ -27,83 +27,79 @@ import reactor.core.publisher.Mono;
 @RequestMapping(EventController.EVENT_PATH)
 public class EventController implements IEventController {
 
-    static final String EVENT_PATH = "/event";
-    private final IEventService eventService;
-    private final Function<Event, EventDto> eventToEventDtoConverter;
+	static final String EVENT_PATH = "/event";
+	private final IEventService eventService;
+	private final Function<Event, EventDto> eventToEventDtoConverter;
 
-    /**
-     * C-or
-     *
-     * @param eventService             service responsible for CRUD operations
-     * @param eventToEventDtoConverter converts event to DTO
-     * @param eventDtoToEventConverter converts DTO to event
-     */
-    public EventController(@Autowired final IEventService eventService,
-			   @Autowired @Qualifier("eventToEventDtoConverter") final Function<Event,
-				   EventDto> eventToEventDtoConverter) {
+	/**
+	 * C-or
+	 *
+	 * @param eventService             service responsible for CRUD operations
+	 * @param eventToEventDtoConverter converts event to DTO
+	 * @param eventDtoToEventConverter converts DTO to event
+	 */
+	public EventController(@Autowired final IEventService eventService,
+			@Autowired @Qualifier("eventToEventDtoConverter") final Function<Event, EventDto> eventToEventDtoConverter) {
 
-	this.eventService = requireNonNull(eventService);
-	this.eventToEventDtoConverter = requireNonNull(eventToEventDtoConverter);
+		this.eventService = requireNonNull(eventService);
+		this.eventToEventDtoConverter = requireNonNull(eventToEventDtoConverter);
+	}
 
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Mono<EventDto> postEvent(final EventDto eventDto) {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Mono<EventDto> postEvent(final EventDto eventDto) {
+		return eventService.add(eventDto).map(eventToEventDtoConverter::apply);
 
-	return this.eventService.add(eventDto).map(this.eventToEventDtoConverter::apply);
+	}
 
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Mono<EventDto> getEvent(final UUID eventId) {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Mono<EventDto> getEvent(final UUID eventId) {
+		return eventService.get(eventId).map(eventToEventDtoConverter::apply);
 
-	return this.eventService.get(eventId).map(this.eventToEventDtoConverter::apply);
+	}
 
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Mono<EventDto> putEvent(final UUID eventId, final EventDto eventDto) {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Mono<EventDto> putEvent(final UUID eventId,
-				   final EventDto eventDto) {
+		return eventService.edit(eventId, eventDto).map(eventToEventDtoConverter::apply);
 
-	return this.eventService.edit(eventId, eventDto).map(this.eventToEventDtoConverter::apply);
+	}
 
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Mono<?> deleteEvent(final UUID eventId) {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Mono<?> deleteEvent(final UUID eventId) {
+		return eventService.delete(eventId);
 
-	return this.eventService.delete(eventId);
+	}
 
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Flux<EventDto> getEvents() {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Flux<EventDto> getEvents() {
+		return eventService.getAll().map(eventToEventDtoConverter::apply);
 
-	return this.eventService.getAll().map(this.eventToEventDtoConverter::apply);
+	}
 
-    }
+	@Override
+	public Mono<Boolean> addAttendee(final UUID eventId, final UUID attendeeId) {
 
-    @Override
-    public Mono<Boolean> addAttendee(final UUID eventId,
-				     final UUID attendeeId) {
+		return eventService.addAttendee(eventId, attendeeId);
 
-	return this.eventService.addAttendee(eventId, attendeeId);
-
-    }
+	}
 
 }

@@ -15,72 +15,67 @@ import jakarta.validation.constraints.NotNull;
 
 public final class Attendee extends AbstractDomainObject {
 
-    private final String firstName;
-    private final String lastName;
-    private final List<UUID> ticketIDs;
+	private final String firstName;
+	private final String lastName;
+	private final List<UUID> ticketIDs;
 
-    public Attendee(final UUID uuid,
-		    final Instant createdAt,
-		    final Instant lastUpdated,
-		    @NotNull final String firstName,
-		    @NotNull final String lastName,
-		    final List<UUID> ticketIDs) {
+	public Attendee(final UUID uuid, final Instant createdAt, final Instant lastUpdated,
+			@NotNull final String firstName, @NotNull final String lastName, final List<UUID> ticketIDs) {
 
-	super(uuid, createdAt, lastUpdated);
-	this.firstName = firstName;
-	this.lastName = lastName;
-	this.ticketIDs = ticketIDs;
+		super(uuid, createdAt, lastUpdated);
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.ticketIDs = ticketIDs;
 
-    }
+	}
 
-    public String getFirstName() {
+	public String getFirstName() {
 
-	return this.firstName;
+		return firstName;
 
-    }
+	}
 
-    public String getLastName() {
+	public String getLastName() {
 
-	return this.lastName;
+		return lastName;
 
-    }
+	}
 
-    public List<UUID> getTicketIDs() {
+	public List<UUID> getTicketIDs() {
 
-	return this.ticketIDs;
+		return ticketIDs;
 
-    }
+	}
 
-    @Override
-    public boolean equals(final Object o) {
+	@Override
+	public boolean equals(final Object o) {
 
-	if (this == o)
-	    return true;
-	if (o == null || this.getClass() != o.getClass())
-	    return false;
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
 
-	final Attendee that = (Attendee) o;
+		final Attendee that = (Attendee) o;
 
-	return new EqualsBuilder().appendSuper(super.equals(that)).append(this.firstName, that.firstName)
-		.append(this.lastName, that.lastName).append(this.ticketIDs, that.ticketIDs).build();
+		return new EqualsBuilder().appendSuper(super.equals(that)).append(firstName, that.firstName)
+				.append(lastName, that.lastName).append(ticketIDs, that.ticketIDs).build();
 
-    }
+	}
 
-    @Override
-    public int hashCode() {
+	@Override
+	public int hashCode() {
 
-	return new HashCodeBuilder(17, 37).appendSuper(super.hashCode()).append(this.firstName).append(this.lastName)
-		.append(this.ticketIDs).build();
+		return new HashCodeBuilder(17, 37).appendSuper(super.hashCode()).append(firstName).append(lastName)
+				.append(ticketIDs).build();
 
-    }
+	}
 
-    @Override
-    public String toString() {
+	@Override
+	public String toString() {
 
-	return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).appendSuper(super.toString())
-		.append("firstName", this.firstName).append("lastName", this.lastName)
-		.append("ticketIDs", this.ticketIDs).toString();
+		return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).appendSuper(super.toString())
+				.append("firstName", firstName).append("lastName", lastName).append("ticketIDs", ticketIDs).toString();
 
-    }
+	}
 
 }

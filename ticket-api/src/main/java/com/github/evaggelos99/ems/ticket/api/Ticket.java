@@ -17,92 +17,88 @@ import jakarta.validation.constraints.NotNull;
 
 public final class Ticket extends AbstractDomainObject {
 
-    private final UUID eventID;
-    private final TicketType ticketType;
-    private final Integer price;
-    private final Boolean transferable;
-    private final SeatingInformation seatingInformation;
-    // TODO create QR code referenceing this ticket
+	private final UUID eventID;
+	private final TicketType ticketType;
+	private final Integer price;
+	private final Boolean transferable;
+	private final SeatingInformation seatingInformation;
+	// TODO create QR code referenceing this ticket
 
-    public Ticket(final UUID uuid,
-		  final Instant createdAt,
-		  final Instant lastUpdated,
-		  @NotNull final UUID eventID,
-		  @NotNull final TicketType ticketType,
-		  @NotNull @NotNegative(message = "cannot be negative") final Integer price,
-		  @NotNull final Boolean transferable,
-		  @NotNull final SeatingInformation seatInfo) {
+	public Ticket(final UUID uuid, final Instant createdAt, final Instant lastUpdated, @NotNull final UUID eventID,
+			@NotNull final TicketType ticketType,
+			@NotNull @NotNegative(message = "cannot be negative") final Integer price,
+			@NotNull final Boolean transferable, @NotNull final SeatingInformation seatingInformation) {
 
-	super(uuid, createdAt, lastUpdated);
-	this.eventID = eventID;
-	this.ticketType = ticketType;
-	this.price = price;
-	this.transferable = transferable;
-	this.seatingInformation = seatInfo;
+		super(uuid, createdAt, lastUpdated);
+		this.eventID = eventID;
+		this.ticketType = ticketType;
+		this.price = price;
+		this.transferable = transferable;
+		this.seatingInformation = seatingInformation;
 
-    }
+	}
 
-    public UUID getEventID() {
+	public UUID getEventID() {
 
-	return this.eventID;
+		return eventID;
 
-    }
+	}
 
-    public TicketType getTicketType() {
+	public TicketType getTicketType() {
 
-	return this.ticketType;
+		return ticketType;
 
-    }
+	}
 
-    public Integer getPrice() {
+	public Integer getPrice() {
 
-	return this.price;
+		return price;
 
-    }
+	}
 
-    public Boolean getTransferable() {
+	public Boolean getTransferable() {
 
-	return this.transferable;
+		return transferable;
 
-    }
+	}
 
-    public SeatingInformation getSeatingInformation() {
+	public SeatingInformation getSeatingInformation() {
 
-	return this.seatingInformation;
+		return seatingInformation;
 
-    }
+	}
 
-    @Override
-    public boolean equals(final Object o) {
+	@Override
+	public boolean equals(final Object o) {
 
-	if (this == o)
-	    return true;
-	if (o == null || this.getClass() != o.getClass())
-	    return false;
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
 
-	final Ticket that = (Ticket) o;
+		final Ticket that = (Ticket) o;
 
-	return new EqualsBuilder().appendSuper(super.equals(that)).append(this.eventID, that.eventID)
-		.append(this.ticketType, that.ticketType).append(this.price, that.price)
-		.append(this.transferable, that.transferable).append(this.seatingInformation, that.seatingInformation).build();
+		return new EqualsBuilder().appendSuper(super.equals(that)).append(eventID, that.eventID)
+				.append(ticketType, that.ticketType).append(price, that.price).append(transferable, that.transferable)
+				.append(seatingInformation, that.seatingInformation).build();
 
-    }
+	}
 
-    @Override
-    public int hashCode() {
+	@Override
+	public int hashCode() {
 
-	return new HashCodeBuilder(17, 37).appendSuper(super.hashCode()).append(this.eventID).append(this.ticketType)
-		.append(this.price).append(this.transferable).append(this.seatingInformation).build();
+		return new HashCodeBuilder(17, 37).appendSuper(super.hashCode()).append(eventID).append(ticketType)
+				.append(price).append(transferable).append(seatingInformation).build();
 
-    }
+	}
 
-    @Override
-    public String toString() {
+	@Override
+	public String toString() {
 
-	return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).appendSuper(super.toString())
-		.append("eventID", this.eventID).append("ticketType", this.ticketType).append("price", this.price)
-		.append("transferable", this.transferable).append("seat information", this.seatingInformation).toString();
+		return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).appendSuper(super.toString())
+				.append("eventID", eventID).append("ticketType", ticketType).append("price", price)
+				.append("transferable", transferable).append("seat information", seatingInformation).toString();
 
-    }
+	}
 
 }

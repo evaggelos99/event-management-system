@@ -26,13 +26,12 @@ public class OrganizerRowMapper implements BiFunction<Row, RowMetadata, Organize
 			@Autowired @Qualifier("arrayToListOfEventTypesConverter") final Function<EventType[], List<EventType>> arrayToListOfEventTypes) {
 
 		this.arrayToListOfEventTypesConverter = arrayToListOfEventTypes;
-
 	}
 
 	@Override
 	public Organizer apply(final Row row, final RowMetadata rmd) {
 
-		final List<EventType> eventsTypes = this.arrayToListOfEventTypesConverter
+		final List<EventType> eventsTypes = arrayToListOfEventTypesConverter
 				.apply((EventType[]) row.get("event_types"));
 
 		final ContactInformation contactInformation = new ContactInformation(row.get("email", String.class),

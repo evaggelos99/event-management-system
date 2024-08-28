@@ -12,17 +12,17 @@ import com.github.evaggelos99.ems.common.api.domainobjects.EventType;
 @Component
 public class ArrayToListOfEventTypesConverter implements Function<EventType[], List<EventType>> {
 
-    @Override
-    public List<EventType> apply(final EventType[] array) {
+	@Override
+	public List<EventType> apply(final EventType[] array) {
 
-	final List<EventType> list = new LinkedList<>();
+		final List<EventType> list = new LinkedList<>();
 
-	if (array == null)
-	    return list;
+		if (array == null)
+			return list;
 
-	Collections.addAll(list, array);
+		Collections.addAll(list, array);
 
-	return list;
+		return list;
 
-    }
+	}
 }

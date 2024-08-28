@@ -239,7 +239,7 @@ WHERE
   table_name = 'tickets';
 
 
--- used for tests
+-- used for seeding
 CREATE OR REPLACE FUNCTION gen_text()
 returns TEXT AS
 $$

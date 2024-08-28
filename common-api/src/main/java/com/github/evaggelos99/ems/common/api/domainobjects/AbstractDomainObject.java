@@ -15,65 +15,62 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  */
 public abstract class AbstractDomainObject {
 
-    private final UUID uuid;
-    private final Instant createdAt;
-    private final Instant lastUpdated;
+	private final UUID uuid;
+	private final Instant createdAt;
+	private final Instant lastUpdated;
 
-    protected AbstractDomainObject(final UUID uuid,
-				   final Instant createdAt,
-				   final Instant lastUpdated) {
+	protected AbstractDomainObject(final UUID uuid, final Instant createdAt, final Instant lastUpdated) {
 
-	this.uuid = uuid;
-	this.createdAt = createdAt;
-	this.lastUpdated = lastUpdated;
+		this.uuid = uuid;
+		this.createdAt = createdAt;
+		this.lastUpdated = lastUpdated;
+	}
 
-    }
+	public UUID getUuid() {
 
-    public UUID getUuid() {
+		return uuid;
 
-	return this.uuid;
+	}
 
-    }
+	public Instant getCreatedAt() {
 
-    public Instant getCreatedAt() {
+		return createdAt;
 
-	return this.createdAt;
+	}
 
-    }
+	public Instant getLastUpdated() {
 
-    public Instant getLastUpdated() {
+		return lastUpdated;
 
-	return this.lastUpdated;
+	}
 
-    }
+	@Override
+	public boolean equals(final Object o) {
 
-    @Override
-    public boolean equals(final Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
 
-	if (this == o)
-	    return true;
-	if (o == null || this.getClass() != o.getClass())
-	    return false;
+		final AbstractDomainObject that = (AbstractDomainObject) o;
 
-	final AbstractDomainObject that = (AbstractDomainObject) o;
+		return new EqualsBuilder().append(uuid, that.uuid).build();
 
-	return new EqualsBuilder().append(this.uuid, that.uuid).build();
+	}
 
-    }
+	@Override
+	public int hashCode() {
 
-    @Override
-    public int hashCode() {
+		return new HashCodeBuilder(17, 37).append(uuid).build();
 
-	return new HashCodeBuilder(17, 37).append(this.uuid).build();
+	}
 
-    }
+	@Override
+	public String toString() {
 
-    @Override
-    public String toString() {
+		return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("uuid", uuid)
+				.append("createdAt", createdAt).append("lastUpdated", lastUpdated).toString();
 
-	return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("uuid", this.uuid)
-		.append("createdAt", this.createdAt).append("lastUpdated", this.lastUpdated).toString();
-
-    }
+	}
 
 }

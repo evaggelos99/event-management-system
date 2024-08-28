@@ -18,93 +18,86 @@ import jakarta.validation.constraints.NotNull;
 
 public final class Organizer extends AbstractDomainObject {
 
-    private final String name;
-    // TODO add regex validation
-    private final String website;
-    private final String information;
-    private final List<EventType> eventTypes;
-    private final ContactInformation contactInformation;
+	private final String name;
+	// TODO add regex validation
+	private final String website;
+	private final String information;
+	private final List<EventType> eventTypes;
+	private final ContactInformation contactInformation;
 
-    public Organizer(final UUID uuid,
-		     final Instant createdAt,
-		     final Instant lastUpdated,
-		     @NotNull @NotBlank final String name,
-		     @NotBlank final String website,
-		     final String description,
-		     @NotNull final List<EventType> eventTypes,
-		     @NotNull final ContactInformation contactInformation) {
+	public Organizer(final UUID uuid, final Instant createdAt, final Instant lastUpdated,
+			@NotNull @NotBlank final String name, @NotBlank final String website, final String information,
+			@NotNull final List<EventType> eventTypes, @NotNull final ContactInformation contactInformation) {
 
-	super(uuid, createdAt, lastUpdated);
-	this.name = name;
-	this.website = website;
-	this.information = description;
-	this.eventTypes = eventTypes;
-	this.contactInformation = contactInformation;
+		super(uuid, createdAt, lastUpdated);
+		this.name = name;
+		this.website = website;
+		this.information = information;
+		this.eventTypes = eventTypes;
+		this.contactInformation = contactInformation;
+	}
 
-    }
+	public String getName() {
 
-    public String getName() {
+		return name;
 
-	return this.name;
+	}
 
-    }
+	public String getWebsite() {
 
-    public String getWebsite() {
+		return website;
 
-	return this.website;
+	}
 
-    }
+	public String getInformation() {
 
-    public String getInformation() {
+		return information;
 
-	return this.information;
+	}
 
-    }
+	public List<EventType> getEventTypes() {
 
-    public List<EventType> getEventTypes() {
+		return eventTypes;
 
-	return this.eventTypes;
+	}
 
-    }
+	public ContactInformation getContactInformation() {
 
-    public ContactInformation getContactInformation() {
+		return contactInformation;
 
-	return this.contactInformation;
+	}
 
-    }
+	@Override
+	public boolean equals(final Object o) {
 
-    @Override
-    public boolean equals(final Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
 
-	if (this == o)
-	    return true;
-	if (o == null || this.getClass() != o.getClass())
-	    return false;
+		final Organizer that = (Organizer) o;
 
-	final Organizer that = (Organizer) o;
+		return new EqualsBuilder().appendSuper(super.equals(that)).append(name, that.name).append(website, that.website)
+				.append(information, that.information).append(eventTypes, that.eventTypes)
+				.append(contactInformation, that.contactInformation).build();
 
-	return new EqualsBuilder().appendSuper(super.equals(that)).append(this.name, that.name)
-		.append(this.website, that.website).append(this.information, that.information)
-		.append(this.eventTypes, that.eventTypes).append(this.contactInformation, that.contactInformation)
-		.build();
+	}
 
-    }
+	@Override
+	public int hashCode() {
 
-    @Override
-    public int hashCode() {
+		return new HashCodeBuilder(17, 37).appendSuper(super.hashCode()).append(name).append(website)
+				.append(information).append(eventTypes).append(contactInformation).build();
 
-	return new HashCodeBuilder(17, 37).appendSuper(super.hashCode()).append(this.name).append(this.website)
-		.append(this.information).append(this.eventTypes).append(this.contactInformation).build();
+	}
 
-    }
+	@Override
+	public String toString() {
 
-    @Override
-    public String toString() {
+		return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).appendSuper(super.toString())
+				.append("name", name).append("website", website).append("information", information)
+				.append("eventTypes", eventTypes).append("contactInformation", contactInformation).toString();
 
-	return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).appendSuper(super.toString())
-		.append("name", this.name).append("website", this.website).append("information", this.information)
-		.append("eventTypes", this.eventTypes).append("contactInformation", this.contactInformation).toString();
-
-    }
+	}
 
 }

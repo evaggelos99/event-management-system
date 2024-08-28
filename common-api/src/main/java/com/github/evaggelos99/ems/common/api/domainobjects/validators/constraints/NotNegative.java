@@ -31,22 +31,22 @@ import jakarta.validation.Payload;
 @Constraint(validatedBy = { NotNegativeValidator.class })
 public @interface NotNegative {
 
-    String message() default "Cannot be negative";
+	String message() default "Cannot be negative";
 
-    Class<?>[] groups() default {};
+	Class<?>[] groups() default {};
 
-    Class<? extends Payload>[] payload() default {};
+	Class<? extends Payload>[] payload() default {};
 
-    /**
-     * Defines several {@link NotNegative} constraints on the same element.
-     *
-     * @see NotNegative
-     */
-    @Target({ METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE })
-    @Retention(RUNTIME)
-    @Documented
-    @interface List {
+	/**
+	 * Defines several {@link NotNegative} constraints on the same element.
+	 *
+	 * @see NotNegative
+	 */
+	@Target({ METHOD, FIELD, ANNOTATION_TYPE, CONSTRUCTOR, PARAMETER, TYPE_USE })
+	@Retention(RUNTIME)
+	@Documented
+	@interface List {
 
-	NotNegative[] value();
-    }
+		NotNegative[] value();
+	}
 }

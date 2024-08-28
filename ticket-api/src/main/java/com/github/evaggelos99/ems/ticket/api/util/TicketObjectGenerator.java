@@ -1,6 +1,5 @@
 package com.github.evaggelos99.ems.ticket.api.util;
 
-import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.List;
 import java.util.Random;
@@ -13,36 +12,47 @@ import com.github.evaggelos99.ems.ticket.api.TicketDto;
 
 public final class TicketObjectGenerator {
 
-    private static final List<TicketType> ALL_TICKET_TYPES = List.of(TicketType.values());
-    private static final Random RANDOM = new Random();
+	private static final List<TicketType> ALL_TICKET_TYPES = List.of(TicketType.values());
+	private static final Random RANDOM = new Random();
 
-    private TicketObjectGenerator() {
+	private TicketObjectGenerator() {
 
-    }
+	}
 
-    public static TicketDto generateTicketDto(final UUID eventId) {
+	public static TicketDto generateTicketDto(final UUID ticketId, final UUID eventId) {
 
-	final TicketType randomTicketType = ALL_TICKET_TYPES.get(RANDOM.nextInt(ALL_TICKET_TYPES.size()));
+		final TicketType randomTicketType = ALL_TICKET_TYPES.get(RANDOM.nextInt(ALL_TICKET_TYPES.size()));
 
-	final Timestamp timestamp = Timestamp.from(Instant.now());
-	return new TicketDto(UUID.randomUUID(), timestamp, timestamp, eventId, randomTicketType, RANDOM.nextInt(500),
-		RANDOM.nextBoolean(), generateSeatingInformation());
+		final Instant timestamp = Instant.now();
 
-    }
+		return new TicketDto(ticketId != null ? ticketId : UUID.randomUUID(), timestamp, timestamp, eventId,
+				randomTicketType, RANDOM.nextInt(500), RANDOM.nextBoolean(), generateSeatingInformation());
 
-    public static Ticket generateTicket(final UUID eventId) {
+	}
 
-	final TicketType randomTicketType = ALL_TICKET_TYPES.get(RANDOM.nextInt(ALL_TICKET_TYPES.size()));
+	public static Ticket generateTicket(final UUID eventId) {
 
-	final Instant now = Instant.now();
-	return new Ticket(UUID.randomUUID(), now, now, eventId, randomTicketType, RANDOM.nextInt(500),
-		RANDOM.nextBoolean(), generateSeatingInformation());
+		final TicketType randomTicketType = ALL_TICKET_TYPES.get(RANDOM.nextInt(ALL_TICKET_TYPES.size()));
 
-    }
+		final Instant now = Instant.now();
+		return new Ticket(UUID.randomUUID(), now, now, eventId, randomTicketType, RANDOM.nextInt(500),
+				RANDOM.nextBoolean(), generateSeatingInformation());
 
-    public static SeatingInformation generateSeatingInformation() {
+	}
 
-	return new SeatingInformation(UUID.randomUUID().toString(), UUID.randomUUID().toString());
+	public static SeatingInformation generateSeatingInformation() {
 
-    }
+		return new SeatingInformation(UUID.randomUUID().toString(), UUID.randomUUID().toString());
+
+	}
+
+	public static TicketDto generateTicketDtoWithoutTimestamps(final UUID ticketId, final UUID eventId) {
+
+		final TicketType randomTicketType = ALL_TICKET_TYPES.get(RANDOM.nextInt(ALL_TICKET_TYPES.size()));
+
+		final Instant timestamp = null;
+
+		return new TicketDto(ticketId != null ? ticketId : UUID.randomUUID(), timestamp, timestamp, eventId,
+				randomTicketType, RANDOM.nextInt(500), RANDOM.nextBoolean(), generateSeatingInformation());
+	}
 }

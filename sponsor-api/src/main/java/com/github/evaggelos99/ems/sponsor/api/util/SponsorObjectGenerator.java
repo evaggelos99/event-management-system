@@ -1,6 +1,5 @@
 package com.github.evaggelos99.ems.sponsor.api.util;
 
-import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.Random;
 import java.util.UUID;
@@ -17,11 +16,11 @@ public final class SponsorObjectGenerator {
 
 	}
 
-	public static SponsorDto generateSponsorDto() {
+	public static SponsorDto generateSponsorDto(final UUID sponsorId) {
 
-		final Timestamp timestamp = Timestamp.from(Instant.now());
-		return new SponsorDto(UUID.randomUUID(), Instant.now(), Instant.now(), UUID.randomUUID().toString(),
-				UUID.randomUUID().toString(), RANDOM.nextInt(500), generateContactInformation());
+		return new SponsorDto(sponsorId != null ? sponsorId : UUID.randomUUID(), Instant.now(), Instant.now(),
+				UUID.randomUUID().toString(), UUID.randomUUID().toString(), RANDOM.nextInt(500),
+				generateContactInformation());
 
 	}
 
@@ -38,5 +37,11 @@ public final class SponsorObjectGenerator {
 		return new ContactInformation(UUID.randomUUID().toString(), UUID.randomUUID().toString(),
 				UUID.randomUUID().toString());
 
+	}
+
+	public static SponsorDto generateSponsorDtoWithoutTimestamps() {
+
+		return new SponsorDto(UUID.randomUUID(), null, null, UUID.randomUUID().toString(), UUID.randomUUID().toString(),
+				RANDOM.nextInt(500), generateContactInformation());
 	}
 }

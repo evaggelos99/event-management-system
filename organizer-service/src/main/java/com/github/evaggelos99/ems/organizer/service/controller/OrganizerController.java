@@ -27,76 +27,74 @@ import reactor.core.publisher.Mono;
 @RequestMapping(OrganizerController.ORGANIZER_PATH)
 public class OrganizerController implements IOrganizerController {
 
-    static final String ORGANIZER_PATH = "/organizer";
-    private final IService<Organizer, OrganizerDto> organizerService;
-    private final Function<Organizer, OrganizerDto> organizerToOrganizerDtoConverter;
+	static final String ORGANIZER_PATH = "/organizer";
+	private final IService<Organizer, OrganizerDto> organizerService;
+	private final Function<Organizer, OrganizerDto> organizerToOrganizerDtoConverter;
 
-    /**
-     * c-or
-     *
-     * @param organizerService                 service responsible for CRUD
-     *                                         operations
-     * @param organizerToOrganizerDtoConverter organizer to DTO
-     * @param organizerDtoToOrganizerConverter DTO to organizer
-     */
-    public OrganizerController(@Autowired final IService<Organizer, OrganizerDto> organizerService,
-			       @Autowired @Qualifier("organizerToOrganizerDtoConverter") final Function<Organizer,
-				       OrganizerDto> organizerToOrganizerDtoConverter) {
+	/**
+	 * c-or
+	 *
+	 * @param organizerService                 service responsible for CRUD
+	 *                                         operations
+	 * @param organizerToOrganizerDtoConverter organizer to DTO
+	 * @param organizerDtoToOrganizerConverter DTO to organizer
+	 */
+	public OrganizerController(@Autowired final IService<Organizer, OrganizerDto> organizerService,
+			@Autowired @Qualifier("organizerToOrganizerDtoConverter") final Function<Organizer, OrganizerDto> organizerToOrganizerDtoConverter) {
 
-	this.organizerService = requireNonNull(organizerService);
-	this.organizerToOrganizerDtoConverter = requireNonNull(organizerToOrganizerDtoConverter);
+		this.organizerService = requireNonNull(organizerService);
+		this.organizerToOrganizerDtoConverter = requireNonNull(organizerToOrganizerDtoConverter);
 
-    }
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Mono<OrganizerDto> postOrganizer(final OrganizerDto organizerDto) {
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Mono<OrganizerDto> postOrganizer(final OrganizerDto organizerDto) {
 
-	return this.organizerService.add(organizerDto).map(this.organizerToOrganizerDtoConverter::apply);
+		return organizerService.add(organizerDto).map(organizerToOrganizerDtoConverter::apply);
 
-    }
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Mono<OrganizerDto> getOrganizer(final UUID organizerId) {
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Mono<OrganizerDto> getOrganizer(final UUID organizerId) {
 
-	return this.organizerService.get(organizerId).map(this.organizerToOrganizerDtoConverter::apply);
+		return organizerService.get(organizerId).map(organizerToOrganizerDtoConverter::apply);
 
-    }
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Mono<OrganizerDto> putOrganizer(final UUID organizerId,
-					   final OrganizerDto organizerDto) {
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Mono<OrganizerDto> putOrganizer(final UUID organizerId, final OrganizerDto organizerDto) {
 
-	return this.organizerService.edit(organizerId, organizerDto).map(this.organizerToOrganizerDtoConverter::apply);
+		return organizerService.edit(organizerId, organizerDto).map(organizerToOrganizerDtoConverter::apply);
 
-    }
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Mono<?> deleteOrganizer(final UUID organizerId) {
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Mono<?> deleteOrganizer(final UUID organizerId) {
 
-	return this.organizerService.delete(organizerId);
+		return organizerService.delete(organizerId);
 
-    }
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Flux<OrganizerDto> getOrganizers() {
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Flux<OrganizerDto> getOrganizers() {
 
-	return this.organizerService.getAll().map(this.organizerToOrganizerDtoConverter::apply);
+		return organizerService.getAll().map(organizerToOrganizerDtoConverter::apply);
 
-    }
+	}
 
 }

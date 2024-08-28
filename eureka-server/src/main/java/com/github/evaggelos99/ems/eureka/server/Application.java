@@ -1,4 +1,4 @@
-package org.exampledriven.eureka.customer.server;
+package com.github.evaggelos99.ems.eureka.server;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -10,10 +10,9 @@ import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
 @EnableDiscoveryClient
 public class Application {
 
-    public static void main(final String[] args) throws Exception {
+	public static void main(final String[] args) throws Exception {
 
-	SpringApplication.run(Application.class, args);
-
-    }
+		SpringApplication.run(Application.class, args);
+	}
 
 }

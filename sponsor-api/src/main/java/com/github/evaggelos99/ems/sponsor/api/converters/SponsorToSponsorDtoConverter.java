@@ -1,7 +1,5 @@
 package com.github.evaggelos99.ems.sponsor.api.converters;
 
-import java.sql.Timestamp;
-import java.time.Instant;
 import java.util.function.Function;
 
 import org.springframework.stereotype.Component;
@@ -20,9 +18,4 @@ public class SponsorToSponsorDtoConverter implements Function<Sponsor, SponsorDt
 
 	}
 
-	private Timestamp convertToTimeStamp(final Instant lastUpdated) {
-
-		return Timestamp.from(lastUpdated);
-
-	}
 }

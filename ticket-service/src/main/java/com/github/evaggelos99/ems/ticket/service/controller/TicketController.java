@@ -27,74 +27,66 @@ import reactor.core.publisher.Mono;
 @RequestMapping(TicketController.TICKET_PATH)
 public class TicketController implements ITicketController {
 
-    static final String TICKET_PATH = "/ticket";
-    private final IService<Ticket, TicketDto> ticketService;
-    private final Function<Ticket, TicketDto> ticketToTicketDtoConverter;
+	static final String TICKET_PATH = "/ticket";
+	private final IService<Ticket, TicketDto> ticketService;
+	private final Function<Ticket, TicketDto> ticketToTicketDtoConverter;
 
-    /**
-     * C-or
-     *
-     * @param ticketService              service responsible for CRUD operations
-     * @param ticketToTicketDtoConverter ticket to DTO
-     */
-    public TicketController(@Autowired final IService<Ticket, TicketDto> ticketService,
-			    @Autowired @Qualifier("ticketToTicketDtoConverter") final Function<Ticket,
-				    TicketDto> ticketToTicketDtoConverter) {
+	/**
+	 * C-or
+	 *
+	 * @param ticketService              service responsible for CRUD operations
+	 * @param ticketToTicketDtoConverter ticket to DTO
+	 */
+	public TicketController(@Autowired final IService<Ticket, TicketDto> ticketService,
+			@Autowired @Qualifier("ticketToTicketDtoConverter") final Function<Ticket, TicketDto> ticketToTicketDtoConverter) {
 
-	this.ticketService = requireNonNull(ticketService);
-	this.ticketToTicketDtoConverter = requireNonNull(ticketToTicketDtoConverter);
+		this.ticketService = requireNonNull(ticketService);
+		this.ticketToTicketDtoConverter = requireNonNull(ticketToTicketDtoConverter);
+	}
 
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Mono<TicketDto> postTicket(final TicketDto ticketDto) {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Mono<TicketDto> postTicket(final TicketDto ticketDto) {
+		return ticketService.add(ticketDto).map(ticketToTicketDtoConverter::apply);
+	}
 
-	return this.ticketService.add(ticketDto).map(this.ticketToTicketDtoConverter::apply);
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Mono<TicketDto> getTicket(final UUID ticketId) {
 
-    }
+		return ticketService.get(ticketId).map(ticketToTicketDtoConverter::apply);
+	}
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Mono<TicketDto> getTicket(final UUID ticketId) {
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Mono<TicketDto> putTicket(final UUID ticketId, final TicketDto ticketDto) {
 
-	return this.ticketService.get(ticketId).map(this.ticketToTicketDtoConverter::apply);
+		return ticketService.edit(ticketId, ticketDto).map(ticketToTicketDtoConverter::apply);
+	}
 
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Mono<?> deleteTicket(final UUID ticketId) {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Mono<TicketDto> putTicket(final UUID ticketId,
-				     final TicketDto ticketDto) {
+		return ticketService.delete(ticketId);
+	}
 
-	return this.ticketService.edit(ticketId, ticketDto).map(this.ticketToTicketDtoConverter::apply);
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Flux<TicketDto> getTickets() {
 
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Mono<?> deleteTicket(final UUID ticketId) {
-
-	return this.ticketService.delete(ticketId);
-
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Flux<TicketDto> getTickets() {
-
-	return this.ticketService.getAll().map(this.ticketToTicketDtoConverter::apply);
-
-    }
+		return ticketService.getAll().map(ticketToTicketDtoConverter::apply);
+	}
 
 }

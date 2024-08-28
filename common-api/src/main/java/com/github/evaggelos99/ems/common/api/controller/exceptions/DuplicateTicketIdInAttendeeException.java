@@ -17,36 +17,35 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(value = HttpStatus.CONFLICT, reason = "The TicketId is already in the attendee's tickets")
 public class DuplicateTicketIdInAttendeeException extends RuntimeException {
 
-    private static final int CODE = 409;
+	private static final int CODE = 409;
 
-    private static final long serialVersionUID = -4696167699698324726L;
+	private static final long serialVersionUID = -4696167699698324726L;
 
-    private static final HttpStatusCode STATUS_CODE = HttpStatusCode.valueOf(CODE);
+	private static final HttpStatusCode STATUS_CODE = HttpStatusCode.valueOf(CODE);
 
-    private final UUID uuid;
+	private final UUID uuid;
 
-    /**
-     * C-or
-     *
-     * @param uuid          cannot be null
-     * @param classOfObject cannot be null
-     */
-    public DuplicateTicketIdInAttendeeException(final UUID uuid) {
+	/**
+	 * C-or
+	 *
+	 * @param uuid          cannot be null
+	 * @param classOfObject cannot be null
+	 */
+	public DuplicateTicketIdInAttendeeException(final UUID uuid) {
 
-	this.uuid = requireNonNull(uuid);
+		this.uuid = requireNonNull(uuid);
+	}
 
-    }
+	public UUID getUuid() {
 
-    public UUID getUuid() {
+		return uuid;
 
-	return this.uuid;
+	}
 
-    }
+	public HttpStatusCode getStatusCode() {
 
-    public HttpStatusCode getStatusCode() {
+		return STATUS_CODE;
 
-	return STATUS_CODE;
-
-    }
+	}
 
 }

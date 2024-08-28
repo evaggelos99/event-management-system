@@ -13,11 +13,10 @@ import org.springframework.web.reactive.function.client.WebClient.Builder;
 @Profile(value = { "dev", "prod" })
 public class Config {
 
-    @Bean
-    @LoadBalanced
-    Builder webClient() {
+	@Bean
+	@LoadBalanced
+	Builder webClient() {
 
-	return WebClient.builder();
-
-    }
+		return WebClient.builder();
+	}
 }

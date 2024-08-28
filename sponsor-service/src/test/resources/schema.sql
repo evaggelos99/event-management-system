@@ -1,4 +1,4 @@
-CREATE SCHEMA ems_sponsor
+CREATE SCHEMA ems_sponsor;
 
 CREATE TABLE IF NOT EXISTS ems_sponsor.sponsors (
   id UUID PRIMARY KEY,

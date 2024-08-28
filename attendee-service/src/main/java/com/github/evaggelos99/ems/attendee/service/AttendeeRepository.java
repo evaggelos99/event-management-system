@@ -36,7 +36,7 @@ public class AttendeeRepository implements IAttendeeRepository {
 	/**
 	 * C-or
 	 *
-	 * @param jdbcTemplate                   the {@link DatabaseClient} used for
+	 * @param databaseClient                 the {@link DatabaseClient} used for
 	 *                                       connecting to the database for the
 	 *                                       Attendee objects
 	 * @param databaseClient                 the {@link AttendeeRowMapper} used for
@@ -50,13 +50,13 @@ public class AttendeeRepository implements IAttendeeRepository {
 	 *                                       for getting the right query CRUD
 	 *                                       database operations
 	 */
-	public AttendeeRepository(@Autowired final DatabaseClient jdbcTemplate,
-			@Autowired @Qualifier("attendeeRowMapper") final AttendeeRowMapper databaseClient,
+	public AttendeeRepository(@Autowired final DatabaseClient databaseClient,
+			@Autowired @Qualifier("attendeeRowMapper") final AttendeeRowMapper attendeeRowMapper,
 			@Autowired @Qualifier("attendeeDtoToAttendeeConverter") final Function<AttendeeDto, Attendee> attendeeDtoToAttendeeConverter,
 			@Autowired @Qualifier("queriesProperties") final Properties attendeeQueriesProperties) {
 
-		this.databaseClient = requireNonNull(jdbcTemplate);
-		this.attendeeRowMapper = requireNonNull(databaseClient);
+		this.databaseClient = requireNonNull(databaseClient);
+		this.attendeeRowMapper = requireNonNull(attendeeRowMapper);
 		this.attendeeDtoToAttendeeConverter = requireNonNull(attendeeDtoToAttendeeConverter);
 		this.attendeeQueriesProperties = requireNonNull(attendeeQueriesProperties);
 	}

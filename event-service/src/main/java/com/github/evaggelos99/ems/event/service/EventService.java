@@ -25,114 +25,107 @@ import reactor.core.publisher.Mono;
 @Service
 public class EventService implements IEventService {
 
-    private final IEventRepository eventRepository;
-    final Function<Event, EventDto> eventToEventDtoConverter;
+	private final IEventRepository eventRepository;
+	final Function<Event, EventDto> eventToEventDtoConverter;
 
-    /**
-     * C-or
-     *
-     * @param eventRepository          {@link EventRepository} the repository that
-     *                                 communicates with the database
-     * @param eventToEventDtoConverter {@link EventToEventDtoConverter} converts
-     *                                 from Event to EventDto
-     */
-    public EventService(@Autowired final IEventRepository eventRepository,
-			@Autowired @Qualifier("eventToEventDtoConverter") final Function<Event,
-				EventDto> eventToEventDtoConverter) {
+	/**
+	 * C-or
+	 *
+	 * @param eventRepository          {@link EventRepository} the repository that
+	 *                                 communicates with the database
+	 * @param eventToEventDtoConverter {@link EventToEventDtoConverter} converts
+	 *                                 from Event to EventDto
+	 */
+	public EventService(@Autowired final IEventRepository eventRepository,
+			@Autowired @Qualifier("eventToEventDtoConverter") final Function<Event, EventDto> eventToEventDtoConverter) {
 
-	this.eventRepository = requireNonNull(eventRepository);
-	this.eventToEventDtoConverter = requireNonNull(eventToEventDtoConverter);
+		this.eventRepository = requireNonNull(eventRepository);
+		this.eventToEventDtoConverter = requireNonNull(eventToEventDtoConverter);
+	}
 
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Mono<Event> add(final EventDto event) {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Mono<Event> add(final EventDto event) {
+		return eventRepository.save(event);
 
-	return this.eventRepository.save(event);
+	}
 
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Mono<Event> get(final UUID uuid) {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Mono<Event> get(final UUID uuid) {
+		return eventRepository.findById(uuid);
 
-	return this.eventRepository.findById(uuid);
+	}
 
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Mono<Boolean> delete(final UUID uuid) {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Mono<Boolean> delete(final UUID uuid) {
+		return eventRepository.deleteById(uuid);
 
-	return this.eventRepository.deleteById(uuid);
+	}
 
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Mono<Event> edit(final UUID uuid, final EventDto event) {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Mono<Event> edit(final UUID uuid,
-			    final EventDto event) {
+		return !uuid.equals(event.uuid()) ? Mono.error(() -> new ObjectNotFoundException(uuid, EventDto.class))
+				: eventRepository.edit(event);
 
-	return !uuid.equals(event.uuid()) ? Mono.error(() -> new ObjectNotFoundException(uuid, EventDto.class))
-		: this.eventRepository.edit(event);
+	}
 
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Flux<Event> getAll() {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Flux<Event> getAll() {
+		return eventRepository.findAll();
 
-	return this.eventRepository.findAll();
+	}
 
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Mono<Boolean> existsById(final UUID eventId) {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Mono<Boolean> existsById(final UUID eventId) {
+		return eventRepository.existsById(eventId);
 
-	return this.eventRepository.existsById(eventId);
+	}
 
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Mono<Boolean> addAttendee(final UUID eventId, final UUID attendeeId) {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Mono<Boolean> addAttendee(final UUID eventId,
-				     final UUID attendeeId) {
+		return eventRepository.findById(eventId).map(event -> addAttendeeIdToExistingList(eventId, attendeeId, event))//
+				.map(eventToEventDtoConverter::apply)//
+				.flatMap(eventRepository::edit)//
+				.map(x -> x.getAttendeesIDs().contains(attendeeId));
 
-	return this.eventRepository.findById(eventId)
-		.map(event -> this.addAttendeeIdToExistingList(eventId, attendeeId, event))//
-		.map(this.eventToEventDtoConverter::apply)//
-		.flatMap(this.eventRepository::edit)//
-		.map(x -> x.getAttendeesIDs().contains(attendeeId));
+	}
 
-    }
+	private Event addAttendeeIdToExistingList(final UUID eventId, final UUID attendeeId, final Event event) {
 
-    private Event addAttendeeIdToExistingList(final UUID eventId,
-					      final UUID attendeeId,
-					      final Event event) {
+		final List<UUID> ids = event.getAttendeesIDs();
+		final LinkedList<UUID> list = new LinkedList<>(ids);
+		list.add(attendeeId);
+		return new Event(eventId, event.getCreatedAt(), Instant.now(), event.getName(), event.getPlace(),
+				event.getEventType(), list, event.getOrganizerID(), event.getLimitOfPeople(), event.getSponsorsIds(),
+				event.getStartTime(), event.getDuration());
 
-	final List<UUID> ids = event.getAttendeesIDs();
-	final LinkedList<UUID> list = new LinkedList<>(ids);
-	list.add(attendeeId);
-	return new Event(eventId, event.getCreatedAt(), Instant.now(), event.getName(), event.getPlace(),
-		event.getEventType(), list, event.getOrganizerID(), event.getLimitOfPeople(), event.getSponsorsIds(),
-		event.getStartTime(), event.getDuration());
-
-    }
+	}
 
 }

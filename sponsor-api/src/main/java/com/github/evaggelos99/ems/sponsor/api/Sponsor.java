@@ -16,83 +16,78 @@ import jakarta.validation.constraints.NotNull;
 
 public final class Sponsor extends AbstractDomainObject {
 
-    private final String name;
-    private final String website;
-    private final Integer financialContribution;
-    private final ContactInformation contactInformation;
+	private final String name;
+	private final String website;
+	private final Integer financialContribution;
+	private final ContactInformation contactInformation;
 
-    public Sponsor(final UUID uuid,
-		   final Instant createdAt,
-		   final Instant lastUpdated,
-		   @NotNull final String name,
-		   @NotNull final String website,
-		   @NotNull @NotNegative final Integer financialContribution,
-		   @NotNull final ContactInformation contactInformation) {
+	public Sponsor(final UUID uuid, final Instant createdAt, final Instant lastUpdated, @NotNull final String name,
+			@NotNull final String website, @NotNull @NotNegative final Integer financialContribution,
+			@NotNull final ContactInformation contactInformation) {
 
-	super(uuid, createdAt, lastUpdated);
-	this.name = name;
-	this.website = website;
-	this.financialContribution = financialContribution;
-	this.contactInformation = contactInformation;
+		super(uuid, createdAt, lastUpdated);
+		this.name = name;
+		this.website = website;
+		this.financialContribution = financialContribution;
+		this.contactInformation = contactInformation;
 
-    }
+	}
 
-    public String getName() {
+	public String getName() {
 
-	return this.name;
+		return name;
 
-    }
+	}
 
-    public String getWebsite() {
+	public String getWebsite() {
 
-	return this.website;
+		return website;
 
-    }
+	}
 
-    public Integer getFinancialContribution() {
+	public Integer getFinancialContribution() {
 
-	return this.financialContribution;
+		return financialContribution;
 
-    }
+	}
 
-    public ContactInformation getContactInformation() {
+	public ContactInformation getContactInformation() {
 
-	return this.contactInformation;
+		return contactInformation;
 
-    }
+	}
 
-    @Override
-    public boolean equals(final Object o) {
+	@Override
+	public boolean equals(final Object o) {
 
-	if (this == o)
-	    return true;
-	if (o == null || this.getClass() != o.getClass())
-	    return false;
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
 
-	final Sponsor that = (Sponsor) o;
+		final Sponsor that = (Sponsor) o;
 
-	return new EqualsBuilder().appendSuper(super.equals(that)).append(this.name, that.name)
-		.append(this.website, that.website).append(this.financialContribution, that.financialContribution)
-		.append(this.contactInformation, that.contactInformation).build();
+		return new EqualsBuilder().appendSuper(super.equals(that)).append(name, that.name).append(website, that.website)
+				.append(financialContribution, that.financialContribution)
+				.append(contactInformation, that.contactInformation).build();
 
-    }
+	}
 
-    @Override
-    public int hashCode() {
+	@Override
+	public int hashCode() {
 
-	return new HashCodeBuilder(17, 37).appendSuper(super.hashCode()).append(this.name).append(this.website)
-		.append(this.financialContribution).append(this.contactInformation).build();
+		return new HashCodeBuilder(17, 37).appendSuper(super.hashCode()).append(name).append(website)
+				.append(financialContribution).append(contactInformation).build();
 
-    }
+	}
 
-    @Override
-    public String toString() {
+	@Override
+	public String toString() {
 
-	return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).appendSuper(super.toString())
-		.append("name", this.name).append("website", this.website)
-		.append("financialContribution", this.financialContribution)
-		.append("contactInformation", this.contactInformation).toString();
+		return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).appendSuper(super.toString())
+				.append("name", name).append("website", website).append("financialContribution", financialContribution)
+				.append("contactInformation", contactInformation).toString();
 
-    }
+	}
 
 }

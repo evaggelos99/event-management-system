@@ -12,21 +12,20 @@ import reactor.core.publisher.Mono;
 @Component
 public class SqlScriptExecutor {
 
-    @Autowired
-    ConnectionFactory connectionFactory;
+	@Autowired
+	ConnectionFactory connectionFactory;
 
-    /**
-     * Sets up the H2 database
-     */
-    public void setup() {
+	/**
+	 * Sets up the H2 database
+	 */
+	public void setup() {
 
-	this.executeScriptBlocking(new ClassPathResource("schema.sql"));
-	this.executeScriptBlocking(new ClassPathResource("data.sql"));
-    }
+		executeScriptBlocking(new ClassPathResource("schema.sql"));
+	}
 
-    private void executeScriptBlocking(final Resource sqlScript) {
+	private void executeScriptBlocking(final Resource sqlScript) {
 
-	Mono.from(this.connectionFactory.create())
-		.flatMap(connection -> ScriptUtils.executeSqlScript(connection, sqlScript)).block();
-    }
+		Mono.from(connectionFactory.create()).flatMap(connection -> ScriptUtils.executeSqlScript(connection, sqlScript))
+				.block();
+	}
 }

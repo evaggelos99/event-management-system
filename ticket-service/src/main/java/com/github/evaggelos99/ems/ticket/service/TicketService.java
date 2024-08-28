@@ -19,80 +19,78 @@ import reactor.core.publisher.Mono;
 @Service
 public class TicketService implements IService<Ticket, TicketDto> {
 
-    private final ITicketRepository ticketRepository;
+	private final ITicketRepository ticketRepository;
 
-    /**
-     * C-or
-     *
-     * @param ticketRepository {@link TicketRepository} the repository that
-     *                         communicates with the database
-     */
-    public TicketService(@Autowired final ITicketRepository ticketRepository) {
+	/**
+	 * C-or
+	 *
+	 * @param ticketRepository {@link TicketRepository} the repository that
+	 *                         communicates with the database
+	 */
+	public TicketService(@Autowired final ITicketRepository ticketRepository) {
 
-	this.ticketRepository = requireNonNull(ticketRepository);
+		this.ticketRepository = requireNonNull(ticketRepository);
+	}
 
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Mono<Ticket> add(final TicketDto ticketDto) {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Mono<Ticket> add(final TicketDto attendee) {
+		return ticketRepository.save(ticketDto);
 
-	return this.ticketRepository.save(attendee);
+	}
 
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Mono<Ticket> get(final UUID uuid) {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Mono<Ticket> get(final UUID uuid) {
+		return ticketRepository.findById(uuid);
 
-	return this.ticketRepository.findById(uuid);
+	}
 
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Mono<Boolean> delete(final UUID uuid) {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Mono<Boolean> delete(final UUID uuid) {
+		return ticketRepository.deleteById(uuid);
 
-	return this.ticketRepository.deleteById(uuid);
+	}
 
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Mono<Ticket> edit(final UUID uuid, final TicketDto ticketDto) {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Mono<Ticket> edit(final UUID uuid,
-			     final TicketDto ticket) {
+		return !uuid.equals(ticketDto.uuid()) ? Mono.error(() -> new ObjectNotFoundException(uuid, TicketDto.class))
+				: ticketRepository.edit(ticketDto);
 
-	return !uuid.equals(ticket.uuid()) ? Mono.error(() -> new ObjectNotFoundException(uuid, TicketDto.class))
-		: this.ticketRepository.edit(ticket);
+	}
 
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Flux<Ticket> getAll() {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Flux<Ticket> getAll() {
+		return ticketRepository.findAll();
 
-	return this.ticketRepository.findAll();
+	}
 
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Mono<Boolean> existsById(final UUID ticketId) {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Mono<Boolean> existsById(final UUID attendeeId) {
+		return ticketRepository.existsById(ticketId);
 
-	return this.ticketRepository.existsById(attendeeId);
-
-    }
+	}
 
 }

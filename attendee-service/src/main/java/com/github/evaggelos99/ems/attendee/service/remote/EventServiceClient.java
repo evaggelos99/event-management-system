@@ -19,34 +19,32 @@ import reactor.core.publisher.Mono;
 @Service
 public class EventServiceClient implements IEventServiceClient {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(EventServiceClient.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(EventServiceClient.class);
 
-    private final WebClient webClient;
+	private final WebClient webClient;
 
-    public EventServiceClient(@Autowired final WebClient.Builder webClientBuilder) {
+	public EventServiceClient(@Autowired final WebClient.Builder webClientBuilder) {
 
-	this.webClient = webClientBuilder.baseUrl("http://event-service/event").build();
+		this.webClient = webClientBuilder.baseUrl("http://event-service/event").build();
+	}
 
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Mono<Boolean> addAttendee(final UUID eventId, final UUID attendeeId) {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Mono<Boolean> addAttendee(final UUID eventId,
-				     final UUID attendeeId) {
+		return webClient.put().uri(
+				uriBuilder -> uriBuilder.path("/{id}/addAttendee").queryParam("attendeeId", attendeeId).build(eventId))
+				.retrieve().bodyToMono(Boolean.class).doOnError(this::log).onErrorReturn(false);
 
-	return this.webClient.put().uri(
-		uriBuilder -> uriBuilder.path("/{id}/addAttendee").queryParam("attendeeId", attendeeId).build(eventId))
-		.retrieve().bodyToMono(Boolean.class).doOnError(this::log).onErrorReturn(false);
+	}
 
-    }
+	private void log(final Throwable exc) {
 
-    private void log(final Throwable exc) {
+		final String simpleName = getClass().getSimpleName();
+		LOGGER.warn(String.format("Could not add Attendee in: %s", simpleName), exc);
 
-	final String simpleName = this.getClass().getSimpleName();
-	LOGGER.warn(String.format("Could not add Attendee in: %s", simpleName), exc);
-
-    }
+	}
 
 }

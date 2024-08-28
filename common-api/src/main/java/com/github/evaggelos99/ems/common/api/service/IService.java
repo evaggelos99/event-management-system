@@ -17,52 +17,51 @@ import reactor.core.publisher.Mono;
  */
 public interface IService<T extends AbstractDomainObject, D> extends ILookUpService<T> {
 
-    /**
-     * Adds the corresponding {@link D} to the service
-     *
-     * @param dto
-     *
-     * @return the {@link T} domain object
-     */
-    Mono<T> add(D dto);
+	/**
+	 * Adds the corresponding {@link D} to the service
+	 *
+	 * @param dto
+	 *
+	 * @return the {@link T} domain object
+	 */
+	Mono<T> add(D dto);
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    Mono<T> get(UUID id);
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	Mono<T> get(UUID id);
 
-    /**
-     * Deletes the {@link T} object that matches the id
-     *
-     * @param id UUID of the object that is about to be deleted
-     */
-    Mono<Boolean> delete(UUID id);
+	/**
+	 * Deletes the {@link T} object that matches the id
+	 *
+	 * @param id UUID of the object that is about to be deleted
+	 */
+	Mono<Boolean> delete(UUID id);
 
-    /**
-     * Edits the {@link T} object
-     *
-     * @param id  the existing {@link T} object's id
-     * @param dto the objects payload
-     * @return the {@link T} domain object
-     */
-    Mono<T> edit(UUID id,
-		 D dto);
+	/**
+	 * Edits the {@link T} object
+	 *
+	 * @param id  the existing {@link T} object's id
+	 * @param dto the objects payload
+	 * @return the {@link T} domain object
+	 */
+	Mono<T> edit(UUID id, D dto);
 
-    /**
-     * Fetches all the {@link T} objects available
-     *
-     * @return {@link Collection} of all the objects
-     */
-    Flux<T> getAll();
+	/**
+	 * Fetches all the {@link T} objects available
+	 *
+	 * @return {@link Collection} of all the objects
+	 */
+	Flux<T> getAll();
 
-    /**
-     * Method that tells your if the object with the specified id exists
-     *
-     * @param id of the object
-     * @return {@link Boolean#TRUE} if the object exists otherwise
-     *         {@link Boolean#FALSE}
-     */
-    Mono<Boolean> existsById(UUID id);
+	/**
+	 * Method that tells your if the object with the specified id exists
+	 *
+	 * @param id of the object
+	 * @return {@link Boolean#TRUE} if the object exists otherwise
+	 *         {@link Boolean#FALSE}
+	 */
+	Mono<Boolean> existsById(UUID id);
 
 }

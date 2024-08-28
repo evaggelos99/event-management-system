@@ -27,74 +27,71 @@ import reactor.core.publisher.Mono;
 @RequestMapping(SponsorController.SPONSOR_PATH)
 public class SponsorController implements ISponsorController {
 
-    static final String SPONSOR_PATH = "/sponsor";
-    private final IService<Sponsor, SponsorDto> sponsorService;
-    private final Function<Sponsor, SponsorDto> sponsorToSponsorDtoConverter;
+	static final String SPONSOR_PATH = "/sponsor";
+	private final IService<Sponsor, SponsorDto> sponsorService;
+	private final Function<Sponsor, SponsorDto> sponsorToSponsorDtoConverter;
 
-    /**
-     * C-or
-     *
-     * @param sponsorService               service responsible for CRUD operations
-     * @param sponsorToSponsorDtoConverter sponsor to DTO
-     */
-    public SponsorController(@Autowired final IService<Sponsor, SponsorDto> sponsorService,
-			     @Autowired @Qualifier("sponsorToSponsorDtoConverter") final Function<Sponsor,
-				     SponsorDto> sponsorToSponsorDtoConverter) {
+	/**
+	 * C-or
+	 *
+	 * @param sponsorService               service responsible for CRUD operations
+	 * @param sponsorToSponsorDtoConverter sponsor to DTO
+	 */
+	public SponsorController(@Autowired final IService<Sponsor, SponsorDto> sponsorService,
+			@Autowired @Qualifier("sponsorToSponsorDtoConverter") final Function<Sponsor, SponsorDto> sponsorToSponsorDtoConverter) {
 
-	this.sponsorService = requireNonNull(sponsorService);
-	this.sponsorToSponsorDtoConverter = requireNonNull(sponsorToSponsorDtoConverter);
+		this.sponsorService = requireNonNull(sponsorService);
+		this.sponsorToSponsorDtoConverter = requireNonNull(sponsorToSponsorDtoConverter);
+	}
 
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Mono<SponsorDto> postSponsor(final SponsorDto sponsorDto) {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Mono<SponsorDto> postSponsor(final SponsorDto sponsorDto) {
+		return sponsorService.add(sponsorDto).map(sponsorToSponsorDtoConverter::apply);
 
-	return this.sponsorService.add(sponsorDto).map(this.sponsorToSponsorDtoConverter::apply);
+	}
 
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Mono<SponsorDto> getSponsor(final UUID sponsorId) {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Mono<SponsorDto> getSponsor(final UUID sponsorId) {
+		return sponsorService.get(sponsorId).map(sponsorToSponsorDtoConverter::apply);
 
-	return this.sponsorService.get(sponsorId).map(this.sponsorToSponsorDtoConverter::apply);
+	}
 
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Mono<SponsorDto> putSponsor(final UUID sponsorId, final SponsorDto sponsorDto) {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Mono<SponsorDto> putSponsor(final UUID sponsorId,
-				       final SponsorDto sponsorDto) {
+		return sponsorService.edit(sponsorId, sponsorDto).map(sponsorToSponsorDtoConverter::apply);
 
-	return this.sponsorService.edit(sponsorId, sponsorDto).map(this.sponsorToSponsorDtoConverter::apply);
+	}
 
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Mono<Boolean> deleteSponsor(final UUID sponsorId) {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Mono<Boolean> deleteSponsor(final UUID sponsorId) {
+		return sponsorService.delete(sponsorId);
 
-	return this.sponsorService.delete(sponsorId);
+	}
 
-    }
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Flux<SponsorDto> getSponsors() {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Flux<SponsorDto> getSponsors() {
+		return sponsorService.getAll().map(sponsorToSponsorDtoConverter::apply);
 
-	return this.sponsorService.getAll().map(this.sponsorToSponsorDtoConverter::apply);
-
-    }
+	}
 
 }

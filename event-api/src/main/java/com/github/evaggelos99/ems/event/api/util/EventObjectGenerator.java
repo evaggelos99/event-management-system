@@ -21,17 +21,18 @@ public final class EventObjectGenerator {
 	private static final List<EventType> ALL_EVENT_TYPES = List.of(EventType.values());
 	private static final Random RANDOM = new Random();
 
-	public static EventDto generateEventDto(final UUID attendeeId, final UUID organizerId, final UUID sponsorId) {
+	public static EventDto generateEventDto(final UUID eventId, final UUID attendeeId, final UUID organizerId,
+			final UUID sponsorId) {
 
 		final EventType randomTicketType = ALL_EVENT_TYPES.get(RANDOM.nextInt(ALL_EVENT_TYPES.size()));
 		final Instant timestamp = Instant.now();
 		final List<UUID> listSponsors = sponsorId != null ? List.of(sponsorId) : List.of();
 		final List<UUID> listAttendees = attendeeId != null ? List.of(attendeeId) : List.of();
 
-		return new EventDto(UUID.randomUUID(), timestamp, timestamp, UUID.randomUUID().toString(),
-				UUID.randomUUID().toString(), randomTicketType, listAttendees, organizerId, RANDOM.nextInt(1500),
-				listSponsors, LocalDateTime.now().plus(5, ChronoUnit.DAYS).truncatedTo(ChronoUnit.SECONDS),
-				Duration.ofHours(5));
+		return new EventDto(eventId != null ? eventId : UUID.randomUUID(), timestamp, timestamp,
+				UUID.randomUUID().toString(), UUID.randomUUID().toString(), randomTicketType, listAttendees,
+				organizerId, RANDOM.nextInt(1500), listSponsors,
+				LocalDateTime.now().plus(5, ChronoUnit.DAYS).truncatedTo(ChronoUnit.SECONDS), Duration.ofHours(5));
 	}
 
 	public static EventDto generateEventDtoWithoutTimestamps(final UUID attendeeId, final UUID organizerId,

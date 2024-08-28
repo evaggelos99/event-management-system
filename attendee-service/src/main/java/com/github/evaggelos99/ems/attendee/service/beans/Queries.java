@@ -13,23 +13,23 @@ import com.github.evaggelos99.ems.common.api.db.CrudQueriesOperations;
 @PropertySource("classpath:properties/queries.properties")
 public class Queries {
 
-    @Bean
-    Properties queriesProperties(@Value("${org.com.ems.queries.attendee.save}") final String save,
-				 @Value("${org.com.ems.queries.attendee.edit}") final String edit,
-				 @Value("${org.com.ems.queries.attendee.get-all}") final String getAll,
-				 @Value("${org.com.ems.queries.attendee.get-id}") final String getId,
-				 @Value("${org.com.ems.queries.attendee.delete-id}") final String deleteId) {
+	@Bean
+	Properties queriesProperties(@Value("${org.com.ems.queries.attendee.save}") final String save,
+			@Value("${org.com.ems.queries.attendee.edit}") final String edit,
+			@Value("${org.com.ems.queries.attendee.get-all}") final String getAll,
+			@Value("${org.com.ems.queries.attendee.get-id}") final String getId,
+			@Value("${org.com.ems.queries.attendee.delete-id}") final String deleteId) {
 
-	final Properties props = new Properties();
+		final Properties props = new Properties();
 
-	props.put(CrudQueriesOperations.SAVE.name(), save);
-	props.put(CrudQueriesOperations.EDIT.name(), edit);
-	props.put(CrudQueriesOperations.GET_ALL.name(), getAll);
-	props.put(CrudQueriesOperations.GET_ID.name(), getId);
-	props.put(CrudQueriesOperations.DELETE_ID.name(), deleteId);
+		props.put(CrudQueriesOperations.SAVE.name(), save);
+		props.put(CrudQueriesOperations.EDIT.name(), edit);
+		props.put(CrudQueriesOperations.GET_ALL.name(), getAll);
+		props.put(CrudQueriesOperations.GET_ID.name(), getId);
+		props.put(CrudQueriesOperations.DELETE_ID.name(), deleteId);
 
-	return props;
+		return props;
 
-    }
+	}
 
 }

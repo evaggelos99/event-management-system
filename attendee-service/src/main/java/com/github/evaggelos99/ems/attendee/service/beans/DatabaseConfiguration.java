@@ -64,12 +64,11 @@ public class DatabaseConfiguration {
 	@Bean
 	ConnectionFactory postgresqlConnectionFactory() {
 
-		return new PostgresqlConnectionFactory(
-				PostgresqlConnectionConfiguration.builder().host(this.host).port(Integer.parseInt(this.port))
-						.database(this.database).username(this.username).password(this.password).connectTimeout(TIMEOUT)
-						.codecRegistrar(EnumCodec.builder().withEnum("event_type_enum", EventType.class)
-								.withEnum("ticket_type_enum", TicketType.class).build())
-						.schema(this.schema).build());
+		return new PostgresqlConnectionFactory(PostgresqlConnectionConfiguration.builder().host(host)
+				.port(Integer.parseInt(port)).database(database).username(username).password(password)
+				.connectTimeout(TIMEOUT).codecRegistrar(EnumCodec.builder().withEnum("event_type_enum", EventType.class)
+						.withEnum("ticket_type_enum", TicketType.class).build())
+				.schema(schema).build());
 
 	}
 

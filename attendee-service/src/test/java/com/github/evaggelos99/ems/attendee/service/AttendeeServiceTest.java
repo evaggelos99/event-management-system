@@ -20,7 +20,6 @@ import com.github.evaggelos99.ems.attendee.api.Attendee;
 import com.github.evaggelos99.ems.attendee.api.AttendeeDto;
 import com.github.evaggelos99.ems.attendee.api.converters.AttendeeToAttendeeDtoConverter;
 import com.github.evaggelos99.ems.attendee.api.repo.IAttendeeRepository;
-import com.github.evaggelos99.ems.attendee.service.AttendeeService;
 import com.github.evaggelos99.ems.attendee.service.remote.EventServiceClient;
 import com.github.evaggelos99.ems.attendee.service.remote.TicketLookUpServiceClient;
 import com.github.evaggelos99.ems.ticket.api.util.TicketObjectGenerator;
@@ -48,7 +47,7 @@ class AttendeeServiceTest {
 	}
 
 	@Test
-	void add_delete_existsById__whenInvokedWithAttendeeDtoThenExpectToBeSaved_thenExpectToBeDeleted() {
+	void add_delete_existsById_whenInvokedWithAttendeeDtoThenExpectToBeSaved_thenExpectToBeDeleted() {
 
 		final String firstName = generateString();
 		final String lastName = generateString();
@@ -150,7 +149,7 @@ class AttendeeServiceTest {
 		final Instant createdAt = Instant.now();
 		final AttendeeDto dto = new AttendeeDto(attendeeId, createdAt, createdAt, firstName, lastName, List.of());
 		Mockito.when(lookUpTicketServiceMock.lookUpTicket(ticketId))
-				.thenReturn(Mono.just(TicketObjectGenerator.generateTicketDto(eventId)));
+				.thenReturn(Mono.just(TicketObjectGenerator.generateTicketDto(null, eventId)));
 		Mockito.when(eventServiceMock.addAttendee(eventId, attendeeId)).thenReturn(Mono.just(true));
 		Assertions.assertDoesNotThrow(() -> service.add(dto));
 		StepVerifier.create(service.addTicket(dto.uuid(), ticketId)).assertNext(Assertions::assertTrue)

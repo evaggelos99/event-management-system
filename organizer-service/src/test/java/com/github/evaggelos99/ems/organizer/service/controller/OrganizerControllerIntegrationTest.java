@@ -48,16 +48,16 @@ class OrganizerControllerIntegrationTest {
 	@BeforeAll
 	void beforeAll() {
 
-		this.sqlScriptExecutor.setup();
+		sqlScriptExecutor.setup();
 	}
 
 	@Test
-	void postAttendee_getAttendee_deleteAttendee_getAttendee_whenInvokedWithValidAttendeeDto_thenExpectForAttendeeToBeAddedFetchedAndDeleted() {
+	void postOrganizer_getOrganizer_deleteOrganizer_getOrganizer_whenInvokedWithValidOrganizerDto_thenExpectForOrganizerToBeAddedFetchedAndDeleted() {
 
 		final Instant currentTime = Instant.now();
 		final OrganizerDto dto = OrganizerObjectGenerator.generateOrganizerDtoWithoutTimestamps();
-		// postAttendee
-		final ResponseEntity<OrganizerDto> actualEntity = restTemplate.postForEntity(this.createUrl(), dto,
+		// postOrganizer
+		final ResponseEntity<OrganizerDto> actualEntity = restTemplate.postForEntity(createUrl(), dto,
 				OrganizerDto.class);
 		assertTrue(actualEntity.getStatusCode().is2xxSuccessful());
 		final OrganizerDto actualDto = actualEntity.getBody();
@@ -72,30 +72,30 @@ class OrganizerControllerIntegrationTest {
 		assertEquals(dto.contactInformation(), actualDto.contactInformation());
 		assertTrue(actualDto.eventTypes().isEmpty());
 
-		// getAttendee
+		// getOrganizer
 		final ResponseEntity<OrganizerDto> actualGetEntity = restTemplate
-				.getForEntity(this.createUrl() + "/" + actualDto.uuid(), OrganizerDto.class);
+				.getForEntity(createUrl() + "/" + actualDto.uuid(), OrganizerDto.class);
 		// assert
 		assertTrue(actualGetEntity.getStatusCode().is2xxSuccessful());
 		assertEquals(actualDto, actualGetEntity.getBody());
-		// deleteAttendee
-		final ResponseEntity<Void> deletedEntity = restTemplate.exchange(this.createUrl() + "/" + actualDto.uuid(),
+		// deleteOrganizer
+		final ResponseEntity<Void> deletedEntity = restTemplate.exchange(createUrl() + "/" + actualDto.uuid(),
 				HttpMethod.DELETE, null, Void.class);
 		assertTrue(deletedEntity.getStatusCode().is2xxSuccessful());
 		// assertThat it cannot be found
-		final ResponseEntity<OrganizerDto> deletedDto = restTemplate
-				.getForEntity(this.createUrl() + "/" + actualDto.uuid(), OrganizerDto.class);
+		final ResponseEntity<OrganizerDto> deletedDto = restTemplate.getForEntity(createUrl() + "/" + actualDto.uuid(),
+				OrganizerDto.class);
 		assertTrue(deletedDto.getStatusCode().is2xxSuccessful());
 		assertNull(deletedDto.getBody());
 	}
 
 	@Test
-	void postAttendee_putAttendee_getAttendee_deleteAttendee_getAll_whenInvokedWithValidAttendeeDto_thenExpectForAttendeeToBeAddedThenEditedThenDeleted() {
+	void postOrganizer_putOrganizer_getOrganizer_deleteOrganizer_getAll_whenInvokedWithValidOrganizerDto_thenExpectForOrganizerToBeAddedThenEditedThenDeleted() {
 
 		final Instant currentTime = Instant.now();
 		final OrganizerDto dto = OrganizerObjectGenerator.generateOrganizerDtoWithoutTimestamps(EventType.OTHER);
-		// postAttendee
-		final ResponseEntity<OrganizerDto> actualEntity = restTemplate.postForEntity(this.createUrl(), dto,
+		// postOrganizer
+		final ResponseEntity<OrganizerDto> actualEntity = restTemplate.postForEntity(createUrl(), dto,
 				OrganizerDto.class);
 		assertTrue(actualEntity.getStatusCode().is2xxSuccessful());
 		final OrganizerDto actualDto = actualEntity.getBody();
@@ -111,16 +111,15 @@ class OrganizerControllerIntegrationTest {
 		assertFalse(actualDto.eventTypes().isEmpty());
 		assertEquals(dto.eventTypes(), actualDto.eventTypes());
 
-		// putAttendee
+		// putOrganizer
 		final List<EventType> eventTypes = List.of(EventType.OTHER, EventType.CONFERENCE);
 		final ContactInformation contactInformation = OrganizerObjectGenerator.generateContactInformation();
 
 		final OrganizerDto updatedDto = new OrganizerDto(actualDto.uuid(), null, null, UUID.randomUUID().toString(),
 				UUID.randomUUID().toString(), UUID.randomUUID().toString(), eventTypes, contactInformation);
 
-		final ResponseEntity<OrganizerDto> actualPutEntity = restTemplate.exchange(
-				this.createUrl() + "/" + actualDto.uuid(), HttpMethod.PUT, this.createHttpEntity(updatedDto),
-				OrganizerDto.class);
+		final ResponseEntity<OrganizerDto> actualPutEntity = restTemplate.exchange(createUrl() + "/" + actualDto.uuid(),
+				HttpMethod.PUT, createHttpEntity(updatedDto), OrganizerDto.class);
 		final OrganizerDto actualPutDto = actualPutEntity.getBody();
 		// assert
 		assertTrue(actualPutEntity.getStatusCode().is2xxSuccessful());
@@ -134,11 +133,11 @@ class OrganizerControllerIntegrationTest {
 		assertEquals(updatedDto.contactInformation(), actualPutDto.contactInformation());
 		assertEquals(eventTypes, actualPutDto.eventTypes());
 
-		// deleteAttendee
-		restTemplate.delete(this.createUrl() + "/" + actualDto.uuid());
+		// deleteOrganizer
+		restTemplate.delete(createUrl() + "/" + actualDto.uuid());
 		// assertThat the list returned is empty
 		@SuppressWarnings("rawtypes")
-		final ResponseEntity<List> listOfOrganizers = restTemplate.getForEntity(this.createUrl(), List.class);
+		final ResponseEntity<List> listOfOrganizers = restTemplate.getForEntity(createUrl(), List.class);
 		assertTrue(listOfOrganizers.getStatusCode().is2xxSuccessful());
 		final List<?> body = listOfOrganizers.getBody();
 		assertNotNull(body);
@@ -153,6 +152,6 @@ class OrganizerControllerIntegrationTest {
 
 	private String createUrl() {
 
-		return HOSTNAME + this.port + RELATIVE_ENDPOINT;
+		return HOSTNAME + port + RELATIVE_ENDPOINT;
 	}
 }

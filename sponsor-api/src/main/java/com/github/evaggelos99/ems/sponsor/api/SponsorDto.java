@@ -17,7 +17,8 @@ import jakarta.validation.constraints.Null;
  * @author Evangelos Georgiou
  */
 public record SponsorDto(@Schema(hidden = true, description = "The UUID of the Attendee") UUID uuid, //
-		@Null @Schema(hidden = true) Instant createdAt, @Null @Schema(hidden = true) Instant lastUpdated, //
+		@Null @Schema(hidden = true) Instant createdAt, //
+		@Null @Schema(hidden = true) Instant lastUpdated, //
 		@NotBlank @Schema(example = "dolore", description = "Name of the Sponsor") String name, //
 		@NotBlank @Schema(example = "www.deserunt.com", description = "Website of the Sponsor") String website, //
 		@NotNegative @Schema(example = "85000", description = "How much money the sponsor gave") Integer financialContribution, //
