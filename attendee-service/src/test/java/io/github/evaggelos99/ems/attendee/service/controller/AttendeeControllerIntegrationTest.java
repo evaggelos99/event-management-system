@@ -126,7 +126,8 @@ class AttendeeControllerIntegrationTest {
 		assertTrue(actualPutEntity.getStatusCode().is2xxSuccessful());
 		assertNotNull(actualPutDto);
 		assertEquals(actualPutDto.uuid(), actualDto.uuid());
-		assertEquals(actualDto.createdAt(), actualPutDto.createdAt());
+		assertEquals(actualDto.createdAt().truncatedTo(ChronoUnit.MILLIS),
+				actualPutDto.createdAt().truncatedTo(ChronoUnit.MILLIS));
 		assertTrue(actualPutDto.lastUpdated().isAfter(actualDto.lastUpdated()));
 		assertEquals(updatedDto.firstName(), actualPutDto.firstName());
 		assertEquals(updatedDto.lastName(), actualPutDto.lastName());

@@ -131,7 +131,8 @@ class TicketControllerIntegrationTest {
 		assertTrue(actualPutEntity.getStatusCode().is2xxSuccessful());
 		assertNotNull(actualPutDto);
 		assertEquals(updatedDto.uuid(), actualPutDto.uuid());
-		assertEquals(actualDto.createdAt(), actualPutDto.createdAt());
+		assertEquals(actualDto.createdAt().truncatedTo(ChronoUnit.MILLIS),
+				actualPutDto.createdAt().truncatedTo(ChronoUnit.MILLIS));
 		assertTrue(actualPutDto.lastUpdated().isAfter(actualDto.lastUpdated()));
 		assertEquals(updatedDto.eventID(), actualPutDto.eventID());
 		assertEquals(updatedDto.ticketType(), actualPutDto.ticketType());

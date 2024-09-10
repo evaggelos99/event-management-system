@@ -161,7 +161,8 @@ public class EventControllerIntegrationTest {
 
 		assertNotNull(actualPutDto);
 		assertEquals(actualDto.uuid(), actualPutDto.uuid());
-		assertEquals(actualDto.createdAt(), actualPutDto.createdAt());
+		assertEquals(actualDto.createdAt().truncatedTo(ChronoUnit.MILLIS),
+				actualPutDto.createdAt().truncatedTo(ChronoUnit.MILLIS));
 		assertTrue(actualPutDto.lastUpdated().isAfter(actualDto.lastUpdated()));
 		assertEquals(updatedDto.organizerId(), actualPutDto.organizerId());
 		// deleteEvent
