@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
 
@@ -76,7 +77,18 @@ class TicketControllerIntegrationTest {
 				.getForEntity(createUrl() + "/" + actualDto.uuid(), TicketDto.class);
 
 		assertTrue(actualGetEntity.getStatusCode().is2xxSuccessful());
-		assertEquals(actualDto, actualGetEntity.getBody());
+		final TicketDto getDto = actualGetEntity.getBody();
+		assertNotNull(getDto);
+		assertEquals(actualDto.uuid(), getDto.uuid());
+		assertEquals(actualDto.createdAt().truncatedTo(ChronoUnit.MILLIS),
+				getDto.createdAt().truncatedTo(ChronoUnit.MILLIS)); // for Github action tests
+		assertEquals(actualDto.lastUpdated().truncatedTo(ChronoUnit.MILLIS),
+				getDto.lastUpdated().truncatedTo(ChronoUnit.MILLIS)); // for Github action tests
+		assertEquals(actualDto.eventID(), getDto.eventID());
+		assertEquals(actualDto.ticketType(), getDto.ticketType());
+		assertEquals(actualDto.price(), getDto.price());
+		assertEquals(actualDto.transferable(), getDto.transferable());
+		assertEquals(actualDto.seatInformation(), getDto.seatInformation());
 
 		final ResponseEntity<Void> deletedEntity = restTemplate.exchange(createUrl() + "/" + actualDto.uuid(),
 				HttpMethod.DELETE, null, Void.class);

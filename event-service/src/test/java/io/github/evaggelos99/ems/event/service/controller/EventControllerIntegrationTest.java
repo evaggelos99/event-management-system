@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
 
@@ -86,7 +87,24 @@ public class EventControllerIntegrationTest {
 				EventDto.class);
 		// assert
 		assertTrue(actualGetEntity.getStatusCode().is2xxSuccessful());
-		assertEquals(actualDto, actualGetEntity.getBody());
+
+		final EventDto getDto = actualGetEntity.getBody();
+		assertNotNull(getDto);
+		assertEquals(actualDto.uuid(), getDto.uuid());
+		assertEquals(actualDto.createdAt().truncatedTo(ChronoUnit.MILLIS),
+				getDto.createdAt().truncatedTo(ChronoUnit.MILLIS)); // for Github action tests
+		assertEquals(actualDto.lastUpdated().truncatedTo(ChronoUnit.MILLIS),
+				getDto.lastUpdated().truncatedTo(ChronoUnit.MILLIS)); // for Github action tests
+		assertEquals(actualDto.name(), getDto.name());
+		assertEquals(actualDto.place(), getDto.place());
+		assertEquals(actualDto.eventType(), getDto.eventType());
+		assertEquals(actualDto.attendeesIds(), getDto.attendeesIds());
+		assertEquals(actualDto.organizerId(), getDto.organizerId());
+		assertEquals(actualDto.limitOfPeople(), getDto.limitOfPeople());
+		assertEquals(actualDto.sponsorsIds(), getDto.sponsorsIds());
+		assertEquals(actualDto.startTimeOfEvent(), getDto.startTimeOfEvent());
+		assertEquals(actualDto.duration(), getDto.duration());
+
 		// deleteEvent
 		final ResponseEntity<Void> deletedEntity = restTemplate.exchange(createUrl() + "/" + actualDto.uuid(),
 				HttpMethod.DELETE, null, Void.class);

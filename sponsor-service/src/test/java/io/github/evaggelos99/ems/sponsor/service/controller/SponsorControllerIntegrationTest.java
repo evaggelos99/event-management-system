@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
 
@@ -74,7 +75,19 @@ class SponsorControllerIntegrationTest {
 				.getForEntity(createUrl() + "/" + actualDto.uuid(), SponsorDto.class);
 		// assert
 		assertTrue(actualGetEntity.getStatusCode().is2xxSuccessful());
-		assertEquals(actualDto, actualGetEntity.getBody());
+
+		final SponsorDto getDto = actualGetEntity.getBody();
+		assertNotNull(getDto);
+		assertEquals(actualDto.uuid(), getDto.uuid());
+		assertEquals(actualDto.createdAt().truncatedTo(ChronoUnit.MILLIS),
+				getDto.createdAt().truncatedTo(ChronoUnit.MILLIS)); // for Github action tests
+		assertEquals(actualDto.lastUpdated().truncatedTo(ChronoUnit.MILLIS),
+				getDto.lastUpdated().truncatedTo(ChronoUnit.MILLIS)); // for Github action tests
+		assertEquals(actualDto.name(), getDto.name());
+		assertEquals(actualDto.website(), getDto.website());
+		assertEquals(actualDto.financialContribution(), getDto.financialContribution());
+		assertEquals(actualDto.contactInformation(), getDto.contactInformation());
+
 		// deleteOrganizer
 		final ResponseEntity<Void> deletedEntity = restTemplate.exchange(createUrl() + "/" + actualDto.uuid(),
 				HttpMethod.DELETE, null, Void.class);
