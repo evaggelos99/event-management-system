@@ -10,8 +10,8 @@
 	<packaging>war</packaging>
 
 	<parent>
-		<groupId>com.github.evaggelos99.ems</groupId>
-		<artifactId>parent</artifactId>
+		<groupId>io.github.evaggelos99</groupId>
+		<artifactId>ems-parent</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
@@ -27,7 +27,7 @@
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.github.evaggelos99.ems</groupId>
+			<groupId>io.github.evaggelos99</groupId>
 			<artifactId>event-api</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
@@ -97,9 +97,10 @@
 			<optional>true</optional>
 		</dependency>
 		<dependency>
-			<groupId>com.github.evaggelos99</groupId>
+			<groupId>io.github.evaggelos99</groupId>
 			<artifactId>r2dbc-h2</artifactId>
-			<version>1.1.0.BUILD-SNAPSHOT</version>
+			<version>1.1.1</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 	

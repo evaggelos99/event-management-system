@@ -9,8 +9,8 @@
 	<packaging>jar</packaging>
 
 	<parent>
-		<groupId>com.github.evaggelos99.ems</groupId>
-		<artifactId>parent</artifactId>
+		<groupId>io.github.evaggelos99</groupId>
+		<artifactId>ems-parent</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
