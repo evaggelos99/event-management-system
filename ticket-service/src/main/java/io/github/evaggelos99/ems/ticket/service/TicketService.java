@@ -12,7 +12,6 @@ import io.github.evaggelos99.ems.common.api.service.IService;
 import io.github.evaggelos99.ems.ticket.api.Ticket;
 import io.github.evaggelos99.ems.ticket.api.TicketDto;
 import io.github.evaggelos99.ems.ticket.api.repo.ITicketRepository;
-
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -91,6 +90,12 @@ public class TicketService implements IService<Ticket, TicketDto> {
 
 		return ticketRepository.existsById(ticketId);
 
+	}
+
+	@Override
+	public Mono<Boolean> ping() {
+
+		return Mono.just(true);
 	}
 
 }

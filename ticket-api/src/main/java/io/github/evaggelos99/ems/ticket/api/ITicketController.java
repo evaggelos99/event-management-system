@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import io.github.evaggelos99.ems.common.api.controller.IGenericController;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -26,12 +27,12 @@ import reactor.core.publisher.Mono;
  *
  */
 @Tag(name = "Ticket", description = "API to create Ticket objects")
-public interface ITicketController {
+public interface ITicketController extends IGenericController {
 
 	/**
 	 * Method that creates an Ticket object and saves it in the DB
 	 *
-	 * @param ticket
+	 * @param ticketDto
 	 */
 	@Operation(summary = "POST operation that creates an ticket object", description = "creates an Attendee object and stores it in the data source")
 	@ApiResponses(value = { @ApiResponse(responseCode = "201", description = "successful operation") })

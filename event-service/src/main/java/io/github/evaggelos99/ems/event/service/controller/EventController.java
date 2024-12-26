@@ -14,7 +14,6 @@ import io.github.evaggelos99.ems.event.api.Event;
 import io.github.evaggelos99.ems.event.api.EventDto;
 import io.github.evaggelos99.ems.event.api.IEventController;
 import io.github.evaggelos99.ems.event.api.service.IEventService;
-
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -100,6 +99,22 @@ public class EventController implements IEventController {
 
 		return eventService.addAttendee(eventId, attendeeId);
 
+	}
+
+	@Override
+	public Mono<Boolean> ping() {
+
+		return pingService();
+	}
+
+	private Mono<Boolean> pingService() {
+		try {
+
+			return eventService.ping().log().onErrorReturn(false);
+		} catch (final Exception e) {
+
+			return Mono.just(false);
+		}
 	}
 
 }

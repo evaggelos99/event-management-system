@@ -14,7 +14,6 @@ import io.github.evaggelos99.ems.common.api.service.IService;
 import io.github.evaggelos99.ems.sponsor.api.ISponsorController;
 import io.github.evaggelos99.ems.sponsor.api.Sponsor;
 import io.github.evaggelos99.ems.sponsor.api.SponsorDto;
-
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -92,6 +91,22 @@ public class SponsorController implements ISponsorController {
 
 		return sponsorService.getAll().map(sponsorToSponsorDtoConverter::apply);
 
+	}
+
+	@Override
+	public Mono<Boolean> ping() {
+
+		return pingService();
+	}
+
+	private Mono<Boolean> pingService() {
+		try {
+
+			return sponsorService.ping().onErrorReturn(false);
+		} catch (final Exception e) {
+
+			return Mono.just(false);
+		}
 	}
 
 }

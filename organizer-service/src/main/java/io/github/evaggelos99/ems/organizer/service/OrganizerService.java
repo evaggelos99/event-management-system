@@ -12,7 +12,6 @@ import io.github.evaggelos99.ems.common.api.service.IService;
 import io.github.evaggelos99.ems.organizer.api.Organizer;
 import io.github.evaggelos99.ems.organizer.api.OrganizerDto;
 import io.github.evaggelos99.ems.organizer.api.repo.IOrganizerRepository;
-
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -91,6 +90,12 @@ public class OrganizerService implements IService<Organizer, OrganizerDto> {
 
 		return organizerRepository.existsById(attendeeId);
 
+	}
+
+	@Override
+	public Mono<Boolean> ping() {
+
+		return Mono.just(true);
 	}
 
 }

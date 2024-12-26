@@ -2,7 +2,6 @@ package io.github.evaggelos99.ems;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 
 /**
  * Main class
@@ -10,12 +9,12 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
  * @author Evangelos Georgiou
  */
 @SpringBootApplication
-public class EventManagementSystemApplication extends SpringBootServletInitializer {
+public class EventManagementSystemApplication {
 
-	public static void main(final String[] args) {
+    public static void main(final String[] args) {
 
-		SpringApplication.run(EventManagementSystemApplication.class, args);
+        SpringApplication.run(EventManagementSystemApplication.class, args);
 
-	}
+    }
 
 }

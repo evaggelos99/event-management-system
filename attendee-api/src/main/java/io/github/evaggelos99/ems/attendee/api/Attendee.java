@@ -1,6 +1,7 @@
 package io.github.evaggelos99.ems.attendee.api;
 
 import java.time.Instant;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -10,7 +11,6 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import io.github.evaggelos99.ems.common.api.domainobjects.AbstractDomainObject;
-
 import jakarta.validation.constraints.NotNull;
 
 public final class Attendee extends AbstractDomainObject {
@@ -43,8 +43,7 @@ public final class Attendee extends AbstractDomainObject {
 
 	public List<UUID> getTicketIDs() {
 
-		return ticketIDs;
-
+		return Collections.unmodifiableList(ticketIDs);
 	}
 
 	@Override

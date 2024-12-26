@@ -1,6 +1,7 @@
 package io.github.evaggelos99.ems.organizer.api;
 
 import java.time.Instant;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -12,7 +13,6 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import io.github.evaggelos99.ems.common.api.domainobjects.AbstractDomainObject;
 import io.github.evaggelos99.ems.common.api.domainobjects.ContactInformation;
 import io.github.evaggelos99.ems.common.api.domainobjects.EventType;
-
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
@@ -57,8 +57,7 @@ public final class Organizer extends AbstractDomainObject {
 
 	public List<EventType> getEventTypes() {
 
-		return eventTypes;
-
+		return Collections.unmodifiableList(eventTypes);
 	}
 
 	public ContactInformation getContactInformation() {

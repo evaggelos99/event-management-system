@@ -12,7 +12,6 @@ import io.github.evaggelos99.ems.common.api.service.IService;
 import io.github.evaggelos99.ems.sponsor.api.Sponsor;
 import io.github.evaggelos99.ems.sponsor.api.SponsorDto;
 import io.github.evaggelos99.ems.sponsor.api.repo.ISponsorRepository;
-
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -91,6 +90,12 @@ public class SponsorService implements IService<Sponsor, SponsorDto> {
 
 		return sponsorRepository.existsById(attendeeId);
 
+	}
+
+	@Override
+	public Mono<Boolean> ping() {
+
+		return Mono.just(true);
 	}
 
 }

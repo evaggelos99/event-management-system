@@ -14,7 +14,6 @@ import io.github.evaggelos99.ems.common.api.service.IService;
 import io.github.evaggelos99.ems.organizer.api.IOrganizerController;
 import io.github.evaggelos99.ems.organizer.api.Organizer;
 import io.github.evaggelos99.ems.organizer.api.OrganizerDto;
-
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -95,6 +94,22 @@ public class OrganizerController implements IOrganizerController {
 
 		return organizerService.getAll().map(organizerToOrganizerDtoConverter::apply);
 
+	}
+
+	@Override
+	public Mono<Boolean> ping() {
+
+		return pingService();
+	}
+
+	private Mono<Boolean> pingService() {
+		try {
+
+			return organizerService.ping().onErrorReturn(false);
+		} catch (final Exception e) {
+
+			return Mono.just(false);
+		}
 	}
 
 }

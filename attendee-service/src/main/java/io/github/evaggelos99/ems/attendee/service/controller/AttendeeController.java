@@ -14,7 +14,6 @@ import io.github.evaggelos99.ems.attendee.api.Attendee;
 import io.github.evaggelos99.ems.attendee.api.AttendeeDto;
 import io.github.evaggelos99.ems.attendee.api.IAttendeeController;
 import io.github.evaggelos99.ems.attendee.api.service.IAttendeeService;
-
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -102,5 +101,17 @@ public class AttendeeController implements IAttendeeController {
 	public Mono<Boolean> addTicket(final UUID attendeeId, final UUID ticketId) {
 
 		return attendeeService.addTicket(attendeeId, ticketId);
+	}
+
+	@Override
+	public Mono<Boolean> ping() {
+
+		return Mono.just(true).onErrorReturn(false);
+	}
+
+	@Override
+	public Mono<Boolean> pingOther() {
+
+		return attendeeService.pingOther();
 	}
 }

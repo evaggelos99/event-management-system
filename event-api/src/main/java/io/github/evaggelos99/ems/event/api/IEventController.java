@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import io.github.evaggelos99.ems.common.api.controller.IGenericController;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -27,7 +28,7 @@ import reactor.core.publisher.Mono;
  *
  */
 @Tag(name = "Event", description = "API to create Event objects")
-public interface IEventController {
+public interface IEventController extends IGenericController {
 
 	/**
 	 * Method that creates an Event object and saves it in the DB

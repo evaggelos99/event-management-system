@@ -1,0 +1,112 @@
+services:
+  attendee-service:
+    container_name: attendee-service
+    image: 'evaggelosg99/attendee-service:latest'
+    environment:
+      - org.com.ems.db.port=5432
+      - org.com.ems.db.host=db
+      - server.port=8080
+      - eureka.client.service-url.default-zone=http://eureka-server:8761/eureka
+    build:
+      context: .
+    ports:
+      - "8081:8080"
+    networks:
+      - backend
+
+  event-service:
+    container_name: event-service
+    image: 'evaggelosg99/event-service:latest'
+    environment:
+      - org.com.ems.db.port=5432
+      - org.com.ems.db.host=db
+      - org.com.ems.db.host=db
+      - server.port=8080
+      - eureka.client.service-url.default-zone=http://eureka-server:8761/eureka
+    build:
+      context: .
+    ports:
+      - "8082:8080"
+    networks:
+      - backend
+
+  organizer-service:
+    container_name: organizer-service
+    image: 'evaggelosg99/organizer-service:latest'
+    environment:
+      - org.com.ems.db.port=5432
+      - org.com.ems.db.host=db
+      - org.com.ems.db.host=db
+      - server.port=8080
+      - eureka.client.service-url.default-zone=http://eureka-server:8761/eureka
+    build:
+      context: .
+    ports:
+      - "8083:8080"
+    networks:
+      - backend
+
+  ticket-service:
+    container_name: ticket-service
+    image: 'evaggelosg99/ticket-service:latest'
+    environment:
+      - org.com.ems.db.port=5432
+      - org.com.ems.db.host=db
+      - org.com.ems.db.host=db
+      - server.port=8080
+      - eureka.client.service-url.default-zone=http://eureka-server:8761/eureka
+    build:
+      context: .
+    ports:
+      - "8084:8080"
+    networks:
+      - backend
+
+  sponsor-service:
+    container_name: sponsor-service
+    image: 'evaggelosg99/sponsor-service:latest'
+    environment:
+      - org.com.ems.db.port=5432
+      - org.com.ems.db.host=db
+      - org.com.ems.db.host=db
+      - server.port=8080
+      - eureka.client.service-url.default-zone=http://eureka-server:8761/eureka
+    build:
+      context: .
+    ports:
+      - "8085:8080"
+    networks:
+      - backend
+
+  eureka-server:
+    container_name: eureka-server
+    image: 'evaggelosg99/eureka-server:latest'
+    environment:
+      - org.com.ems.db.port=5432
+      - org.com.ems.db.host=db
+      - org.com.ems.db.host=db
+      - server.port=8761
+    build:
+      context: .
+    ports:
+      - "8761:8761"
+    networks:
+      - backend
+
+  db:
+    image: postgres
+    container_name: db
+    environment:
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=pass
+      - POSTGRES_DB=event-management-system
+    ports:
+      - "5433:5432"
+    volumes:
+      - ./scripts/docker-postgres/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
+    networks:
+      - backend
+
+networks:
+  backend:
+    driver: bridge

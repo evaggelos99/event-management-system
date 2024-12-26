@@ -14,7 +14,6 @@ import io.github.evaggelos99.ems.common.api.service.IService;
 import io.github.evaggelos99.ems.ticket.api.ITicketController;
 import io.github.evaggelos99.ems.ticket.api.Ticket;
 import io.github.evaggelos99.ems.ticket.api.TicketDto;
-
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
@@ -50,7 +49,7 @@ public class TicketController implements ITicketController {
 	@Override
 	public Mono<TicketDto> postTicket(final TicketDto ticketDto) {
 
-		return ticketService.add(ticketDto).map(ticketToTicketDtoConverter::apply);
+		return ticketService.add(ticketDto).map(ticketToTicketDtoConverter);
 	}
 
 	/**
@@ -59,7 +58,7 @@ public class TicketController implements ITicketController {
 	@Override
 	public Mono<TicketDto> getTicket(final UUID ticketId) {
 
-		return ticketService.get(ticketId).map(ticketToTicketDtoConverter::apply);
+		return ticketService.get(ticketId).map(ticketToTicketDtoConverter);
 	}
 
 	/**
@@ -68,7 +67,7 @@ public class TicketController implements ITicketController {
 	@Override
 	public Mono<TicketDto> putTicket(final UUID ticketId, final TicketDto ticketDto) {
 
-		return ticketService.edit(ticketId, ticketDto).map(ticketToTicketDtoConverter::apply);
+		return ticketService.edit(ticketId, ticketDto).map(ticketToTicketDtoConverter);
 	}
 
 	/**
@@ -86,7 +85,23 @@ public class TicketController implements ITicketController {
 	@Override
 	public Flux<TicketDto> getTickets() {
 
-		return ticketService.getAll().map(ticketToTicketDtoConverter::apply);
+		return ticketService.getAll().map(ticketToTicketDtoConverter);
+	}
+
+	@Override
+	public Mono<Boolean> ping() {
+
+		return pingService();
+	}
+
+	private Mono<Boolean> pingService() {
+		try {
+
+			return ticketService.ping().log().onErrorReturn(false);
+		} catch (final Exception e) {
+
+			return Mono.just(false);
+		}
 	}
 
 }
