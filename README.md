@@ -8,7 +8,7 @@ TODO:
 - [x] Postgres
   - [ ] Roles within the Database
 - [ ] Microservices
-  - [ ] Some type of service discovery: Spring, eureka?
+  - [ ] Some type of service discovery
 - [ ] Redis for caching front page stuff.
 - [ ] UI Simple JS or Angular
 - [ ] Kafka streaming for events. An attendee can subscribe on an event stream(can be a football match).
