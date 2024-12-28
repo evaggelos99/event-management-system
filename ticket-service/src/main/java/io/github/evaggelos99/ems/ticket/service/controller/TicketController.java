@@ -73,7 +73,7 @@ public class TicketController implements ITicketController {
      * {@inheritDoc}
      */
     @Override
-    public Mono<?> deleteTicket(final UUID ticketId) {
+    public Mono<Boolean> deleteTicket(final UUID ticketId) {
 
         return ticketService.delete(ticketId);
     }

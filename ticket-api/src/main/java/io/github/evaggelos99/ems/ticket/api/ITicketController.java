@@ -76,6 +76,6 @@ public interface ITicketController extends IGenericController {
     @ApiResponses(value = {@ApiResponse(responseCode = "204", description = "successful operation")})
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @DeleteMapping("/{ticketId}")
-    Mono<?> deleteTicket(@PathVariable UUID ticketId);
+    Mono<Boolean> deleteTicket(@PathVariable UUID ticketId);
 
 }

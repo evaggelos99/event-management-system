@@ -1,16 +1,15 @@
 package io.github.evaggelos99.ems.attendee.api;
 
-import org.junit.jupiter.api.Test;
-
 import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.jupiter.api.Test;
 
 class AttendeeTest {
 
-	@Test
-	void equalsAndHashcode() {
+    @Test
+    void equalsAndHashcode() {
 
-		EqualsVerifier.simple().forClass(Attendee.class).withIgnoredFields("createdAt", "lastUpdated").verify();
+        EqualsVerifier.simple().forClass(Attendee.class).withIgnoredFields("createdAt", "lastUpdated").verify();
 
-	}
+    }
 
 }

@@ -76,6 +76,6 @@ public interface IOrganizerController extends IGenericController {
     @ApiResponses(value = {@ApiResponse(responseCode = "204", description = "successful operation")})
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @DeleteMapping(path = "/{organizerId}")
-    Mono<?> deleteOrganizer(@PathVariable UUID organizerId);
+    Mono<Boolean> deleteOrganizer(@PathVariable UUID organizerId);
 
 }

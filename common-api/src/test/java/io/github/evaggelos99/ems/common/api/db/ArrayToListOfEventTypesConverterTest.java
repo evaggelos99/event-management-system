@@ -1,44 +1,42 @@
 package io.github.evaggelos99.ems.common.api.db;
 
-import java.util.List;
-
+import io.github.evaggelos99.ems.common.api.domainobjects.EventType;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import io.github.evaggelos99.ems.common.api.db.ArrayToListOfEventTypesConverter;
-import io.github.evaggelos99.ems.common.api.domainobjects.EventType;
+import java.util.List;
 
 class ArrayToListOfEventTypesConverterTest {
 
-	private static final EventType EVENT_TYPE = EventType.CONFERENCE;
+    private static final EventType EVENT_TYPE = EventType.CONFERENCE;
 
-	ArrayToListOfEventTypesConverter converter;
+    ArrayToListOfEventTypesConverter converter;
 
-	@BeforeEach
-	void setUp() {
+    @BeforeEach
+    void setUp() {
 
-		this.converter = new ArrayToListOfEventTypesConverter();
+        this.converter = new ArrayToListOfEventTypesConverter();
 
-	}
+    }
 
-	@Test
-	void apply_givenNullArray_() {
+    @Test
+    void apply_givenNullArray_() {
 
-		final List<EventType> actualList = this.converter.apply(null);
+        final List<EventType> actualList = this.converter.apply(null);
 
-		Assertions.assertTrue(actualList.isEmpty());
+        Assertions.assertTrue(actualList.isEmpty());
 
-	}
+    }
 
-	@Test
-	void apply_givenValidEventTypeArray_thenExpectForListContainCorrectElements_andTheExactSameElement() {
+    @Test
+    void apply_givenValidEventTypeArray_thenExpectForListContainCorrectElements_andTheExactSameElement() {
 
-		final List<EventType> actualList = this.converter.apply(new EventType[] { EVENT_TYPE });
+        final List<EventType> actualList = this.converter.apply(new EventType[]{EVENT_TYPE});
 
-		Assertions.assertTrue(actualList.size() == 1);
-		Assertions.assertEquals(EVENT_TYPE, actualList.get(0));
+        Assertions.assertTrue(actualList.size() == 1);
+        Assertions.assertEquals(EVENT_TYPE, actualList.get(0));
 
-	}
+    }
 
 }

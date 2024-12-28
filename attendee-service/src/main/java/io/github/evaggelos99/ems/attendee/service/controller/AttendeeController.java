@@ -84,7 +84,7 @@ public class AttendeeController implements IAttendeeController {
      * {@inheritDoc}
      */
     @Override
-    public Mono<?> deleteAttendee(final UUID attendeeId) {
+    public Mono<Boolean> deleteAttendee(final UUID attendeeId) {
 
         return attendeeService.delete(attendeeId);
     }

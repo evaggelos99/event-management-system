@@ -49,21 +49,33 @@ public final class Attendee extends AbstractDomainObject {
 
         final Attendee that = (Attendee) o;
 
-        return new EqualsBuilder().appendSuper(super.equals(that)).append(firstName, that.firstName).append(lastName, that.lastName).append(ticketIDs, that.ticketIDs).build();
+        return new EqualsBuilder().appendSuper(super.equals(that))
+                .append(firstName, that.firstName)
+                .append(lastName, that.lastName)
+                .append(ticketIDs, that.ticketIDs)
+                .build();
 
     }
 
     @Override
     public int hashCode() {
 
-        return new HashCodeBuilder(17, 37).appendSuper(super.hashCode()).append(firstName).append(lastName).append(ticketIDs).build();
+        return new HashCodeBuilder(17, 37).appendSuper(super.hashCode())
+                .append(firstName)
+                .append(lastName)
+                .append(ticketIDs)
+                .build();
 
     }
 
     @Override
     public String toString() {
 
-        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).appendSuper(super.toString()).append("firstName", firstName).append("lastName", lastName).append("ticketIDs", ticketIDs).toString();
+        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).appendSuper(super.toString())
+                .append("firstName", firstName)
+                .append("lastName", lastName)
+                .append("ticketIDs", ticketIDs)
+                .toString();
 
     }
 

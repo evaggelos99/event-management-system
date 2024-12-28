@@ -47,7 +47,7 @@ public class OrganizerController implements IOrganizerController {
      * {@inheritDoc}
      */
     @Override
-    public Mono<?> deleteOrganizer(final UUID organizerId) {
+    public Mono<Boolean> deleteOrganizer(final UUID organizerId) {
 
         return organizerService.delete(organizerId);
     }

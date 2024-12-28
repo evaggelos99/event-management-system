@@ -25,7 +25,7 @@ public interface ISponsorController extends IGenericController {
     /**
      * Method that creates an Sponsor object and saves it in the DB
      *
-     * @param sponsor
+     * @param sponsorDto
      */
     @Operation(summary = "POST operation that creates an sponsor object", description = "creates an Sponsor object and stores it in the data source")
     @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "successful operation")})
@@ -59,8 +59,8 @@ public interface ISponsorController extends IGenericController {
      * Method that updates the Sponsor with that SponsorId If the id does not match
      * any Sponsor stored in the DB it will return 404
      *
-     * @param sponsorId the UUID of the Sponsor object
-     * @param sponsor   the edited Sponsor object
+     * @param sponsorId  the UUID of the Sponsor object
+     * @param sponsorDto the edited Sponsor object
      */
     @Operation(summary = "PUT operation that updates or creates an sponsor object", description = "updates or creates an Sponsor object and stores it in the data source")
     @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "successful operation"),

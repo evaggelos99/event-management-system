@@ -76,7 +76,7 @@ public interface IEventController extends IGenericController {
     @ApiResponses(value = {@ApiResponse(responseCode = "204", description = "successful operation")})
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @DeleteMapping(path = "/{eventId}")
-    Mono<?> deleteEvent(@PathVariable UUID eventId);
+    Mono<Boolean> deleteEvent(@PathVariable UUID eventId);
 
     @PutMapping("/{eventId}/addAttendee")
     Mono<Boolean> addAttendee(@PathVariable UUID eventId, @RequestParam UUID attendeeId);

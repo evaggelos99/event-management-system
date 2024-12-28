@@ -77,7 +77,7 @@ public class EventController implements IEventController {
      * {@inheritDoc}
      */
     @Override
-    public Mono<?> deleteEvent(final UUID eventId) {
+    public Mono<Boolean> deleteEvent(final UUID eventId) {
 
         return eventService.delete(eventId);
 
