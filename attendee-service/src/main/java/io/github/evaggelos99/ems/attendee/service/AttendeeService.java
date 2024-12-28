@@ -43,9 +43,9 @@ public class AttendeeService implements IAttendeeService {
      * @param attendeeToAttendeeDtoConverter the
      *                                       {@link AttendeeToAttendeeDtoConverter}
      *                                       that converts Attendee to AttendeeDto
-     * @param eventService                   the {@link EventService} used for
+     * @param eventService                   the {@link EventServiceClient} used for
      *                                       cascading adding attendee to it's event
-     * @param lookUpTicketService            the {@link TicketService} as a lookup
+     * @param lookUpTicketService            the {@link TicketLookUpServiceClient} as a lookup
      *                                       for the tickets
      */
     public AttendeeService(@Autowired final IAttendeeRepository attendeeRepository,
@@ -75,13 +75,13 @@ public class AttendeeService implements IAttendeeService {
     public Mono<Boolean> addTicket(final UUID attendeeId, final UUID ticketId) {
 
         return lookUpTicketService.ping() //
-            .filter(Boolean.TRUE::equals).flatMap(x -> eventService.ping()).filter(Boolean.TRUE::equals)
-            .flatMap(x -> attendeeRepository.findById(attendeeId))
-            .map(attendee -> addTicketIdToExistingList(attendeeId, ticketId, attendee))
-            .map(attendeeToAttendeeDtoConverter)//
-            .flatMap(attendeeRepository::edit)//
-            .flatMap(x -> lookUpTicketService.lookUpTicket(ticketId))
-            .flatMap(x -> eventService.addAttendee(x.eventID(), attendeeId)).defaultIfEmpty(false);
+                .filter(Boolean.TRUE::equals).flatMap(x -> eventService.ping()).filter(Boolean.TRUE::equals)
+                .flatMap(x -> attendeeRepository.findById(attendeeId))
+                .map(attendee -> addTicketIdToExistingList(attendeeId, ticketId, attendee))
+                .map(attendeeToAttendeeDtoConverter)//
+                .flatMap(attendeeRepository::edit)//
+                .flatMap(x -> lookUpTicketService.lookUpTicket(ticketId))
+                .flatMap(x -> eventService.addAttendee(x.eventID(), attendeeId)).defaultIfEmpty(false);
     }
 
     /**
@@ -100,7 +100,7 @@ public class AttendeeService implements IAttendeeService {
     public Mono<Attendee> edit(final UUID uuid, final AttendeeDto attendee) {
 
         return !uuid.equals(attendee.uuid()) ? Mono.error(() -> new ObjectNotFoundException(uuid, AttendeeDto.class))
-            : attendeeRepository.edit(attendee);
+                : attendeeRepository.edit(attendee);
     }
 
     /**
@@ -152,7 +152,7 @@ public class AttendeeService implements IAttendeeService {
             newList.add(ticketId);
 
             return new Attendee(attendeeId, attendee.getCreatedAt(), Instant.now(), attendee.getFirstName(),
-                attendee.getLastName(), newList);
+                    attendee.getLastName(), newList);
         }
         throw new DuplicateTicketIdInAttendeeException(ticketId);
     }

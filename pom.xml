@@ -29,7 +29,7 @@
     </properties>
 
     <modules>
-<!--        <module>event-management-system</module>-->
+        <!--        <module>event-management-system</module>-->
         <module>common-api</module>
         <module>sponsor-api</module>
         <module>sponsor-service</module>
@@ -42,7 +42,6 @@
         <module>ticket-api</module>
         <module>ticket-service</module>
         <!-- <module>event-producer</module>-->
-        <module>eureka-server</module>
     </modules>
 
     <dependencies>
@@ -63,23 +62,9 @@
     <dependencyManagement>
         <dependencies>
             <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-dependencies</artifactId>
-                <version>2024.0.0</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-dependencies</artifactId>
                 <version>3.4.1</version>
-                <type>pom</type>
-                <scope>import</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework.cloud</groupId>
-                <artifactId>spring-cloud-starter-parent</artifactId>
-                <version>2024.0.0</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>

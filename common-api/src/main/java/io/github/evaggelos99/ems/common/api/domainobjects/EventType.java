@@ -25,6 +25,6 @@ public enum EventType {
     /**
      * Event type used for difference types of events
      */
-    OTHER;
+    OTHER
 
 }

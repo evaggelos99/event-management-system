@@ -58,9 +58,9 @@ public class EventService implements IEventService {
     public Mono<Boolean> addAttendee(final UUID eventId, final UUID attendeeId) {
 
         return eventRepository.findById(eventId).map(event -> addAttendeeIdToExistingList(eventId, attendeeId, event))//
-            .map(eventToEventDtoConverter)//
-            .flatMap(eventRepository::edit)//
-            .map(x -> x.getAttendeesIDs().contains(attendeeId));
+                .map(eventToEventDtoConverter)//
+                .flatMap(eventRepository::edit)//
+                .map(x -> x.getAttendeesIDs().contains(attendeeId));
 
     }
 
@@ -81,7 +81,7 @@ public class EventService implements IEventService {
     public Mono<Event> edit(final UUID uuid, final EventDto event) {
 
         return !uuid.equals(event.uuid()) ? Mono.error(() -> new ObjectNotFoundException(uuid, EventDto.class))
-            : eventRepository.edit(event);
+                : eventRepository.edit(event);
 
     }
 
@@ -127,8 +127,8 @@ public class EventService implements IEventService {
         final LinkedList<UUID> list = new LinkedList<>(ids);
         list.add(attendeeId);
         return new Event(eventId, event.getCreatedAt(), Instant.now(), event.getName(), event.getPlace(),
-            event.getEventType(), list, event.getOrganizerID(), event.getLimitOfPeople(), event.getSponsorsIds(),
-            event.getStartTime(), event.getDuration());
+                event.getEventType(), list, event.getOrganizerID(), event.getLimitOfPeople(), event.getSponsorsIds(),
+                event.getStartTime(), event.getDuration());
 
     }
 

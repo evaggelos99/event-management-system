@@ -8,7 +8,6 @@ import io.github.evaggelos99.ems.event.api.EventDto;
  * Event's Repository
  *
  * @author Evangelos Georgiou
- *
  */
 public interface IEventRepository extends IRepository<Event, EventDto> {
 

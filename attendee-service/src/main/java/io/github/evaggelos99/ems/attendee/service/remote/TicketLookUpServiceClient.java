@@ -29,21 +29,19 @@ public class TicketLookUpServiceClient implements ITicketLookUpServiceClient {
     public Mono<TicketDto> lookUpTicket(final UUID id) {
 
         return webClient.get().uri(uriBuilder -> uriBuilder.path("/{id}").build(id)).retrieve()
-            .bodyToMono(TicketDto.class).doOnError(this::log);
-
-    }
-
-    @Override
-    public Mono<Boolean> ping() {
-
-        return webClient.get().uri("/ping").retrieve().bodyToMono(Boolean.class).log().onErrorReturn(false);
+                .bodyToMono(TicketDto.class).doOnError(this::log);
     }
 
     private void log(final Throwable exc) {
 
         final String simpleName = getClass().getSimpleName();
         LOGGER.warn(String.format("Could not add Attendee in: %s", simpleName), exc);
+    }
 
+    @Override
+    public Mono<Boolean> ping() {
+
+        return webClient.get().uri("/ping").retrieve().bodyToMono(Boolean.class).log().onErrorReturn(false);
     }
 
 }

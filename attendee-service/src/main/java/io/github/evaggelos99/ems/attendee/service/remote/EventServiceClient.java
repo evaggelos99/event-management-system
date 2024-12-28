@@ -24,7 +24,6 @@ public class EventServiceClient implements IEventServiceClient {
     public EventServiceClient(@Autowired final WebClient.Builder webClientBuilder) {
 
         this.webClient = webClientBuilder.baseUrl("http://event-service/event").build();
-
     }
 
     /**
@@ -34,23 +33,21 @@ public class EventServiceClient implements IEventServiceClient {
     public Mono<Boolean> addAttendee(final UUID eventId, final UUID attendeeId) {
 
         return webClient.put().uri(
-                uriBuilder -> uriBuilder.path("/{id}/addAttendee").queryParam("attendeeId", attendeeId).build(eventId))
-            .retrieve().bodyToMono(Boolean.class).doOnError(this::log).onErrorReturn(false);
-
-    }
-
-    @Override
-    public Mono<Boolean> ping() {
-
-        return webClient.get().uri(uriBuilder -> uriBuilder.path("/ping").build()).retrieve().bodyToMono(Boolean.class)
-            .log().onErrorReturn(false);
+                        uriBuilder -> uriBuilder.path("/{id}/addAttendee").queryParam("attendeeId", attendeeId).build(eventId))
+                .retrieve().bodyToMono(Boolean.class).doOnError(this::log).onErrorReturn(false);
     }
 
     private void log(final Throwable exc) {
 
         final String simpleName = getClass().getSimpleName();
         LOGGER.warn(String.format("Could not add Attendee in: %s", simpleName), exc);
+    }
 
+    @Override
+    public Mono<Boolean> ping() {
+
+        return webClient.get().uri(uriBuilder -> uriBuilder.path("/ping").build()).retrieve().bodyToMono(Boolean.class)
+                .log().onErrorReturn(false);
     }
 
 }

@@ -8,7 +8,6 @@ import io.github.evaggelos99.ems.sponsor.api.SponsorDto;
  * Sponsor's Repository
  *
  * @author Evangelos Georgiou
- *
  */
 public interface ISponsorRepository extends IRepository<Sponsor, SponsorDto> {
 

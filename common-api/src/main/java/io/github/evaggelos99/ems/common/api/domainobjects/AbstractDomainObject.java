@@ -1,12 +1,12 @@
 package io.github.evaggelos99.ems.common.api.domainobjects;
 
-import java.time.Instant;
-import java.util.UUID;
-
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
+
+import java.time.Instant;
+import java.util.UUID;
 
 /**
  * Super class for domain object classes
@@ -15,62 +15,62 @@ import org.apache.commons.lang3.builder.ToStringStyle;
  */
 public abstract class AbstractDomainObject {
 
-	private final UUID uuid;
-	private final Instant createdAt;
-	private final Instant lastUpdated;
+    private final Instant createdAt;
 
-	protected AbstractDomainObject(final UUID uuid, final Instant createdAt, final Instant lastUpdated) {
+    private final Instant lastUpdated;
 
-		this.uuid = uuid;
-		this.createdAt = createdAt;
-		this.lastUpdated = lastUpdated;
-	}
+    private final UUID uuid;
 
-	public UUID getUuid() {
+    protected AbstractDomainObject(final UUID uuid, final Instant createdAt, final Instant lastUpdated) {
 
-		return uuid;
+        this.uuid = uuid;
+        this.createdAt = createdAt;
+        this.lastUpdated = lastUpdated;
+    }
 
-	}
+    public Instant getCreatedAt() {
 
-	public Instant getCreatedAt() {
+        return createdAt;
+    }
 
-		return createdAt;
+    public Instant getLastUpdated() {
 
-	}
+        return lastUpdated;
+    }
 
-	public Instant getLastUpdated() {
+    public UUID getUuid() {
 
-		return lastUpdated;
+        return uuid;
+    }
 
-	}
+    @Override
+    public int hashCode() {
 
-	@Override
-	public boolean equals(final Object o) {
+        return new HashCodeBuilder(17, 37).append(uuid).build();
 
-		if (this == o)
-			return true;
-		if (o == null || getClass() != o.getClass())
-			return false;
+    }
 
-		final AbstractDomainObject that = (AbstractDomainObject) o;
+    @Override
+    public boolean equals(final Object o) {
 
-		return new EqualsBuilder().append(uuid, that.uuid).build();
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
 
-	}
+        final AbstractDomainObject that = (AbstractDomainObject) o;
 
-	@Override
-	public int hashCode() {
+        return new EqualsBuilder().append(uuid, that.uuid).build();
+    }
 
-		return new HashCodeBuilder(17, 37).append(uuid).build();
+    @Override
+    public String toString() {
 
-	}
+        return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("uuid", uuid)
+                .append("createdAt", createdAt).append("lastUpdated", lastUpdated).toString();
 
-	@Override
-	public String toString() {
-
-		return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("uuid", uuid)
-				.append("createdAt", createdAt).append("lastUpdated", lastUpdated).toString();
-
-	}
+    }
 
 }

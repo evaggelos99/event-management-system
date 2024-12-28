@@ -8,7 +8,6 @@ import io.github.evaggelos99.ems.organizer.api.OrganizerDto;
  * Organizer's Repository
  *
  * @author Evangelos Georgiou
- *
  */
 public interface IOrganizerRepository extends IRepository<Organizer, OrganizerDto> {
 

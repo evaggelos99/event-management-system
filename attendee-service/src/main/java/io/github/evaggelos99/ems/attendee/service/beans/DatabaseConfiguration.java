@@ -6,8 +6,6 @@ import io.r2dbc.postgresql.PostgresqlConnectionConfiguration;
 import io.r2dbc.postgresql.PostgresqlConnectionFactory;
 import io.r2dbc.postgresql.codec.EnumCodec;
 import io.r2dbc.spi.ConnectionFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -41,10 +39,10 @@ public class DatabaseConfiguration {
      *
      * @param username the username of the DB
      * @param password the password of the DB
-     * @param port the port of the DB
+     * @param port     the port of the DB
      * @param database the name of the DB
-     * @param host the hostname of the DB
-     * @param schema the schema of the DB
+     * @param host     the hostname of the DB
+     * @param schema   the schema of the DB
      */
     public DatabaseConfiguration(@Value("${org.com.ems.db.username}") final String username,
                                  @Value("${org.com.ems.db.password}") final String password,
@@ -70,10 +68,10 @@ public class DatabaseConfiguration {
     ConnectionFactory postgresqlConnectionFactory() {
 
         return new PostgresqlConnectionFactory(PostgresqlConnectionConfiguration.builder().host(host)
-            .port(Integer.parseInt(port)).database(database).username(username).password(password)
-            .connectTimeout(TIMEOUT).codecRegistrar(EnumCodec.builder().withEnum("event_type_enum", EventType.class)
-                .withEnum("ticket_type_enum", TicketType.class).build())
-            .schema(schema).build());
+                .port(Integer.parseInt(port)).database(database).username(username).password(password)
+                .connectTimeout(TIMEOUT).codecRegistrar(EnumCodec.builder().withEnum("event_type_enum", EventType.class)
+                        .withEnum("ticket_type_enum", TicketType.class).build())
+                .schema(schema).build());
     }
 
 }

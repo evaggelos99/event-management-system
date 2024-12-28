@@ -20,11 +20,6 @@ cd ../sponsor-service
 mvn package spring-boot:repackage
 docker build -t evaggelosg99/sponsor-service:latest .
 
-# Sponsor service docker build
-cd ../eureka-server
-mvn package spring-boot:repackage
-docker build -t evaggelosg99/eureka-server:latest .
-
 # Ticket service docker build
 cd ../ticket-service
 mvn package spring-boot:repackage
