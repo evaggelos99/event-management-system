@@ -17,7 +17,6 @@ class ArrayToListOfEventTypesConverterTest {
     void setUp() {
 
         this.converter = new ArrayToListOfEventTypesConverter();
-
     }
 
     @Test

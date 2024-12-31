@@ -48,7 +48,7 @@ public class SponsorController implements ISponsorController {
     @Override
     public Mono<SponsorDto> postSponsor(final SponsorDto sponsorDto) {
 
-        return sponsorService.add(sponsorDto).map(sponsorToSponsorDtoConverter::apply);
+        return sponsorService.add(sponsorDto).map(sponsorToSponsorDtoConverter);
 
     }
 
@@ -58,7 +58,17 @@ public class SponsorController implements ISponsorController {
     @Override
     public Mono<SponsorDto> getSponsor(final UUID sponsorId) {
 
-        return sponsorService.get(sponsorId).map(sponsorToSponsorDtoConverter::apply);
+        return sponsorService.get(sponsorId).map(sponsorToSponsorDtoConverter);
+
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Flux<SponsorDto> getSponsors() {
+
+        return sponsorService.getAll().map(sponsorToSponsorDtoConverter);
 
     }
 
@@ -68,7 +78,7 @@ public class SponsorController implements ISponsorController {
     @Override
     public Mono<SponsorDto> putSponsor(final UUID sponsorId, final SponsorDto sponsorDto) {
 
-        return sponsorService.edit(sponsorId, sponsorDto).map(sponsorToSponsorDtoConverter::apply);
+        return sponsorService.edit(sponsorId, sponsorDto).map(sponsorToSponsorDtoConverter);
 
     }
 
@@ -86,26 +96,9 @@ public class SponsorController implements ISponsorController {
      * {@inheritDoc}
      */
     @Override
-    public Flux<SponsorDto> getSponsors() {
-
-        return sponsorService.getAll().map(sponsorToSponsorDtoConverter::apply);
-
-    }
-
-    @Override
     public Mono<Boolean> ping() {
 
-        return pingService();
-    }
-
-    private Mono<Boolean> pingService() {
-        try {
-
-            return sponsorService.ping().onErrorReturn(false);
-        } catch (final Exception e) {
-
-            return Mono.just(false);
-        }
+        return sponsorService.ping().onErrorReturn(false);
     }
 
 }

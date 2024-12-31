@@ -10,7 +10,7 @@ import java.util.UUID;
 public interface IEventService extends IService<Event, EventDto> {
 
     /**
-     * This method is called only from {@link IEventService} implementor to add it self to the
+     * This method is called only from {@link IEventService} implementor to add itself to the
      * event.
      *
      * @param eventId

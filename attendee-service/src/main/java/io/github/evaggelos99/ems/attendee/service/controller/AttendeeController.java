@@ -99,12 +99,6 @@ public class AttendeeController implements IAttendeeController {
     }
 
     @Override
-    public Mono<Boolean> pingOther() {
-
-        return attendeeService.pingOther();
-    }
-
-    @Override
     public Mono<Boolean> ping() {
 
         return Mono.just(true).onErrorReturn(false);

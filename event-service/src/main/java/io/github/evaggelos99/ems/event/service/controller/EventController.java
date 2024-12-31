@@ -34,7 +34,6 @@ public class EventController implements IEventController {
      *
      * @param eventService             service responsible for CRUD operations
      * @param eventToEventDtoConverter converts event to DTO
-     * @param eventDtoToEventConverter converts DTO to event
      */
     public EventController(@Autowired final IEventService eventService,
                            @Autowired @Qualifier("eventToEventDtoConverter") final Function<Event, EventDto> eventToEventDtoConverter) {
@@ -49,8 +48,7 @@ public class EventController implements IEventController {
     @Override
     public Mono<EventDto> postEvent(final EventDto eventDto) {
 
-        return eventService.add(eventDto).map(eventToEventDtoConverter::apply);
-
+        return eventService.add(eventDto).map(eventToEventDtoConverter);
     }
 
     /**
@@ -59,8 +57,16 @@ public class EventController implements IEventController {
     @Override
     public Mono<EventDto> getEvent(final UUID eventId) {
 
-        return eventService.get(eventId).map(eventToEventDtoConverter::apply);
+        return eventService.get(eventId).map(eventToEventDtoConverter);
+    }
 
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Flux<EventDto> getEvents() {
+
+        return eventService.getAll().map(eventToEventDtoConverter);
     }
 
     /**
@@ -69,8 +75,7 @@ public class EventController implements IEventController {
     @Override
     public Mono<EventDto> putEvent(final UUID eventId, final EventDto eventDto) {
 
-        return eventService.edit(eventId, eventDto).map(eventToEventDtoConverter::apply);
-
+        return eventService.edit(eventId, eventDto).map(eventToEventDtoConverter);
     }
 
     /**
@@ -80,24 +85,12 @@ public class EventController implements IEventController {
     public Mono<Boolean> deleteEvent(final UUID eventId) {
 
         return eventService.delete(eventId);
-
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Flux<EventDto> getEvents() {
-
-        return eventService.getAll().map(eventToEventDtoConverter::apply);
-
     }
 
     @Override
     public Mono<Boolean> addAttendee(final UUID eventId, final UUID attendeeId) {
 
         return eventService.addAttendee(eventId, attendeeId);
-
     }
 
     @Override
