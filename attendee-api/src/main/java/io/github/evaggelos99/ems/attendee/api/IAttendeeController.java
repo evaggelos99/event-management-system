@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -24,7 +25,7 @@ public interface IAttendeeController extends IGenericController {
     /**
      * Method that creates an Attendee object and saves it in the DB
      *
-     * @param attendee
+     * @param attendee the Attendee payload object
      */
     @Operation(summary = "POST operation that creates an attendee object", description = "creates an Attendee object and stores it in the data source")
     @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "successful operation")})
@@ -82,8 +83,8 @@ public interface IAttendeeController extends IGenericController {
      * Method that updates the Event with that eventId If the id does not match any
      * Event stored in the DB it will return 404
      *
-     * @param eventId the UUID of the Event object
-     * @param event   the edited Event object
+     * @param attendeeId the UUID of the Attendee object
+     * @param ticketId   the UUID of the Ticket object
      */
     @Operation(summary = "PUT Operation that adds a ticket to the attendee", description = "Updates the attendee and adds a ticket")
     @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "successful operation"),
@@ -91,8 +92,5 @@ public interface IAttendeeController extends IGenericController {
     @PutMapping("/{attendeeId}/addTicket")
     @ResponseStatus(value = HttpStatus.CREATED)
     Mono<Boolean> addTicket(@PathVariable UUID attendeeId, @RequestParam UUID ticketId);
-
-    @GetMapping("/pingOther")
-    Mono<Boolean> pingOther();
 
 }

@@ -77,7 +77,7 @@ public class EventRepository implements IEventRepository {
     public Mono<Event> findById(final UUID uuid) {
 
         return databaseClient.sql(eventQueriesProperties.getProperty(CrudQueriesOperations.GET_ID.name())).bind(0, uuid)
-                .map(eventRowMapper::apply).one();
+                .map(eventRowMapper).one();
     }
 
     @Override
@@ -97,7 +97,7 @@ public class EventRepository implements IEventRepository {
     public Flux<Event> findAll() {
 
         return databaseClient.sql(eventQueriesProperties.getProperty(CrudQueriesOperations.GET_ALL.name()))
-                .map(eventRowMapper::apply).all();
+                .map(eventRowMapper).all();
     }
 
     @Override

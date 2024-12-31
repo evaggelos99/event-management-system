@@ -4,8 +4,8 @@ import io.github.evaggelos99.ems.attendee.api.Attendee;
 import io.github.evaggelos99.ems.attendee.api.AttendeeDto;
 import io.github.evaggelos99.ems.attendee.api.converters.AttendeeToAttendeeDtoConverter;
 import io.github.evaggelos99.ems.attendee.api.repo.IAttendeeRepository;
-import io.github.evaggelos99.ems.attendee.service.remote.EventServiceClient;
-import io.github.evaggelos99.ems.attendee.service.remote.TicketLookUpServiceClient;
+import io.github.evaggelos99.ems.attendee.service.remote.EventServicePublisher;
+import io.github.evaggelos99.ems.attendee.service.remote.TicketLookUpRemoteService;
 import io.github.evaggelos99.ems.ticket.api.util.TicketObjectGenerator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -34,10 +34,10 @@ class AttendeeServiceTest {
     private final Function<Attendee, AttendeeDto> attendeeToAttendeeDtoConverter = new AttendeeToAttendeeDtoConverter();
 
     @Mock
-    private EventServiceClient eventServiceMock;
+    private EventServicePublisher eventServiceMock;
 
     @Mock
-    private TicketLookUpServiceClient lookUpTicketServiceMock;
+    private TicketLookUpRemoteService lookUpTicketServiceMock;
 
     private AttendeeService service;
 
