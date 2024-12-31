@@ -29,7 +29,6 @@
     </properties>
 
     <modules>
-        <!--        <module>event-management-system</module>-->
         <module>common-api</module>
         <module>sponsor-api</module>
         <module>sponsor-service</module>
@@ -41,7 +40,6 @@
         <module>event-service</module>
         <module>ticket-api</module>
         <module>ticket-service</module>
-        <module>demo</module>
         <module>kafka-lib</module>
     </modules>
 
