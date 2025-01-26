@@ -21,30 +21,21 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
-public class Config {
-
-    @Value("${spring.kafka.producer.bootstrap-servers}")
-    private String bootstrapServers;
-
-    @Value("${io.github.evaggelos99.ems.event.topic.add-attendee}")
-    private String topicToBeCreated;
-
-    @Value("${spring.kafka.consumer.bootstrap-servers}")
-    private String server;
+public class KafkaSetupConfig {
 
     @Bean
-    KafkaAdmin admin() {
+    KafkaAdmin kafkaAdmin(@Value("${spring.kafka.producer.bootstrap-servers}") String producerBootstrapServers) {
 
         final Map<String, Object> configs = new HashMap<>();
-        configs.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, this.bootstrapServers);
+        configs.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, producerBootstrapServers);
         return new KafkaAdmin(configs);
     }
 
     @Bean
-    ProducerFactory<String, Serializable> producerFactory() {
+    ProducerFactory<String, Serializable> producerFactory(@Value("${spring.kafka.producer.bootstrap-servers}") String producerBootstrapServers) {
 
         final Map<String, Object> configProps = new HashMap<>();
-        configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, this.bootstrapServers);
+        configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, producerBootstrapServers);
         configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, ByteArraySerializer.class);
         configProps.put(ProducerConfig.ACKS_CONFIG, "1");
@@ -61,10 +52,10 @@ public class Config {
     }
 
     @Bean
-    ConsumerFactory<String, String> consumerFactory() {
+    ConsumerFactory<String, String> consumerFactory(@Value("${spring.kafka.consumer.bootstrap-servers}") String consumerBootstrapServers) {
 
         final Map<String, Object> props = new HashMap<>();
-        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, server);
+        props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, consumerBootstrapServers);
 //        props.put(ConsumerConfig.GROUP_ID_CONFIG, "default-group");
         props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
         props.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, 15000);
@@ -81,9 +72,9 @@ public class Config {
     }
 
     @Bean
-    NewTopic createTopic() {
+    NewTopic createTopic(@Value("${io.github.evaggelos99.ems.event.topic.add-attendee}") String topicToBeCreated) {
 
-        return new NewTopic(this.topicToBeCreated, 1, (short) 0);
+        return new NewTopic(topicToBeCreated, 1, (short) 0);
     }
 
     @Bean

@@ -41,6 +41,7 @@
         <module>ticket-api</module>
         <module>ticket-service</module>
         <module>kafka-lib</module>
+        <module>testcontainer-kafka-lib</module>
     </modules>
 
     <dependencies>

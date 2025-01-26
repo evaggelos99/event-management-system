@@ -28,7 +28,7 @@ public class Config {
     private String topicToBeCreated;
 
     @Bean
-    KafkaAdmin admin() {
+    KafkaAdmin kafkaAdmin() {
 
         final Map<String, Object> configs = new HashMap<>();
         configs.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
