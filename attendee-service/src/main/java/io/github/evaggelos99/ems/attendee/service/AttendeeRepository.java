@@ -37,7 +37,7 @@ public class AttendeeRepository implements IAttendeeRepository {
      * @param databaseClient                 the {@link DatabaseClient} used for
      *                                       connecting to the database for the
      *                                       Attendee objects
-     * @param attendeeRowMapper                 the {@link AttendeeRowMapper} used for
+     * @param attendeeRowMapper              the {@link AttendeeRowMapper} used for
      *                                       returning Attendee objects from the
      *                                       database
      * @param attendeeDtoToAttendeeConverter the
@@ -63,12 +63,6 @@ public class AttendeeRepository implements IAttendeeRepository {
     public Mono<Attendee> save(final AttendeeDto attendeeDto) {
 
         return saveAttendee(attendeeDto);
-    }
-
-    @Override
-    public Mono<Attendee> edit(final AttendeeDto attendeeDto) {
-
-        return editAttendee(attendeeDto);
     }
 
     @Override
@@ -98,19 +92,10 @@ public class AttendeeRepository implements IAttendeeRepository {
                 .map(attendeeRowMapper::apply).all();
     }
 
-    private Mono<Attendee> saveAttendee(final AttendeeDto attendee) {
+    @Override
+    public Mono<Attendee> edit(final AttendeeDto attendeeDto) {
 
-        final UUID attendeeId = attendee.uuid();
-        final Instant instantNow = Instant.now();
-        final UUID uuid = attendeeId != null ? attendeeId : UUID.randomUUID();
-        final List<UUID> ticketIds = attendee.ticketIDs() != null ? attendee.ticketIDs() : List.of();
-        final UUID[] uuids = convertToArray(ticketIds);
-        final Mono<Long> rowsAffected = databaseClient
-                .sql(attendeeQueriesProperties.getProperty(CrudQueriesOperations.SAVE.name())).bind(0, uuid)
-                .bind(1, instantNow).bind(2, instantNow).bind(3, attendee.firstName()).bind(4, attendee.lastName())
-                .bind(5, uuids).fetch().rowsUpdated();
-        return rowsAffected.filter(this::rowsAffectedAreMoreThanOne).map(n_ -> attendeeDtoToAttendeeConverter.apply(
-                new AttendeeDto(uuid, instantNow, instantNow, attendee.firstName(), attendee.lastName(), ticketIds)));
+        return editAttendee(attendeeDto);
     }
 
     private Mono<Attendee> editAttendee(final AttendeeDto attendee) {
@@ -125,8 +110,36 @@ public class AttendeeRepository implements IAttendeeRepository {
                 .bind(5, uuid).fetch().rowsUpdated();
         return rowsAffected.filter(this::rowsAffectedAreMoreThanOne).flatMap(n_ -> findById(uuid))
                 .map(AbstractDomainObject::getCreatedAt)
-                .map(createdAt -> attendeeDtoToAttendeeConverter.apply(new AttendeeDto(uuid, createdAt, updatedAt,
-                        attendee.firstName(), attendee.lastName(), ticketIds)));
+                .map(createdAt -> attendeeDtoToAttendeeConverter.apply(
+                        AttendeeDto.builder()
+                                .uuid(uuid)
+                                .createdAt(createdAt)
+                                .lastUpdated(updatedAt)
+                                .firstName(attendee.firstName())
+                                .lastName(attendee.lastName())
+                                .ticketIDs(ticketIds)
+                                .build()));
+    }
+
+    private Mono<Attendee> saveAttendee(final AttendeeDto attendee) {
+
+        final UUID attendeeId = attendee.uuid();
+        final Instant instantNow = Instant.now();
+        final UUID uuid = attendeeId != null ? attendeeId : UUID.randomUUID();
+        final List<UUID> ticketIds = attendee.ticketIDs() != null ? attendee.ticketIDs() : List.of();
+        final UUID[] uuids = convertToArray(ticketIds);
+        final Mono<Long> rowsAffected = databaseClient
+                .sql(attendeeQueriesProperties.getProperty(CrudQueriesOperations.SAVE.name())).bind(0, uuid)
+                .bind(1, instantNow).bind(2, instantNow).bind(3, attendee.firstName()).bind(4, attendee.lastName())
+                .bind(5, uuids).fetch().rowsUpdated();
+        return rowsAffected.filter(this::rowsAffectedAreMoreThanOne).map(n_ -> attendeeDtoToAttendeeConverter.apply(
+                AttendeeDto.builder().uuid(uuid)
+                        .createdAt(instantNow)
+                        .lastUpdated(instantNow)
+                        .firstName(attendee.firstName())
+                        .lastName(attendee.lastName())
+                        .ticketIDs(ticketIds)
+                        .build()));
     }
 
     private UUID[] convertToArray(final List<UUID> ticketIds) {

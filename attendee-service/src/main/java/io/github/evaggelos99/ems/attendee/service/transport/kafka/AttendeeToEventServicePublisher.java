@@ -38,6 +38,7 @@ public class AttendeeToEventServicePublisher {
     public Mono<Boolean> send(final UUID eventId, final UUID attendeeId) {
 
         final CompletableFuture<SendResult<String, Serializable>> fut = template.send(topicName, new AttendeeToEventPayload(eventId, attendeeId));
+        // return hook?
         return Mono.fromFuture(fut)
                 .map(x -> true)
                 .doOnError(error -> LOGGER.error("Could not reach send message to EventService", error))

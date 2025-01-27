@@ -9,6 +9,7 @@ import io.github.evaggelos99.ems.attendee.service.remote.EventServicePublisher;
 import io.github.evaggelos99.ems.attendee.service.remote.TicketLookUpRemoteService;
 import io.github.evaggelos99.ems.common.api.controller.exceptions.DuplicateTicketIdInAttendeeException;
 import io.github.evaggelos99.ems.common.api.controller.exceptions.ObjectNotFoundException;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -22,6 +23,7 @@ import java.util.UUID;
 import java.util.function.Function;
 
 import static java.util.Objects.requireNonNull;
+import static org.apache.commons.lang3.ObjectUtils.notEqual;
 
 @Service
 public class AttendeeService implements IAttendeeService {
@@ -92,8 +94,8 @@ public class AttendeeService implements IAttendeeService {
     @Override
     public Mono<Attendee> edit(final UUID uuid, final AttendeeDto attendee) {
 
-        return !uuid.equals(attendee.uuid()) ? Mono.error(() -> new ObjectNotFoundException(uuid, AttendeeDto.class))
-                : attendeeRepository.edit(attendee);
+        return notEqual(uuid, attendee.uuid()) ? Mono.error(() -> new ObjectNotFoundException(uuid, AttendeeDto.class))
+                        : attendeeRepository.edit(attendee);
     }
 
     /**

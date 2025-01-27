@@ -1,6 +1,7 @@
 package io.github.evaggelos99.ems.event.api;
 
 import io.github.evaggelos99.ems.common.api.controller.IGenericController;
+import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -24,7 +25,7 @@ public interface IEventController extends IGenericController {
     /**
      * Method that creates an Event object and saves it in the DB
      *
-     * @param event
+     * @param eventDto the DTO of event to be saved
      */
     @Operation(summary = "POST operation that creates an event object", description = "creates an Event object and stores it in the data source")
     @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "successful operation")})
@@ -58,7 +59,7 @@ public interface IEventController extends IGenericController {
      * Event stored in the DB it will return 404
      *
      * @param eventId the UUID of the Event object
-     * @param event   the edited Event object
+     * @param eventDto   the edited Event object
      */
     @Operation(summary = "PUT operation that updates or creates an event object", description = "updates or creates an Event object and stores it in the data source")
     @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "successful operation"),
@@ -78,6 +79,19 @@ public interface IEventController extends IGenericController {
     @DeleteMapping(path = "/{eventId}")
     Mono<Boolean> deleteEvent(@PathVariable UUID eventId);
 
+    /**
+     * Adds an attendee to the event. <br/>
+     * <b>This is NOT a safe operation because it assumes that:</b>
+     * <ul>
+     *  <li>The ticket object already exists, and it has the same event ID as the eventId given</li>
+     *  <li>The attendee object has the ticket ID already</li>
+     * <ul/>
+     *
+     * @param eventId the event ID that the attendee will be added
+     * @param attendeeId the attendee ID that will be added to the event
+     * @return {@link Boolean#TRUE} if the operation is successful otherwise {@link Boolean#FALSE}
+     */
+    @Hidden
     @PutMapping("/{eventId}/addAttendee")
     Mono<Boolean> addAttendee(@PathVariable UUID eventId, @RequestParam UUID attendeeId);
 

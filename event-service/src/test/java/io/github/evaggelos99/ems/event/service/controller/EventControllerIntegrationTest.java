@@ -5,48 +5,31 @@ import io.github.evaggelos99.ems.event.api.util.EventObjectGenerator;
 import io.github.evaggelos99.ems.event.service.EventServiceApplication;
 import io.github.evaggelos99.ems.event.service.util.SqlScriptExecutor;
 import io.github.evaggelos99.ems.event.service.util.TestConfiguration;
-import io.github.evaggelos99.ems.kafka.lib.object.deserializer.ObjectDeserializer;
-import io.github.evaggelos99.ems.kafka.lib.serializer.ByteArraySerializer;
 import io.github.evaggelos99.ems.testcontainerkafka.lib.KafkaContainer;
-import org.apache.kafka.clients.admin.AdminClientConfig;
-import org.apache.kafka.clients.admin.NewTopic;
-import org.apache.kafka.clients.consumer.ConsumerConfig;
-import org.apache.kafka.clients.producer.ProducerConfig;
-import org.apache.kafka.common.serialization.ByteArrayDeserializer;
-import org.apache.kafka.common.serialization.StringDeserializer;
-import org.apache.kafka.common.serialization.StringSerializer;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.kafka.config.ConcurrentKafkaListenerContainerFactory;
-import org.springframework.kafka.core.*;
-import org.springframework.kafka.listener.ContainerProperties;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.io.Serializable;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(classes = {EventServiceApplication.class,
-        TestConfiguration.class, EventControllerIntegrationTest.KafkaConfiguration.class}, webEnvironment = WebEnvironment.RANDOM_PORT)
+        TestConfiguration.class,}, webEnvironment = WebEnvironment.RANDOM_PORT)
 @TestInstance(Lifecycle.PER_CLASS)
 @Testcontainers
 public class EventControllerIntegrationTest {
@@ -64,6 +47,8 @@ public class EventControllerIntegrationTest {
 
     EventControllerIntegrationTest() {
         KAFKA.start();
+
+        System.setProperty("spring.kafka.consumer.bootstrap-servers", KAFKA.getBootstrapServers());
     }
 
     @BeforeAll
@@ -86,7 +71,6 @@ public class EventControllerIntegrationTest {
         // postEvent
         final ResponseEntity<EventDto> actualEntity = restTemplate.postForEntity(createUrl(), dto, EventDto.class);
 
-        System.out.println(actualEntity);
         assertTrue(actualEntity.getStatusCode().is2xxSuccessful());
         final EventDto actualDto = actualEntity.getBody();
 
@@ -130,9 +114,7 @@ public class EventControllerIntegrationTest {
         assertEquals(actualDto.duration(), getDto.duration());
 
         // deleteEvent
-        final ResponseEntity<Void> deletedEntity = restTemplate.exchange(createUrl() + "/" + actualDto.uuid(),
-                HttpMethod.DELETE, null, Void.class);
-        assertTrue(deletedEntity.getStatusCode().is2xxSuccessful());
+        restTemplate.delete(createUrl() + "/{eventId}", actualDto.uuid());
         // assertThat it cannot be found
         final ResponseEntity<EventDto> deletedDto = restTemplate.getForEntity(createUrl() + "/" + actualDto.uuid(),
                 EventDto.class);
@@ -210,71 +192,45 @@ public class EventControllerIntegrationTest {
         return new HttpEntity(updatedDto);
     }
 
-    @org.springframework.boot.test.context.TestConfiguration
-    static class KafkaConfiguration {
+    @Test
+    void postEvent_addAttendee_deleteEvent_whenInvokedWithValidEventDto_thenExpectForEventToBeAddedThenEditedWithAddAttendeeThenDeleted() {
 
-        @Value("${io.github.evaggelos99.ems.event.topic.add-attendee}")
-        private String topicToBeCreated;
+        final Instant currentTime = Instant.now();
 
-        @Bean("kafkaAdmin")
-        KafkaAdmin kafkaAdmin() {
+        final UUID attendeeId = UUID.randomUUID();
+        final UUID organizerId = UUID.randomUUID();
+        final UUID sponsorId = UUID.randomUUID();
 
-            final Map<String, Object> configs = new HashMap<>();
-            configs.put(AdminClientConfig.BOOTSTRAP_SERVERS_CONFIG, KAFKA.getBootstrapServers());
-            return new KafkaAdmin(configs);
-        }
+        final EventDto dto = EventObjectGenerator.generateEventDtoWithoutTimestamps(null, organizerId, sponsorId);
+        // postEvent
+        final ResponseEntity<EventDto> actualEntity = restTemplate.postForEntity(createUrl(), dto, EventDto.class);
 
-        @Bean("producerFactory")
-        ProducerFactory<String, Serializable> producerFactory() {
+        assertTrue(actualEntity.getStatusCode().is2xxSuccessful());
+        final EventDto actualDto = actualEntity.getBody();
 
-            final Map<String, Object> configProps = new HashMap<>();
-            configProps.put(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, KAFKA.getBootstrapServers());
-            configProps.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
-            configProps.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, ByteArraySerializer.class);
-            configProps.put(ProducerConfig.ACKS_CONFIG, "1");
-            return new DefaultKafkaProducerFactory<>(configProps);
-        }
+        // assert
+        assertNotNull(actualDto);
+        assertEquals(dto.uuid(), actualDto.uuid());
+        assertTrue(actualDto.createdAt().isAfter(currentTime));
+        assertTrue(actualDto.lastUpdated().isAfter(currentTime));
+        assertNotNull(actualDto.createdAt());
+        assertNotNull(actualDto.lastUpdated());
+        assertEquals(dto.name(), actualDto.name());
+        assertEquals(dto.place(), actualDto.place());
+        assertEquals(dto.eventType(), actualDto.eventType());
+        assertTrue(actualDto.attendeesIds().isEmpty());
+        assertEquals(organizerId, actualDto.organizerId());
+        assertEquals(dto.limitOfPeople(), actualDto.limitOfPeople());
+        assertTrue(actualDto.sponsorsIds().contains(sponsorId));
+        assertEquals(dto.startTimeOfEvent(), actualDto.startTimeOfEvent());
+        assertEquals(dto.duration(), actualDto.duration());
 
-        @Bean("kafkaManualAckListenerContainerFactory")
-        public ConcurrentKafkaListenerContainerFactory<String, String> kafkaManualAckListenerContainerFactory(ConsumerFactory<String, String> consumerFactory) {
+        final ResponseEntity<Boolean> successfulOperation = restTemplate.exchange(createUrl() + "/{eventId}/addAttendee?attendeeId={attendeeId}", HttpMethod.PUT, null, Boolean.class, actualDto.uuid(), attendeeId);
 
-            final ConcurrentKafkaListenerContainerFactory<String, String> factory = new ConcurrentKafkaListenerContainerFactory<>();
-            factory.setConsumerFactory(consumerFactory);
-            factory.getContainerProperties().setAckMode(ContainerProperties.AckMode.MANUAL_IMMEDIATE);
-            return factory;
-        }
+        assertTrue(successfulOperation.getStatusCode().is2xxSuccessful());
+        assertEquals(Boolean.TRUE, successfulOperation.getBody());
 
-        @Bean("consumerFactory")
-        ConsumerFactory<String, String> consumerFactory() {
-
-            final Map<String, Object> props = new HashMap<>();
-            props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, KAFKA.getBootstrapServers());
-//        props.put(ConsumerConfig.GROUP_ID_CONFIG, "default-group");
-            props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
-            props.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, 15000);
-            props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
-            props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ByteArrayDeserializer.class);
-
-            return new DefaultKafkaConsumerFactory<>(props);
-        }
-
-        @Bean("kafkaTemplate")
-        KafkaTemplate<String, Serializable> kafkaTemplate(final ProducerFactory<String, Serializable> producerConfigs) {
-
-            return new KafkaTemplate<>(producerConfigs);
-        }
-
-        @Bean("createTopic")
-        NewTopic createTopic() {
-
-            return new NewTopic(topicToBeCreated, 1, (short) 0);
-        }
-
-        @Bean("objectDeserializer")
-        ObjectDeserializer objectDeserializer() {
-
-            return new ObjectDeserializer();
-        }
+        restTemplate.delete(createUrl() + "/{eventId}", actualDto.uuid());
     }
 
 }

@@ -18,10 +18,22 @@ public final class OrganizerObjectGenerator {
     public static OrganizerDto generateOrganizerDto(final EventType... eventTypes) {
 
         final Instant timestamp = Instant.now();
+        return OrganizerDto.builder()
+                .uuid(UUID.randomUUID())
+                .createdAt(timestamp)
+                .lastUpdated(timestamp)
+                .name(UUID.randomUUID().toString())
+                .website(UUID.randomUUID().toString())
+                .information(UUID.randomUUID().toString())
+                .eventTypes(List.of(eventTypes))
+                .contactInformation(generateContactInformation())
+                .build();
+    }
 
-        return new OrganizerDto(UUID.randomUUID(), timestamp, timestamp, UUID.randomUUID().toString(),
-                UUID.randomUUID().toString(), UUID.randomUUID().toString(), List.of(eventTypes),
-                generateContactInformation());
+    public static ContactInformation generateContactInformation() {
+
+        return new ContactInformation(UUID.randomUUID().toString(), UUID.randomUUID().toString(),
+                UUID.randomUUID().toString());
     }
 
     public static Organizer generateOrganizer(final EventType... eventTypes) {
@@ -31,16 +43,15 @@ public final class OrganizerObjectGenerator {
                 UUID.randomUUID().toString(), List.of(eventTypes), generateContactInformation());
     }
 
-    public static ContactInformation generateContactInformation() {
-
-        return new ContactInformation(UUID.randomUUID().toString(), UUID.randomUUID().toString(),
-                UUID.randomUUID().toString());
-    }
-
     public static OrganizerDto generateOrganizerDtoWithoutTimestamps(final EventType... eventTypes) {
 
-        return new OrganizerDto(UUID.randomUUID(), null, null, UUID.randomUUID().toString(),
-                UUID.randomUUID().toString(), UUID.randomUUID().toString(), List.of(eventTypes),
-                generateContactInformation());
+        return OrganizerDto.builder()
+                .uuid(UUID.randomUUID())
+                .name(UUID.randomUUID().toString())
+                .website(UUID.randomUUID().toString())
+                .information(UUID.randomUUID().toString())
+                .eventTypes(List.of(eventTypes))
+                .contactInformation(generateContactInformation())
+                .build();
     }
 }

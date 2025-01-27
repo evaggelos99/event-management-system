@@ -103,7 +103,6 @@ public class EventService implements IEventService {
     @Override
     public Mono<Boolean> addAttendee(final UUID eventId, final UUID attendeeId) {
 
-        System.out.println("djiasjdas " + eventId + " " + attendeeId);
         return eventRepository.findById(eventId)
                 .map(event -> addAttendeeIdToExistingList(eventId, attendeeId, event))//
                 .map(eventToEventDtoConverter)

@@ -24,4 +24,70 @@ public record TicketDto(@Schema(hidden = true, description = "The UUID of the At
                         @NotNull @Schema(example = "true", description = "If the ticket is transferable") Boolean transferable,
                         @NotNull @Schema(description = "The SeatingInformation of the ticket") SeatingInformation seatInformation) {
 
+    public static Builder builder() {
+
+        return new Builder();
+    }
+
+    public static final class Builder {
+
+        private UUID uuid;
+        private Instant createdAt;
+        private Instant lastUpdated;
+        private UUID eventID;
+        private TicketType ticketType;
+        private Integer price;
+        private Boolean transferable;
+        private SeatingInformation seatInformation;
+
+        private Builder() {
+
+        }
+
+        public TicketDto build() {
+
+            return new TicketDto(uuid, createdAt, lastUpdated, eventID, ticketType, price, transferable, seatInformation);
+        }
+
+        public Builder uuid(final UUID uuid) {
+            this.uuid = uuid;
+            return this;
+        }
+
+        public Builder createdAt(final Instant createdAt) {
+            this.createdAt = createdAt;
+            return this;
+        }
+
+        public Builder lastUpdated(final Instant lastUpdated) {
+            this.lastUpdated = lastUpdated;
+            return this;
+        }
+
+        public Builder eventID(final UUID eventID) {
+            this.eventID = eventID;
+            return this;
+        }
+
+        public Builder ticketType(final TicketType ticketType) {
+            this.ticketType = ticketType;
+            return this;
+        }
+
+        public Builder price(final Integer price) {
+            this.price = price;
+            return this;
+        }
+
+        public Builder transferable(final Boolean transferable) {
+            this.transferable = transferable;
+            return this;
+        }
+
+        public Builder seatInformation(final SeatingInformation seatInformation) {
+            this.seatInformation = seatInformation;
+            return this;
+        }
+    }
+
 }

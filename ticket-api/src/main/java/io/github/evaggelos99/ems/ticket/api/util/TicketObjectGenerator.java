@@ -22,22 +22,16 @@ public final class TicketObjectGenerator {
     public static TicketDto generateTicketDto(final UUID ticketId, final UUID eventId) {
 
         final TicketType randomTicketType = ALL_TICKET_TYPES.get(RANDOM.nextInt(ALL_TICKET_TYPES.size()));
-
         final Instant timestamp = Instant.now();
-
-        return new TicketDto(ticketId != null ? ticketId : UUID.randomUUID(), timestamp, timestamp, eventId,
-                randomTicketType, RANDOM.nextInt(500), RANDOM.nextBoolean(), generateSeatingInformation());
-
-    }
-
-    public static Ticket generateTicket(final UUID eventId) {
-
-        final TicketType randomTicketType = ALL_TICKET_TYPES.get(RANDOM.nextInt(ALL_TICKET_TYPES.size()));
-
-        final Instant now = Instant.now();
-        return new Ticket(UUID.randomUUID(), now, now, eventId, randomTicketType, RANDOM.nextInt(500),
-                RANDOM.nextBoolean(), generateSeatingInformation());
-
+        return TicketDto.builder()
+                .uuid(ticketId != null ? ticketId : UUID.randomUUID())
+                .createdAt(timestamp)
+                .lastUpdated(timestamp)
+                .eventID(eventId)
+                .ticketType(randomTicketType)
+                .price(RANDOM.nextInt(500))
+                .transferable(RANDOM.nextBoolean())
+                .seatInformation(generateSeatingInformation()).build();
     }
 
     public static SeatingInformation generateSeatingInformation() {
@@ -46,13 +40,24 @@ public final class TicketObjectGenerator {
 
     }
 
+    public static Ticket generateTicket(final UUID eventId) {
+
+        final TicketType randomTicketType = ALL_TICKET_TYPES.get(RANDOM.nextInt(ALL_TICKET_TYPES.size()));
+        final Instant now = Instant.now();
+        return new Ticket(UUID.randomUUID(), now, now, eventId, randomTicketType, RANDOM.nextInt(500),
+                RANDOM.nextBoolean(), generateSeatingInformation());
+
+    }
+
     public static TicketDto generateTicketDtoWithoutTimestamps(final UUID ticketId, final UUID eventId) {
 
         final TicketType randomTicketType = ALL_TICKET_TYPES.get(RANDOM.nextInt(ALL_TICKET_TYPES.size()));
-
-        final Instant timestamp = null;
-
-        return new TicketDto(ticketId != null ? ticketId : UUID.randomUUID(), timestamp, timestamp, eventId,
-                randomTicketType, RANDOM.nextInt(500), RANDOM.nextBoolean(), generateSeatingInformation());
+        return TicketDto.builder()
+                .uuid(ticketId != null ? ticketId : UUID.randomUUID())
+                .eventID(eventId)
+                .ticketType(randomTicketType)
+                .price(RANDOM.nextInt(500))
+                .transferable(RANDOM.nextBoolean())
+                .seatInformation(generateSeatingInformation()).build();
     }
 }

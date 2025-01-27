@@ -24,8 +24,8 @@ public class Config {
     @Value("${spring.kafka.producer.bootstrap-servers}")
     private String bootstrapServers;
 
-    @Value("${io.github.evaggelos99.ems.event.topic.add-attendee}")
-    private String topicToBeCreated;
+//    @Value("${io.github.evaggelos99.ems.event.topic.add-attendee}")
+//    private String topicToBeCreated;
 
     @Bean
     KafkaAdmin kafkaAdmin() {
@@ -52,11 +52,11 @@ public class Config {
         return new KafkaTemplate<>(producerConfigs);
     }
 
-    @Bean
-    NewTopic createTopic() {
-
-        return new NewTopic(topicToBeCreated, 0, (short) 0);
-    }
+//    @Bean
+//    NewTopic createTopic() {
+//
+//        return new NewTopic(topicToBeCreated, 0, (short) 0);
+//    }
 
     @Bean
     WebClient.Builder webClientBuilder() {

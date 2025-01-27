@@ -19,18 +19,28 @@ public final class AttendeeObjectGenerator {
                 List.of(ticketIds));
     }
 
-    public static AttendeeDto generateAttendeeDto(final UUID... ticketIds) {
+    public static AttendeeDto generateAttendeeDto(final UUID id, final UUID... ticketIds) {
 
         final List<UUID> listTickets = ticketIds != null ? List.of(ticketIds) : List.of();
         final Instant instantNow = Instant.now();
-        return new AttendeeDto(UUID.randomUUID(), instantNow, instantNow, UUID.randomUUID().toString(),
-                UUID.randomUUID().toString(), listTickets);
+        return AttendeeDto.builder()
+                .uuid(id != null ? id : UUID.randomUUID())
+                .createdAt(instantNow)
+                .lastUpdated(instantNow)
+                .firstName(UUID.randomUUID().toString())
+                .lastName(UUID.randomUUID().toString())
+                .ticketIDs(listTickets)
+                .build();
     }
 
-    public static AttendeeDto generateAttendeeDtoWithoutTimestamps(final UUID... ticketIds) {
+    public static AttendeeDto generateAttendeeDtoWithoutTimestamps(final UUID uuid, final UUID... ticketIds) {
 
         final List<UUID> listTickets = ticketIds != null ? List.of(ticketIds) : List.of();
-        return new AttendeeDto(UUID.randomUUID(), null, null, UUID.randomUUID().toString(),
-                UUID.randomUUID().toString(), listTickets);
+        return AttendeeDto.builder()
+                .uuid(uuid != null ? uuid : UUID.randomUUID())
+                .firstName(UUID.randomUUID().toString())
+                .lastName(UUID.randomUUID().toString())
+                .ticketIDs(listTickets)
+                .build();
     }
 }

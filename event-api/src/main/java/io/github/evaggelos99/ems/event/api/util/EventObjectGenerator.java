@@ -14,12 +14,12 @@ import java.util.UUID;
 
 public final class EventObjectGenerator {
 
+    private static final List<EventType> ALL_EVENT_TYPES = List.of(EventType.values());
+    private static final Random RANDOM = new Random();
+
     private EventObjectGenerator() {
 
     }
-
-    private static final List<EventType> ALL_EVENT_TYPES = List.of(EventType.values());
-    private static final Random RANDOM = new Random();
 
     public static EventDto generateEventDto(final UUID eventId, final UUID attendeeId, final UUID organizerId,
                                             final UUID sponsorId) {
@@ -29,10 +29,20 @@ public final class EventObjectGenerator {
         final List<UUID> listSponsors = sponsorId != null ? List.of(sponsorId) : List.of();
         final List<UUID> listAttendees = attendeeId != null ? List.of(attendeeId) : List.of();
 
-        return new EventDto(eventId != null ? eventId : UUID.randomUUID(), timestamp, timestamp,
-                UUID.randomUUID().toString(), UUID.randomUUID().toString(), randomTicketType, listAttendees,
-                organizerId, RANDOM.nextInt(1500), listSponsors,
-                LocalDateTime.now().plusDays(5).truncatedTo(ChronoUnit.SECONDS), Duration.ofHours(5));
+        return EventDto.builder()
+                .uuid(eventId != null ? eventId : UUID.randomUUID())
+                .createdAt(timestamp)
+                .lastUpdated(timestamp)
+                .name(UUID.randomUUID().toString())
+                .place(UUID.randomUUID().toString())
+                .eventType(randomTicketType)
+                .attendeesIds(listAttendees)
+                .organizerId(organizerId)
+                .limitOfPeople(RANDOM.nextInt(1500))
+                .sponsorsIds(listSponsors)
+                .startTimeOfEvent(LocalDateTime.now().plusDays(5).truncatedTo(ChronoUnit.SECONDS))
+                .duration(Duration.ofHours(5))
+                .build();
     }
 
     public static EventDto generateEventDtoWithoutTimestamps(final UUID attendeeId, final UUID organizerId,
@@ -42,9 +52,18 @@ public final class EventObjectGenerator {
         final List<UUID> listSponsors = sponsorId != null ? List.of(sponsorId) : List.of();
         final List<UUID> listAttendees = attendeeId != null ? List.of(attendeeId) : List.of();
 
-        return new EventDto(UUID.randomUUID(), null, null, UUID.randomUUID().toString(), UUID.randomUUID().toString(),
-                randomTicketType, listAttendees, organizerId, RANDOM.nextInt(1500), listSponsors,
-                LocalDateTime.now().plusDays(5).truncatedTo(ChronoUnit.SECONDS), Duration.ofHours(5));
+        return EventDto.builder()
+                .uuid(UUID.randomUUID())
+                .name(UUID.randomUUID().toString())
+                .place(UUID.randomUUID().toString())
+                .eventType(randomTicketType)
+                .attendeesIds(listAttendees)
+                .organizerId(organizerId)
+                .limitOfPeople(RANDOM.nextInt(1500))
+                .sponsorsIds(listSponsors)
+                .startTimeOfEvent(LocalDateTime.now().plusDays(5).truncatedTo(ChronoUnit.SECONDS))
+                .duration(Duration.ofHours(5))
+                .build();
     }
 
     public static Event generateEvent(final UUID attendeeId, final UUID organizerId, final UUID sponsorId) {
@@ -64,8 +83,17 @@ public final class EventObjectGenerator {
         final List<UUID> listSponsors = sponsorId != null ? List.of(sponsorId) : List.of();
         final List<UUID> listAttendees = attendeeId != null ? List.of(attendeeId) : List.of();
 
-        return new EventDto(uuid, null, null, UUID.randomUUID().toString(), UUID.randomUUID().toString(),
-                randomTicketType, listAttendees, organizerId, RANDOM.nextInt(1500), listSponsors,
-                LocalDateTime.now().plusDays(5).truncatedTo(ChronoUnit.SECONDS), Duration.ofHours(5));
+        return EventDto.builder()
+                .uuid(uuid)
+                .name(UUID.randomUUID().toString())
+                .place(UUID.randomUUID().toString())
+                .eventType(randomTicketType)
+                .attendeesIds(listAttendees)
+                .organizerId(organizerId)
+                .limitOfPeople(RANDOM.nextInt(1500))
+                .sponsorsIds(listSponsors)
+                .startTimeOfEvent(LocalDateTime.now().plusDays(5).truncatedTo(ChronoUnit.SECONDS))
+                .duration(Duration.ofHours(5))
+                .build();
     }
 }

@@ -12,10 +12,20 @@ public class EventToEventDtoConverter implements Function<Event, EventDto> {
     @Override
     public EventDto apply(final Event event) {
 
-        return new EventDto(event.getUuid(), event.getCreatedAt(), event.getLastUpdated(), event.getName(),
-                event.getPlace(), event.getEventType(), event.getAttendeesIDs(), event.getOrganizerID(),
-                event.getLimitOfPeople(), event.getSponsorsIds(), event.getStartTime(), event.getDuration());
-
+        return EventDto.builder()
+                .uuid(event.getUuid())
+                .createdAt(event.getCreatedAt())
+                .lastUpdated(event.getLastUpdated())
+                .name(event.getName())
+                .place(event.getPlace())
+                .eventType(event.getEventType())
+                .attendeesIds(event.getAttendeesIDs())
+                .organizerId(event.getOrganizerID())
+                .limitOfPeople(event.getLimitOfPeople())
+                .sponsorsIds(event.getSponsorsIds())
+                .startTimeOfEvent(event.getStartTime())
+                .duration(event.getDuration())
+                .build();
     }
 
 }

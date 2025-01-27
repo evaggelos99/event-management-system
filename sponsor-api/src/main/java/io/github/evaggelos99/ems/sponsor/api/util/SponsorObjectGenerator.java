@@ -18,9 +18,21 @@ public final class SponsorObjectGenerator {
 
     public static SponsorDto generateSponsorDto(final UUID sponsorId) {
 
-        return new SponsorDto(sponsorId != null ? sponsorId : UUID.randomUUID(), Instant.now(), Instant.now(),
-                UUID.randomUUID().toString(), UUID.randomUUID().toString(), RANDOM.nextInt(500),
-                generateContactInformation());
+        return SponsorDto.builder()
+                .uuid(sponsorId != null ? sponsorId : UUID.randomUUID())
+                .createdAt(Instant.now())
+                .lastUpdated(Instant.now())
+                .name(UUID.randomUUID().toString())
+                .website(UUID.randomUUID().toString())
+                .financialContribution(RANDOM.nextInt(500))
+                .contactInformation(generateContactInformation())
+                .build();
+    }
+
+    public static ContactInformation generateContactInformation() {
+
+        return new ContactInformation(UUID.randomUUID().toString(), UUID.randomUUID().toString(),
+                UUID.randomUUID().toString());
 
     }
 
@@ -32,16 +44,14 @@ public final class SponsorObjectGenerator {
 
     }
 
-    public static ContactInformation generateContactInformation() {
-
-        return new ContactInformation(UUID.randomUUID().toString(), UUID.randomUUID().toString(),
-                UUID.randomUUID().toString());
-
-    }
-
     public static SponsorDto generateSponsorDtoWithoutTimestamps() {
 
-        return new SponsorDto(UUID.randomUUID(), null, null, UUID.randomUUID().toString(), UUID.randomUUID().toString(),
-                RANDOM.nextInt(500), generateContactInformation());
+        return SponsorDto.builder()
+                .uuid(UUID.randomUUID())
+                .name(UUID.randomUUID().toString())
+                .website(UUID.randomUUID().toString())
+                .financialContribution(RANDOM.nextInt(500))
+                .contactInformation(generateContactInformation())
+                .build();
     }
 }

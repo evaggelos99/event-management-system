@@ -21,24 +21,108 @@ import java.util.UUID;
  *
  * @author Evangelos Georgiou
  */
-public record EventDto(@Schema(hidden = true, description = "The UUID of the Attendee") UUID uuid, //
+public record EventDto(@Schema(hidden = true, description = "The UUID of the Attendee") UUID uuid,
                        @Null @Schema(hidden = true) Instant createdAt, @Null @Schema(hidden = true) Instant lastUpdated,
-                       //
                        @NotBlank @Schema(example = "in voluptate velit", description = "Name of the Event") String name,
-                       //
                        @NotBlank @Schema(example = "anim id est laborum", description = "The place of the Event") String place,
-                       //
                        @NotNull @Schema(example = "OTHER", description = "The type of the Event") EventType eventType,
-                       //
-                       @Schema(description = "The list of attendees") List<UUID> attendeesIds, //
+                       @Schema(description = "The list of attendees") List<UUID> attendeesIds,
                        @NotNull @Schema(description = "The organizer of the event", example = "61ee265a-f3d8-400a-8ae4-5e806b3eba92") UUID organizerId,
-                       //
                        @NotNull @Schema(example = "500", description = "The limit people the event can hold") Integer limitOfPeople,
-                       //
-                       @Schema(description = "The sponsors of the event") List<UUID> sponsorsIds, //
-                       @NotNull @Schema(description = "The start time of the Event") LocalDateTime startTimeOfEvent, //
-                       @NotNull @Schema(description = "The duration of the Event", example = "PT5H") //
-                       @JsonDeserialize(using = DurationDeserializer.class) //
+                       @Schema(description = "The sponsors of the event") List<UUID> sponsorsIds,
+                       @NotNull @Schema(description = "The start time of the Event") LocalDateTime startTimeOfEvent,
+                       @NotNull @Schema(description = "The duration of the Event", example = "PT5H")
+                       @JsonDeserialize(using = DurationDeserializer.class)
                        @JsonSerialize(using = DurationSerialzer.class) Duration duration) {
+
+    public static Builder builder() {
+
+        return new Builder();
+    }
+
+    public static final class Builder {
+
+        private UUID uuid;
+        private Instant createdAt;
+        private Instant lastUpdated;
+        private String name;
+        private String place;
+        private EventType eventType;
+        private List<UUID> attendeesIds;
+        private UUID organizerId;
+        private Integer limitOfPeople;
+        private List<UUID> sponsorsIds;
+        private LocalDateTime startTimeOfEvent;
+        private Duration duration;
+
+        private Builder() {
+
+        }
+
+        public EventDto build() {
+
+            return new EventDto(uuid, createdAt, lastUpdated, name, place, eventType, attendeesIds, organizerId, limitOfPeople, sponsorsIds, startTimeOfEvent, duration);
+        }
+
+        public Builder uuid(final UUID uuid) {
+            this.uuid = uuid;
+            return this;
+        }
+
+        public Builder createdAt(final Instant createdAt) {
+            this.createdAt = createdAt;
+            return this;
+        }
+
+        public Builder lastUpdated(final Instant lastUpdated) {
+            this.lastUpdated = lastUpdated;
+            return this;
+        }
+
+        public Builder name(final String name) {
+            this.name = name;
+            return this;
+        }
+
+        public Builder place(final String place) {
+            this.place = place;
+            return this;
+        }
+
+        public Builder eventType(final EventType eventType) {
+            this.eventType = eventType;
+            return this;
+        }
+
+        public Builder attendeesIds(final List<UUID> attendeesIds) {
+            this.attendeesIds = attendeesIds;
+            return this;
+        }
+
+        public Builder organizerId(final UUID organizerId) {
+            this.organizerId = organizerId;
+            return this;
+        }
+
+        public Builder limitOfPeople(final Integer limitOfPeople) {
+            this.limitOfPeople = limitOfPeople;
+            return this;
+        }
+
+        public Builder sponsorsIds(final List<UUID> sponsorsIds) {
+            this.sponsorsIds = sponsorsIds;
+            return this;
+        }
+
+        public Builder startTimeOfEvent(final LocalDateTime startTimeOfEvent) {
+            this.startTimeOfEvent = startTimeOfEvent;
+            return this;
+        }
+
+        public Builder duration(final Duration duration) {
+            this.duration = duration;
+            return this;
+        }
+    }
 
 }

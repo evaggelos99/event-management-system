@@ -106,34 +106,6 @@ public class EventRepository implements IEventRepository {
         return editEvent(eventDto);
     }
 
-    private Mono<Event> saveEvent(final EventDto event) {
-
-        final UUID eventUuid = event.uuid();
-        final Instant now = Instant.now();
-        final UUID uuid = eventUuid != null ? eventUuid : UUID.randomUUID();
-        final String name = event.name();
-        final String place = event.place();
-        final EventType eventType = event.eventType();
-        final List<UUID> attendeesIds = event.attendeesIds() != null ? event.attendeesIds() : List.of();
-        final UUID organizerId = event.organizerId();
-        final Integer limitOfPeople = event.limitOfPeople();
-        final List<UUID> sponsorIds = event.sponsorsIds() != null ? event.sponsorsIds() : List.of();
-        final LocalDateTime startTimeOfEvent = event.startTimeOfEvent();
-        final Duration duration = event.duration();
-        final Object interval = durationToIntervalConverter.apply(duration);
-        final UUID[] attendees = convertToArray(attendeesIds);
-        final UUID[] sponsors = convertToArray(sponsorIds);
-        final Mono<Long> rowsAffected = databaseClient
-                .sql(eventQueriesProperties.getProperty(CrudQueriesOperations.SAVE.name())).bind(0, uuid).bind(1, now)
-                .bind(2, now).bind(3, name).bind(4, place).bind(5, eventType).bind(6, attendees).bind(7, organizerId)
-                .bind(8, limitOfPeople).bind(9, sponsors).bind(10, startTimeOfEvent).bind(11, interval).fetch()
-                .rowsUpdated();
-
-        return rowsAffected.filter(this::rowsAffectedAreMoreThanOne)
-                .map(m_ -> eventDtoToEventConverter.apply(new EventDto(uuid, now, now, name, place, eventType,
-                        attendeesIds, organizerId, limitOfPeople, sponsorIds, startTimeOfEvent, duration)));
-    }
-
     private Mono<Event> editEvent(final EventDto event) {
 
         final UUID uuid = event.uuid();
@@ -158,8 +130,61 @@ public class EventRepository implements IEventRepository {
 
         return rowsAffected.filter(this::rowsAffectedAreMoreThanOne).flatMap(n_ -> findById(uuid))
                 .map(AbstractDomainObject::getCreatedAt)
-                .map(createdAt -> eventDtoToEventConverter.apply(new EventDto(uuid, createdAt, updatedAt, name, place,
-                        eventType, attendeesIds, organizerId, limitOfPeople, sponsorIds, startTimeOfEvent, duration)));
+                .map(createdAt -> eventDtoToEventConverter.apply(EventDto.builder()
+                        .uuid(uuid)
+                        .createdAt(createdAt)
+                        .lastUpdated(updatedAt)
+                        .name(name)
+                        .place(place)
+                        .eventType(eventType)
+                        .attendeesIds(attendeesIds)
+                        .organizerId(organizerId)
+                        .limitOfPeople(limitOfPeople)
+                        .sponsorsIds(sponsorIds)
+                        .startTimeOfEvent(startTimeOfEvent)
+                        .duration(duration)
+                        .build()));
+    }
+
+    private Mono<Event> saveEvent(final EventDto event) {
+
+        final UUID eventUuid = event.uuid();
+        final Instant now = Instant.now();
+        final UUID uuid = eventUuid != null ? eventUuid : UUID.randomUUID();
+        final String name = event.name();
+        final String place = event.place();
+        final EventType eventType = event.eventType();
+        final List<UUID> attendeesIds = event.attendeesIds() != null ? event.attendeesIds() : List.of();
+        final UUID organizerId = event.organizerId();
+        final Integer limitOfPeople = event.limitOfPeople();
+        final List<UUID> sponsorIds = event.sponsorsIds() != null ? event.sponsorsIds() : List.of();
+        final LocalDateTime startTimeOfEvent = event.startTimeOfEvent();
+        final Duration duration = event.duration();
+        final Object interval = durationToIntervalConverter.apply(duration);
+        final UUID[] attendees = convertToArray(attendeesIds);
+        final UUID[] sponsors = convertToArray(sponsorIds);
+
+        final Mono<Long> rowsAffected = databaseClient
+                .sql(eventQueriesProperties.getProperty(CrudQueriesOperations.SAVE.name())).bind(0, uuid).bind(1, now)
+                .bind(2, now).bind(3, name).bind(4, place).bind(5, eventType).bind(6, attendees).bind(7, organizerId)
+                .bind(8, limitOfPeople).bind(9, sponsors).bind(10, startTimeOfEvent).bind(11, interval).fetch()
+                .rowsUpdated();
+
+        return rowsAffected.filter(this::rowsAffectedAreMoreThanOne)
+                .map(m_ -> eventDtoToEventConverter.apply(EventDto.builder()
+                        .uuid(uuid)
+                        .createdAt(now)
+                        .lastUpdated(now)
+                        .name(name)
+                        .place(place)
+                        .eventType(eventType)
+                        .attendeesIds(attendeesIds)
+                        .organizerId(organizerId)
+                        .limitOfPeople(limitOfPeople)
+                        .sponsorsIds(sponsorIds)
+                        .startTimeOfEvent(startTimeOfEvent)
+                        .duration(duration)
+                        .build()));
     }
 
     private UUID[] convertToArray(final List<UUID> ids) {

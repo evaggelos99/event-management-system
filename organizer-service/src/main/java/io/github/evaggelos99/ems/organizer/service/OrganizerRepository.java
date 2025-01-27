@@ -70,13 +70,6 @@ public class OrganizerRepository implements IOrganizerRepository {
     }
 
     @Override
-    public Mono<Organizer> edit(final OrganizerDto organizerDto) {
-
-        return editOrganizer(organizerDto);
-
-    }
-
-    @Override
     public Mono<Organizer> findById(final UUID uuid) {
 
         return databaseClient.sql(organizerQueriesProperties.getProperty(CrudQueriesOperations.GET_ID.name()))
@@ -107,29 +100,10 @@ public class OrganizerRepository implements IOrganizerRepository {
 
     }
 
-    private Mono<Organizer> saveOrganizer(final OrganizerDto organizer) {
+    @Override
+    public Mono<Organizer> edit(final OrganizerDto organizerDto) {
 
-        final UUID organizerUuid = organizer.uuid();
-        final UUID uuid = organizerUuid != null ? organizerUuid : UUID.randomUUID();
-
-        final Instant instantNow = Instant.now();
-
-        final String name = organizer.name();
-        final String website = organizer.website();
-        final String description = organizer.information();
-        final List<EventType> listOfEventTypes = organizer.eventTypes();
-        final ContactInformation contactInformation = organizer.contactInformation();
-        final EventType[] eventTypesArray = convertToArray(listOfEventTypes);
-
-        final Mono<Long> rowsAffected = databaseClient
-                .sql(organizerQueriesProperties.getProperty(CrudQueriesOperations.SAVE.name())).bind(0, uuid)
-                .bind(1, instantNow).bind(2, instantNow).bind(3, name).bind(4, website).bind(5, description)
-                .bind(6, eventTypesArray).bind(7, contactInformation.email()).bind(8, contactInformation.phoneNumber())
-                .bind(9, contactInformation.physicalAddress()).fetch().rowsUpdated();
-
-        return rowsAffected.filter(this::rowsAffectedAreMoreThanOne)
-                .map(n_ -> organizerDtoToOrganizerConverter.apply(new OrganizerDto(uuid, instantNow, instantNow, name,
-                        website, description, listOfEventTypes, contactInformation)));
+        return editOrganizer(organizerDto);
 
     }
 
@@ -140,22 +114,57 @@ public class OrganizerRepository implements IOrganizerRepository {
 
         final String name = organizer.name();
         final String website = organizer.website();
-        final String description = organizer.information();
+        final String information = organizer.information();
         final List<EventType> listOfEventTypes = organizer.eventTypes();
         final ContactInformation contactInformation = organizer.contactInformation();
         final EventType[] eventTypesArray = convertToArray(listOfEventTypes);
 
         final Mono<Long> rowsAffected = databaseClient
                 .sql(organizerQueriesProperties.getProperty(CrudQueriesOperations.EDIT.name())).bind(0, uuid)
-                .bind(1, updatedAt).bind(2, name).bind(3, website).bind(4, description).bind(5, eventTypesArray)
+                .bind(1, updatedAt).bind(2, name).bind(3, website).bind(4, information).bind(5, eventTypesArray)
                 .bind(6, contactInformation.email()).bind(7, contactInformation.phoneNumber())
                 .bind(8, contactInformation.physicalAddress()).bind(9, uuid).fetch().rowsUpdated();
 
         return rowsAffected.filter(this::rowsAffectedAreMoreThanOne).flatMap(n_ -> findById(uuid))
                 .map(AbstractDomainObject::getCreatedAt)
-                .map(createdAt -> organizerDtoToOrganizerConverter.apply(new OrganizerDto(uuid, createdAt, updatedAt,
-                        name, website, description, listOfEventTypes, contactInformation)));
+                .map(createdAt -> organizerDtoToOrganizerConverter.apply(
+                        OrganizerDto.builder()
+                                .uuid(uuid)
+                                .createdAt(createdAt)
+                                .lastUpdated(updatedAt)
+                                .eventTypes(listOfEventTypes)
+                                .name(name).website(website).information(information)
+                                .contactInformation(contactInformation).build()));
+    }
 
+    private Mono<Organizer> saveOrganizer(final OrganizerDto organizer) {
+
+        final UUID organizerUuid = organizer.uuid();
+        final UUID uuid = organizerUuid != null ? organizerUuid : UUID.randomUUID();
+
+        final Instant instantNow = Instant.now();
+
+        final String name = organizer.name();
+        final String website = organizer.website();
+        final String information = organizer.information();
+        final List<EventType> listOfEventTypes = organizer.eventTypes();
+        final ContactInformation contactInformation = organizer.contactInformation();
+        final EventType[] eventTypesArray = convertToArray(listOfEventTypes);
+
+        final Mono<Long> rowsAffected = databaseClient
+                .sql(organizerQueriesProperties.getProperty(CrudQueriesOperations.SAVE.name())).bind(0, uuid)
+                .bind(1, instantNow).bind(2, instantNow).bind(3, name).bind(4, website).bind(5, information)
+                .bind(6, eventTypesArray).bind(7, contactInformation.email()).bind(8, contactInformation.phoneNumber())
+                .bind(9, contactInformation.physicalAddress()).fetch().rowsUpdated();
+
+        return rowsAffected.filter(this::rowsAffectedAreMoreThanOne)
+                .map(n_ -> organizerDtoToOrganizerConverter.apply(OrganizerDto.builder()
+                        .uuid(uuid)
+                        .createdAt(instantNow)
+                        .lastUpdated(instantNow)
+                        .eventTypes(listOfEventTypes)
+                        .name(name).website(website).information(information)
+                        .contactInformation(contactInformation).build()));
     }
 
     private EventType[] convertToArray(final List<EventType> ticketIds) {

@@ -65,13 +65,6 @@ public class SponsorRepository implements ISponsorRepository {
     }
 
     @Override
-    public Mono<Sponsor> edit(final SponsorDto organizerDto) {
-
-        return editSponsor(organizerDto);
-
-    }
-
-    @Override
     public Mono<Sponsor> findById(final UUID uuid) {
 
         return databaseClient.sql(sponsorQueriesProperties.getProperty(CrudQueriesOperations.GET_ID.name()))
@@ -102,26 +95,10 @@ public class SponsorRepository implements ISponsorRepository {
 
     }
 
-    private Mono<Sponsor> saveSponsor(final SponsorDto sponsor) {
+    @Override
+    public Mono<Sponsor> edit(final SponsorDto organizerDto) {
 
-        final UUID sponsorUuid = sponsor.uuid();
-        final Instant instantNow = Instant.now();
-
-        final UUID uuid = sponsorUuid != null ? sponsorUuid : UUID.randomUUID();
-        final String name = sponsor.name();
-        final String website = sponsor.website();
-        final Integer financialContribution = sponsor.financialContribution();
-        final ContactInformation contactInformation = sponsor.contactInformation();
-
-        final Mono<Long> rowsAffected = databaseClient
-                .sql(sponsorQueriesProperties.getProperty(CrudQueriesOperations.SAVE.name())).bind(0, uuid)
-                .bind(1, instantNow).bind(2, instantNow).bind(3, name).bind(4, website).bind(5, financialContribution)
-                .bind(6, contactInformation.email()).bind(7, contactInformation.phoneNumber())
-                .bind(8, contactInformation.physicalAddress()).fetch().rowsUpdated();
-
-        return rowsAffected.filter(this::rowsAffectedAreMoreThanOne)
-                .map(n_ -> sponsorDtoToSponsorConverter.apply(new SponsorDto(uuid, instantNow, instantNow, name,
-                        website, financialContribution, contactInformation)));
+        return editSponsor(organizerDto);
 
     }
 
@@ -142,9 +119,37 @@ public class SponsorRepository implements ISponsorRepository {
 
         return rowsAffected.filter(this::rowsAffectedAreMoreThanOne).flatMap(n_ -> findById(uuid))
                 .map(AbstractDomainObject::getCreatedAt)
-                .map(monoCreatedAt -> sponsorDtoToSponsorConverter.apply(new SponsorDto(uuid, monoCreatedAt, updatedAt,
-                        name, website, financialContribution, contactInformation)));
+                .map(monoCreatedAt -> sponsorDtoToSponsorConverter.apply(SponsorDto.builder()
+                        .uuid(uuid)
+                        .createdAt(monoCreatedAt)
+                        .lastUpdated(updatedAt)
+                        .name(name)
+                        .website(website)
+                        .financialContribution(financialContribution)
+                        .contactInformation(contactInformation).build()));
+    }
 
+    private Mono<Sponsor> saveSponsor(final SponsorDto sponsor) {
+
+        final UUID sponsorUuid = sponsor.uuid();
+        final Instant instantNow = Instant.now();
+
+        final UUID uuid = sponsorUuid != null ? sponsorUuid : UUID.randomUUID();
+        final String name = sponsor.name();
+        final String website = sponsor.website();
+        final Integer financialContribution = sponsor.financialContribution();
+        final ContactInformation contactInformation = sponsor.contactInformation();
+
+        final Mono<Long> rowsAffected = databaseClient
+                .sql(sponsorQueriesProperties.getProperty(CrudQueriesOperations.SAVE.name())).bind(0, uuid)
+                .bind(1, instantNow).bind(2, instantNow).bind(3, name).bind(4, website).bind(5, financialContribution)
+                .bind(6, contactInformation.email()).bind(7, contactInformation.phoneNumber())
+                .bind(8, contactInformation.physicalAddress()).fetch().rowsUpdated();
+
+        return rowsAffected.filter(this::rowsAffectedAreMoreThanOne)
+                .map(n_ -> sponsorDtoToSponsorConverter.apply(SponsorDto.builder().uuid(uuid).createdAt(instantNow)
+                        .lastUpdated(instantNow).name(name).website(website)
+                        .financialContribution(financialContribution).contactInformation(contactInformation).build()));
     }
 
     private boolean rowsAffectedAreMoreThanOne(final Long x) {
