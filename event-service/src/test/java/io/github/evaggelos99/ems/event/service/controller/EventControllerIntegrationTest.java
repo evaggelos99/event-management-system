@@ -5,6 +5,7 @@ import io.github.evaggelos99.ems.event.api.util.EventObjectGenerator;
 import io.github.evaggelos99.ems.event.service.EventServiceApplication;
 import io.github.evaggelos99.ems.event.service.util.SqlScriptExecutor;
 import io.github.evaggelos99.ems.event.service.util.TestConfiguration;
+import io.github.evaggelos99.ems.testcontainerkafka.lib.ExtendedKafkaContainer;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -17,6 +18,8 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -26,12 +29,15 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(classes = {EventServiceApplication.class,
-        TestConfiguration.class}, webEnvironment = WebEnvironment.RANDOM_PORT)
+        TestConfiguration.class,}, webEnvironment = WebEnvironment.RANDOM_PORT)
 @TestInstance(Lifecycle.PER_CLASS)
+@Testcontainers
 public class EventControllerIntegrationTest {
 
     private static final String HOSTNAME = "http://localhost:";
     private static final String RELATIVE_ENDPOINT = "/event";
+    @Container
+    private static final ExtendedKafkaContainer KAFKA = new ExtendedKafkaContainer();
     @Autowired
     private TestRestTemplate restTemplate;
     @Autowired
@@ -39,11 +45,18 @@ public class EventControllerIntegrationTest {
     @LocalServerPort
     private int port;
 
+    EventControllerIntegrationTest() {
+        KAFKA.start();
+
+        System.setProperty("spring.kafka.consumer.bootstrap-servers", KAFKA.getBootstrapServers());
+    }
+
     @BeforeAll
-    void beforeAll() {
+    public void beforeAll() {
 
         sqlScriptExecutor.setup();
     }
+
 
     @Test
     void postEvent_getEvent_deleteEvent_getEvent_whenInvokedWithValidEventDto_thenExpectForEventToBeAddedFetchedAndDeleted() {
@@ -58,7 +71,6 @@ public class EventControllerIntegrationTest {
         // postEvent
         final ResponseEntity<EventDto> actualEntity = restTemplate.postForEntity(createUrl(), dto, EventDto.class);
 
-        System.out.println(actualEntity);
         assertTrue(actualEntity.getStatusCode().is2xxSuccessful());
         final EventDto actualDto = actualEntity.getBody();
 
@@ -102,14 +114,17 @@ public class EventControllerIntegrationTest {
         assertEquals(actualDto.duration(), getDto.duration());
 
         // deleteEvent
-        final ResponseEntity<Void> deletedEntity = restTemplate.exchange(createUrl() + "/" + actualDto.uuid(),
-                HttpMethod.DELETE, null, Void.class);
-        assertTrue(deletedEntity.getStatusCode().is2xxSuccessful());
+        restTemplate.delete(createUrl() + "/{eventId}", actualDto.uuid());
         // assertThat it cannot be found
         final ResponseEntity<EventDto> deletedDto = restTemplate.getForEntity(createUrl() + "/" + actualDto.uuid(),
                 EventDto.class);
         assertTrue(deletedDto.getStatusCode().is2xxSuccessful());
         assertNull(deletedDto.getBody());
+    }
+
+    private String createUrl() {
+
+        return HOSTNAME + port + RELATIVE_ENDPOINT;
     }
 
     @Test
@@ -177,9 +192,45 @@ public class EventControllerIntegrationTest {
         return new HttpEntity(updatedDto);
     }
 
-    private String createUrl() {
+    @Test
+    void postEvent_addAttendee_deleteEvent_whenInvokedWithValidEventDto_thenExpectForEventToBeAddedThenEditedWithAddAttendeeThenDeleted() {
 
-        return HOSTNAME + port + RELATIVE_ENDPOINT;
+        final Instant currentTime = Instant.now();
+
+        final UUID attendeeId = UUID.randomUUID();
+        final UUID organizerId = UUID.randomUUID();
+        final UUID sponsorId = UUID.randomUUID();
+
+        final EventDto dto = EventObjectGenerator.generateEventDtoWithoutTimestamps(null, organizerId, sponsorId);
+        // postEvent
+        final ResponseEntity<EventDto> actualEntity = restTemplate.postForEntity(createUrl(), dto, EventDto.class);
+
+        assertTrue(actualEntity.getStatusCode().is2xxSuccessful());
+        final EventDto actualDto = actualEntity.getBody();
+
+        // assert
+        assertNotNull(actualDto);
+        assertEquals(dto.uuid(), actualDto.uuid());
+        assertTrue(actualDto.createdAt().isAfter(currentTime));
+        assertTrue(actualDto.lastUpdated().isAfter(currentTime));
+        assertNotNull(actualDto.createdAt());
+        assertNotNull(actualDto.lastUpdated());
+        assertEquals(dto.name(), actualDto.name());
+        assertEquals(dto.place(), actualDto.place());
+        assertEquals(dto.eventType(), actualDto.eventType());
+        assertTrue(actualDto.attendeesIds().isEmpty());
+        assertEquals(organizerId, actualDto.organizerId());
+        assertEquals(dto.limitOfPeople(), actualDto.limitOfPeople());
+        assertTrue(actualDto.sponsorsIds().contains(sponsorId));
+        assertEquals(dto.startTimeOfEvent(), actualDto.startTimeOfEvent());
+        assertEquals(dto.duration(), actualDto.duration());
+
+        final ResponseEntity<Boolean> successfulOperation = restTemplate.exchange(createUrl() + "/{eventId}/addAttendee?attendeeId={attendeeId}", HttpMethod.PUT, null, Boolean.class, actualDto.uuid(), attendeeId);
+
+        assertTrue(successfulOperation.getStatusCode().is2xxSuccessful());
+        assertEquals(Boolean.TRUE, successfulOperation.getBody());
+
+        restTemplate.delete(createUrl() + "/{eventId}", actualDto.uuid());
     }
 
 }

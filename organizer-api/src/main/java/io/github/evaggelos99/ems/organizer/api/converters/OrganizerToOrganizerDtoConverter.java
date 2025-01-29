@@ -12,9 +12,15 @@ public class OrganizerToOrganizerDtoConverter implements Function<Organizer, Org
     @Override
     public OrganizerDto apply(final Organizer organizer) {
 
-        return new OrganizerDto(organizer.getUuid(), organizer.getCreatedAt(), organizer.getLastUpdated(),
-                organizer.getName(), organizer.getWebsite(), organizer.getInformation(), organizer.getEventTypes(),
-                organizer.getContactInformation());
+        return OrganizerDto.builder()
+                .uuid(organizer.getUuid())
+                .createdAt(organizer.getCreatedAt())
+                .lastUpdated(organizer.getLastUpdated())
+                .name(organizer.getName())
+                .website(organizer.getWebsite())
+                .information(organizer.getInformation())
+                .eventTypes(organizer.getEventTypes())
+                .contactInformation(organizer.getContactInformation()).build();
     }
 
 }

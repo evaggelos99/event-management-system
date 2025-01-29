@@ -84,10 +84,8 @@ class SponsorControllerIntegrationTest {
         assertEquals(actualDto.financialContribution(), getDto.financialContribution());
         assertEquals(actualDto.contactInformation(), getDto.contactInformation());
 
-        // deleteOrganizer
-        final ResponseEntity<Void> deletedEntity = restTemplate.exchange(createUrl() + "/" + actualDto.uuid(),
-                HttpMethod.DELETE, null, Void.class);
-        assertTrue(deletedEntity.getStatusCode().is2xxSuccessful());
+        restTemplate.delete(createUrl() + "/{uuid}", actualDto.uuid());
+
         // assertThat it cannot be found
         final ResponseEntity<SponsorDto> deletedDto = restTemplate.getForEntity(createUrl() + "/" + actualDto.uuid(),
                 SponsorDto.class);
@@ -116,8 +114,13 @@ class SponsorControllerIntegrationTest {
         // putOrganizer
         final ContactInformation contactInformation = SponsorObjectGenerator.generateContactInformation();
 
-        final SponsorDto updatedDto = new SponsorDto(actualDto.uuid(), null, null, UUID.randomUUID().toString(),
-                UUID.randomUUID().toString(), 1500, contactInformation);
+        final SponsorDto updatedDto = SponsorDto.builder()
+                .uuid(actualDto.uuid())
+                .name(UUID.randomUUID().toString())
+                .financialContribution(1500)
+                .contactInformation(contactInformation)
+                .website(UUID.randomUUID().toString())
+                .build();
 
         final ResponseEntity<SponsorDto> actualPutEntity = restTemplate.exchange(createUrl() + "/" + actualDto.uuid(),
                 HttpMethod.PUT, createHttpEntity(updatedDto), SponsorDto.class);
@@ -135,7 +138,7 @@ class SponsorControllerIntegrationTest {
         assertEquals(updatedDto.contactInformation(), actualPutDto.contactInformation());
 
         // deleteOrganizer
-        restTemplate.delete(createUrl() + "/" + actualDto.uuid());
+        restTemplate.delete(createUrl() + "/{uuid}", actualDto.uuid());
         // assertThat the list returned is empty
         @SuppressWarnings("rawtypes") final ResponseEntity<List> listOfOrganizers = restTemplate.getForEntity(createUrl(), List.class);
         assertTrue(listOfOrganizers.getStatusCode().is2xxSuccessful());

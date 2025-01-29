@@ -86,14 +86,17 @@ class TicketControllerIntegrationTest {
         assertEquals(actualDto.transferable(), getDto.transferable());
         assertEquals(actualDto.seatInformation(), getDto.seatInformation());
 
-        final ResponseEntity<Void> deletedEntity = restTemplate.exchange(createUrl() + "/" + actualDto.uuid(),
-                HttpMethod.DELETE, null, Void.class);
-        assertTrue(deletedEntity.getStatusCode().is2xxSuccessful());
+        restTemplate.delete(createUrl() + "/{uuid}", actualDto.uuid());
 
         final ResponseEntity<TicketDto> deletedDto = restTemplate.getForEntity(createUrl() + "/" + actualDto.uuid(),
                 TicketDto.class);
         assertTrue(deletedDto.getStatusCode().is2xxSuccessful());
         assertNull(deletedDto.getBody());
+    }
+
+    private String createUrl() {
+
+        return HOSTNAME + port + RELATIVE_ENDPOINT;
     }
 
     @Test
@@ -137,7 +140,7 @@ class TicketControllerIntegrationTest {
         assertEquals(updatedDto.seatInformation(), actualPutDto.seatInformation());
 
         // deleteTicket
-        restTemplate.delete(createUrl() + "/" + actualDto.uuid());
+        restTemplate.delete(createUrl() + "/{uuid}", actualDto.uuid());
         // assertThat the list returned is empty
         @SuppressWarnings("rawtypes") final ResponseEntity<List> listOfTickets = restTemplate.getForEntity(createUrl(), List.class);
         assertTrue(listOfTickets.getStatusCode().is2xxSuccessful());
@@ -150,10 +153,5 @@ class TicketControllerIntegrationTest {
     private HttpEntity createHttpEntity(final TicketDto updatedDto) {
 
         return new HttpEntity(updatedDto);
-    }
-
-    private String createUrl() {
-
-        return HOSTNAME + port + RELATIVE_ENDPOINT;
     }
 }

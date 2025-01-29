@@ -12,9 +12,14 @@ public class AttendeeToAttendeeDtoConverter implements Function<Attendee, Attend
     @Override
     public AttendeeDto apply(final Attendee attendee) {
 
-        return new AttendeeDto(attendee.getUuid(), attendee.getCreatedAt(), attendee.getLastUpdated(),
-                attendee.getFirstName(), attendee.getLastName(), attendee.getTicketIDs());
-
+        return AttendeeDto.builder()
+                .uuid(attendee.getUuid())
+                .createdAt(attendee.getCreatedAt())
+                .lastUpdated(attendee.getLastUpdated())
+                .firstName(attendee.getFirstName())
+                .lastName(attendee.getLastName())
+                .ticketIDs(attendee.getTicketIDs())
+                .build();
     }
 
 }

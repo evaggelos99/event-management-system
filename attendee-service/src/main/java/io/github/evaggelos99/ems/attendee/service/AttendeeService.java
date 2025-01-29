@@ -5,8 +5,8 @@ import io.github.evaggelos99.ems.attendee.api.AttendeeDto;
 import io.github.evaggelos99.ems.attendee.api.converters.AttendeeToAttendeeDtoConverter;
 import io.github.evaggelos99.ems.attendee.api.repo.IAttendeeRepository;
 import io.github.evaggelos99.ems.attendee.api.service.IAttendeeService;
-import io.github.evaggelos99.ems.attendee.service.remote.EventServiceClient;
-import io.github.evaggelos99.ems.attendee.service.remote.TicketLookUpServiceClient;
+import io.github.evaggelos99.ems.attendee.service.remote.EventServicePublisher;
+import io.github.evaggelos99.ems.attendee.service.remote.TicketLookUpRemoteService;
 import io.github.evaggelos99.ems.common.api.controller.exceptions.DuplicateTicketIdInAttendeeException;
 import io.github.evaggelos99.ems.common.api.controller.exceptions.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +22,7 @@ import java.util.UUID;
 import java.util.function.Function;
 
 import static java.util.Objects.requireNonNull;
+import static org.apache.commons.lang3.ObjectUtils.notEqual;
 
 @Service
 public class AttendeeService implements IAttendeeService {
@@ -30,9 +31,9 @@ public class AttendeeService implements IAttendeeService {
 
     private final Function<Attendee, AttendeeDto> attendeeToAttendeeDtoConverter;
 
-    private final EventServiceClient eventService;
+    private final EventServicePublisher eventService;
 
-    private final TicketLookUpServiceClient lookUpTicketService;
+    private final TicketLookUpRemoteService lookUpTicketService;
 
     /**
      * C-or
@@ -43,15 +44,15 @@ public class AttendeeService implements IAttendeeService {
      * @param attendeeToAttendeeDtoConverter the
      *                                       {@link AttendeeToAttendeeDtoConverter}
      *                                       that converts Attendee to AttendeeDto
-     * @param eventService                   the {@link EventServiceClient} used for
+     * @param eventService                   the {@link EventServicePublisher} used for
      *                                       cascading adding attendee to it's event
-     * @param lookUpTicketService            the {@link TicketLookUpServiceClient} as a lookup
+     * @param lookUpTicketService            the {@link TicketLookUpRemoteService} as a lookup
      *                                       for the tickets
      */
     public AttendeeService(@Autowired final IAttendeeRepository attendeeRepository,
                            @Autowired @Qualifier("attendeeToAttendeeDtoConverter") final Function<Attendee, AttendeeDto> attendeeToAttendeeDtoConverter,
-                           @Autowired final EventServiceClient eventService,
-                           @Autowired final TicketLookUpServiceClient lookUpTicketService) {
+                           @Autowired final EventServicePublisher eventService,
+                           @Autowired final TicketLookUpRemoteService lookUpTicketService) {
 
         this.attendeeRepository = requireNonNull(attendeeRepository);
         this.attendeeToAttendeeDtoConverter = requireNonNull(attendeeToAttendeeDtoConverter);
@@ -72,16 +73,9 @@ public class AttendeeService implements IAttendeeService {
      * {@inheritDoc}
      */
     @Override
-    public Mono<Boolean> addTicket(final UUID attendeeId, final UUID ticketId) {
+    public Mono<Attendee> get(final UUID uuid) {
 
-        return lookUpTicketService.ping() //
-                .filter(Boolean.TRUE::equals).flatMap(x -> eventService.ping()).filter(Boolean.TRUE::equals)
-                .flatMap(x -> attendeeRepository.findById(attendeeId))
-                .map(attendee -> addTicketIdToExistingList(attendeeId, ticketId, attendee))
-                .map(attendeeToAttendeeDtoConverter)//
-                .flatMap(attendeeRepository::edit)//
-                .flatMap(x -> lookUpTicketService.lookUpTicket(ticketId))
-                .flatMap(x -> eventService.addAttendee(x.eventID(), attendeeId)).defaultIfEmpty(false);
+        return attendeeRepository.findById(uuid);
     }
 
     /**
@@ -99,8 +93,17 @@ public class AttendeeService implements IAttendeeService {
     @Override
     public Mono<Attendee> edit(final UUID uuid, final AttendeeDto attendee) {
 
-        return !uuid.equals(attendee.uuid()) ? Mono.error(() -> new ObjectNotFoundException(uuid, AttendeeDto.class))
-                : attendeeRepository.edit(attendee);
+        return notEqual(uuid, attendee.uuid()) ? Mono.error(() -> new ObjectNotFoundException(uuid, AttendeeDto.class))
+                        : attendeeRepository.edit(attendee);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Flux<Attendee> getAll() {
+
+        return attendeeRepository.findAll();
     }
 
     /**
@@ -116,24 +119,16 @@ public class AttendeeService implements IAttendeeService {
      * {@inheritDoc}
      */
     @Override
-    public Mono<Attendee> get(final UUID uuid) {
+    public Mono<Boolean> addTicket(final UUID attendeeId, final UUID ticketId) {
 
-        return attendeeRepository.findById(uuid);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public Flux<Attendee> getAll() {
-
-        return attendeeRepository.findAll();
-    }
-
-    @Override
-    public Mono<Boolean> ping() {
-
-        return Mono.just(true);
+        return lookUpTicketService.ping().filter(Boolean.TRUE::equals)
+                .flatMap(x -> eventService.ping()).filter(Boolean.TRUE::equals)
+                .flatMap(x -> attendeeRepository.findById(attendeeId))
+                .map(attendee -> addTicketIdToExistingList(attendeeId, ticketId, attendee))
+                .map(attendeeToAttendeeDtoConverter)//
+                .flatMap(attendeeRepository::edit)//
+                .flatMap(x -> lookUpTicketService.lookUpTicket(ticketId))
+                .flatMap(ticketDto -> eventService.addAttendee(ticketDto.eventID(), attendeeId)).defaultIfEmpty(false);
     }
 
     @Override
@@ -145,7 +140,6 @@ public class AttendeeService implements IAttendeeService {
     private Attendee addTicketIdToExistingList(final UUID attendeeId, final UUID ticketId, final Attendee attendee) {
 
         final List<UUID> list = attendee.getTicketIDs();
-
         if (list.stream().noneMatch(ticketId::equals)) {
 
             final LinkedList<UUID> newList = new LinkedList<>(list);
@@ -154,6 +148,13 @@ public class AttendeeService implements IAttendeeService {
             return new Attendee(attendeeId, attendee.getCreatedAt(), Instant.now(), attendee.getFirstName(),
                     attendee.getLastName(), newList);
         }
+
         throw new DuplicateTicketIdInAttendeeException(ticketId);
+    }
+
+    @Override
+    public Mono<Boolean> ping() {
+
+        return Mono.just(true);
     }
 }

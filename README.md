@@ -7,8 +7,9 @@ TODO:
 - [ ] QR code for ticket and add validation for it.
 - [x] Postgres
   - [ ] Roles within the Database
-- [ ] Microservices
+- [x] Microservices
   - [ ] Some type of service discovery
+  - [x] Kafka used as a transport layer
 - [ ] Redis for caching front page stuff.
 - [ ] UI Simple JS or Angular
 - [ ] Kafka streaming for events. An attendee can subscribe on an event stream(can be a football match).
@@ -18,3 +19,4 @@ TODO:
 - [ ] Authentication/authorisation (fusionauth)
   - [ ] Add roles: Sponsor, Organizer, User, Admin
 - [ ] e commerce eshop for buying tickets to the events. Stripe for buying tickets?
+- [ ] Add controllers that use web-sockets

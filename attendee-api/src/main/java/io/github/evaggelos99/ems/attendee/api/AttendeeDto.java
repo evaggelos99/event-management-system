@@ -20,4 +20,60 @@ public record AttendeeDto(@Schema(hidden = true, description = "The UUID of the 
                           @NotBlank @Schema(example = "aliquip ex ea commodo consequat", description = "Last name of the Attendee") String lastName,
                           @Schema(description = "The UUIDs of tickets of an event belonging to an Attendee") List<UUID> ticketIDs) {
 
+
+
+
+    public static Builder builder() {
+
+        return new Builder();
+    }
+
+    public static final class Builder {
+
+        private UUID uuid;
+        private Instant createdAt;
+        private Instant lastUpdated;
+        private String firstName;
+        private String lastName;
+        private List<UUID> ticketIDs;
+
+        private Builder() {
+
+        }
+
+        public AttendeeDto build() {
+
+            return new AttendeeDto(uuid,createdAt,lastUpdated,firstName,lastName,ticketIDs);
+        }
+
+        public Builder uuid(final UUID uuid) {
+            this.uuid = uuid;
+            return this;
+        }
+
+        public Builder createdAt(final Instant createdAt) {
+            this.createdAt = createdAt;
+            return this;
+        }
+
+        public Builder lastUpdated(final Instant lastUpdated) {
+            this.lastUpdated = lastUpdated;
+            return this;
+        }
+
+        public Builder firstName(final String firstName) {
+            this.firstName = firstName;
+            return this;
+        }
+
+        public Builder lastName(final String lastName) {
+            this.lastName = lastName;
+            return this;
+        }
+
+        public Builder ticketIDs(final List<UUID> ticketIDs) {
+            this.ticketIDs = ticketIDs;
+            return this;
+        }
+    }
 }
