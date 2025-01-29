@@ -1,8 +1,6 @@
 package io.github.evaggelos99.ems.kafka.lib.object.deserializer;
 
 import org.apache.kafka.common.KafkaException;
-import org.apache.kafka.common.errors.RecordDeserializationException;
-import org.apache.kafka.common.errors.SerializationException;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;

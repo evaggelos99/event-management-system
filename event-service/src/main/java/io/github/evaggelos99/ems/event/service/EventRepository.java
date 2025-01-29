@@ -171,7 +171,7 @@ public class EventRepository implements IEventRepository {
                 .rowsUpdated();
 
         return rowsAffected.filter(this::rowsAffectedAreMoreThanOne)
-                .map(m_ -> eventDtoToEventConverter.apply(EventDto.builder()
+                .map(rowNum -> eventDtoToEventConverter.apply(EventDto.builder()
                         .uuid(uuid)
                         .createdAt(now)
                         .lastUpdated(now)
