@@ -1,5 +1,6 @@
 package io.github.evaggelos99.ems.kafka.lib.serializer;
 
+import org.apache.kafka.common.KafkaException;
 import org.apache.kafka.common.header.Headers;
 import org.apache.kafka.common.serialization.Serializer;
 
@@ -20,7 +21,7 @@ public class ByteArraySerializer implements Serializer<Serializable> {
             objectStream.flush();
             return byteStream.toByteArray();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new KafkaException(e);
         }
     }
 

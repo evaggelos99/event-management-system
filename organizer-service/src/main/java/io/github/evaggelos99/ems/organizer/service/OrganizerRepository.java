@@ -125,7 +125,7 @@ public class OrganizerRepository implements IOrganizerRepository {
                 .bind(6, contactInformation.email()).bind(7, contactInformation.phoneNumber())
                 .bind(8, contactInformation.physicalAddress()).bind(9, uuid).fetch().rowsUpdated();
 
-        return rowsAffected.filter(this::rowsAffectedAreMoreThanOne).flatMap(n_ -> findById(uuid))
+        return rowsAffected.filter(this::rowsAffectedAreMoreThanOne).flatMap(rowNum -> findById(uuid))
                 .map(AbstractDomainObject::getCreatedAt)
                 .map(createdAt -> organizerDtoToOrganizerConverter.apply(
                         OrganizerDto.builder()
@@ -158,7 +158,7 @@ public class OrganizerRepository implements IOrganizerRepository {
                 .bind(9, contactInformation.physicalAddress()).fetch().rowsUpdated();
 
         return rowsAffected.filter(this::rowsAffectedAreMoreThanOne)
-                .map(n_ -> organizerDtoToOrganizerConverter.apply(OrganizerDto.builder()
+                .map(rowNum -> organizerDtoToOrganizerConverter.apply(OrganizerDto.builder()
                         .uuid(uuid)
                         .createdAt(instantNow)
                         .lastUpdated(instantNow)

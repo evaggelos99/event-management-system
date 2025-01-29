@@ -108,7 +108,7 @@ public class AttendeeRepository implements IAttendeeRepository {
                 .sql(attendeeQueriesProperties.getProperty(CrudQueriesOperations.EDIT.name())).bind(0, uuid)
                 .bind(1, updatedAt).bind(2, attendee.firstName()).bind(3, attendee.lastName()).bind(4, uuids)
                 .bind(5, uuid).fetch().rowsUpdated();
-        return rowsAffected.filter(this::rowsAffectedAreMoreThanOne).flatMap(n_ -> findById(uuid))
+        return rowsAffected.filter(this::rowsAffectedAreMoreThanOne).flatMap(rowNum -> findById(uuid))
                 .map(AbstractDomainObject::getCreatedAt)
                 .map(createdAt -> attendeeDtoToAttendeeConverter.apply(
                         AttendeeDto.builder()
@@ -132,7 +132,7 @@ public class AttendeeRepository implements IAttendeeRepository {
                 .sql(attendeeQueriesProperties.getProperty(CrudQueriesOperations.SAVE.name())).bind(0, uuid)
                 .bind(1, instantNow).bind(2, instantNow).bind(3, attendee.firstName()).bind(4, attendee.lastName())
                 .bind(5, uuids).fetch().rowsUpdated();
-        return rowsAffected.filter(this::rowsAffectedAreMoreThanOne).map(n_ -> attendeeDtoToAttendeeConverter.apply(
+        return rowsAffected.filter(this::rowsAffectedAreMoreThanOne).map(rowNum -> attendeeDtoToAttendeeConverter.apply(
                 AttendeeDto.builder().uuid(uuid)
                         .createdAt(instantNow)
                         .lastUpdated(instantNow)

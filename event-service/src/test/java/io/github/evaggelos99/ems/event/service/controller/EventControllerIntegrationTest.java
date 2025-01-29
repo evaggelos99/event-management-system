@@ -5,7 +5,7 @@ import io.github.evaggelos99.ems.event.api.util.EventObjectGenerator;
 import io.github.evaggelos99.ems.event.service.EventServiceApplication;
 import io.github.evaggelos99.ems.event.service.util.SqlScriptExecutor;
 import io.github.evaggelos99.ems.event.service.util.TestConfiguration;
-import io.github.evaggelos99.ems.testcontainerkafka.lib.KafkaContainer;
+import io.github.evaggelos99.ems.testcontainerkafka.lib.ExtendedKafkaContainer;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -37,7 +37,7 @@ public class EventControllerIntegrationTest {
     private static final String HOSTNAME = "http://localhost:";
     private static final String RELATIVE_ENDPOINT = "/event";
     @Container
-    private final static KafkaContainer KAFKA = new KafkaContainer();
+    private static final ExtendedKafkaContainer KAFKA = new ExtendedKafkaContainer();
     @Autowired
     private TestRestTemplate restTemplate;
     @Autowired

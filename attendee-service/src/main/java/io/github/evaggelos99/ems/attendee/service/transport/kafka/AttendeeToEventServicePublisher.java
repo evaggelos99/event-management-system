@@ -37,6 +37,8 @@ public class AttendeeToEventServicePublisher {
 
     public Mono<Boolean> send(final UUID eventId, final UUID attendeeId) {
 
+        LOGGER.trace("Publishing data to topic: {}", topicName);
+
         final CompletableFuture<SendResult<String, Serializable>> fut = template.send(topicName, new AttendeeToEventPayload(eventId, attendeeId));
         // return hook?
         return Mono.fromFuture(fut)

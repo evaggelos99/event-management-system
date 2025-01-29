@@ -128,7 +128,7 @@ public class EventRepository implements IEventRepository {
                 .bind(6, organizerId).bind(7, limitOfPeople).bind(8, sponsors).bind(9, startTimeOfEvent)
                 .bind(10, interval).bind(11, uuid).fetch().rowsUpdated();
 
-        return rowsAffected.filter(this::rowsAffectedAreMoreThanOne).flatMap(n_ -> findById(uuid))
+        return rowsAffected.filter(this::rowsAffectedAreMoreThanOne).flatMap(rowNum -> findById(uuid))
                 .map(AbstractDomainObject::getCreatedAt)
                 .map(createdAt -> eventDtoToEventConverter.apply(EventDto.builder()
                         .uuid(uuid)

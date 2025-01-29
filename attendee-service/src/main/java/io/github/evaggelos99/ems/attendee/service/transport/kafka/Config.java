@@ -2,7 +2,6 @@ package io.github.evaggelos99.ems.attendee.service.transport.kafka;
 
 import io.github.evaggelos99.ems.kafka.lib.serializer.ByteArraySerializer;
 import org.apache.kafka.clients.admin.AdminClientConfig;
-import org.apache.kafka.clients.admin.NewTopic;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;

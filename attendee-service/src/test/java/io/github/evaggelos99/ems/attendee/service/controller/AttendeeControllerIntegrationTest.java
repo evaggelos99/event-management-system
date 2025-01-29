@@ -6,7 +6,7 @@ import io.github.evaggelos99.ems.attendee.service.AttendeeServiceApplication;
 import io.github.evaggelos99.ems.attendee.service.remote.TicketLookUpRemoteService;
 import io.github.evaggelos99.ems.attendee.service.util.SqlScriptExecutor;
 import io.github.evaggelos99.ems.attendee.service.util.TestConfiguration;
-import io.github.evaggelos99.ems.testcontainerkafka.lib.KafkaContainer;
+import io.github.evaggelos99.ems.testcontainerkafka.lib.ExtendedKafkaContainer;
 import io.github.evaggelos99.ems.ticket.api.TicketDto;
 import io.github.evaggelos99.ems.ticket.api.util.TicketObjectGenerator;
 import org.junit.jupiter.api.BeforeAll;
@@ -43,7 +43,7 @@ class AttendeeControllerIntegrationTest {
     private static final String HOSTNAME = "http://localhost:";
     private static final String RELATIVE_ENDPOINT = "/attendee";
     @Container
-    private final static KafkaContainer KAFKA = new KafkaContainer();
+    private static final ExtendedKafkaContainer KAFKA = new ExtendedKafkaContainer();
     @Autowired
     private TestRestTemplate restTemplate;
     @Autowired

@@ -1,5 +1,9 @@
 package io.github.evaggelos99.ems.kafka.lib.object.deserializer;
 
+import org.apache.kafka.common.KafkaException;
+import org.apache.kafka.common.errors.RecordDeserializationException;
+import org.apache.kafka.common.errors.SerializationException;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -13,7 +17,7 @@ public class ObjectDeserializer {
              ObjectInputStream ois = new ObjectInputStream(is)) {
             return ois.readObject();
         } catch (IOException | ClassNotFoundException ioe) {
-            throw new RuntimeException(ioe);
+            throw new KafkaException(ioe);
         }
     }
 }

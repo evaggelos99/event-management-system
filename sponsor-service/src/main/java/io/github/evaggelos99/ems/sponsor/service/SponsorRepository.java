@@ -117,7 +117,7 @@ public class SponsorRepository implements ISponsorRepository {
                 .bind(5, contactInformation.email()).bind(6, contactInformation.phoneNumber())
                 .bind(7, contactInformation.physicalAddress()).bind(8, uuid).fetch().rowsUpdated();
 
-        return rowsAffected.filter(this::rowsAffectedAreMoreThanOne).flatMap(n_ -> findById(uuid))
+        return rowsAffected.filter(this::rowsAffectedAreMoreThanOne).flatMap(rowNum -> findById(uuid))
                 .map(AbstractDomainObject::getCreatedAt)
                 .map(monoCreatedAt -> sponsorDtoToSponsorConverter.apply(SponsorDto.builder()
                         .uuid(uuid)
@@ -147,7 +147,7 @@ public class SponsorRepository implements ISponsorRepository {
                 .bind(8, contactInformation.physicalAddress()).fetch().rowsUpdated();
 
         return rowsAffected.filter(this::rowsAffectedAreMoreThanOne)
-                .map(n_ -> sponsorDtoToSponsorConverter.apply(SponsorDto.builder().uuid(uuid).createdAt(instantNow)
+                .map(rowNum -> sponsorDtoToSponsorConverter.apply(SponsorDto.builder().uuid(uuid).createdAt(instantNow)
                         .lastUpdated(instantNow).name(name).website(website)
                         .financialContribution(financialContribution).contactInformation(contactInformation).build()));
     }

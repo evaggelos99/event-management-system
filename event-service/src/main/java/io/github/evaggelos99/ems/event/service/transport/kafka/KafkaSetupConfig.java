@@ -56,7 +56,6 @@ public class KafkaSetupConfig {
 
         final Map<String, Object> props = new HashMap<>();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, consumerBootstrapServers);
-//        props.put(ConsumerConfig.GROUP_ID_CONFIG, "default-group");
         props.put(ConsumerConfig.ENABLE_AUTO_COMMIT_CONFIG, false);
         props.put(ConsumerConfig.SESSION_TIMEOUT_MS_CONFIG, 15000);
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);

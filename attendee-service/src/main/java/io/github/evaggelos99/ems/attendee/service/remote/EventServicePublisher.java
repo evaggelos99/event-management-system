@@ -9,14 +9,11 @@ import reactor.core.publisher.Mono;
 import java.util.UUID;
 
 /**
- * FIXME this must be it's own artifact
  *
  * @author Evangelos Georgiou
  */
 @Service
 public class EventServicePublisher implements IEventServiceClient {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(EventServicePublisher.class);
 
     private final AttendeeToEventServicePublisher publisher;
 
