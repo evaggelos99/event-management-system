@@ -35,8 +35,8 @@ public class AttendeeController implements IAttendeeController {
      * @param attendeeService                service responsible for CRUD operations
      * @param attendeeToAttendeeDtoConverter converts attendee to DTO
      */
-    public AttendeeController(@Autowired final IAttendeeService attendeeService,
-                              @Autowired @Qualifier("attendeeToAttendeeDtoConverter") final Function<Attendee, AttendeeDto> attendeeToAttendeeDtoConverter) {
+    public AttendeeController(final IAttendeeService attendeeService,
+                              @Qualifier("attendeeToAttendeeDtoConverter") final Function<Attendee, AttendeeDto> attendeeToAttendeeDtoConverter) {
 
         this.attendeeService = requireNonNull(attendeeService);
         this.attendeeToAttendeeDtoConverter = requireNonNull(attendeeToAttendeeDtoConverter);

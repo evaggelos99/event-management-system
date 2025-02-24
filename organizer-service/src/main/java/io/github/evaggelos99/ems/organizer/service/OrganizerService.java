@@ -25,7 +25,7 @@ public class OrganizerService implements IService<Organizer, OrganizerDto> {
      * @param organizerRepository {@link OrganizerRepository} the repository that
      *                            communicates with the database
      */
-    public OrganizerService(@Autowired final IOrganizerRepository organizerRepository) {
+    public OrganizerService(final IOrganizerRepository organizerRepository) {
 
         this.organizerRepository = requireNonNull(organizerRepository);
     }

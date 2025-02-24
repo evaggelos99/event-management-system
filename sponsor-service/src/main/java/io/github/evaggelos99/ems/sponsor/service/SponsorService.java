@@ -22,11 +22,10 @@ public class SponsorService implements IService<Sponsor, SponsorDto> {
     /**
      * C-or
      *
-     * @param organizerRepository {@link SponsorRepository} the repository that
+     * @param sponsorRepository {@link SponsorRepository} the repository that
      *                            communicates with the database
      */
-    public SponsorService(@Autowired final ISponsorRepository sponsorRepository) {
-
+    public SponsorService(final ISponsorRepository sponsorRepository) {
         this.sponsorRepository = requireNonNull(sponsorRepository);
     }
 

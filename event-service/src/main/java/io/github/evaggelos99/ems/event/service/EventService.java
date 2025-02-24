@@ -36,7 +36,7 @@ public class EventService implements IEventService {
      * @param eventToEventDtoConverter {@link EventToEventDtoConverter} converts
      *                                 from Event to EventDto
      */
-    public EventService(@Autowired final IEventRepository eventRepository, @Autowired @Qualifier("eventToEventDtoConverter") final Function<Event, EventDto> eventToEventDtoConverter) {
+    public EventService(final IEventRepository eventRepository, @Qualifier("eventToEventDtoConverter") final Function<Event, EventDto> eventToEventDtoConverter) {
 
         this.eventRepository = requireNonNull(eventRepository);
         this.eventToEventDtoConverter = requireNonNull(eventToEventDtoConverter);

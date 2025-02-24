@@ -35,8 +35,8 @@ public class SponsorController implements ISponsorController {
      * @param sponsorService               service responsible for CRUD operations
      * @param sponsorToSponsorDtoConverter sponsor to DTO
      */
-    public SponsorController(@Autowired final IService<Sponsor, SponsorDto> sponsorService,
-                             @Autowired @Qualifier("sponsorToSponsorDtoConverter") final Function<Sponsor, SponsorDto> sponsorToSponsorDtoConverter) {
+    public SponsorController(final IService<Sponsor, SponsorDto> sponsorService,
+                             @Qualifier("sponsorToSponsorDtoConverter") final Function<Sponsor, SponsorDto> sponsorToSponsorDtoConverter) {
 
         this.sponsorService = requireNonNull(sponsorService);
         this.sponsorToSponsorDtoConverter = requireNonNull(sponsorToSponsorDtoConverter);

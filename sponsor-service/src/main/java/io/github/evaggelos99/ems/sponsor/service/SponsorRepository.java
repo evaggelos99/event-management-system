@@ -46,10 +46,10 @@ public class SponsorRepository implements ISponsorRepository {
      *                                     getting the right query CRUD database
      *                                     operations
      */
-    public SponsorRepository(@Autowired final DatabaseClient databaseClient,
-                             @Autowired @Qualifier("sponsorRowMapper") final SponsorRowMapper sponsorRowMapper,
-                             @Autowired @Qualifier("sponsorDtoToSponsorConverter") final Function<SponsorDto, Sponsor> sponsorDtoToSponsorConverter,
-                             @Autowired @Qualifier("queriesProperties") final Properties sponsorQueriesProperties) {
+    public SponsorRepository(final DatabaseClient databaseClient,
+                             @Qualifier("sponsorRowMapper") final SponsorRowMapper sponsorRowMapper,
+                             @Qualifier("sponsorDtoToSponsorConverter") final Function<SponsorDto, Sponsor> sponsorDtoToSponsorConverter,
+                             @Qualifier("queriesProperties") final Properties sponsorQueriesProperties) {
 
         this.databaseClient = requireNonNull(databaseClient);
         this.sponsorRowMapper = requireNonNull(sponsorRowMapper);
@@ -66,10 +66,8 @@ public class SponsorRepository implements ISponsorRepository {
 
     @Override
     public Mono<Sponsor> findById(final UUID uuid) {
-
         return databaseClient.sql(sponsorQueriesProperties.getProperty(CrudQueriesOperations.GET_ID.name()))
-                .bind(0, uuid).map(sponsorRowMapper::apply).one();
-
+                .bind(0, uuid).map(sponsorRowMapper).one();
     }
 
     @Override
@@ -89,10 +87,8 @@ public class SponsorRepository implements ISponsorRepository {
 
     @Override
     public Flux<Sponsor> findAll() {
-
         return databaseClient.sql(sponsorQueriesProperties.getProperty(CrudQueriesOperations.GET_ALL.name()))
-                .map(sponsorRowMapper::apply).all().log();
-
+                .map(sponsorRowMapper).all();
     }
 
     @Override

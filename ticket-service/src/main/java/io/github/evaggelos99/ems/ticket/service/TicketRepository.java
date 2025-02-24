@@ -47,38 +47,34 @@ public class TicketRepository implements ITicketRepository {
      *                                   getting the right query CRUD database
      *                                   operations
      */
-    public TicketRepository(@Autowired final DatabaseClient databaseClient,
-                            @Autowired @Qualifier("ticketRowMapper") final TicketRowMapper ticketRowMapper,
-                            @Autowired @Qualifier("ticketDtoToTicketConverter") final Function<TicketDto, Ticket> ticketDtoToTicketConverter,
-                            @Autowired @Qualifier("queriesProperties") final Properties ticketQueriesProperties) {
+    public TicketRepository(final DatabaseClient databaseClient,
+                            @Qualifier("ticketRowMapper") final TicketRowMapper ticketRowMapper,
+                            @Qualifier("ticketDtoToTicketConverter") final Function<TicketDto, Ticket> ticketDtoToTicketConverter,
+                            @Qualifier("queriesProperties") final Properties ticketQueriesProperties) {
 
         this.databaseClient = requireNonNull(databaseClient);
         this.ticketRowMapper = requireNonNull(ticketRowMapper);
         this.ticketDtoToTicketConverter = requireNonNull(ticketDtoToTicketConverter);
         this.ticketQueriesProperties = requireNonNull(ticketQueriesProperties);
-
     }
 
     @Override
-    public Mono<Ticket> save(final TicketDto organizerDto) {
+    public Mono<Ticket> save(final TicketDto ticketDto) {
 
-        return saveTicket(organizerDto);
-
+        return saveTicket(ticketDto);
     }
 
     @Override
-    public Mono<Ticket> edit(final TicketDto organizerDto) {
+    public Mono<Ticket> edit(final TicketDto ticketDto) {
 
-        return editTicket(organizerDto);
-
+        return editTicket(ticketDto);
     }
 
     @Override
     public Mono<Ticket> findById(final UUID uuid) {
 
         return databaseClient.sql(ticketQueriesProperties.getProperty(CrudQueriesOperations.GET_ID.name()))
-                .bind(0, uuid).map(ticketRowMapper::apply).one();
-
+                .bind(0, uuid).map(ticketRowMapper).one();
     }
 
     @Override
@@ -89,22 +85,19 @@ public class TicketRepository implements ITicketRepository {
                 .rowsUpdated();
 
         return rows.map(this::rowsAffectedAreMoreThanOne);
-
     }
 
     @Override
     public Mono<Boolean> existsById(final UUID uuid) {
 
         return findById(uuid).map(Objects::nonNull);
-
     }
 
     @Override
     public Flux<Ticket> findAll() {
 
         return databaseClient.sql(ticketQueriesProperties.getProperty(CrudQueriesOperations.GET_ALL.name()))
-                .map(ticketRowMapper::apply).all();
-
+                .map(ticketRowMapper).all();
     }
 
     private Mono<Ticket> saveTicket(final TicketDto ticket) {
@@ -126,7 +119,6 @@ public class TicketRepository implements ITicketRepository {
 
         return rowsAffected.filter(this::rowsAffectedAreMoreThanOne).map(rowNum -> ticketDtoToTicketConverter
                 .apply(new TicketDto(uuid, now, now, eventId, ticketType, price, isTransferable, seatInformation)));
-
     }
 
     private Mono<Ticket> editTicket(final TicketDto ticket) {
@@ -153,9 +145,7 @@ public class TicketRepository implements ITicketRepository {
     }
 
     private boolean rowsAffectedAreMoreThanOne(final Long x) {
-
         return x >= 1;
-
     }
 
 }

@@ -18,7 +18,7 @@ public class TicketLookUpRemoteService implements ITicketLookUpServiceClient {
 
     private final WebClient webClient;
 
-    public TicketLookUpRemoteService(@Autowired final WebClient.Builder webClientBuilder,
+    public TicketLookUpRemoteService(final WebClient.Builder webClientBuilder,
                                      @Value("${io.github.evaggelos99.ems.attendee.ticket-service-url}") final String ticketUrl) {
 
         this.webClient = webClientBuilder.baseUrl(ticketUrl).build();

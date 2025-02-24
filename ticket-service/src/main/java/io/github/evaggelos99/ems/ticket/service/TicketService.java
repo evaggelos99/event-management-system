@@ -25,7 +25,7 @@ public class TicketService implements IService<Ticket, TicketDto> {
      * @param ticketRepository {@link TicketRepository} the repository that
      *                         communicates with the database
      */
-    public TicketService(@Autowired final ITicketRepository ticketRepository) {
+    public TicketService(final ITicketRepository ticketRepository) {
 
         this.ticketRepository = requireNonNull(ticketRepository);
     }
@@ -37,7 +37,6 @@ public class TicketService implements IService<Ticket, TicketDto> {
     public Mono<Ticket> add(final TicketDto ticketDto) {
 
         return ticketRepository.save(ticketDto);
-
     }
 
     /**

@@ -35,8 +35,8 @@ public class TicketController implements ITicketController {
      * @param ticketService              service responsible for CRUD operations
      * @param ticketToTicketDtoConverter ticket to DTO
      */
-    public TicketController(@Autowired final IService<Ticket, TicketDto> ticketService,
-                            @Autowired @Qualifier("ticketToTicketDtoConverter") final Function<Ticket, TicketDto> ticketToTicketDtoConverter) {
+    public TicketController(final IService<Ticket, TicketDto> ticketService,
+                            @Qualifier("ticketToTicketDtoConverter") final Function<Ticket, TicketDto> ticketToTicketDtoConverter) {
 
         this.ticketService = requireNonNull(ticketService);
         this.ticketToTicketDtoConverter = requireNonNull(ticketToTicketDtoConverter);

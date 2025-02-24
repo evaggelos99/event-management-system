@@ -37,7 +37,7 @@ public class OrganizerController implements IOrganizerController {
      *                                         operations
      * @param organizerToOrganizerDtoConverter DTO to organizer
      */
-    public OrganizerController(@Autowired final IService<Organizer, OrganizerDto> organizerService, @Autowired @Qualifier("organizerToOrganizerDtoConverter") final Function<Organizer, OrganizerDto> organizerToOrganizerDtoConverter) {
+    public OrganizerController(final IService<Organizer, OrganizerDto> organizerService, @Qualifier("organizerToOrganizerDtoConverter") final Function<Organizer, OrganizerDto> organizerToOrganizerDtoConverter) {
 
         this.organizerService = requireNonNull(organizerService);
         this.organizerToOrganizerDtoConverter = requireNonNull(organizerToOrganizerDtoConverter);

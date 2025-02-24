@@ -48,10 +48,10 @@ public class AttendeeRepository implements IAttendeeRepository {
      *                                       for getting the right query CRUD
      *                                       database operations
      */
-    public AttendeeRepository(@Autowired final DatabaseClient databaseClient,
-                              @Autowired @Qualifier("attendeeRowMapper") final AttendeeRowMapper attendeeRowMapper,
-                              @Autowired @Qualifier("attendeeDtoToAttendeeConverter") final Function<AttendeeDto, Attendee> attendeeDtoToAttendeeConverter,
-                              @Autowired @Qualifier("queriesProperties") final Properties attendeeQueriesProperties) {
+    public AttendeeRepository(final DatabaseClient databaseClient,
+                              @Qualifier("attendeeRowMapper") final AttendeeRowMapper attendeeRowMapper,
+                              @Qualifier("attendeeDtoToAttendeeConverter") final Function<AttendeeDto, Attendee> attendeeDtoToAttendeeConverter,
+                              @Qualifier("queriesProperties") final Properties attendeeQueriesProperties) {
 
         this.databaseClient = requireNonNull(databaseClient);
         this.attendeeRowMapper = requireNonNull(attendeeRowMapper);

@@ -28,7 +28,7 @@ public class AttendeeToEventServicePublisher {
      * @param template  the {@link KafkaTemplate} of Key value {@link String} and Value {@link Serializable}
      * @param topicName the topic name to send the data to
      */
-    public AttendeeToEventServicePublisher(@Autowired final KafkaTemplate<String, Serializable> template,
+    public AttendeeToEventServicePublisher(final KafkaTemplate<String, Serializable> template,
                                            @Value("${io.github.evaggelos99.ems.event.topic.add-attendee}") final String topicName) {
 
         this.template = template;

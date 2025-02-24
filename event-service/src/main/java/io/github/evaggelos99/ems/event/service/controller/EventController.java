@@ -35,8 +35,8 @@ public class EventController implements IEventController {
      * @param eventService             service responsible for CRUD operations
      * @param eventToEventDtoConverter converts event to DTO
      */
-    public EventController(@Autowired final IEventService eventService,
-                           @Autowired @Qualifier("eventToEventDtoConverter") final Function<Event, EventDto> eventToEventDtoConverter) {
+    public EventController(final IEventService eventService,
+                           @Qualifier("eventToEventDtoConverter") final Function<Event, EventDto> eventToEventDtoConverter) {
 
         this.eventService = requireNonNull(eventService);
         this.eventToEventDtoConverter = requireNonNull(eventToEventDtoConverter);

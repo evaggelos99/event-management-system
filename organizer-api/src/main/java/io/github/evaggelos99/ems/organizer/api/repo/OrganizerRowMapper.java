@@ -21,7 +21,7 @@ public class OrganizerRowMapper implements BiFunction<Row, RowMetadata, Organize
     private final Function<EventType[], List<EventType>> arrayToListOfEventTypesConverter;
 
     public OrganizerRowMapper(
-            @Autowired @Qualifier("arrayToListOfEventTypesConverter") final Function<EventType[], List<EventType>> arrayToListOfEventTypes) {
+            @Qualifier("arrayToListOfEventTypesConverter") final Function<EventType[], List<EventType>> arrayToListOfEventTypes) {
 
         this.arrayToListOfEventTypesConverter = arrayToListOfEventTypes;
     }

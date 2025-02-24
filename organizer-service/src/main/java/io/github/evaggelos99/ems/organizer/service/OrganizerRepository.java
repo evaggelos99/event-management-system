@@ -51,10 +51,10 @@ public class OrganizerRepository implements IOrganizerRepository {
      *                                         for getting the right query CRUD
      *                                         database operations
      */
-    public OrganizerRepository(@Autowired final DatabaseClient databaseClient,
-                               @Autowired @Qualifier("organizerRowMapper") final OrganizerRowMapper organizerRowMapper,
-                               @Autowired @Qualifier("organizerDtoToOrganizerConverter") final Function<OrganizerDto, Organizer> organizerDtoToOrganizerConverter,
-                               @Autowired @Qualifier("queriesProperties") final Properties organizerQueriesProperties) {
+    public OrganizerRepository(final DatabaseClient databaseClient,
+                               @Qualifier("organizerRowMapper") final OrganizerRowMapper organizerRowMapper,
+                               @Qualifier("organizerDtoToOrganizerConverter") final Function<OrganizerDto, Organizer> organizerDtoToOrganizerConverter,
+                               @Qualifier("queriesProperties") final Properties organizerQueriesProperties) {
 
         this.databaseClient = requireNonNull(databaseClient);
         this.organizerRowMapper = requireNonNull(organizerRowMapper);

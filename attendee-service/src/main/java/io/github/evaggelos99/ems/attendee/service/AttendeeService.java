@@ -49,10 +49,10 @@ public class AttendeeService implements IAttendeeService {
      * @param lookUpTicketService            the {@link TicketLookUpRemoteService} as a lookup
      *                                       for the tickets
      */
-    public AttendeeService(@Autowired final IAttendeeRepository attendeeRepository,
-                           @Autowired @Qualifier("attendeeToAttendeeDtoConverter") final Function<Attendee, AttendeeDto> attendeeToAttendeeDtoConverter,
-                           @Autowired final EventServicePublisher eventService,
-                           @Autowired final TicketLookUpRemoteService lookUpTicketService) {
+    public AttendeeService(final IAttendeeRepository attendeeRepository,
+                           @Qualifier("attendeeToAttendeeDtoConverter") final Function<Attendee, AttendeeDto> attendeeToAttendeeDtoConverter,
+                           final EventServicePublisher eventService,
+                           final TicketLookUpRemoteService lookUpTicketService) {
 
         this.attendeeRepository = requireNonNull(attendeeRepository);
         this.attendeeToAttendeeDtoConverter = requireNonNull(attendeeToAttendeeDtoConverter);

@@ -54,11 +54,11 @@ public class EventRepository implements IEventRepository {
      * @param durationToIntervalConverter {@link DurationToIntervalConverter} this
      *                                    returns {@link Interval}
      */
-    public EventRepository(@Autowired final DatabaseClient databaseClient,
-                           @Autowired @Qualifier("eventRowMapper") final EventRowMapper eventRowMapperFunction,
-                           @Autowired @Qualifier("eventDtoToEventConverter") final Function<EventDto, Event> eventDtoToEventConverter,
-                           @Autowired @Qualifier("queriesProperties") final Properties eventQueriesProperties,
-                           @Autowired @Qualifier("durationToIntervalConverter") final Function<Duration, Object> durationToIntervalConverter) {
+    public EventRepository(final DatabaseClient databaseClient,
+                           @Qualifier("eventRowMapper") final EventRowMapper eventRowMapperFunction,
+                           @Qualifier("eventDtoToEventConverter") final Function<EventDto, Event> eventDtoToEventConverter,
+                           @Qualifier("queriesProperties") final Properties eventQueriesProperties,
+                           @Qualifier("durationToIntervalConverter") final Function<Duration, Object> durationToIntervalConverter) {
 
         this.databaseClient = requireNonNull(databaseClient);
         this.eventRowMapper = requireNonNull(eventRowMapperFunction);
