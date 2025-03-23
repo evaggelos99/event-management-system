@@ -9,11 +9,7 @@ test:
 	mvn clean install -T 2
 
 build-services:
-	mvn -f ./ticket-service clean compile assembly:single -DskipTests
-	mvn -f ./sponsor-service clean compile assembly:single -DskipTests
-	mvn -f ./organizer-service clean compile assembly:single -DskipTests
-	mvn -f ./event-service clean compile assembly:single -DskipTests
-	mvn -f ./attendee-service clean compile assembly:single -DskipTests
+	$(shell ./scripts/boot-up.sh)
 
 up:
 	docker compose -f ${DOCKER_COMPOSE_FILE} up

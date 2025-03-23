@@ -23,28 +23,13 @@ public class DatabaseConfiguration {
 
     private static final Duration TIMEOUT = Duration.ofSeconds(5);
 
-    private final String database;
-
-    private final String host;
-
+    private final String username;
     private final String password;
-
     private final String port;
-
+    private final String database;
+    private final String host;
     private final String schema;
 
-    private final String username;
-
-    /**
-     * C-or
-     *
-     * @param username the username of the DB
-     * @param password the password of the DB
-     * @param port     the port of the DB
-     * @param database the name of the DB
-     * @param host     the hostname of the DB
-     * @param schema   the schema of the DB
-     */
     public DatabaseConfiguration(@Value("${org.com.ems.db.username}") final String username,
                                  @Value("${org.com.ems.db.password}") final String password,
                                  @Value("${org.com.ems.db.port}") final String port,
@@ -64,7 +49,6 @@ public class DatabaseConfiguration {
     DatabaseClient databaseClient(final ConnectionFactory postgresqlConnectionFactory) {
 
         return DatabaseClient.builder()
-//                .bindMarkers(BindMarkersFactory)
                 .connectionFactory(postgresqlConnectionFactory).build();
     }
 

@@ -9,7 +9,6 @@ import io.github.evaggelos99.ems.ticket.api.TicketDto;
 import io.github.evaggelos99.ems.ticket.api.converters.TicketDtoToTicketConverter;
 import io.github.evaggelos99.ems.ticket.api.repo.ITicketRepository;
 import io.github.evaggelos99.ems.ticket.api.repo.TicketRowMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.stereotype.Component;
@@ -141,7 +140,6 @@ public class TicketRepository implements ITicketRepository {
                 .map(AbstractDomainObject::getCreatedAt)
                 .map(monoCreatedAt -> ticketDtoToTicketConverter.apply(new TicketDto(uuid, monoCreatedAt, updatedAt,
                         eventId, ticketType, price, isTransferable, seatInformation)));
-
     }
 
     private boolean rowsAffectedAreMoreThanOne(final Long x) {

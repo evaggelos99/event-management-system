@@ -8,7 +8,6 @@ import io.github.evaggelos99.ems.sponsor.api.SponsorDto;
 import io.github.evaggelos99.ems.sponsor.api.converters.SponsorDtoToSponsorConverter;
 import io.github.evaggelos99.ems.sponsor.api.repo.ISponsorRepository;
 import io.github.evaggelos99.ems.sponsor.api.repo.SponsorRowMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.stereotype.Component;
@@ -61,11 +60,11 @@ public class SponsorRepository implements ISponsorRepository {
     public Mono<Sponsor> save(final SponsorDto organizerDto) {
 
         return saveSponsor(organizerDto);
-
     }
 
     @Override
     public Mono<Sponsor> findById(final UUID uuid) {
+
         return databaseClient.sql(sponsorQueriesProperties.getProperty(CrudQueriesOperations.GET_ID.name()))
                 .bind(0, uuid).map(sponsorRowMapper).one();
     }
@@ -75,14 +74,12 @@ public class SponsorRepository implements ISponsorRepository {
 
         return databaseClient.sql(sponsorQueriesProperties.getProperty(CrudQueriesOperations.DELETE_ID.name()))
                 .bind(0, uuid).fetch().rowsUpdated().map(this::rowsAffectedAreMoreThanOne);
-
     }
 
     @Override
     public Mono<Boolean> existsById(final UUID uuid) {
 
         return findById(uuid).map(Objects::nonNull);
-
     }
 
     @Override
@@ -95,7 +92,6 @@ public class SponsorRepository implements ISponsorRepository {
     public Mono<Sponsor> edit(final SponsorDto organizerDto) {
 
         return editSponsor(organizerDto);
-
     }
 
     private Mono<Sponsor> editSponsor(final SponsorDto sponsor) {
@@ -151,6 +147,5 @@ public class SponsorRepository implements ISponsorRepository {
     private boolean rowsAffectedAreMoreThanOne(final Long x) {
 
         return x >= 1;
-
     }
 }

@@ -39,7 +39,6 @@ public class OrganizerRowMapper implements BiFunction<Row, RowMetadata, Organize
                 row.get("last_updated", OffsetDateTime.class).toInstant(), row.get("name", String.class),
                 row.get("website", String.class), row.get("information", String.class), eventsTypes,
                 contactInformation);
-
     }
 
 }

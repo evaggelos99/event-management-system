@@ -9,7 +9,6 @@ import io.github.evaggelos99.ems.organizer.api.OrganizerDto;
 import io.github.evaggelos99.ems.organizer.api.converters.OrganizerDtoToOrganizerConverter;
 import io.github.evaggelos99.ems.organizer.api.repo.IOrganizerRepository;
 import io.github.evaggelos99.ems.organizer.api.repo.OrganizerRowMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.stereotype.Component;
@@ -66,15 +65,13 @@ public class OrganizerRepository implements IOrganizerRepository {
     public Mono<Organizer> save(final OrganizerDto organizerDto) {
 
         return saveOrganizer(organizerDto);
-
     }
 
     @Override
     public Mono<Organizer> findById(final UUID uuid) {
 
         return databaseClient.sql(organizerQueriesProperties.getProperty(CrudQueriesOperations.GET_ID.name()))
-                .bind(0, uuid).map(organizerRowMapper::apply).one();
-
+                .bind(0, uuid).map(organizerRowMapper).one();
     }
 
     @Override
@@ -82,29 +79,25 @@ public class OrganizerRepository implements IOrganizerRepository {
 
         return databaseClient.sql(organizerQueriesProperties.getProperty(CrudQueriesOperations.DELETE_ID.name()))
                 .bind(0, uuid).fetch().rowsUpdated().map(this::rowsAffectedAreMoreThanOne);
-
     }
 
     @Override
     public Mono<Boolean> existsById(final UUID uuid) {
 
         return findById(uuid).map(Objects::nonNull);
-
     }
 
     @Override
     public Flux<Organizer> findAll() {
 
         return databaseClient.sql(organizerQueriesProperties.getProperty(CrudQueriesOperations.GET_ALL.name()))
-                .map(organizerRowMapper::apply).all();
-
+                .map(organizerRowMapper).all();
     }
 
     @Override
     public Mono<Organizer> edit(final OrganizerDto organizerDto) {
 
         return editOrganizer(organizerDto);
-
     }
 
     private Mono<Organizer> editOrganizer(final OrganizerDto organizer) {
@@ -180,8 +173,8 @@ public class OrganizerRepository implements IOrganizerRepository {
 
             eventTypesArray[i] = ticketIds.get(i);
         }
-        return eventTypesArray;
 
+        return eventTypesArray;
     }
 
     private boolean rowsAffectedAreMoreThanOne(final Long x) {

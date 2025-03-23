@@ -38,6 +38,7 @@
         <module>kafka-lib</module>
         <module>testcontainer-kafka-lib</module>
         <module>security-lib</module>
+        <module>flyway-script-migrator</module>
         <module>sponsor-service</module>
         <module>attendee-service</module>
         <module>organizer-service</module>

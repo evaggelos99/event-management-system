@@ -10,7 +10,6 @@ import io.github.evaggelos99.ems.event.api.converters.EventDtoToEventConverter;
 import io.github.evaggelos99.ems.event.api.repo.EventRowMapper;
 import io.github.evaggelos99.ems.event.api.repo.IEventRepository;
 import io.r2dbc.postgresql.codec.Interval;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.stereotype.Component;

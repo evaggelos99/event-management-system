@@ -19,5 +19,4 @@ public interface IAttendeeService extends IService<Attendee, AttendeeDto> {
      */
     Mono<Boolean> addTicket(UUID attendeeId, UUID ticketId);
 
-    Mono<Boolean> pingOther();
 }

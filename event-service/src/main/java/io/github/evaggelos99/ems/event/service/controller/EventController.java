@@ -4,7 +4,6 @@ import io.github.evaggelos99.ems.event.api.Event;
 import io.github.evaggelos99.ems.event.api.EventDto;
 import io.github.evaggelos99.ems.event.api.IEventController;
 import io.github.evaggelos99.ems.event.api.service.IEventService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -96,17 +95,7 @@ public class EventController implements IEventController {
     @Override
     public Mono<Boolean> ping() {
 
-        return pingService();
-    }
-
-    private Mono<Boolean> pingService() {
-        try {
-
-            return eventService.ping().log().onErrorReturn(false);
-        } catch (final Exception e) {
-
-            return Mono.just(false);
-        }
+        return eventService.ping().onErrorReturn(false);
     }
 
 }

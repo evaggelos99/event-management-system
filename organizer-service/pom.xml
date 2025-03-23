@@ -123,8 +123,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>io.github.evaggelos99.ems.organizer.service.OrganizerServiceApplication
-                            </mainClass>
+                            <mainClass>io.github.evaggelos99.ems.organizer.service.OrganizerServiceApplication</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -133,19 +132,6 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <version>3.4.1</version>
-            </plugin>
-            <plugin>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <configuration>
-                    <archive>
-                        <manifest>
-                            <mainClass>io.github.evaggelos99.ems.organizer.service.OrganizerServiceApplication</mainClass>
-                        </manifest>
-                    </archive>
-                    <descriptorRefs>
-                        <descriptorRef>jar-with-dependencies</descriptorRef>
-                    </descriptorRefs>
-                </configuration>
             </plugin>
         </plugins>
     </build>

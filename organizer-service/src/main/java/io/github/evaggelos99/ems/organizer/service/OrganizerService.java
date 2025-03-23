@@ -5,7 +5,6 @@ import io.github.evaggelos99.ems.common.api.service.IService;
 import io.github.evaggelos99.ems.organizer.api.Organizer;
 import io.github.evaggelos99.ems.organizer.api.OrganizerDto;
 import io.github.evaggelos99.ems.organizer.api.repo.IOrganizerRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -37,7 +36,6 @@ public class OrganizerService implements IService<Organizer, OrganizerDto> {
     public Mono<Organizer> add(final OrganizerDto attendee) {
 
         return organizerRepository.save(attendee);
-
     }
 
     /**
@@ -47,7 +45,6 @@ public class OrganizerService implements IService<Organizer, OrganizerDto> {
     public Mono<Organizer> get(final UUID uuid) {
 
         return organizerRepository.findById(uuid);
-
     }
 
     /**
@@ -57,7 +54,6 @@ public class OrganizerService implements IService<Organizer, OrganizerDto> {
     public Mono<Boolean> delete(final UUID uuid) {
 
         return organizerRepository.deleteById(uuid);
-
     }
 
     /**
@@ -68,7 +64,6 @@ public class OrganizerService implements IService<Organizer, OrganizerDto> {
 
         return !uuid.equals(organizer.uuid()) ? Mono.error(() -> new ObjectNotFoundException(uuid, OrganizerDto.class))
                 : organizerRepository.edit(organizer);
-
     }
 
     /**
@@ -78,7 +73,6 @@ public class OrganizerService implements IService<Organizer, OrganizerDto> {
     public Flux<Organizer> getAll() {
 
         return organizerRepository.findAll();
-
     }
 
     /**
@@ -88,7 +82,6 @@ public class OrganizerService implements IService<Organizer, OrganizerDto> {
     public Mono<Boolean> existsById(final UUID attendeeId) {
 
         return organizerRepository.existsById(attendeeId);
-
     }
 
     @Override

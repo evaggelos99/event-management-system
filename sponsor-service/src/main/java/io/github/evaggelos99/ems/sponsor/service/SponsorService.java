@@ -5,7 +5,6 @@ import io.github.evaggelos99.ems.common.api.service.IService;
 import io.github.evaggelos99.ems.sponsor.api.Sponsor;
 import io.github.evaggelos99.ems.sponsor.api.SponsorDto;
 import io.github.evaggelos99.ems.sponsor.api.repo.ISponsorRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -26,6 +25,7 @@ public class SponsorService implements IService<Sponsor, SponsorDto> {
      *                            communicates with the database
      */
     public SponsorService(final ISponsorRepository sponsorRepository) {
+
         this.sponsorRepository = requireNonNull(sponsorRepository);
     }
 
@@ -36,7 +36,6 @@ public class SponsorService implements IService<Sponsor, SponsorDto> {
     public Mono<Sponsor> add(final SponsorDto attendee) {
 
         return sponsorRepository.save(attendee);
-
     }
 
     /**
@@ -46,7 +45,6 @@ public class SponsorService implements IService<Sponsor, SponsorDto> {
     public Mono<Sponsor> get(final UUID uuid) {
 
         return sponsorRepository.findById(uuid);
-
     }
 
     /**
@@ -56,7 +54,6 @@ public class SponsorService implements IService<Sponsor, SponsorDto> {
     public Mono<Boolean> delete(final UUID uuid) {
 
         return sponsorRepository.deleteById(uuid);
-
     }
 
     /**
@@ -67,7 +64,6 @@ public class SponsorService implements IService<Sponsor, SponsorDto> {
 
         return !uuid.equals(sponsor.uuid()) ? Mono.error(() -> new ObjectNotFoundException(uuid, SponsorDto.class))
                 : sponsorRepository.edit(sponsor);
-
     }
 
     /**
@@ -77,7 +73,6 @@ public class SponsorService implements IService<Sponsor, SponsorDto> {
     public Flux<Sponsor> getAll() {
 
         return sponsorRepository.findAll();
-
     }
 
     /**
@@ -87,7 +82,6 @@ public class SponsorService implements IService<Sponsor, SponsorDto> {
     public Mono<Boolean> existsById(final UUID attendeeId) {
 
         return sponsorRepository.existsById(attendeeId);
-
     }
 
     @Override

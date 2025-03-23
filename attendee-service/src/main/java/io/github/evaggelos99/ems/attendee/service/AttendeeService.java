@@ -131,12 +131,6 @@ public class AttendeeService implements IAttendeeService {
                 .flatMap(ticketDto -> eventService.addAttendee(ticketDto.eventID(), attendeeId)).defaultIfEmpty(false);
     }
 
-    @Override
-    public Mono<Boolean> pingOther() {
-
-        return lookUpTicketService.ping();
-    }
-
     private Attendee addTicketIdToExistingList(final UUID attendeeId, final UUID ticketId, final Attendee attendee) {
 
         final List<UUID> list = attendee.getTicketIDs();

@@ -28,7 +28,6 @@ public class Queries {
         props.put(CrudQueriesOperations.DELETE_ID.name(), deleteId);
 
         return props;
-
     }
 
 }

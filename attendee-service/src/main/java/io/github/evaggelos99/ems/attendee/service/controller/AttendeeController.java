@@ -101,6 +101,7 @@ public class AttendeeController implements IAttendeeController {
     @Override
     public Mono<Boolean> ping() {
 
-        return Mono.just(true).onErrorReturn(false);
+        return attendeeService.ping().onErrorReturn(false);
     }
+
 }

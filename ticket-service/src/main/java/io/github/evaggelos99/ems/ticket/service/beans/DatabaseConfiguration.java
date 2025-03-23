@@ -20,30 +20,18 @@ import java.time.Duration;
 public class DatabaseConfiguration {
 
     private final String username;
-
     private final String password;
-
     private final String port;
-
     private final String database;
-
     private final String host;
-
     private final String schema;
 
-    /**
-     * C-or
-     *
-     * @param driver
-     * @param url
-     * @param username
-     * @param password
-     */
     public DatabaseConfiguration(@Value("${org.com.ems.db.username}") final String username,
                                  @Value("${org.com.ems.db.password}") final String password,
                                  @Value("${org.com.ems.db.port}") final String port,
                                  @Value("${org.com.ems.db.database}") final String database,
-                                 @Value("${org.com.ems.db.host}") final String host, @Value("${org.com.ems.db.schema") final String schema) {
+                                 @Value("${org.com.ems.db.host}") final String host,
+                                 @Value("${org.com.ems.db.schema") final String schema) {
 
         this.username = username;
         this.password = password;
@@ -56,20 +44,26 @@ public class DatabaseConfiguration {
     @Bean
     PostgresqlConnectionFactory postgresqlConnectionFactory() {
 
-        return new PostgresqlConnectionFactory(
-                PostgresqlConnectionConfiguration.builder().host(host).port(Integer.parseInt(port)).database(database)
-                        .username(username).password(password).connectTimeout(Duration.ofSeconds(5))
-                        .codecRegistrar(EnumCodec.builder().withEnum("event_type_enum", EventType.class)
-                                .withEnum("ticket_type_enum", TicketType.class).build())
-                        .schema(schema).build());
-
+        return new PostgresqlConnectionFactory(PostgresqlConnectionConfiguration.builder()
+                .host(host)
+                .port(Integer.parseInt(port))
+                .database(database)
+                .username(username)
+                .password(password)
+                .connectTimeout(Duration.ofSeconds(5))
+                .codecRegistrar(EnumCodec.builder()
+                        .withEnum("event_type_enum", EventType.class)
+                        .withEnum("ticket_type_enum", TicketType.class)
+                        .build())
+                .schema(schema)
+                .tcpKeepAlive(true)
+                .build());
     }
 
     @Bean
     DatabaseClient databaseClient(final PostgresqlConnectionFactory postgresqlConnectionFactory) {
 
         return DatabaseClient.builder().connectionFactory(postgresqlConnectionFactory).build();
-
     }
 
 }

@@ -5,7 +5,6 @@ import io.github.evaggelos99.ems.common.api.service.IService;
 import io.github.evaggelos99.ems.ticket.api.Ticket;
 import io.github.evaggelos99.ems.ticket.api.TicketDto;
 import io.github.evaggelos99.ems.ticket.api.repo.ITicketRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -46,7 +45,6 @@ public class TicketService implements IService<Ticket, TicketDto> {
     public Mono<Ticket> get(final UUID uuid) {
 
         return ticketRepository.findById(uuid);
-
     }
 
     /**
@@ -56,7 +54,6 @@ public class TicketService implements IService<Ticket, TicketDto> {
     public Mono<Boolean> delete(final UUID uuid) {
 
         return ticketRepository.deleteById(uuid);
-
     }
 
     /**
@@ -67,7 +64,6 @@ public class TicketService implements IService<Ticket, TicketDto> {
 
         return !uuid.equals(ticketDto.uuid()) ? Mono.error(() -> new ObjectNotFoundException(uuid, TicketDto.class))
                 : ticketRepository.edit(ticketDto);
-
     }
 
     /**
@@ -77,7 +73,6 @@ public class TicketService implements IService<Ticket, TicketDto> {
     public Flux<Ticket> getAll() {
 
         return ticketRepository.findAll();
-
     }
 
     /**
@@ -87,7 +82,6 @@ public class TicketService implements IService<Ticket, TicketDto> {
     public Mono<Boolean> existsById(final UUID ticketId) {
 
         return ticketRepository.existsById(ticketId);
-
     }
 
     @Override

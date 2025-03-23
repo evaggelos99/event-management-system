@@ -46,55 +46,46 @@ public final class Event extends AbstractDomainObject {
     public String getName() {
 
         return name;
-
     }
 
     public String getPlace() {
 
         return place;
-
     }
 
     public EventType getEventType() {
 
         return eventType;
-
     }
 
     public List<UUID> getAttendeesIDs() {
 
         return attendeesIds;
-
     }
 
     public UUID getOrganizerID() {
 
         return organizerId;
-
     }
 
     public Integer getLimitOfPeople() {
 
         return limitOfPeople;
-
     }
 
     public List<UUID> getSponsorsIds() {
 
         return sponsorsIds;
-
     }
 
     public LocalDateTime getStartTime() {
 
         return startTime;
-
     }
 
     public Duration getDuration() {
 
         return duration;
-
     }
 
     @Override
@@ -112,7 +103,6 @@ public final class Event extends AbstractDomainObject {
                 .append(organizerId, that.organizerId).append(limitOfPeople, that.limitOfPeople)
                 .append(sponsorsIds, that.sponsorsIds).append(startTime, that.startTime).append(duration, that.duration)
                 .build();
-
     }
 
     @Override
@@ -121,7 +111,6 @@ public final class Event extends AbstractDomainObject {
         return new HashCodeBuilder(17, 37).appendSuper(super.hashCode()).append(name).append(place).append(eventType)
                 .append(attendeesIds).append(organizerId).append(limitOfPeople).append(sponsorsIds).append(startTime)
                 .append(duration).build();
-
     }
 
     @Override
@@ -132,7 +121,6 @@ public final class Event extends AbstractDomainObject {
                 .append("attendeesIDs", attendeesIds).append("organizerID", organizerId)
                 .append("limitOfPeople", limitOfPeople).append("sponsorID", sponsorsIds).append("startTime", startTime)
                 .append("duration", duration).toString();
-
     }
 
 }

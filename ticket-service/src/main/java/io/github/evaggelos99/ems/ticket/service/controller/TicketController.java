@@ -4,8 +4,8 @@ import io.github.evaggelos99.ems.common.api.service.IService;
 import io.github.evaggelos99.ems.ticket.api.ITicketController;
 import io.github.evaggelos99.ems.ticket.api.Ticket;
 import io.github.evaggelos99.ems.ticket.api.TicketDto;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
@@ -84,23 +84,14 @@ public class TicketController implements ITicketController {
     @Override
     public Flux<TicketDto> getTickets() {
 
+        System.out.println("dasas "+ SecurityContextHolder.getContext().getAuthentication());
         return ticketService.getAll().map(ticketToTicketDtoConverter);
     }
 
     @Override
     public Mono<Boolean> ping() {
 
-        return pingService();
-    }
-
-    private Mono<Boolean> pingService() {
-        try {
-
-            return ticketService.ping().log().onErrorReturn(false);
-        } catch (final Exception e) {
-
-            return Mono.just(false);
-        }
+        return ticketService.ping().onErrorReturn(false);
     }
 
 }

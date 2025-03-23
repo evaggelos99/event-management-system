@@ -1,4 +1,4 @@
-package io.github.evaggelos99.ems.ticket.service.util;
+package io.github.evaggelos99.ems.migrate.service.util;
 
 import io.github.evaggelos99.r2dbc.h2.H2ConnectionFactoryProvider;
 import io.r2dbc.spi.ConnectionFactory;

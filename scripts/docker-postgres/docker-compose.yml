@@ -1,15 +1,25 @@
 services:
   db:
-    image: db
-    build: 
-      context: .
-      target: db
+    image: postgres:16.8-alpine3.20
     ports:
-      - 5433:5432
+      - "5433:5432"
     environment:
-      - POSTGRES_PASSWORD=pass
-      - POSTGRES_USER=user
-      - POSTGRES_DB=event-management-system
+      POSTGRES_PASSWORD: pass
+      POSTGRES_USER: user
+      POSTGRES_DB: event-management-system
+    networks:
+      - backend
+  # Used for migration scripts and schema versioning
+  flyway:
+    image: flyway/flyway:11.3-alpine
+    command: -url=jdbc:postgresql://db:5432/event-management-system -schemas=ems_sponsor,ems_attendee,ems_organizer,ems_event,ems_ticket -user=user -password=pass -connectRetries=60 migrate
+    depends_on:
+      - db
     volumes:
-      - ./init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
-      # - ./data.sql:/tmp/seed.sql
+      - ../flyway:/flyway/sql/migrations
+    networks:
+      - backend
+
+
+networks:
+  backend:

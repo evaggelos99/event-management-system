@@ -8,7 +8,6 @@ import io.github.evaggelos99.ems.event.api.converters.EventToEventDtoConverter;
 import io.github.evaggelos99.ems.event.api.repo.IEventRepository;
 import io.github.evaggelos99.ems.event.api.service.IEventService;
 import org.apache.commons.lang3.ObjectUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
@@ -94,7 +93,6 @@ public class EventService implements IEventService {
     public Mono<Boolean> existsById(final UUID eventId) {
 
         return eventRepository.existsById(eventId);
-
     }
 
     /**
@@ -122,8 +120,8 @@ public class EventService implements IEventService {
 
         final LinkedList<UUID> list = new LinkedList<>(ids);
         list.add(attendeeId);
-        return new Event(eventId, event.getCreatedAt(), Instant.now(), event.getName(), event.getPlace(), event.getEventType(), list, event.getOrganizerID(), event.getLimitOfPeople(), event.getSponsorsIds(), event.getStartTime(), event.getDuration());
 
+        return new Event(eventId, event.getCreatedAt(), Instant.now(), event.getName(), event.getPlace(), event.getEventType(), list, event.getOrganizerID(), event.getLimitOfPeople(), event.getSponsorsIds(), event.getStartTime(), event.getDuration());
     }
 
     @Override

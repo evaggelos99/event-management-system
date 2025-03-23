@@ -1,4 +1,4 @@
-package io.github.evaggelos99.ems.ticket.service.util;
+package io.github.evaggelos99.ems.migrate.service.util;
 
 import org.springframework.context.annotation.Configuration;
 
