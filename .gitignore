@@ -65,5 +65,5 @@ local.properties
 #.project
 
 #docker related
-scripts/docker-fusionauth/db_data/
+infra/docker-fusionauth/db_data/
 db_data/

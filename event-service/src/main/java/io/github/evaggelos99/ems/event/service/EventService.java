@@ -2,11 +2,13 @@ package io.github.evaggelos99.ems.event.service;
 
 import io.github.evaggelos99.ems.common.api.controller.exceptions.ConflictException;
 import io.github.evaggelos99.ems.common.api.controller.exceptions.ObjectNotFoundException;
+import io.github.evaggelos99.ems.common.api.domainobjects.validators.constraints.PublisherValidator;
 import io.github.evaggelos99.ems.event.api.Event;
 import io.github.evaggelos99.ems.event.api.EventDto;
 import io.github.evaggelos99.ems.event.api.converters.EventToEventDtoConverter;
 import io.github.evaggelos99.ems.event.api.repo.IEventRepository;
 import io.github.evaggelos99.ems.event.api.service.IEventService;
+import io.github.evaggelos99.ems.security.lib.SecurityContextHelper;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
@@ -47,7 +49,8 @@ public class EventService implements IEventService {
     @Override
     public Mono<Event> add(final EventDto event) {
 
-        return eventRepository.save(event);
+        return SecurityContextHelper.filterRoles("ROLE_CREATE_EVENT") //TODO extract 
+                .flatMap(x -> PublisherValidator.validateBooleanMono(x, () -> eventRepository.save(event)));
     }
 
     /**
@@ -56,7 +59,8 @@ public class EventService implements IEventService {
     @Override
     public Mono<Event> get(final UUID uuid) {
 
-        return eventRepository.findById(uuid);
+        return SecurityContextHelper.filterRoles("ROLE_READ_EVENT") //TODO extract 
+                .flatMap(x -> PublisherValidator.validateBooleanMono(x, () -> eventRepository.findById(uuid)));
     }
 
     /**
@@ -65,7 +69,8 @@ public class EventService implements IEventService {
     @Override
     public Mono<Boolean> delete(final UUID uuid) {
 
-        return eventRepository.deleteById(uuid);
+        return SecurityContextHelper.filterRoles("ROLE_DELETE_EVENT") //TODO extract 
+                .flatMap(x -> PublisherValidator.validateBooleanMono(x, () -> eventRepository.deleteById(uuid)));
     }
 
     /**
@@ -74,7 +79,8 @@ public class EventService implements IEventService {
     @Override
     public Mono<Event> edit(final UUID uuid, final EventDto event) {
 
-        return ObjectUtils.notEqual(uuid, event.uuid()) ? Mono.error(() -> new ObjectNotFoundException(uuid, EventDto.class)) : eventRepository.edit(event);
+        return ObjectUtils.notEqual(uuid, event.uuid()) ? Mono.error(() -> new ObjectNotFoundException(uuid, EventDto.class)) : SecurityContextHelper.filterRoles("ROLE_UPDATE_EVENT") //TODO extract 
+                .flatMap(x -> PublisherValidator.validateBooleanMono(x, () -> eventRepository.edit(event)));
     }
 
     /**
@@ -83,7 +89,8 @@ public class EventService implements IEventService {
     @Override
     public Flux<Event> getAll() {
 
-        return eventRepository.findAll();
+        return SecurityContextHelper.filterRoles("ROLE_READ_EVENT") //TODO extract 
+                .flatMapMany(x -> PublisherValidator.validateBooleanFlux(x, eventRepository::findAll));
     }
 
     /**
@@ -92,7 +99,9 @@ public class EventService implements IEventService {
     @Override
     public Mono<Boolean> existsById(final UUID eventId) {
 
-        return eventRepository.existsById(eventId);
+        return SecurityContextHelper.filterRoles("ROLE_READ_EVENT") //TODO extract 
+                .flatMap(x -> PublisherValidator.validateBooleanMono(x, () -> eventRepository.findById(eventId)))
+                .hasElement();
     }
 
     /**
@@ -100,7 +109,7 @@ public class EventService implements IEventService {
      */
     @Override
     public Mono<Boolean> addAttendee(final UUID eventId, final UUID attendeeId) {
-
+        // TODO add role and add whatever is needed
         return eventRepository.findById(eventId)
                 .map(event -> addAttendeeIdToExistingList(eventId, attendeeId, event))//
                 .map(eventToEventDtoConverter)

@@ -2,6 +2,7 @@
 # must be run from root directory
 
 mvn clean install -T 3 -DskipTests
+
 cd attendee-service
 mvn clean package spring-boot:repackage -DskipTests
 docker buildx build -t evaggelosg99/attendee-service:latest .

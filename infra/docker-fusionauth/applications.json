@@ -1,0 +1,1068 @@
+// curl -X GET "http://localhost:9011/api/application" \
+//  -H "Authorization: API_KEY"
+{
+  "applications": [
+    {
+      "accessControlConfiguration": {},
+      "active": true,
+      "authenticationTokenConfiguration": { "enabled": false },
+      "data": {},
+      "emailConfiguration": {},
+      "externalIdentifierConfiguration": {},
+      "formConfiguration": {
+        "adminRegistrationFormId": "f06e5624-fef2-8e03-a59d-9c33769cc099",
+        "selfServiceFormConfiguration": {
+          "requireCurrentPasswordOnPasswordChange": false
+        }
+      },
+      "id": "d2d26a15-6484-4f1e-98b7-0c54a6274ad4",
+      "insertInstant": 1742912321431,
+      "jwtConfiguration": {
+        "accessTokenKeyId": "2de54551-5ae3-4b5b-973e-9a786c7d5d75",
+        "enabled": false,
+        "idTokenKeyId": "2de54551-5ae3-4b5b-973e-9a786c7d5d75",
+        "refreshTokenExpirationPolicy": "Fixed",
+        "refreshTokenSlidingWindowConfiguration": {
+          "maximumTimeToLiveInMinutes": 43200
+        },
+        "refreshTokenTimeToLiveInMinutes": 43200,
+        "refreshTokenUsagePolicy": "Reusable",
+        "timeToLiveInSeconds": 3600
+      },
+      "lambdaConfiguration": {},
+      "lastUpdateInstant": 1742912321431,
+      "loginConfiguration": {
+        "allowTokenRefresh": false,
+        "generateRefreshTokens": false,
+        "requireAuthentication": true
+      },
+      "multiFactorConfiguration": { "email": {}, "sms": {} },
+      "name": "event-management-system - copy",
+      "oauthConfiguration": {
+        "authorizedOriginURLs": [],
+        "authorizedRedirectURLs": [],
+        "authorizedURLValidationPolicy": "ExactMatch",
+        "clientAuthenticationPolicy": "Required",
+        "clientId": "d2d26a15-6484-4f1e-98b7-0c54a6274ad4",
+        "clientSecret": "*********",
+        "consentMode": "AlwaysPrompt",
+        "debug": false,
+        "enabledGrants": ["authorization_code", "password", "refresh_token"],
+        "generateRefreshTokens": true,
+        "logoutBehavior": "AllApplications",
+        "proofKeyForCodeExchangePolicy": "NotRequired",
+        "providedScopePolicy": {
+          "address": { "enabled": true, "required": false },
+          "email": { "enabled": true, "required": false },
+          "phone": { "enabled": true, "required": false },
+          "profile": { "enabled": true, "required": false }
+        },
+        "relationship": "FirstParty",
+        "requireClientAuthentication": true,
+        "requireRegistration": false,
+        "scopeHandlingPolicy": "Strict",
+        "unknownScopePolicy": "Reject"
+      },
+      "passwordlessConfiguration": { "enabled": false },
+      "registrationConfiguration": {
+        "birthDate": { "enabled": false, "required": false },
+        "confirmPassword": false,
+        "enabled": false,
+        "firstName": { "enabled": false, "required": false },
+        "fullName": { "enabled": false, "required": false },
+        "lastName": { "enabled": false, "required": false },
+        "loginIdType": "email",
+        "middleName": { "enabled": false, "required": false },
+        "mobilePhone": { "enabled": false, "required": false },
+        "preferredLanguages": { "enabled": false, "required": false },
+        "type": "basic"
+      },
+      "registrationDeletePolicy": {
+        "unverified": { "enabled": false, "numberOfDaysToRetain": 120 }
+      },
+      "roles": [
+        {
+          "id": "f73192dd-9ef5-4cb1-955e-67219a99c4a1",
+          "insertInstant": 1742912321431,
+          "isDefault": true,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742912321431,
+          "name": "ROLE_CREATE_ATTENDEE"
+        },
+        {
+          "id": "c1660a7d-44f9-470f-b60f-441dbb6f2eea",
+          "insertInstant": 1742912321431,
+          "isDefault": true,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742912321431,
+          "name": "ROLE_CREATE_EVENT"
+        },
+        {
+          "id": "89279c8d-37ae-48ea-abf6-993e4db031cd",
+          "insertInstant": 1742912321431,
+          "isDefault": true,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742912321431,
+          "name": "ROLE_CREATE_ORGANIZER"
+        },
+        {
+          "id": "2f28c921-7268-4ea5-941b-c5f73da77307",
+          "insertInstant": 1742912321431,
+          "isDefault": true,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742912321431,
+          "name": "ROLE_CREATE_SPONSOR"
+        },
+        {
+          "description": "Role that can create tickets",
+          "id": "1436100e-6097-4e77-b5c5-3476941fe4f9",
+          "insertInstant": 1742912321431,
+          "isDefault": true,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742912321431,
+          "name": "ROLE_CREATE_TICKET"
+        },
+        {
+          "id": "d90ca6d3-1923-4e98-92f9-347323010845",
+          "insertInstant": 1742912321431,
+          "isDefault": true,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742912321431,
+          "name": "ROLE_DELETE_ATTENDEE"
+        },
+        {
+          "id": "fa1edbc9-5c9d-4990-b32e-77b9f438b77f",
+          "insertInstant": 1742912321431,
+          "isDefault": true,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742912321431,
+          "name": "ROLE_DELETE_EVENT"
+        },
+        {
+          "id": "12120e2d-231b-4adf-acab-32c1da3bee35",
+          "insertInstant": 1742912321431,
+          "isDefault": true,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742912321431,
+          "name": "ROLE_DELETE_ORGANIZER"
+        },
+        {
+          "id": "88300348-63f2-4532-8e42-048475539869",
+          "insertInstant": 1742912321431,
+          "isDefault": true,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742912321431,
+          "name": "ROLE_DELETE_SPONSOR"
+        },
+        {
+          "id": "c08bb0ce-1c42-43c7-b28c-108dac645974",
+          "insertInstant": 1742912321431,
+          "isDefault": true,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742912321431,
+          "name": "ROLE_DELETE_TICKET"
+        },
+        {
+          "id": "83dabf4f-b11f-4ed9-9339-f8e501cd3ff2",
+          "insertInstant": 1742912321431,
+          "isDefault": true,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742912321431,
+          "name": "ROLE_READ_ATTENDEE"
+        },
+        {
+          "id": "f1a52930-85dd-4c08-b154-24a5cc22b14c",
+          "insertInstant": 1742912321431,
+          "isDefault": true,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742912321431,
+          "name": "ROLE_READ_EVENT"
+        },
+        {
+          "id": "8696fa6a-67cf-4335-94fb-ada5733a63b0",
+          "insertInstant": 1742912321431,
+          "isDefault": true,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742912321431,
+          "name": "ROLE_READ_ORGANIZER"
+        },
+        {
+          "id": "84d9cd7c-8b0b-4792-a805-22dfedd475ec",
+          "insertInstant": 1742912321431,
+          "isDefault": true,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742912321431,
+          "name": "ROLE_READ_SPONSOR"
+        },
+        {
+          "description": "Role that is able to read tickets",
+          "id": "146fa920-83ac-4652-9f88-35205dc73625",
+          "insertInstant": 1742912321431,
+          "isDefault": true,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742912321431,
+          "name": "ROLE_READ_TICKET"
+        },
+        {
+          "id": "f852b32a-9606-425f-b11a-1797ccdc2fe5",
+          "insertInstant": 1742912321431,
+          "isDefault": true,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742912321431,
+          "name": "ROLE_UPDATE_ATTENDEE"
+        },
+        {
+          "id": "afa2981f-91f2-42cb-9bf7-9a62ba4b8257",
+          "insertInstant": 1742912321431,
+          "isDefault": true,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742912321431,
+          "name": "ROLE_UPDATE_EVENT"
+        },
+        {
+          "id": "4daeb880-463c-4dc2-be08-cf22ee074f00",
+          "insertInstant": 1742912321431,
+          "isDefault": true,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742912321431,
+          "name": "ROLE_UPDATE_ORGANIZER"
+        },
+        {
+          "id": "a8158aec-237c-4a02-b953-5cc31e4ed0b8",
+          "insertInstant": 1742912321431,
+          "isDefault": true,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742912321431,
+          "name": "ROLE_UPDATE_SPONSOR"
+        },
+        {
+          "description": "Role that can update tickets",
+          "id": "71bddf9d-ba6c-4cb8-b3ef-a69d6d1947d7",
+          "insertInstant": 1742912321431,
+          "isDefault": true,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742912321431,
+          "name": "ROLE_UPDATE_TICKET"
+        },
+        {
+          "description": "DEFAULT ROLE",
+          "id": "ac768dcf-6202-4fa0-a860-90e5ac035885",
+          "insertInstant": 1742912321431,
+          "isDefault": true,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742912321431,
+          "name": "ROLE_USER"
+        }
+      ],
+      "samlv2Configuration": {
+        "assertionEncryptionConfiguration": {
+          "digestAlgorithm": "SHA256",
+          "enabled": false,
+          "encryptionAlgorithm": "AES256GCM",
+          "keyLocation": "Child",
+          "keyTransportAlgorithm": "RSA_OAEP",
+          "maskGenerationFunction": "MGF1_SHA1"
+        },
+        "authorizedRedirectURLs": [],
+        "debug": false,
+        "enabled": false,
+        "initiatedLogin": {
+          "enabled": false,
+          "nameIdFormat": "urn:oasis:names:tc:SAML:2.0:nameid-format:persistent"
+        },
+        "loginHintConfiguration": {
+          "enabled": true,
+          "parameterName": "login_hint"
+        },
+        "logout": {
+          "behavior": "AllParticipants",
+          "requireSignedRequests": false,
+          "singleLogout": {
+            "enabled": false,
+            "xmlSignatureC14nMethod": "exclusive_with_comments"
+          },
+          "xmlSignatureC14nMethod": "exclusive_with_comments"
+        },
+        "requireSignedRequests": false,
+        "xmlSignatureC14nMethod": "exclusive_with_comments",
+        "xmlSignatureLocation": "Assertion"
+      },
+      "scopes": [],
+      "state": "Active",
+      "tenantId": "b69758e6-8962-cf88-1846-973fb53abdb5",
+      "unverified": { "behavior": "Allow" },
+      "verificationStrategy": "ClickableLink",
+      "verifyRegistration": false,
+      "webAuthnConfiguration": {
+        "bootstrapWorkflow": { "enabled": false },
+        "enabled": false,
+        "reauthenticationWorkflow": { "enabled": false }
+      }
+    },
+    {
+      "accessControlConfiguration": {},
+      "active": true,
+      "authenticationTokenConfiguration": { "enabled": false },
+      "data": {},
+      "emailConfiguration": {},
+      "externalIdentifierConfiguration": {},
+      "formConfiguration": {
+        "adminRegistrationFormId": "f06e5624-fef2-8e03-a59d-9c33769cc099",
+        "selfServiceFormConfiguration": {
+          "requireCurrentPasswordOnPasswordChange": false
+        }
+      },
+      "id": "99c404e4-2877-4296-9c85-a89191d19e21",
+      "insertInstant": 1742745668628,
+      "jwtConfiguration": {
+        "accessTokenKeyId": "2de54551-5ae3-4b5b-973e-9a786c7d5d75",
+        "enabled": false,
+        "idTokenKeyId": "2de54551-5ae3-4b5b-973e-9a786c7d5d75",
+        "refreshTokenExpirationPolicy": "Fixed",
+        "refreshTokenSlidingWindowConfiguration": {
+          "maximumTimeToLiveInMinutes": 43200
+        },
+        "refreshTokenTimeToLiveInMinutes": 43200,
+        "refreshTokenUsagePolicy": "Reusable",
+        "timeToLiveInSeconds": 3600
+      },
+      "lambdaConfiguration": {},
+      "lastUpdateInstant": 1742746109510,
+      "loginConfiguration": {
+        "allowTokenRefresh": false,
+        "generateRefreshTokens": false,
+        "requireAuthentication": true
+      },
+      "multiFactorConfiguration": { "email": {}, "sms": {} },
+      "name": "event-management-system",
+      "oauthConfiguration": {
+        "authorizedOriginURLs": [],
+        "authorizedRedirectURLs": [],
+        "authorizedURLValidationPolicy": "ExactMatch",
+        "clientAuthenticationPolicy": "Required",
+        "clientId": "99c404e4-2877-4296-9c85-a89191d19e21",
+        "clientSecret": "*********",
+        "consentMode": "AlwaysPrompt",
+        "debug": false,
+        "enabledGrants": ["authorization_code", "password", "refresh_token"],
+        "generateRefreshTokens": true,
+        "logoutBehavior": "AllApplications",
+        "proofKeyForCodeExchangePolicy": "NotRequired",
+        "providedScopePolicy": {
+          "address": { "enabled": true, "required": false },
+          "email": { "enabled": true, "required": false },
+          "phone": { "enabled": true, "required": false },
+          "profile": { "enabled": true, "required": false }
+        },
+        "relationship": "FirstParty",
+        "requireClientAuthentication": true,
+        "requireRegistration": false,
+        "scopeHandlingPolicy": "Strict",
+        "unknownScopePolicy": "Reject"
+      },
+      "passwordlessConfiguration": { "enabled": false },
+      "registrationConfiguration": {
+        "birthDate": { "enabled": false, "required": false },
+        "confirmPassword": false,
+        "enabled": false,
+        "firstName": { "enabled": false, "required": false },
+        "fullName": { "enabled": false, "required": false },
+        "lastName": { "enabled": false, "required": false },
+        "loginIdType": "email",
+        "middleName": { "enabled": false, "required": false },
+        "mobilePhone": { "enabled": false, "required": false },
+        "preferredLanguages": { "enabled": false, "required": false },
+        "type": "basic"
+      },
+      "registrationDeletePolicy": {
+        "unverified": { "enabled": false, "numberOfDaysToRetain": 120 }
+      },
+      "roles": [
+        {
+          "id": "a3ce7f07-c20c-4c5c-b4be-38e402ac4ce0",
+          "insertInstant": 1742910434799,
+          "isDefault": false,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742910434799,
+          "name": "ROLE_CREATE_ATTENDEE"
+        },
+        {
+          "id": "d9774e1c-e1ed-4fa1-bbee-597446c26b57",
+          "insertInstant": 1742910458763,
+          "isDefault": false,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742910458763,
+          "name": "ROLE_CREATE_EVENT"
+        },
+        {
+          "id": "7dbece12-42c3-4ed1-bfe4-e3778ede0962",
+          "insertInstant": 1742910494167,
+          "isDefault": false,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742910494167,
+          "name": "ROLE_CREATE_ORGANIZER"
+        },
+        {
+          "id": "a06e0980-cb29-4fea-bd85-293886be4df4",
+          "insertInstant": 1742910477106,
+          "isDefault": false,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742910477106,
+          "name": "ROLE_CREATE_SPONSOR"
+        },
+        {
+          "description": "Role that can create tickets",
+          "id": "55ac5451-4f05-4cde-9a89-8fe816811a62",
+          "insertInstant": 1742893937107,
+          "isDefault": false,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742893993295,
+          "name": "ROLE_CREATE_TICKET"
+        },
+        {
+          "id": "bbf1b113-e93b-47f2-864b-a3c803160bbd",
+          "insertInstant": 1742910447828,
+          "isDefault": false,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742910447828,
+          "name": "ROLE_DELETE_ATTENDEE"
+        },
+        {
+          "id": "e8d5ebd3-5240-44da-92ce-f81f131bb15b",
+          "insertInstant": 1742910472821,
+          "isDefault": false,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742910472821,
+          "name": "ROLE_DELETE_EVENT"
+        },
+        {
+          "id": "39134f8c-445b-4a8b-9474-080723088206",
+          "insertInstant": 1742910518727,
+          "isDefault": false,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742910518727,
+          "name": "ROLE_DELETE_ORGANIZER"
+        },
+        {
+          "id": "9d5130b2-36a1-4d40-9978-699e55c5e86a",
+          "insertInstant": 1742910488803,
+          "isDefault": false,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742910488803,
+          "name": "ROLE_DELETE_SPONSOR"
+        },
+        {
+          "id": "eb3e177a-4af7-455e-a1ea-f7b0f93c1ad6",
+          "insertInstant": 1742910428713,
+          "isDefault": false,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742910428713,
+          "name": "ROLE_DELETE_TICKET"
+        },
+        {
+          "id": "97d6adad-f3f2-4950-82da-9469be2e228a",
+          "insertInstant": 1742910439396,
+          "isDefault": false,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742910439396,
+          "name": "ROLE_READ_ATTENDEE"
+        },
+        {
+          "id": "f71a1230-58e4-4d42-8a81-fe453bc6b4cf",
+          "insertInstant": 1742910463990,
+          "isDefault": false,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742910463990,
+          "name": "ROLE_READ_EVENT"
+        },
+        {
+          "id": "e0a7827e-b580-4ec7-a3e5-b90cb8f927e6",
+          "insertInstant": 1742910498531,
+          "isDefault": false,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742910498531,
+          "name": "ROLE_READ_ORGANIZER"
+        },
+        {
+          "id": "43f0002a-9ba6-448b-8143-8770a82f187f",
+          "insertInstant": 1742910480685,
+          "isDefault": false,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742910480685,
+          "name": "ROLE_READ_SPONSOR"
+        },
+        {
+          "description": "Role that is able to read tickets",
+          "id": "d02def71-87f8-4013-81f9-ba2c3f3c43a2",
+          "insertInstant": 1742893962272,
+          "isDefault": false,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742893986410,
+          "name": "ROLE_READ_TICKET"
+        },
+        {
+          "id": "ec71ab5a-8721-49b5-ad88-7a14728725a8",
+          "insertInstant": 1742910443815,
+          "isDefault": false,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742910443815,
+          "name": "ROLE_UPDATE_ATTENDEE"
+        },
+        {
+          "id": "570fe289-b779-46c8-a1a8-01277a472c50",
+          "insertInstant": 1742910468744,
+          "isDefault": false,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742910468744,
+          "name": "ROLE_UPDATE_EVENT"
+        },
+        {
+          "id": "6e44dddd-b611-4601-af8e-f088492c62c2",
+          "insertInstant": 1742910505212,
+          "isDefault": false,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742910505212,
+          "name": "ROLE_UPDATE_ORGANIZER"
+        },
+        {
+          "id": "373f86e5-4168-44d0-878a-e51c3979cfd4",
+          "insertInstant": 1742910485052,
+          "isDefault": false,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742910485052,
+          "name": "ROLE_UPDATE_SPONSOR"
+        },
+        {
+          "description": "Role that can update tickets",
+          "id": "7655f3aa-b0cd-46bc-b193-2cd3091e6a16",
+          "insertInstant": 1742893975738,
+          "isDefault": false,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742893975738,
+          "name": "ROLE_UPDATE_TICKET"
+        },
+        {
+          "description": "DEFAULT ROLE",
+          "id": "0eace13c-4603-4b2c-a849-7fde9fbd6b62",
+          "insertInstant": 1742745770036,
+          "isDefault": true,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742745770036,
+          "name": "ROLE_USER"
+        }
+      ],
+      "samlv2Configuration": {
+        "assertionEncryptionConfiguration": {
+          "digestAlgorithm": "SHA256",
+          "enabled": false,
+          "encryptionAlgorithm": "AES256GCM",
+          "keyLocation": "Child",
+          "keyTransportAlgorithm": "RSA_OAEP",
+          "maskGenerationFunction": "MGF1_SHA1"
+        },
+        "authorizedRedirectURLs": [],
+        "debug": false,
+        "enabled": false,
+        "initiatedLogin": {
+          "enabled": false,
+          "nameIdFormat": "urn:oasis:names:tc:SAML:2.0:nameid-format:persistent"
+        },
+        "loginHintConfiguration": {
+          "enabled": true,
+          "parameterName": "login_hint"
+        },
+        "logout": {
+          "behavior": "AllParticipants",
+          "requireSignedRequests": false,
+          "singleLogout": {
+            "enabled": false,
+            "xmlSignatureC14nMethod": "exclusive_with_comments"
+          },
+          "xmlSignatureC14nMethod": "exclusive_with_comments"
+        },
+        "requireSignedRequests": false,
+        "xmlSignatureC14nMethod": "exclusive_with_comments",
+        "xmlSignatureLocation": "Assertion"
+      },
+      "scopes": [],
+      "state": "Active",
+      "tenantId": "b69758e6-8962-cf88-1846-973fb53abdb5",
+      "unverified": { "behavior": "Allow" },
+      "verificationStrategy": "ClickableLink",
+      "verifyRegistration": false,
+      "webAuthnConfiguration": {
+        "bootstrapWorkflow": { "enabled": false },
+        "enabled": false,
+        "reauthenticationWorkflow": { "enabled": false }
+      }
+    },
+    {
+      "accessControlConfiguration": {},
+      "active": true,
+      "authenticationTokenConfiguration": { "enabled": false },
+      "data": {},
+      "emailConfiguration": {},
+      "externalIdentifierConfiguration": {},
+      "formConfiguration": {
+        "adminRegistrationFormId": "f06e5624-fef2-8e03-a59d-9c33769cc099",
+        "selfServiceFormConfiguration": {
+          "requireCurrentPasswordOnPasswordChange": false
+        }
+      },
+      "id": "3c219e58-ed0e-4b18-ad48-f4f92793ae32",
+      "insertInstant": 1742744570148,
+      "jwtConfiguration": {
+        "accessTokenKeyId": "cfbb1bbf-1f88-f786-edde-f8ad81d40df2",
+        "enabled": true,
+        "idTokenKeyId": "092dbedc-30af-4149-9c61-b578f2c72f59",
+        "refreshTokenExpirationPolicy": "SlidingWindow",
+        "refreshTokenSlidingWindowConfiguration": {
+          "maximumTimeToLiveInMinutes": 43200
+        },
+        "refreshTokenTimeToLiveInMinutes": 60,
+        "refreshTokenUsagePolicy": "OneTimeUse",
+        "timeToLiveInSeconds": 60
+      },
+      "lambdaConfiguration": {},
+      "lastUpdateInstant": 1742744570148,
+      "loginConfiguration": {
+        "allowTokenRefresh": false,
+        "generateRefreshTokens": false,
+        "requireAuthentication": true
+      },
+      "multiFactorConfiguration": { "email": {}, "sms": {} },
+      "name": "FusionAuth",
+      "oauthConfiguration": {
+        "authorizedOriginURLs": [],
+        "authorizedRedirectURLs": ["/admin/login"],
+        "authorizedURLValidationPolicy": "ExactMatch",
+        "clientAuthenticationPolicy": "Required",
+        "clientId": "3c219e58-ed0e-4b18-ad48-f4f92793ae32",
+        "clientSecret": "*********",
+        "consentMode": "AlwaysPrompt",
+        "debug": false,
+        "enabledGrants": ["authorization_code", "refresh_token"],
+        "generateRefreshTokens": true,
+        "logoutBehavior": "AllApplications",
+        "logoutURL": "/admin/single-logout",
+        "proofKeyForCodeExchangePolicy": "Required",
+        "providedScopePolicy": {
+          "address": { "enabled": true, "required": false },
+          "email": { "enabled": true, "required": false },
+          "phone": { "enabled": true, "required": false },
+          "profile": { "enabled": true, "required": false }
+        },
+        "relationship": "FirstParty",
+        "requireClientAuthentication": true,
+        "requireRegistration": false,
+        "scopeHandlingPolicy": "Strict",
+        "unknownScopePolicy": "Reject"
+      },
+      "passwordlessConfiguration": { "enabled": false },
+      "registrationConfiguration": {
+        "birthDate": { "enabled": false, "required": false },
+        "confirmPassword": false,
+        "enabled": false,
+        "firstName": { "enabled": false, "required": false },
+        "fullName": { "enabled": false, "required": false },
+        "lastName": { "enabled": false, "required": false },
+        "loginIdType": "email",
+        "middleName": { "enabled": false, "required": false },
+        "mobilePhone": { "enabled": false, "required": false },
+        "preferredLanguages": { "enabled": false, "required": false },
+        "type": "basic"
+      },
+      "registrationDeletePolicy": {
+        "unverified": { "enabled": false, "numberOfDaysToRetain": 120 }
+      },
+      "roles": [
+        {
+          "description": "ACL deleter",
+          "id": "631ecd9d-8d40-4c13-8277-80cedb823711",
+          "insertInstant": 1742744570148,
+          "isDefault": false,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742744570148,
+          "name": "acl_deleter"
+        },
+        {
+          "description": "ACL manager",
+          "id": "631ecd9d-8d40-4c13-8277-80cedb823712",
+          "insertInstant": 1742744570148,
+          "isDefault": false,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742744570148,
+          "name": "acl_manager"
+        },
+        {
+          "description": "Global admin",
+          "id": "631ecd9d-8d40-4c13-8277-80cedb8236e2",
+          "insertInstant": 1742744570148,
+          "isDefault": false,
+          "isSuperRole": true,
+          "lastUpdateInstant": 1742744570148,
+          "name": "admin"
+        },
+        {
+          "description": "API key manager",
+          "id": "631ecd9d-8d40-4c13-8277-80cedb8236e3",
+          "insertInstant": 1742744570148,
+          "isDefault": false,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742744570148,
+          "name": "api_key_manager"
+        },
+        {
+          "description": "Application deleter",
+          "id": "631ecd9d-8d40-4c13-8277-80cedb8236e4",
+          "insertInstant": 1742744570148,
+          "isDefault": false,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742744570148,
+          "name": "application_deleter"
+        },
+        {
+          "description": "Application manager",
+          "id": "631ecd9d-8d40-4c13-8277-80cedb8236e5",
+          "insertInstant": 1742744570148,
+          "isDefault": false,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742744570148,
+          "name": "application_manager"
+        },
+        {
+          "description": "Audit log viewer",
+          "id": "631ecd9d-8d40-4c13-8277-80cedb8236e6",
+          "insertInstant": 1742744570148,
+          "isDefault": false,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742744570148,
+          "name": "audit_log_viewer"
+        },
+        {
+          "description": "Connector deleter",
+          "id": "631ecd9d-8d40-4c13-8277-80cedb823700",
+          "insertInstant": 1742744570148,
+          "isDefault": false,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742744570148,
+          "name": "connector_deleter"
+        },
+        {
+          "description": "Connector manager",
+          "id": "631ecd9d-8d40-4c13-8277-80cedb823701",
+          "insertInstant": 1742744570148,
+          "isDefault": false,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742744570148,
+          "name": "connector_manager"
+        },
+        {
+          "description": "Consent deleter",
+          "id": "631ecd9d-8d40-4c13-8277-80cedb8236fc",
+          "insertInstant": 1742744570148,
+          "isDefault": false,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742744570148,
+          "name": "consent_deleter"
+        },
+        {
+          "description": "Consent manager",
+          "id": "631ecd9d-8d40-4c13-8277-80cedb8236fd",
+          "insertInstant": 1742744570148,
+          "isDefault": false,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742744570148,
+          "name": "consent_manager"
+        },
+        {
+          "description": "Email template manager",
+          "id": "631ecd9d-8d40-4c13-8277-80cedb8236e7",
+          "insertInstant": 1742744570148,
+          "isDefault": false,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742744570148,
+          "name": "email_template_manager"
+        },
+        {
+          "description": "Entity manager",
+          "id": "631ecd9d-8d40-4c13-8277-80cedb823706",
+          "insertInstant": 1742744570148,
+          "isDefault": false,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742744570148,
+          "name": "entity_manager"
+        },
+        {
+          "description": "Event log viewer",
+          "id": "631ecd9d-8d40-4c13-8277-80cedb8236fa",
+          "insertInstant": 1742744570148,
+          "isDefault": false,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742744570148,
+          "name": "event_log_viewer"
+        },
+        {
+          "description": "Form deleter",
+          "id": "631ecd9d-8d40-4c13-8277-80cedb823702",
+          "insertInstant": 1742744570148,
+          "isDefault": false,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742744570148,
+          "name": "form_deleter"
+        },
+        {
+          "description": "Form manager",
+          "id": "631ecd9d-8d40-4c13-8277-80cedb823703",
+          "insertInstant": 1742744570148,
+          "isDefault": false,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742744570148,
+          "name": "form_manager"
+        },
+        {
+          "description": "Group deleter",
+          "id": "631ecd9d-8d40-4c13-8277-80cedb8236f6",
+          "insertInstant": 1742744570148,
+          "isDefault": false,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742744570148,
+          "name": "group_deleter"
+        },
+        {
+          "description": "Group manager",
+          "id": "631ecd9d-8d40-4c13-8277-80cedb8236f5",
+          "insertInstant": 1742744570148,
+          "isDefault": false,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742744570148,
+          "name": "group_manager"
+        },
+        {
+          "description": "Key manager",
+          "id": "631ecd9d-8d40-4c13-8277-80cedb8236fb",
+          "insertInstant": 1742744570148,
+          "isDefault": false,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742744570148,
+          "name": "key_manager"
+        },
+        {
+          "description": "Lambda manager",
+          "id": "631ecd9d-8d40-4c13-8277-80cedb8236f9",
+          "insertInstant": 1742744570148,
+          "isDefault": false,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742744570148,
+          "name": "lambda_manager"
+        },
+        {
+          "description": "Message template deleter",
+          "id": "631ecd9d-8d40-4c13-8277-80cedb823709",
+          "insertInstant": 1742744570148,
+          "isDefault": false,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742744570148,
+          "name": "message_template_deleter"
+        },
+        {
+          "description": "Message template manager",
+          "id": "631ecd9d-8d40-4c13-8277-80cedb823710",
+          "insertInstant": 1742744570148,
+          "isDefault": false,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742744570148,
+          "name": "message_template_manager"
+        },
+        {
+          "description": "Messenger deleter",
+          "id": "631ecd9d-8d40-4c13-8277-80cedb823707",
+          "insertInstant": 1742744570148,
+          "isDefault": false,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742744570148,
+          "name": "messenger_deleter"
+        },
+        {
+          "description": "Messenger manager",
+          "id": "631ecd9d-8d40-4c13-8277-80cedb823708",
+          "insertInstant": 1742744570148,
+          "isDefault": false,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742744570148,
+          "name": "messenger_manager"
+        },
+        {
+          "description": "Reactor manager",
+          "id": "631ecd9d-8d40-4c13-8277-80cedb8236ff",
+          "insertInstant": 1742744570148,
+          "isDefault": false,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742744570148,
+          "name": "reactor_manager"
+        },
+        {
+          "description": "Report viewer",
+          "id": "631ecd9d-8d40-4c13-8277-80cedb8236e8",
+          "insertInstant": 1742744570148,
+          "isDefault": false,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742744570148,
+          "name": "report_viewer"
+        },
+        {
+          "description": "System configuration manager",
+          "id": "631ecd9d-8d40-4c13-8277-80cedb8236e9",
+          "insertInstant": 1742744570148,
+          "isDefault": false,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742744570148,
+          "name": "system_manager"
+        },
+        {
+          "description": "Tenant deleter",
+          "id": "631ecd9d-8d40-4c13-8277-80cedb8236f8",
+          "insertInstant": 1742744570148,
+          "isDefault": false,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742744570148,
+          "name": "tenant_deleter"
+        },
+        {
+          "description": "Tenant manager",
+          "id": "631ecd9d-8d40-4c13-8277-80cedb8236f7",
+          "insertInstant": 1742744570148,
+          "isDefault": false,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742744570148,
+          "name": "tenant_manager"
+        },
+        {
+          "description": "Theme manager",
+          "id": "631ecd9d-8d40-4c13-8277-80cedb8236fe",
+          "insertInstant": 1742744570148,
+          "isDefault": false,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742744570148,
+          "name": "theme_manager"
+        },
+        {
+          "description": "User action deleter",
+          "id": "631ecd9d-8d40-4c13-8277-80cedb8236f0",
+          "insertInstant": 1742744570148,
+          "isDefault": false,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742744570148,
+          "name": "user_action_deleter"
+        },
+        {
+          "description": "User action manager",
+          "id": "631ecd9d-8d40-4c13-8277-80cedb8236f1",
+          "insertInstant": 1742744570148,
+          "isDefault": false,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742744570148,
+          "name": "user_action_manager"
+        },
+        {
+          "description": "User deleter",
+          "id": "631ecd9d-8d40-4c13-8277-80cedb8236f2",
+          "insertInstant": 1742744570148,
+          "isDefault": false,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742744570148,
+          "name": "user_deleter"
+        },
+        {
+          "description": "User manager",
+          "id": "631ecd9d-8d40-4c13-8277-80cedb8236f3",
+          "insertInstant": 1742744570148,
+          "isDefault": false,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742744570148,
+          "name": "user_manager"
+        },
+        {
+          "description": "User support manager",
+          "id": "631ecd9d-8d40-4c13-8277-80cedb823704",
+          "insertInstant": 1742744570148,
+          "isDefault": false,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742744570148,
+          "name": "user_support_manager"
+        },
+        {
+          "description": "User support viewer",
+          "id": "631ecd9d-8d40-4c13-8277-80cedb823705",
+          "insertInstant": 1742744570148,
+          "isDefault": false,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742744570148,
+          "name": "user_support_viewer"
+        },
+        {
+          "description": "Webhook event log viewer",
+          "id": "631ecd9d-8d40-4c13-8277-80cedb823713",
+          "insertInstant": 1742744570148,
+          "isDefault": false,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742744570148,
+          "name": "webhook_event_log_viewer"
+        },
+        {
+          "description": "Webhook manager",
+          "id": "631ecd9d-8d40-4c13-8277-80cedb8236f4",
+          "insertInstant": 1742744570148,
+          "isDefault": false,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1742744570148,
+          "name": "webhook_manager"
+        }
+      ],
+      "samlv2Configuration": {
+        "assertionEncryptionConfiguration": {
+          "digestAlgorithm": "SHA256",
+          "enabled": false,
+          "encryptionAlgorithm": "AES256GCM",
+          "keyLocation": "Child",
+          "keyTransportAlgorithm": "RSA_OAEP",
+          "maskGenerationFunction": "MGF1_SHA1"
+        },
+        "authorizedRedirectURLs": [],
+        "debug": false,
+        "enabled": false,
+        "initiatedLogin": {
+          "enabled": false,
+          "nameIdFormat": "urn:oasis:names:tc:SAML:2.0:nameid-format:persistent"
+        },
+        "loginHintConfiguration": {
+          "enabled": true,
+          "parameterName": "login_hint"
+        },
+        "logout": {
+          "behavior": "AllParticipants",
+          "requireSignedRequests": false,
+          "singleLogout": {
+            "enabled": false,
+            "xmlSignatureC14nMethod": "exclusive_with_comments"
+          },
+          "xmlSignatureC14nMethod": "exclusive_with_comments"
+        },
+        "requireSignedRequests": false,
+        "xmlSignatureC14nMethod": "exclusive_with_comments",
+        "xmlSignatureLocation": "Assertion"
+      },
+      "scopes": [],
+      "state": "Active",
+      "tenantId": "b69758e6-8962-cf88-1846-973fb53abdb5",
+      "unverified": { "behavior": "Allow" },
+      "verificationStrategy": "ClickableLink",
+      "verifyRegistration": false,
+      "webAuthnConfiguration": {
+        "bootstrapWorkflow": { "enabled": false },
+        "enabled": false,
+        "reauthenticationWorkflow": { "enabled": false }
+      }
+    }
+  ]
+}

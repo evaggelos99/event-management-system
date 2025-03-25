@@ -69,7 +69,7 @@ public class AttendeeRepository implements IAttendeeRepository {
     public Mono<Attendee> findById(final UUID uuid) {
 
         return databaseClient.sql(attendeeQueriesProperties.getProperty(CrudQueriesOperations.GET_ID.name()))
-                .bind(0, uuid).map(attendeeRowMapper::apply).one();
+                .bind(0, uuid).map(attendeeRowMapper).one();
     }
 
     @Override
@@ -89,7 +89,7 @@ public class AttendeeRepository implements IAttendeeRepository {
     public Flux<Attendee> findAll() {
 
         return databaseClient.sql(attendeeQueriesProperties.getProperty(CrudQueriesOperations.GET_ALL.name()))
-                .map(attendeeRowMapper::apply).all();
+                .map(attendeeRowMapper).all();
     }
 
     @Override

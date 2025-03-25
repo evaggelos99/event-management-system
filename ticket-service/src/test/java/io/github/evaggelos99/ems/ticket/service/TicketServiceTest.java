@@ -4,8 +4,6 @@ import io.github.evaggelos99.ems.ticket.api.Ticket;
 import io.github.evaggelos99.ems.ticket.api.TicketDto;
 import io.github.evaggelos99.ems.ticket.api.repo.ITicketRepository;
 import io.github.evaggelos99.ems.ticket.api.util.TicketObjectGenerator;
-import io.github.evaggelos99.ems.ticket.service.TicketService;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class TicketServiceTest {
 
     private final ITicketRepository ticketRepository = ticketRepositoryMock();
+
 
     private TicketService service;
 

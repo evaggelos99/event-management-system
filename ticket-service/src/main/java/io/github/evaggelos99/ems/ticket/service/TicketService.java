@@ -1,7 +1,9 @@
 package io.github.evaggelos99.ems.ticket.service;
 
 import io.github.evaggelos99.ems.common.api.controller.exceptions.ObjectNotFoundException;
+import io.github.evaggelos99.ems.common.api.domainobjects.validators.constraints.PublisherValidator;
 import io.github.evaggelos99.ems.common.api.service.IService;
+import io.github.evaggelos99.ems.security.lib.SecurityContextHelper;
 import io.github.evaggelos99.ems.ticket.api.Ticket;
 import io.github.evaggelos99.ems.ticket.api.TicketDto;
 import io.github.evaggelos99.ems.ticket.api.repo.ITicketRepository;
@@ -35,7 +37,8 @@ public class TicketService implements IService<Ticket, TicketDto> {
     @Override
     public Mono<Ticket> add(final TicketDto ticketDto) {
 
-        return ticketRepository.save(ticketDto);
+        return SecurityContextHelper.filterRoles("ROLE_CREATE_TICKET") //TODO extract 
+                .flatMap(x -> ticketRepository.save(ticketDto));
     }
 
     /**
@@ -44,7 +47,8 @@ public class TicketService implements IService<Ticket, TicketDto> {
     @Override
     public Mono<Ticket> get(final UUID uuid) {
 
-        return ticketRepository.findById(uuid);
+        return SecurityContextHelper.filterRoles("ROLE_READ_TICKET") //TODO extract 
+                .flatMap(x -> ticketRepository.findById(uuid));
     }
 
     /**
@@ -53,7 +57,8 @@ public class TicketService implements IService<Ticket, TicketDto> {
     @Override
     public Mono<Boolean> delete(final UUID uuid) {
 
-        return ticketRepository.deleteById(uuid);
+        return SecurityContextHelper.filterRoles("ROLE_DELETE_TICKET") //TODO extract 
+                .flatMap(x -> PublisherValidator.validateBooleanMono(x, () -> ticketRepository.deleteById(uuid)));
     }
 
     /**
@@ -63,7 +68,8 @@ public class TicketService implements IService<Ticket, TicketDto> {
     public Mono<Ticket> edit(final UUID uuid, final TicketDto ticketDto) {
 
         return !uuid.equals(ticketDto.uuid()) ? Mono.error(() -> new ObjectNotFoundException(uuid, TicketDto.class))
-                : ticketRepository.edit(ticketDto);
+                : SecurityContextHelper.filterRoles("ROLE_UPDATE_TICKET") //TODO extract 
+                .flatMap(x -> PublisherValidator.validateBooleanMono(x, () -> ticketRepository.edit(ticketDto)));
     }
 
     /**
@@ -72,7 +78,8 @@ public class TicketService implements IService<Ticket, TicketDto> {
     @Override
     public Flux<Ticket> getAll() {
 
-        return ticketRepository.findAll();
+        return SecurityContextHelper.filterRoles("ROLE_READ_TICKET") //TODO extract 
+                .flatMapMany(x -> PublisherValidator.validateBooleanFlux(x, ticketRepository::findAll));
     }
 
     /**
@@ -81,7 +88,9 @@ public class TicketService implements IService<Ticket, TicketDto> {
     @Override
     public Mono<Boolean> existsById(final UUID ticketId) {
 
-        return ticketRepository.existsById(ticketId);
+        return SecurityContextHelper.filterRoles("ROLE_READ_TICKET") //TODO extract 
+                .flatMap(x -> PublisherValidator.validateBooleanMono(x, () -> ticketRepository.findById(ticketId)))
+                .hasElement();
     }
 
     @Override

@@ -9,7 +9,7 @@ test:
 	mvn clean install -T 2
 
 build-services:
-	$(shell ./scripts/boot-up.sh)
+	sh ./infra/boot-up.sh
 
 up:
 	docker compose -f ${DOCKER_COMPOSE_FILE} up

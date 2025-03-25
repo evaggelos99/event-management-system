@@ -1,7 +1,9 @@
 package io.github.evaggelos99.ems.sponsor.service;
 
 import io.github.evaggelos99.ems.common.api.controller.exceptions.ObjectNotFoundException;
+import io.github.evaggelos99.ems.common.api.domainobjects.validators.constraints.PublisherValidator;
 import io.github.evaggelos99.ems.common.api.service.IService;
+import io.github.evaggelos99.ems.security.lib.SecurityContextHelper;
 import io.github.evaggelos99.ems.sponsor.api.Sponsor;
 import io.github.evaggelos99.ems.sponsor.api.SponsorDto;
 import io.github.evaggelos99.ems.sponsor.api.repo.ISponsorRepository;
@@ -33,9 +35,10 @@ public class SponsorService implements IService<Sponsor, SponsorDto> {
      * {@inheritDoc}
      */
     @Override
-    public Mono<Sponsor> add(final SponsorDto attendee) {
+    public Mono<Sponsor> add(final SponsorDto sponsorDto) {
 
-        return sponsorRepository.save(attendee);
+        return SecurityContextHelper.filterRoles("ROLE_CREATE_SPONSOR") //TODO extract 
+                .flatMap(x -> PublisherValidator.validateBooleanMono(x, () -> sponsorRepository.save(sponsorDto)));
     }
 
     /**
@@ -44,7 +47,8 @@ public class SponsorService implements IService<Sponsor, SponsorDto> {
     @Override
     public Mono<Sponsor> get(final UUID uuid) {
 
-        return sponsorRepository.findById(uuid);
+        return SecurityContextHelper.filterRoles("ROLE_READ_SPONSOR") //TODO extract 
+                .flatMap(x -> PublisherValidator.validateBooleanMono(x, () -> sponsorRepository.findById(uuid)));
     }
 
     /**
@@ -53,7 +57,8 @@ public class SponsorService implements IService<Sponsor, SponsorDto> {
     @Override
     public Mono<Boolean> delete(final UUID uuid) {
 
-        return sponsorRepository.deleteById(uuid);
+        return SecurityContextHelper.filterRoles("ROLE_DELETE_SPONSOR") //TODO extract 
+                .flatMap(x -> PublisherValidator.validateBooleanMono(x, () -> sponsorRepository.deleteById(uuid)));
     }
 
     /**
@@ -63,7 +68,8 @@ public class SponsorService implements IService<Sponsor, SponsorDto> {
     public Mono<Sponsor> edit(final UUID uuid, final SponsorDto sponsor) {
 
         return !uuid.equals(sponsor.uuid()) ? Mono.error(() -> new ObjectNotFoundException(uuid, SponsorDto.class))
-                : sponsorRepository.edit(sponsor);
+                : SecurityContextHelper.filterRoles("ROLE_UPDATE_SPONSOR") //TODO extract 
+                .flatMap(x -> PublisherValidator.validateBooleanMono(x, () -> sponsorRepository.edit(sponsor)));
     }
 
     /**
@@ -72,7 +78,8 @@ public class SponsorService implements IService<Sponsor, SponsorDto> {
     @Override
     public Flux<Sponsor> getAll() {
 
-        return sponsorRepository.findAll();
+        return SecurityContextHelper.filterRoles("ROLE_READ_SPONSOR") //TODO extract 
+                .flatMapMany(x -> PublisherValidator.validateBooleanFlux(x, sponsorRepository::findAll));
     }
 
     /**
@@ -81,7 +88,9 @@ public class SponsorService implements IService<Sponsor, SponsorDto> {
     @Override
     public Mono<Boolean> existsById(final UUID attendeeId) {
 
-        return sponsorRepository.existsById(attendeeId);
+        return SecurityContextHelper.filterRoles("ROLE_READ_SPONSOR") //TODO extract 
+                .flatMap(x -> PublisherValidator.validateBooleanMono(x, () -> sponsorRepository.findById(attendeeId)))
+                .hasElement();
     }
 
     @Override
