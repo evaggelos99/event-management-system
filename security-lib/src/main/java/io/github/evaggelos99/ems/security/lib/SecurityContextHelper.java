@@ -6,8 +6,8 @@ import org.springframework.security.core.context.SecurityContext;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.Arrays;
 import java.util.List;
-import java.util.function.Supplier;
 
 public class SecurityContextHelper {
 
@@ -19,9 +19,9 @@ public class SecurityContextHelper {
      * @return {@link Boolean#TRUE} if all the roles passed are in the authentication object
      * otherwise {@link Boolean#FALSE}
      */
-    public static Mono<Boolean> filterRoles(String... roles) {
+    public static Mono<Boolean> filterRoles(Roles... roles) {
 
-        final List<String> listOfRoles = List.of(roles);
+        final List<String> listOfRoles = Arrays.stream(roles).map(Enum::name).toList();
 
         return ReactiveSecurityContextHolder.getContext()
                 .map(SecurityContext::getAuthentication)

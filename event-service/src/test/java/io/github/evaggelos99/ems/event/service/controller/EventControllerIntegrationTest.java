@@ -13,11 +13,13 @@ import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
@@ -38,8 +40,7 @@ public class EventControllerIntegrationTest {
     private static final String RELATIVE_ENDPOINT = "/event";
     @Container
     private static final ExtendedKafkaContainer KAFKA = new ExtendedKafkaContainer();
-    @Autowired
-    private TestRestTemplate restTemplate;
+    private final RestTemplate restTemplate = new RestTemplate();
     @Autowired
     private SqlScriptExecutor sqlScriptExecutor;
     @LocalServerPort
@@ -59,6 +60,7 @@ public class EventControllerIntegrationTest {
 
 
     @Test
+    @WithMockUser(roles = {"CREATE_EVENT", "UPDATE_EVENT", "DELETE_EVENT", "READ_EVENT"})
     void postEvent_getEvent_deleteEvent_getEvent_whenInvokedWithValidEventDto_thenExpectForEventToBeAddedFetchedAndDeleted() {
 
         final Instant currentTime = Instant.now();
@@ -128,6 +130,7 @@ public class EventControllerIntegrationTest {
     }
 
     @Test
+    @WithMockUser(roles = {"CREATE_EVENT", "UPDATE_EVENT", "DELETE_EVENT", "READ_EVENT"})
     void postEvent_putEvent_getEvent_deleteEvent_getAll_whenInvokedWithValidEventDto_thenExpectForEventToBeAddedThenEditedThenDeleted() {
 
         final Instant currentTime = Instant.now();
@@ -193,6 +196,7 @@ public class EventControllerIntegrationTest {
     }
 
     @Test
+    @WithMockUser(roles = {"CREATE_EVENT", "UPDATE_EVENT", "DELETE_EVENT", "READ_EVENT"})
     void postEvent_addAttendee_deleteEvent_whenInvokedWithValidEventDto_thenExpectForEventToBeAddedThenEditedWithAddAttendeeThenDeleted() {
 
         final Instant currentTime = Instant.now();
@@ -231,6 +235,31 @@ public class EventControllerIntegrationTest {
         assertEquals(Boolean.TRUE, successfulOperation.getBody());
 
         restTemplate.delete(createUrl() + "/{eventId}", actualDto.uuid());
+    }
+
+    @Test
+    @WithMockUser(roles = {"READ_EVENT"})
+    void postEventWithWrongRole() {
+
+        final EventDto dto = EventObjectGenerator.generateEventDtoWithoutTimestamps(UUID.randomUUID(),UUID.randomUUID(),UUID.randomUUID());
+        try {
+            restTemplate.postForEntity(createUrl(), dto, EventDto.class);
+        } catch (HttpClientErrorException.Forbidden e) {
+            return;
+        }
+        throw new AssertionError("The request status is not 403");
+    }
+
+    @Test
+    void postEventWithNoRole() {
+
+        final EventDto dto = EventObjectGenerator.generateEventDto(UUID.randomUUID(),UUID.randomUUID(),UUID.randomUUID(),UUID.randomUUID());
+        try {
+            restTemplate.postForEntity(createUrl(), dto, EventDto.class);
+        } catch (HttpClientErrorException.Unauthorized e) {
+            return;
+        }
+        throw new AssertionError("The request status is not 401");
     }
 
 }

@@ -13,6 +13,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.UUID;
 
+import static io.github.evaggelos99.ems.security.lib.Roles.*;
 import static java.util.Objects.requireNonNull;
 
 @Service
@@ -37,7 +38,7 @@ public class OrganizerService implements IService<Organizer, OrganizerDto> {
     @Override
     public Mono<Organizer> add(final OrganizerDto organizerDto) {
 
-        return SecurityContextHelper.filterRoles("ROLE_CREATE_ORGANIZER") //TODO extract 
+        return SecurityContextHelper.filterRoles(ROLE_CREATE_ORGANIZER) //TODO extract
                 .flatMap(x -> PublisherValidator.validateBooleanMono(x, () -> organizerRepository.save(organizerDto)));
     }
 
@@ -47,7 +48,7 @@ public class OrganizerService implements IService<Organizer, OrganizerDto> {
     @Override
     public Mono<Organizer> get(final UUID uuid) {
 
-        return SecurityContextHelper.filterRoles("ROLE_READ_ORGANIZER") //TODO extract 
+        return SecurityContextHelper.filterRoles(ROLE_READ_ORGANIZER) //TODO extract
                 .flatMap(x -> PublisherValidator.validateBooleanMono(x, () -> organizerRepository.findById(uuid)));
     }
 
@@ -57,7 +58,7 @@ public class OrganizerService implements IService<Organizer, OrganizerDto> {
     @Override
     public Mono<Boolean> delete(final UUID uuid) {
 
-        return SecurityContextHelper.filterRoles("ROLE_DELETE_ORGANIZER") //TODO extract 
+        return SecurityContextHelper.filterRoles(ROLE_DELETE_ORGANIZER) //TODO extract
                 .flatMap(x -> PublisherValidator.validateBooleanMono(x, () -> organizerRepository.deleteById(uuid)));
     }
 
@@ -68,7 +69,7 @@ public class OrganizerService implements IService<Organizer, OrganizerDto> {
     public Mono<Organizer> edit(final UUID uuid, final OrganizerDto organizer) {
 
         return !uuid.equals(organizer.uuid()) ? Mono.error(() -> new ObjectNotFoundException(uuid, OrganizerDto.class))
-                : SecurityContextHelper.filterRoles("ROLE_UPDATE_ORGANIZER") //TODO extract 
+                : SecurityContextHelper.filterRoles(ROLE_UPDATE_ORGANIZER) //TODO extract
                 .flatMap(x -> PublisherValidator.validateBooleanMono(x, () -> organizerRepository.edit(organizer)));
     }
 
@@ -78,7 +79,7 @@ public class OrganizerService implements IService<Organizer, OrganizerDto> {
     @Override
     public Flux<Organizer> getAll() {
 
-        return SecurityContextHelper.filterRoles("ROLE_READ_ORGANIZER") //TODO extract 
+        return SecurityContextHelper.filterRoles(ROLE_READ_ORGANIZER) //TODO extract
                 .flatMapMany(x -> PublisherValidator.validateBooleanFlux(x, organizerRepository::findAll));
     }
 
@@ -88,9 +89,8 @@ public class OrganizerService implements IService<Organizer, OrganizerDto> {
     @Override
     public Mono<Boolean> existsById(final UUID attendeeId) {
 
-        return SecurityContextHelper.filterRoles("ROLE_READ_ORGANIZER") //TODO extract 
-                .flatMap(x -> PublisherValidator.validateBooleanMono(x, () -> organizerRepository.findById(attendeeId)))
-                .hasElement();
+        return SecurityContextHelper.filterRoles(ROLE_READ_ORGANIZER) //TODO extract
+                .flatMap(x -> PublisherValidator.validateBooleanMono(x, () -> organizerRepository.existsById(attendeeId)));
     }
 
     @Override

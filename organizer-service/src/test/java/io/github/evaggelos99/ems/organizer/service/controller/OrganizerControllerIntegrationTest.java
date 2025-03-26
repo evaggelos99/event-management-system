@@ -14,11 +14,13 @@ import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -34,8 +36,7 @@ class OrganizerControllerIntegrationTest {
 
     private static final String HOSTNAME = "http://localhost:";
     private static final String RELATIVE_ENDPOINT = "/organizer";
-    @Autowired
-    private TestRestTemplate restTemplate;
+    private final RestTemplate restTemplate = new RestTemplate();
     @Autowired
     private SqlScriptExecutor sqlScriptExecutor;
     @LocalServerPort
@@ -48,6 +49,7 @@ class OrganizerControllerIntegrationTest {
     }
 
     @Test
+    @WithMockUser(roles = {"CREATE_ORGANIZER", "UPDATE_ORGANIZER", "DELETE_ORGANIZER", "READ_ORGANIZER"})
     void postOrganizer_getOrganizer_deleteOrganizer_getOrganizer_whenInvokedWithValidOrganizerDto_thenExpectForOrganizerToBeAddedFetchedAndDeleted() {
 
         final Instant currentTime = Instant.now();
@@ -101,6 +103,7 @@ class OrganizerControllerIntegrationTest {
     }
 
     @Test
+    @WithMockUser(roles = {"CREATE_ORGANIZER", "UPDATE_ORGANIZER", "DELETE_ORGANIZER", "READ_ORGANIZER"})
     void postOrganizer_putOrganizer_getOrganizer_deleteOrganizer_getAll_whenInvokedWithValidOrganizerDto_thenExpectForOrganizerToBeAddedThenEditedThenDeleted() {
 
         final Instant currentTime = Instant.now();
@@ -158,6 +161,31 @@ class OrganizerControllerIntegrationTest {
         final List<?> body = listOfOrganizers.getBody();
         assertNotNull(body);
         assertTrue(body.isEmpty());
+    }
+
+    @Test
+    @WithMockUser(roles = {"READ_ORGANIZER"})
+    void postOrganizerWithWrongRole() {
+
+        final OrganizerDto dto = OrganizerObjectGenerator.generateOrganizerDtoWithoutTimestamps(EventType.OTHER);
+        try {
+            restTemplate.postForEntity(createUrl(), dto, OrganizerDto.class);
+        } catch (HttpClientErrorException.Forbidden e) {
+            return;
+        }
+        throw new AssertionError("The request status is not 403");
+    }
+
+    @Test
+    void postOrganizerWithNoRole() {
+
+        final OrganizerDto dto = OrganizerObjectGenerator.generateOrganizerDto(UUID.randomUUID(), EventType.OTHER);
+        try {
+            restTemplate.postForEntity(createUrl(), dto, OrganizerDto.class);
+        } catch (HttpClientErrorException.Unauthorized e) {
+            return;
+        }
+        throw new AssertionError("The request status is not 401");
     }
 
     @SuppressWarnings({"all"})

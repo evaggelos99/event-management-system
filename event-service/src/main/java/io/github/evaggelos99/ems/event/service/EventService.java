@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.function.Function;
 
+import static io.github.evaggelos99.ems.security.lib.Roles.*;
 import static java.util.Objects.requireNonNull;
 
 @Service
@@ -49,7 +50,7 @@ public class EventService implements IEventService {
     @Override
     public Mono<Event> add(final EventDto event) {
 
-        return SecurityContextHelper.filterRoles("ROLE_CREATE_EVENT") //TODO extract 
+        return SecurityContextHelper.filterRoles(ROLE_CREATE_EVENT) //TODO extract 
                 .flatMap(x -> PublisherValidator.validateBooleanMono(x, () -> eventRepository.save(event)));
     }
 
@@ -59,7 +60,7 @@ public class EventService implements IEventService {
     @Override
     public Mono<Event> get(final UUID uuid) {
 
-        return SecurityContextHelper.filterRoles("ROLE_READ_EVENT") //TODO extract 
+        return SecurityContextHelper.filterRoles(ROLE_READ_EVENT) //TODO extract 
                 .flatMap(x -> PublisherValidator.validateBooleanMono(x, () -> eventRepository.findById(uuid)));
     }
 
@@ -69,7 +70,7 @@ public class EventService implements IEventService {
     @Override
     public Mono<Boolean> delete(final UUID uuid) {
 
-        return SecurityContextHelper.filterRoles("ROLE_DELETE_EVENT") //TODO extract 
+        return SecurityContextHelper.filterRoles(ROLE_DELETE_EVENT) //TODO extract 
                 .flatMap(x -> PublisherValidator.validateBooleanMono(x, () -> eventRepository.deleteById(uuid)));
     }
 
@@ -79,8 +80,9 @@ public class EventService implements IEventService {
     @Override
     public Mono<Event> edit(final UUID uuid, final EventDto event) {
 
-        return ObjectUtils.notEqual(uuid, event.uuid()) ? Mono.error(() -> new ObjectNotFoundException(uuid, EventDto.class)) : SecurityContextHelper.filterRoles("ROLE_UPDATE_EVENT") //TODO extract 
-                .flatMap(x -> PublisherValidator.validateBooleanMono(x, () -> eventRepository.edit(event)));
+        return ObjectUtils.notEqual(uuid, event.uuid()) ? Mono.error(() -> new ObjectNotFoundException(uuid, EventDto.class)) :
+                SecurityContextHelper.filterRoles(ROLE_UPDATE_EVENT) //TODO extract
+                        .flatMap(x -> PublisherValidator.validateBooleanMono(x, () -> eventRepository.edit(event)));
     }
 
     /**
@@ -89,7 +91,7 @@ public class EventService implements IEventService {
     @Override
     public Flux<Event> getAll() {
 
-        return SecurityContextHelper.filterRoles("ROLE_READ_EVENT") //TODO extract 
+        return SecurityContextHelper.filterRoles(ROLE_READ_EVENT) //TODO extract 
                 .flatMapMany(x -> PublisherValidator.validateBooleanFlux(x, eventRepository::findAll));
     }
 
@@ -99,9 +101,8 @@ public class EventService implements IEventService {
     @Override
     public Mono<Boolean> existsById(final UUID eventId) {
 
-        return SecurityContextHelper.filterRoles("ROLE_READ_EVENT") //TODO extract 
-                .flatMap(x -> PublisherValidator.validateBooleanMono(x, () -> eventRepository.findById(eventId)))
-                .hasElement();
+        return SecurityContextHelper.filterRoles(ROLE_READ_EVENT) //TODO extract 
+                .flatMap(x -> PublisherValidator.validateBooleanMono(x, () -> eventRepository.existsById(eventId)));
     }
 
     /**

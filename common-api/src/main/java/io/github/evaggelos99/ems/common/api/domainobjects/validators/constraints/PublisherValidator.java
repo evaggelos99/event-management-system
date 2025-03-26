@@ -9,17 +9,11 @@ import java.util.function.Supplier;
 public class PublisherValidator {
 
     public static <T> Flux<T> validateBooleanFlux(final boolean x, final Supplier<Flux<T>> o) {
-        if (!x) {
-            return Flux.error(new UnauthorizedRoleException());
-        }
-        return o.get();
+        return x ? o.get() : Flux.error(new UnauthorizedRoleException());
     }
 
     public static <T> Mono<T> validateBooleanMono(final boolean x, final Supplier<Mono<T>> o) {
-        if (!x) {
-            return Mono.error(new UnauthorizedRoleException());
-        }
-        return o.get();
+        return x ? o.get() : Mono.error(new UnauthorizedRoleException());
     }
 
 }

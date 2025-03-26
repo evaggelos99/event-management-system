@@ -80,7 +80,6 @@ public class ControllerExceptionAdvice {
         errorResponse.put(TIME_STAMP, Instant.now());
         errorResponse.put("status", statusCode.value());
         errorResponse.put("error", exception.getMessage());
-        System.out.println("djasdjhasdkas resolved");
 
         return new ResponseEntity<>(errorResponse, new HttpHeaders(), statusCode);
     }

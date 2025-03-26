@@ -3,8 +3,8 @@ package io.github.evaggelos99.ems.ticket.service.controller;
 import io.github.evaggelos99.ems.ticket.api.TicketDto;
 import io.github.evaggelos99.ems.ticket.api.util.TicketObjectGenerator;
 import io.github.evaggelos99.ems.ticket.service.TicketServiceApplication;
-import io.github.evaggelos99.ems.migrate.service.util.SqlScriptExecutor;
-import io.github.evaggelos99.ems.migrate.service.util.TestConfiguration;
+import io.github.evaggelos99.ems.ticket.service.util.SqlScriptExecutor;
+import io.github.evaggelos99.ems.ticket.service.util.TestConfiguration;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -12,11 +12,13 @@ import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -32,23 +34,20 @@ class TicketControllerIntegrationTest {
 
     private static final String HOSTNAME = "http://localhost:";
     private static final String RELATIVE_ENDPOINT = "/ticket";
-
-    @Autowired
-    private TestRestTemplate restTemplate;
-
+    private final RestTemplate restTemplate = new RestTemplate();
     @Autowired
     private SqlScriptExecutor sqlScriptExecutor;
-
     @LocalServerPort
     private int port;
 
     @BeforeAll
-    void beforeAll() {
+    public void beforeAll() {
 
         sqlScriptExecutor.setup();
     }
 
     @Test
+    @WithMockUser(roles = {"CREATE_TICKET", "UPDATE_TICKET", "DELETE_TICKET", "READ_TICKET"})
     void postTicket_getTicket_deleteTicket_getTicket_whenInvokedWithValidTicketDto_thenExpectForTicketToBeAddedFetchedAndDeleted() {
 
         final Instant currentTime = Instant.now();
@@ -100,6 +99,7 @@ class TicketControllerIntegrationTest {
     }
 
     @Test
+    @WithMockUser(roles = {"CREATE_TICKET", "UPDATE_TICKET", "DELETE_TICKET", "READ_TICKET"})
     void postTicket_putTicket_deleteTicket_getAll_whenInvokedWithValidTicketDto_thenExpectForTicketToBeAddedThenEditedThenDeleted() {
 
         final Instant currentTime = Instant.now();
@@ -153,5 +153,32 @@ class TicketControllerIntegrationTest {
     private HttpEntity createHttpEntity(final TicketDto updatedDto) {
 
         return new HttpEntity(updatedDto);
+    }
+
+    @Test
+    @WithMockUser(roles = {"READ_TICKET"})
+    void postTicketWithWrongRole() {
+
+        final TicketDto dto = TicketObjectGenerator.generateTicketDtoWithoutTimestamps(UUID.randomUUID(), UUID.randomUUID());
+        try {
+            restTemplate.postForEntity(createUrl(), dto, TicketDto.class);
+
+        } catch (HttpClientErrorException.Forbidden e) {
+            return;
+        }
+
+        throw new AssertionError("The request status is not 403");
+    }
+
+    @Test
+    void postTicketWithNoRole() {
+
+        final TicketDto dto = TicketObjectGenerator.generateTicketDto(UUID.randomUUID(), UUID.randomUUID());
+        try {
+            restTemplate.postForEntity(createUrl(), dto, TicketDto.class);
+        } catch (HttpClientErrorException.Unauthorized e) {
+            return;
+        }
+        throw new AssertionError("The request status is not 401");
     }
 }

@@ -7,6 +7,7 @@ import org.springframework.core.convert.converter.Converter;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
+import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
 import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -24,13 +25,11 @@ import java.util.List;
 @EnableWebFluxSecurity
 public class SecurityConfig {
 
-    public static final String USER = "ROLE_USER";
-
     @Bean
     SecurityWebFilterChain securityFilterChain(final ServerHttpSecurity http) {
 
-        return http.cors(Customizer.withDefaults())
-                .csrf(Customizer.withDefaults())
+        return http.cors(ServerHttpSecurity.CorsSpec::disable)
+                .csrf(ServerHttpSecurity.CsrfSpec::disable)
                 .authorizeExchange(this::setupRequestMatchers2)
                 .oauth2ResourceServer(authResourceServer -> authResourceServer
                         .jwt(jwtSpec -> jwtSpec.jwtAuthenticationConverter(converter())))
@@ -41,11 +40,11 @@ public class SecurityConfig {
 
     private void setupRequestMatchers2(ServerHttpSecurity.AuthorizeExchangeSpec authorizeExchangeSpec) {
 
-        authorizeExchangeSpec.pathMatchers("/event").authenticated();
-        authorizeExchangeSpec.pathMatchers("/sponsor").authenticated();
-        authorizeExchangeSpec.pathMatchers("/attendee").authenticated();
-        authorizeExchangeSpec.pathMatchers("/organizer").authenticated();
-        authorizeExchangeSpec.pathMatchers("/ticket").authenticated();
+        authorizeExchangeSpec.pathMatchers("/event/**").authenticated();
+        authorizeExchangeSpec.pathMatchers("/sponsor/**").authenticated();
+        authorizeExchangeSpec.pathMatchers("/attendee/**").authenticated();
+        authorizeExchangeSpec.pathMatchers("/organizer/**").authenticated();
+        authorizeExchangeSpec.pathMatchers("/ticket/**").authenticated();
         authorizeExchangeSpec.pathMatchers("/swagger-ui.html").permitAll();
         authorizeExchangeSpec.pathMatchers("/webjars/**").permitAll();
         authorizeExchangeSpec.pathMatchers("/v3/api-docs/**").permitAll();

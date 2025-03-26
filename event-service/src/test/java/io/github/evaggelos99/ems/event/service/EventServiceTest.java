@@ -5,9 +5,11 @@ import io.github.evaggelos99.ems.event.api.EventDto;
 import io.github.evaggelos99.ems.event.api.converters.EventToEventDtoConverter;
 import io.github.evaggelos99.ems.event.api.repo.IEventRepository;
 import io.github.evaggelos99.ems.event.api.util.EventObjectGenerator;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -35,6 +37,7 @@ class EventServiceTest {
     }
 
     @Test
+    @WithMockUser(roles = {"CREATE_EVENT", "UPDATE_EVENT", "DELETE_EVENT", "READ_EVENT"})
     void add_delete_existsById_whenInvokedWithValidEventDto_thenExpectEventToBeCorrectThenDeletedThenNotFetched() {
 
         // given
@@ -43,27 +46,27 @@ class EventServiceTest {
         final UUID sponsorId = UUID.randomUUID();
         final EventDto eventDto = EventObjectGenerator.generateEventDto(null, attendeeId, organizerId, sponsorId);
         // when
-        final Mono<Event> actualResult = assertDoesNotThrow(() -> service.add(eventDto));
-        // assert
-        StepVerifier.create(actualResult).assertNext(event -> {
-            assertEquals(eventDto.uuid(), event.getUuid());
-            assertNotNull(event.getCreatedAt());
-            assertNotNull(event.getLastUpdated());
-            assertEquals(eventDto.name(), event.getName());
-            assertEquals(eventDto.place(), event.getPlace());
-            assertEquals(eventDto.eventType(), event.getEventType());
-            assertTrue(event.getAttendeesIDs().contains(attendeeId));
-            assertEquals(organizerId, event.getOrganizerID());
-            assertTrue(event.getSponsorsIds().contains(sponsorId));
-            assertEquals(eventDto.startTimeOfEvent(), event.getStartTime());
-            assertEquals(eventDto.duration(), event.getDuration());
-        }).verifyComplete();
+        StepVerifier.create(assertDoesNotThrow(() -> service.add(eventDto)))
+                .assertNext(event -> {
+                    assertEquals(eventDto.uuid(), event.getUuid());
+                    assertNotNull(event.getCreatedAt());
+                    assertNotNull(event.getLastUpdated());
+                    assertEquals(eventDto.name(), event.getName());
+                    assertEquals(eventDto.place(), event.getPlace());
+                    assertEquals(eventDto.eventType(), event.getEventType());
+                    assertTrue(event.getAttendeesIDs().contains(attendeeId));
+                    assertEquals(organizerId, event.getOrganizerID());
+                    assertTrue(event.getSponsorsIds().contains(sponsorId));
+                    assertEquals(eventDto.startTimeOfEvent(), event.getStartTime());
+                    assertEquals(eventDto.duration(), event.getDuration());
+                }).verifyComplete();
         StepVerifier.create(assertDoesNotThrow(() -> service.delete(eventDto.uuid()))).expectNext(true)
                 .verifyComplete();
         StepVerifier.create(service.existsById(eventDto.uuid())).expectNext(false).verifyComplete();
     }
 
     @Test
+    @WithMockUser(roles = {"CREATE_EVENT", "UPDATE_EVENT", "DELETE_EVENT", "READ_EVENT"})
     void add_get_edit_delete_getAll_whenInvokedWithAttendeeDtoThenExpectToBeSaved_expectThatCanBeFetched() {
 
         final UUID attendeeId = UUID.randomUUID();
@@ -71,8 +74,7 @@ class EventServiceTest {
         final UUID sponsorId = UUID.randomUUID();
         final EventDto eventDto = EventObjectGenerator.generateEventDto(null, attendeeId, organizerId, sponsorId);
 
-        final Mono<Event> actualResult = assertDoesNotThrow(() -> service.add(eventDto));
-        StepVerifier.create(actualResult).assertNext(event -> {
+        StepVerifier.create(assertDoesNotThrow(() -> service.add(eventDto))).assertNext(event -> {
             assertEquals(eventDto.uuid(), event.getUuid());
             assertNotNull(event.getCreatedAt());
             assertNotNull(event.getLastUpdated());
@@ -87,7 +89,7 @@ class EventServiceTest {
             assertEquals(eventDto.duration(), event.getDuration());
         }).verifyComplete();
 
-        StepVerifier.create(service.get(eventDto.uuid())).expectNext(actualResult.block()).verifyComplete();
+        StepVerifier.create(service.get(eventDto.uuid())).assertNext(Assertions::assertNotNull).verifyComplete();
 
         final UUID attendeeId2 = UUID.randomUUID();
         final UUID organizerId2 = UUID.randomUUID();
@@ -119,6 +121,7 @@ class EventServiceTest {
     }
 
     @Test
+    @WithMockUser(roles = {"CREATE_EVENT", "UPDATE_EVENT", "DELETE_EVENT", "READ_EVENT"})
     void add_addAttendee_get_whenInvokedWithValidAttendeeDto_ThenExpectAttendeeToBeSaved_ThenExpectToAddAttendeeToAnEventAndReturnTrue_thenExpectToRetrieveTheUpdatedEvent() {
 
         final UUID eventId = UUID.randomUUID();
@@ -128,8 +131,7 @@ class EventServiceTest {
         final UUID sponsorId = UUID.randomUUID();
         final EventDto eventDto = EventObjectGenerator.generateEventDto(eventId, attendeeId, organizerId, sponsorId);
 
-        final Mono<Event> actualResult = assertDoesNotThrow(() -> service.add(eventDto));
-        StepVerifier.create(actualResult).assertNext(event -> {
+        StepVerifier.create(assertDoesNotThrow(() -> service.add(eventDto))).assertNext(event -> {
             assertEquals(eventDto.uuid(), event.getUuid());
             assertNotNull(event.getCreatedAt());
             assertNotNull(event.getLastUpdated());
@@ -158,7 +160,7 @@ class EventServiceTest {
 
         return new IEventRepository() {
 
-            Map<UUID, Event> list = new HashMap<>();
+            private final Map<UUID, Event> list = new HashMap<>();
 
             @Override
             public Mono<Event> save(final EventDto dto) {

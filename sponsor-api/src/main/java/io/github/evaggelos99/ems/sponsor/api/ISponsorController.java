@@ -43,7 +43,6 @@ public interface ISponsorController extends IGenericController {
             @ApiResponse(responseCode = "404", description = "could not find the object")})
     @ResponseStatus(value = HttpStatus.OK)
     @GetMapping("/{sponsorId}")
-    @Parameter(required = true, name = "sponsorId")
     Mono<SponsorDto> getSponsor(@PathVariable UUID sponsorId);
 
     /**
@@ -52,7 +51,7 @@ public interface ISponsorController extends IGenericController {
     @Operation(summary = "GET operation that returns all sponsor object", description = "retrieves all Sponsor objects from the data source")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "successful operation")})
     @ResponseStatus(value = HttpStatus.OK)
-    @GetMapping()
+    @GetMapping
     Flux<SponsorDto> getSponsors();
 
     /**

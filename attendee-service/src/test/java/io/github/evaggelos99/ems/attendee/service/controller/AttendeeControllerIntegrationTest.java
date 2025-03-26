@@ -6,6 +6,8 @@ import io.github.evaggelos99.ems.attendee.service.AttendeeServiceApplication;
 import io.github.evaggelos99.ems.attendee.service.remote.TicketLookUpRemoteService;
 import io.github.evaggelos99.ems.attendee.service.util.SqlScriptExecutor;
 import io.github.evaggelos99.ems.attendee.service.util.TestConfiguration;
+import io.github.evaggelos99.ems.event.api.EventDto;
+import io.github.evaggelos99.ems.event.api.util.EventObjectGenerator;
 import io.github.evaggelos99.ems.testcontainerkafka.lib.ExtendedKafkaContainer;
 import io.github.evaggelos99.ems.ticket.api.TicketDto;
 import io.github.evaggelos99.ems.ticket.api.util.TicketObjectGenerator;
@@ -16,12 +18,14 @@ import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import reactor.core.publisher.Mono;
@@ -44,8 +48,7 @@ class AttendeeControllerIntegrationTest {
     private static final String RELATIVE_ENDPOINT = "/attendee";
     @Container
     private static final ExtendedKafkaContainer KAFKA = new ExtendedKafkaContainer();
-    @Autowired
-    private TestRestTemplate restTemplate;
+    private final RestTemplate restTemplate = new RestTemplate();
     @Autowired
     private SqlScriptExecutor sqlScriptExecutor;
     @LocalServerPort
@@ -66,6 +69,7 @@ class AttendeeControllerIntegrationTest {
     }
 
     @Test
+    @WithMockUser(roles = {"CREATE_ATTENDEE", "UPDATE_ATTENDEE", "DELETE_ATTENDEE", "READ_ATTENDEE"})
     void postAttendee_getAttendee_deleteAttendee_getAttendee_whenInvokedWithValidAttendeeDto_thenExpectForAttendeeToBeAddedFetchedAndDeleted() {
 
         final Instant currentTime = Instant.now();
@@ -114,6 +118,7 @@ class AttendeeControllerIntegrationTest {
     }
 
     @Test
+    @WithMockUser(roles = {"CREATE_ATTENDEE", "UPDATE_ATTENDEE", "DELETE_ATTENDEE", "READ_ATTENDEE"})
     void postAttendee_putAttendee_getAttendee_deleteAttendee_getAll_whenInvokedWithValidAttendeeDto_thenExpectForAttendeeToBeAddedThenEditedThenDeleted() {
 
         final Instant currentTime = Instant.now();
@@ -169,6 +174,7 @@ class AttendeeControllerIntegrationTest {
     }
 
     @Test
+    @WithMockUser(roles = {"CREATE_ATTENDEE", "UPDATE_ATTENDEE", "DELETE_ATTENDEE", "READ_ATTENDEE"})
     void postAttendee_addTicket_deleteAttendee_whenInvokedWithValidAttendeeDto_thenExpectForAttendeeToBeAddedThenEditedWithAddTicketThenDeleted() {
 
         final Instant currentTime = Instant.now();
@@ -200,5 +206,30 @@ class AttendeeControllerIntegrationTest {
         assertEquals(Boolean.TRUE, actualPutEntity.getBody());
 
         restTemplate.delete(createUrl() + "/" + actualDto.uuid());
+    }
+
+    @Test
+    @WithMockUser(roles = {"READ_ATTENDEE"})
+    void postAttendeeWithWrongRole() {
+
+        final AttendeeDto dto = AttendeeObjectGenerator.generateAttendeeDtoWithoutTimestamps(UUID.randomUUID());
+        try {
+            restTemplate.postForEntity(createUrl(), dto, AttendeeDto.class);
+        } catch (HttpClientErrorException.Forbidden e) {
+            return;
+        }
+        throw new AssertionError("The request status is not 403");
+    }
+
+    @Test
+    void postAttendeeWithNoRole() {
+
+        final AttendeeDto dto = AttendeeObjectGenerator.generateAttendeeDto(UUID.randomUUID(),UUID.randomUUID(),UUID.randomUUID(),UUID.randomUUID());
+        try {
+            restTemplate.postForEntity(createUrl(), dto, AttendeeDto.class);
+        } catch (HttpClientErrorException.Unauthorized e) {
+            return;
+        }
+        throw new AssertionError("The request status is not 401");
     }
 }
