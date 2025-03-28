@@ -16,10 +16,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.Instant;
-import java.util.List;
-import java.util.Objects;
-import java.util.Properties;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Function;
 
 import static java.util.Objects.requireNonNull;
@@ -30,7 +27,7 @@ public class OrganizerRepository implements IOrganizerRepository {
     private final DatabaseClient databaseClient;
     private final OrganizerRowMapper organizerRowMapper;
     private final Function<OrganizerDto, Organizer> organizerDtoToOrganizerConverter;
-    private final Properties organizerQueriesProperties;
+    private final Map<CrudQueriesOperations, String> organizerQueriesProperties;
 
     /**
      * C-or
@@ -46,14 +43,14 @@ public class OrganizerRepository implements IOrganizerRepository {
      *                                         used for converting
      *                                         {@link OrganizerDto} to
      *                                         {@link Organizer}
-     * @param organizerQueriesProperties       the {@link Properties} which are used
+     * @param organizerQueriesProperties       the {@link Map} which are used
      *                                         for getting the right query CRUD
      *                                         database operations
      */
     public OrganizerRepository(final DatabaseClient databaseClient,
                                @Qualifier("organizerRowMapper") final OrganizerRowMapper organizerRowMapper,
                                @Qualifier("organizerDtoToOrganizerConverter") final Function<OrganizerDto, Organizer> organizerDtoToOrganizerConverter,
-                               @Qualifier("queriesProperties") final Properties organizerQueriesProperties) {
+                               @Qualifier("queriesProperties") final Map<CrudQueriesOperations, String> organizerQueriesProperties) {
 
         this.databaseClient = requireNonNull(databaseClient);
         this.organizerRowMapper = requireNonNull(organizerRowMapper);
@@ -70,14 +67,14 @@ public class OrganizerRepository implements IOrganizerRepository {
     @Override
     public Mono<Organizer> findById(final UUID uuid) {
 
-        return databaseClient.sql(organizerQueriesProperties.getProperty(CrudQueriesOperations.GET_ID.name()))
+        return databaseClient.sql(organizerQueriesProperties.get(CrudQueriesOperations.GET_ID))
                 .bind(0, uuid).map(organizerRowMapper).one();
     }
 
     @Override
     public Mono<Boolean> deleteById(final UUID uuid) {
 
-        return databaseClient.sql(organizerQueriesProperties.getProperty(CrudQueriesOperations.DELETE_ID.name()))
+        return databaseClient.sql(organizerQueriesProperties.get(CrudQueriesOperations.DELETE_ID))
                 .bind(0, uuid).fetch().rowsUpdated().map(this::rowsAffectedAreMoreThanOne);
     }
 
@@ -90,7 +87,7 @@ public class OrganizerRepository implements IOrganizerRepository {
     @Override
     public Flux<Organizer> findAll() {
 
-        return databaseClient.sql(organizerQueriesProperties.getProperty(CrudQueriesOperations.GET_ALL.name()))
+        return databaseClient.sql(organizerQueriesProperties.get(CrudQueriesOperations.GET_ALL))
                 .map(organizerRowMapper).all();
     }
 
@@ -113,7 +110,7 @@ public class OrganizerRepository implements IOrganizerRepository {
         final EventType[] eventTypesArray = convertToArray(listOfEventTypes);
 
         final Mono<Long> rowsAffected = databaseClient
-                .sql(organizerQueriesProperties.getProperty(CrudQueriesOperations.EDIT.name())).bind(0, uuid)
+                .sql(organizerQueriesProperties.get(CrudQueriesOperations.EDIT)).bind(0, uuid)
                 .bind(1, updatedAt).bind(2, name).bind(3, website).bind(4, information).bind(5, eventTypesArray)
                 .bind(6, contactInformation.email()).bind(7, contactInformation.phoneNumber())
                 .bind(8, contactInformation.physicalAddress()).bind(9, uuid).fetch().rowsUpdated();
@@ -145,7 +142,7 @@ public class OrganizerRepository implements IOrganizerRepository {
         final EventType[] eventTypesArray = convertToArray(listOfEventTypes);
 
         final Mono<Long> rowsAffected = databaseClient
-                .sql(organizerQueriesProperties.getProperty(CrudQueriesOperations.SAVE.name())).bind(0, uuid)
+                .sql(organizerQueriesProperties.get(CrudQueriesOperations.SAVE)).bind(0, uuid)
                 .bind(1, instantNow).bind(2, instantNow).bind(3, name).bind(4, website).bind(5, information)
                 .bind(6, eventTypesArray).bind(7, contactInformation.email()).bind(8, contactInformation.phoneNumber())
                 .bind(9, contactInformation.physicalAddress()).fetch().rowsUpdated();

@@ -19,10 +19,7 @@ import reactor.core.publisher.Mono;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Objects;
-import java.util.Properties;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Function;
 
 import static java.util.Objects.requireNonNull;
@@ -33,7 +30,7 @@ public class EventRepository implements IEventRepository {
     private final DatabaseClient databaseClient;
     private final EventRowMapper eventRowMapper;
     private final Function<EventDto, Event> eventDtoToEventConverter;
-    private final Properties eventQueriesProperties;
+    private final Map<CrudQueriesOperations, String> eventQueriesProperties;
     private final Function<Duration, Object> durationToIntervalConverter;
 
     /**
@@ -47,7 +44,7 @@ public class EventRepository implements IEventRepository {
      * @param eventDtoToEventConverter    the {@link EventDtoToEventConverter} used
      *                                    for converting {@link EventDto} to
      *                                    {@link Event}
-     * @param eventQueriesProperties      the {@link Properties} which are used for
+     * @param eventQueriesProperties      the {@link Map} which are used for
      *                                    getting the right query CRUD database
      *                                    operations
      * @param durationToIntervalConverter {@link DurationToIntervalConverter} this
@@ -56,7 +53,7 @@ public class EventRepository implements IEventRepository {
     public EventRepository(final DatabaseClient databaseClient,
                            @Qualifier("eventRowMapper") final EventRowMapper eventRowMapperFunction,
                            @Qualifier("eventDtoToEventConverter") final Function<EventDto, Event> eventDtoToEventConverter,
-                           @Qualifier("queriesProperties") final Properties eventQueriesProperties,
+                           @Qualifier("queriesProperties") final Map<CrudQueriesOperations, String> eventQueriesProperties,
                            @Qualifier("durationToIntervalConverter") final Function<Duration, Object> durationToIntervalConverter) {
 
         this.databaseClient = requireNonNull(databaseClient);
@@ -75,14 +72,14 @@ public class EventRepository implements IEventRepository {
     @Override
     public Mono<Event> findById(final UUID uuid) {
 
-        return databaseClient.sql(eventQueriesProperties.getProperty(CrudQueriesOperations.GET_ID.name())).bind(0, uuid)
+        return databaseClient.sql(eventQueriesProperties.get(CrudQueriesOperations.GET_ID)).bind(0, uuid)
                 .map(eventRowMapper).one();
     }
 
     @Override
     public Mono<Boolean> deleteById(final UUID uuid) {
 
-        return databaseClient.sql(eventQueriesProperties.getProperty(CrudQueriesOperations.DELETE_ID.name()))
+        return databaseClient.sql(eventQueriesProperties.get(CrudQueriesOperations.DELETE_ID))
                 .bind(0, uuid).fetch().rowsUpdated().map(this::rowsAffectedAreMoreThanOne);
     }
 
@@ -95,7 +92,7 @@ public class EventRepository implements IEventRepository {
     @Override
     public Flux<Event> findAll() {
 
-        return databaseClient.sql(eventQueriesProperties.getProperty(CrudQueriesOperations.GET_ALL.name()))
+        return databaseClient.sql(eventQueriesProperties.get(CrudQueriesOperations.GET_ALL))
                 .map(eventRowMapper).all();
     }
 
@@ -122,7 +119,7 @@ public class EventRepository implements IEventRepository {
         final UUID[] attendees = convertToArray(attendeesIds);
         final UUID[] sponsors = convertToArray(sponsorIds);
         final Mono<Long> rowsAffected = databaseClient
-                .sql(eventQueriesProperties.getProperty(CrudQueriesOperations.EDIT.name())).bind(0, uuid)
+                .sql(eventQueriesProperties.get(CrudQueriesOperations.EDIT)).bind(0, uuid)
                 .bind(1, updatedAt).bind(2, name).bind(3, place).bind(4, eventType).bind(5, attendees)
                 .bind(6, organizerId).bind(7, limitOfPeople).bind(8, sponsors).bind(9, startTimeOfEvent)
                 .bind(10, interval).bind(11, uuid).fetch().rowsUpdated();
@@ -164,7 +161,7 @@ public class EventRepository implements IEventRepository {
         final UUID[] sponsors = convertToArray(sponsorIds);
 
         final Mono<Long> rowsAffected = databaseClient
-                .sql(eventQueriesProperties.getProperty(CrudQueriesOperations.SAVE.name())).bind(0, uuid).bind(1, now)
+                .sql(eventQueriesProperties.get(CrudQueriesOperations.SAVE)).bind(0, uuid).bind(1, now)
                 .bind(2, now).bind(3, name).bind(4, place).bind(5, eventType).bind(6, attendees).bind(7, organizerId)
                 .bind(8, limitOfPeople).bind(9, sponsors).bind(10, startTimeOfEvent).bind(11, interval).fetch()
                 .rowsUpdated();

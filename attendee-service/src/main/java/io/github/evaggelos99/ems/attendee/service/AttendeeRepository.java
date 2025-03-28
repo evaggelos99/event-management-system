@@ -15,10 +15,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.Instant;
-import java.util.List;
-import java.util.Objects;
-import java.util.Properties;
-import java.util.UUID;
+import java.util.*;
 import java.util.function.Function;
 
 import static java.util.Objects.requireNonNull;
@@ -29,7 +26,7 @@ public class AttendeeRepository implements IAttendeeRepository {
     private final DatabaseClient databaseClient;
     private final AttendeeRowMapper attendeeRowMapper;
     private final Function<AttendeeDto, Attendee> attendeeDtoToAttendeeConverter;
-    private final Properties attendeeQueriesProperties;
+    private final Map<CrudQueriesOperations, String> attendeeQueriesProperties;
 
     /**
      * C-or
@@ -44,14 +41,14 @@ public class AttendeeRepository implements IAttendeeRepository {
      *                                       {@link AttendeeDtoToAttendeeConverter}
      *                                       used for converting {@link AttendeeDto}
      *                                       to {@link Attendee}
-     * @param attendeeQueriesProperties      the {@link Properties} which are used
+     * @param attendeeQueriesProperties      the {@link Map} which are used
      *                                       for getting the right query CRUD
      *                                       database operations
      */
     public AttendeeRepository(final DatabaseClient databaseClient,
                               @Qualifier("attendeeRowMapper") final AttendeeRowMapper attendeeRowMapper,
                               @Qualifier("attendeeDtoToAttendeeConverter") final Function<AttendeeDto, Attendee> attendeeDtoToAttendeeConverter,
-                              @Qualifier("queriesProperties") final Properties attendeeQueriesProperties) {
+                              @Qualifier("queriesProperties") final Map<CrudQueriesOperations, String> attendeeQueriesProperties) {
 
         this.databaseClient = requireNonNull(databaseClient);
         this.attendeeRowMapper = requireNonNull(attendeeRowMapper);
@@ -68,14 +65,14 @@ public class AttendeeRepository implements IAttendeeRepository {
     @Override
     public Mono<Attendee> findById(final UUID uuid) {
 
-        return databaseClient.sql(attendeeQueriesProperties.getProperty(CrudQueriesOperations.GET_ID.name()))
+        return databaseClient.sql(attendeeQueriesProperties.get(CrudQueriesOperations.GET_ID))
                 .bind(0, uuid).map(attendeeRowMapper).one();
     }
 
     @Override
     public Mono<Boolean> deleteById(final UUID uuid) {
 
-        return databaseClient.sql(attendeeQueriesProperties.getProperty(CrudQueriesOperations.DELETE_ID.name()))
+        return databaseClient.sql(attendeeQueriesProperties.get(CrudQueriesOperations.DELETE_ID))
                 .bind(0, uuid).fetch().rowsUpdated().map(this::rowsAffectedAreMoreThanOne);
     }
 
@@ -88,7 +85,7 @@ public class AttendeeRepository implements IAttendeeRepository {
     @Override
     public Flux<Attendee> findAll() {
 
-        return databaseClient.sql(attendeeQueriesProperties.getProperty(CrudQueriesOperations.GET_ALL.name()))
+        return databaseClient.sql(attendeeQueriesProperties.get(CrudQueriesOperations.GET_ALL))
                 .map(attendeeRowMapper).all();
     }
 
@@ -105,7 +102,7 @@ public class AttendeeRepository implements IAttendeeRepository {
         final List<UUID> ticketIds = attendee.ticketIDs() != null ? attendee.ticketIDs() : List.of();
         final UUID[] uuids = convertToArray(ticketIds);
         final Mono<Long> rowsAffected = databaseClient
-                .sql(attendeeQueriesProperties.getProperty(CrudQueriesOperations.EDIT.name())).bind(0, uuid)
+                .sql(attendeeQueriesProperties.get(CrudQueriesOperations.EDIT)).bind(0, uuid)
                 .bind(1, updatedAt).bind(2, attendee.firstName()).bind(3, attendee.lastName()).bind(4, uuids)
                 .bind(5, uuid).fetch().rowsUpdated();
         return rowsAffected.filter(this::rowsAffectedAreMoreThanOne).flatMap(rowNum -> findById(uuid))
@@ -129,7 +126,7 @@ public class AttendeeRepository implements IAttendeeRepository {
         final List<UUID> ticketIds = attendee.ticketIDs() != null ? attendee.ticketIDs() : List.of();
         final UUID[] uuids = convertToArray(ticketIds);
         final Mono<Long> rowsAffected = databaseClient
-                .sql(attendeeQueriesProperties.getProperty(CrudQueriesOperations.SAVE.name())).bind(0, uuid)
+                .sql(attendeeQueriesProperties.get(CrudQueriesOperations.SAVE)).bind(0, uuid)
                 .bind(1, instantNow).bind(2, instantNow).bind(3, attendee.firstName()).bind(4, attendee.lastName())
                 .bind(5, uuids).fetch().rowsUpdated();
         return rowsAffected.filter(this::rowsAffectedAreMoreThanOne).map(rowNum -> attendeeDtoToAttendeeConverter.apply(
