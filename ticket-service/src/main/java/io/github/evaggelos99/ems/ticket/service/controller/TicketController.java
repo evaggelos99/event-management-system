@@ -4,7 +4,6 @@ import io.github.evaggelos99.ems.common.api.service.IService;
 import io.github.evaggelos99.ems.ticket.api.ITicketController;
 import io.github.evaggelos99.ems.ticket.api.Ticket;
 import io.github.evaggelos99.ems.ticket.api.TicketDto;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,8 +34,8 @@ public class TicketController implements ITicketController {
      * @param ticketService              service responsible for CRUD operations
      * @param ticketToTicketDtoConverter ticket to DTO
      */
-    public TicketController(@Autowired final IService<Ticket, TicketDto> ticketService,
-                            @Autowired @Qualifier("ticketToTicketDtoConverter") final Function<Ticket, TicketDto> ticketToTicketDtoConverter) {
+    public TicketController(final IService<Ticket, TicketDto> ticketService,
+                            @Qualifier("ticketToTicketDtoConverter") final Function<Ticket, TicketDto> ticketToTicketDtoConverter) {
 
         this.ticketService = requireNonNull(ticketService);
         this.ticketToTicketDtoConverter = requireNonNull(ticketToTicketDtoConverter);
@@ -90,17 +89,7 @@ public class TicketController implements ITicketController {
     @Override
     public Mono<Boolean> ping() {
 
-        return pingService();
-    }
-
-    private Mono<Boolean> pingService() {
-        try {
-
-            return ticketService.ping().log().onErrorReturn(false);
-        } catch (final Exception e) {
-
-            return Mono.just(false);
-        }
+        return ticketService.ping().onErrorReturn(false);
     }
 
 }

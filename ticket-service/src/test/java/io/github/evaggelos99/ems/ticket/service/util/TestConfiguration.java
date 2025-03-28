@@ -30,23 +30,4 @@ public class TestConfiguration {
         return DatabaseClient.builder().connectionFactory(postgresqlConnectionFactory).build();
     }
 
-//	@Bean("ticketRowMapper")
-//	TicketRowMapper ticketRowMapper() {
-//
-//		return new TicketRowMapper() {
-//
-//			@Override
-//			public Ticket apply(final Row row, final RowMetadata u) {
-//
-//				final SeatingInformation seatingInformation = new SeatingInformation(row.get("seat", String.class),
-//						row.get("section", String.class));
-//
-//				return new Ticket(row.get("id", UUID.class), row.get("created_at", OffsetDateTime.class).toInstant(),
-//						row.get("last_updated", OffsetDateTime.class).toInstant(),
-//						UUID.fromString(row.get("event_id", String.class)),
-//						TicketType.valueOf(row.get("ticket_type", String.class)), row.get("price", Integer.class),
-//						row.get("transferable", Boolean.class), seatingInformation);
-//			}
-//		};
-//	}
 }

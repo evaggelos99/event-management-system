@@ -58,7 +58,6 @@ public interface ITicketController extends IGenericController {
      * any Attendee stored in the DB it will return 404
      *
      * @param ticketId the UUID of the Attendee object
-     * @param ticket   the edited Ticket object
      */
     @Operation(summary = "PUT operation that updates or creates an ticket object", description = "updates or creates an Attendee object and stores it in the data source")
     @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "successful operation"),

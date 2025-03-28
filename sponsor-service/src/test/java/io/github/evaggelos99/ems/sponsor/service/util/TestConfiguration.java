@@ -29,4 +29,5 @@ public class TestConfiguration {
 
         return DatabaseClient.builder().connectionFactory(postgresqlConnectionFactory).build();
     }
+
 }

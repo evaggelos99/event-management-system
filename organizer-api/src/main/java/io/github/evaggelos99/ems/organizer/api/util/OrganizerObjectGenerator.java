@@ -15,11 +15,11 @@ public final class OrganizerObjectGenerator {
 
     }
 
-    public static OrganizerDto generateOrganizerDto(final EventType... eventTypes) {
+    public static OrganizerDto generateOrganizerDto(UUID id, final EventType... eventTypes) {
 
         final Instant timestamp = Instant.now();
         return OrganizerDto.builder()
-                .uuid(UUID.randomUUID())
+                .uuid(id != null ? id : UUID.randomUUID())
                 .createdAt(timestamp)
                 .lastUpdated(timestamp)
                 .name(UUID.randomUUID().toString())

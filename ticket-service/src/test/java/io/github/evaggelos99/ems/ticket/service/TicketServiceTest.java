@@ -7,6 +7,7 @@ import io.github.evaggelos99.ems.ticket.api.util.TicketObjectGenerator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -24,6 +25,7 @@ class TicketServiceTest {
 
     private final ITicketRepository ticketRepository = ticketRepositoryMock();
 
+
     private TicketService service;
 
     @BeforeEach
@@ -33,6 +35,7 @@ class TicketServiceTest {
     }
 
     @Test
+    @WithMockUser(roles = {"CREATE_TICKET", "UPDATE_TICKET", "DELETE_TICKET", "READ_TICKET"})
     void add_delete_existsById_whenInvokedWithValidTicketDto_thenExpectEventToBeCorrectThenDeletedThenNotFetched() {
 
         final UUID eventId = UUID.randomUUID();
@@ -59,6 +62,7 @@ class TicketServiceTest {
     }
 
     @Test
+    @WithMockUser(roles = {"CREATE_TICKET", "UPDATE_TICKET", "DELETE_TICKET", "READ_TICKET"})
     void add_get_edit_delete_getAll_whenInvokedWithAttendeeDtoThenExpectToBeSaved_expectThatCanBeFetched() {
 
         final UUID eventId = UUID.randomUUID();
@@ -104,7 +108,7 @@ class TicketServiceTest {
 
         return new ITicketRepository() {
 
-            Map<UUID, Ticket> list = new HashMap<>();
+            private final Map<UUID, Ticket> list = new HashMap<>();
 
             @Override
             public Mono<Ticket> save(final TicketDto dto) {

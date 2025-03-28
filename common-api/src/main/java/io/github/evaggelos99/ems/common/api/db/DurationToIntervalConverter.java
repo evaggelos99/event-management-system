@@ -13,6 +13,5 @@ public class DurationToIntervalConverter implements Function<Duration, Object> {
     public Interval apply(final Duration duration) {
 
         return Interval.of(duration);
-
     }
 }

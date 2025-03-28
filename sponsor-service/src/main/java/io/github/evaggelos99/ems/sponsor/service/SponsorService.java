@@ -1,17 +1,19 @@
 package io.github.evaggelos99.ems.sponsor.service;
 
 import io.github.evaggelos99.ems.common.api.controller.exceptions.ObjectNotFoundException;
+import io.github.evaggelos99.ems.common.api.domainobjects.validators.constraints.PublisherValidator;
 import io.github.evaggelos99.ems.common.api.service.IService;
+import io.github.evaggelos99.ems.security.lib.SecurityContextHelper;
 import io.github.evaggelos99.ems.sponsor.api.Sponsor;
 import io.github.evaggelos99.ems.sponsor.api.SponsorDto;
 import io.github.evaggelos99.ems.sponsor.api.repo.ISponsorRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.UUID;
 
+import static io.github.evaggelos99.ems.security.lib.Roles.*;
 import static java.util.Objects.requireNonNull;
 
 @Service
@@ -22,10 +24,10 @@ public class SponsorService implements IService<Sponsor, SponsorDto> {
     /**
      * C-or
      *
-     * @param organizerRepository {@link SponsorRepository} the repository that
+     * @param sponsorRepository {@link SponsorRepository} the repository that
      *                            communicates with the database
      */
-    public SponsorService(@Autowired final ISponsorRepository sponsorRepository) {
+    public SponsorService(final ISponsorRepository sponsorRepository) {
 
         this.sponsorRepository = requireNonNull(sponsorRepository);
     }
@@ -34,10 +36,10 @@ public class SponsorService implements IService<Sponsor, SponsorDto> {
      * {@inheritDoc}
      */
     @Override
-    public Mono<Sponsor> add(final SponsorDto attendee) {
+    public Mono<Sponsor> add(final SponsorDto sponsorDto) {
 
-        return sponsorRepository.save(attendee);
-
+        return SecurityContextHelper.filterRoles(ROLE_CREATE_SPONSOR) //TODO extract 
+                .flatMap(x -> PublisherValidator.validateBooleanMono(x, () -> sponsorRepository.save(sponsorDto)));
     }
 
     /**
@@ -46,8 +48,8 @@ public class SponsorService implements IService<Sponsor, SponsorDto> {
     @Override
     public Mono<Sponsor> get(final UUID uuid) {
 
-        return sponsorRepository.findById(uuid);
-
+        return SecurityContextHelper.filterRoles(ROLE_READ_SPONSOR) //TODO extract 
+                .flatMap(x -> PublisherValidator.validateBooleanMono(x, () -> sponsorRepository.findById(uuid)));
     }
 
     /**
@@ -56,8 +58,8 @@ public class SponsorService implements IService<Sponsor, SponsorDto> {
     @Override
     public Mono<Boolean> delete(final UUID uuid) {
 
-        return sponsorRepository.deleteById(uuid);
-
+        return SecurityContextHelper.filterRoles(ROLE_DELETE_SPONSOR) //TODO extract 
+                .flatMap(x -> PublisherValidator.validateBooleanMono(x, () -> sponsorRepository.deleteById(uuid)));
     }
 
     /**
@@ -67,8 +69,8 @@ public class SponsorService implements IService<Sponsor, SponsorDto> {
     public Mono<Sponsor> edit(final UUID uuid, final SponsorDto sponsor) {
 
         return !uuid.equals(sponsor.uuid()) ? Mono.error(() -> new ObjectNotFoundException(uuid, SponsorDto.class))
-                : sponsorRepository.edit(sponsor);
-
+                : SecurityContextHelper.filterRoles(ROLE_UPDATE_SPONSOR) //TODO extract 
+                .flatMap(x -> PublisherValidator.validateBooleanMono(x, () -> sponsorRepository.edit(sponsor)));
     }
 
     /**
@@ -77,8 +79,8 @@ public class SponsorService implements IService<Sponsor, SponsorDto> {
     @Override
     public Flux<Sponsor> getAll() {
 
-        return sponsorRepository.findAll();
-
+        return SecurityContextHelper.filterRoles(ROLE_READ_SPONSOR) //TODO extract 
+                .flatMapMany(x -> PublisherValidator.validateBooleanFlux(x, sponsorRepository::findAll));
     }
 
     /**
@@ -87,8 +89,8 @@ public class SponsorService implements IService<Sponsor, SponsorDto> {
     @Override
     public Mono<Boolean> existsById(final UUID attendeeId) {
 
-        return sponsorRepository.existsById(attendeeId);
-
+        return SecurityContextHelper.filterRoles(ROLE_READ_SPONSOR) //TODO extract 
+                .flatMap(x -> PublisherValidator.validateBooleanMono(x, () -> sponsorRepository.existsById(attendeeId)));
     }
 
     @Override

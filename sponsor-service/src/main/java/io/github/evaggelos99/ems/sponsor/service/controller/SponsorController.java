@@ -4,7 +4,6 @@ import io.github.evaggelos99.ems.common.api.service.IService;
 import io.github.evaggelos99.ems.sponsor.api.ISponsorController;
 import io.github.evaggelos99.ems.sponsor.api.Sponsor;
 import io.github.evaggelos99.ems.sponsor.api.SponsorDto;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -35,8 +34,8 @@ public class SponsorController implements ISponsorController {
      * @param sponsorService               service responsible for CRUD operations
      * @param sponsorToSponsorDtoConverter sponsor to DTO
      */
-    public SponsorController(@Autowired final IService<Sponsor, SponsorDto> sponsorService,
-                             @Autowired @Qualifier("sponsorToSponsorDtoConverter") final Function<Sponsor, SponsorDto> sponsorToSponsorDtoConverter) {
+    public SponsorController(final IService<Sponsor, SponsorDto> sponsorService,
+                             @Qualifier("sponsorToSponsorDtoConverter") final Function<Sponsor, SponsorDto> sponsorToSponsorDtoConverter) {
 
         this.sponsorService = requireNonNull(sponsorService);
         this.sponsorToSponsorDtoConverter = requireNonNull(sponsorToSponsorDtoConverter);
@@ -49,7 +48,6 @@ public class SponsorController implements ISponsorController {
     public Mono<SponsorDto> postSponsor(final SponsorDto sponsorDto) {
 
         return sponsorService.add(sponsorDto).map(sponsorToSponsorDtoConverter);
-
     }
 
     /**
@@ -59,7 +57,6 @@ public class SponsorController implements ISponsorController {
     public Mono<SponsorDto> getSponsor(final UUID sponsorId) {
 
         return sponsorService.get(sponsorId).map(sponsorToSponsorDtoConverter);
-
     }
 
     /**
@@ -69,7 +66,6 @@ public class SponsorController implements ISponsorController {
     public Flux<SponsorDto> getSponsors() {
 
         return sponsorService.getAll().map(sponsorToSponsorDtoConverter);
-
     }
 
     /**
@@ -79,7 +75,6 @@ public class SponsorController implements ISponsorController {
     public Mono<SponsorDto> putSponsor(final UUID sponsorId, final SponsorDto sponsorDto) {
 
         return sponsorService.edit(sponsorId, sponsorDto).map(sponsorToSponsorDtoConverter);
-
     }
 
     /**
@@ -89,7 +84,6 @@ public class SponsorController implements ISponsorController {
     public Mono<Boolean> deleteSponsor(final UUID sponsorId) {
 
         return sponsorService.delete(sponsorId);
-
     }
 
     /**

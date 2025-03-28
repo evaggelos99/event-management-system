@@ -1,0 +1,36 @@
+# admin
+# adminadmin
+services:
+
+  fusionauth:
+    hostname: fusionauth
+    image: fusionauth/fusionauth-app:1.55.1
+    environment:
+      DATABASE_URL: jdbc:postgresql://host.docker.internal:5432/fusionauth
+      DATABASE_ROOT_USERNAME: fusionauth
+      DATABASE_ROOT_PASSWORD: fusionauth
+      DATABASE_USERNAME: fusionauth
+      DATABASE_PASSWORD: fusionauth
+      FUSIONAUTH_APP_MEMORY: "512M"
+      FUSIONAUTH_APP_RUNTIME_MODE: "development"
+      FUSIONAUTH_APP_URL: http://fusionauth:9011
+    healthcheck:
+      test: curl --silent --fail http://localhost:9011/api/status -o /dev/null -w "%{http_code}"
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - db_net
+    restart: unless-stopped
+    ports:
+      - "9011:9011"
+    volumes:
+      - fusionauth_config:/usr/local/fusionauth/config
+
+networks:
+  db_net:
+    driver: bridge
+
+volumes:
+  db_data:
+  fusionauth_config:

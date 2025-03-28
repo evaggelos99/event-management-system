@@ -13,11 +13,13 @@ import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestTemplate;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -33,8 +35,7 @@ class SponsorControllerIntegrationTest {
 
     private static final String HOSTNAME = "http://localhost:";
     private static final String RELATIVE_ENDPOINT = "/sponsor";
-    @Autowired
-    private TestRestTemplate restTemplate;
+    private final RestTemplate restTemplate = new RestTemplate();
     @Autowired
     private SqlScriptExecutor sqlScriptExecutor;
     @LocalServerPort
@@ -47,6 +48,7 @@ class SponsorControllerIntegrationTest {
     }
 
     @Test
+    @WithMockUser(roles = {"CREATE_SPONSOR", "UPDATE_SPONSOR", "DELETE_SPONSOR", "READ_SPONSOR"})
     void postSponsor_getSponsor_deleteSponsor_getSponsor_whenInvokedWithValidSponsorDto_thenExpectForSponsorToBeAddedFetchedAndDeleted() {
 
         final Instant currentTime = Instant.now();
@@ -94,11 +96,12 @@ class SponsorControllerIntegrationTest {
     }
 
     @Test
-    void postOrganizer_putOrganizer_getOrganizer_deleteOrganizer_getAll_whenInvokedWithValidSponsorDto_thenExpectForOrganizerToBeAddedThenEditedThenDeleted() {
+    @WithMockUser(roles = {"CREATE_SPONSOR", "UPDATE_SPONSOR", "DELETE_SPONSOR", "READ_SPONSOR"})
+    void postSponsor_putSponsor_getSponsor_deleteSponsor_getAll_whenInvokedWithValidSponsorDto_thenExpectForSponsorToBeAddedThenEditedThenDeleted() {
 
         final Instant currentTime = Instant.now();
         final SponsorDto dto = SponsorObjectGenerator.generateSponsorDtoWithoutTimestamps();
-        // postOrganizer
+        // postSponsor
         final ResponseEntity<SponsorDto> actualEntity = restTemplate.postForEntity(createUrl(), dto, SponsorDto.class);
         assertTrue(actualEntity.getStatusCode().is2xxSuccessful());
         final SponsorDto actualDto = actualEntity.getBody();
@@ -111,7 +114,7 @@ class SponsorControllerIntegrationTest {
         assertEquals(dto.website(), actualDto.website());
         assertEquals(dto.financialContribution(), actualDto.financialContribution());
         assertEquals(dto.contactInformation(), actualDto.contactInformation());
-        // putOrganizer
+        // putSponsor
         final ContactInformation contactInformation = SponsorObjectGenerator.generateContactInformation();
 
         final SponsorDto updatedDto = SponsorDto.builder()
@@ -137,25 +140,50 @@ class SponsorControllerIntegrationTest {
         assertEquals(updatedDto.financialContribution(), actualPutDto.financialContribution());
         assertEquals(updatedDto.contactInformation(), actualPutDto.contactInformation());
 
-        // deleteOrganizer
+        // deleteSponsor
         restTemplate.delete(createUrl() + "/{uuid}", actualDto.uuid());
         // assertThat the list returned is empty
-        @SuppressWarnings("rawtypes") final ResponseEntity<List> listOfOrganizers = restTemplate.getForEntity(createUrl(), List.class);
-        assertTrue(listOfOrganizers.getStatusCode().is2xxSuccessful());
-        final List<?> body = listOfOrganizers.getBody();
+        @SuppressWarnings("rawtypes") final ResponseEntity<List> listOfSponsor = restTemplate.getForEntity(createUrl(), List.class);
+        assertTrue(listOfSponsor.getStatusCode().is2xxSuccessful());
+        final List<?> body = listOfSponsor.getBody();
         assertNotNull(body);
         assertTrue(body.isEmpty());
+    }
+
+    @Test
+    @WithMockUser(roles = {"READ_SPONSOR"})
+    void postSponsorWithWrongRole() {
+
+        final SponsorDto dto = SponsorObjectGenerator.generateSponsorDtoWithoutTimestamps();
+        try {
+            restTemplate.postForEntity(createUrl(), dto, SponsorDto.class);
+        } catch (HttpClientErrorException.Forbidden e) {
+            return;
+        }
+        throw new AssertionError("The request status is not 403");
+    }
+
+    @Test
+    void postSponsorWithNoRole() {
+
+        final SponsorDto dto = SponsorObjectGenerator.generateSponsorDtoWithoutTimestamps();
+        try {
+            restTemplate.postForEntity(createUrl(), dto, SponsorDto.class);
+        } catch (HttpClientErrorException.Unauthorized e) {
+            return;
+        }
+        throw new AssertionError("The request status is not 401");
+    }
+
+    private String createUrl() {
+
+        return HOSTNAME + this.port + RELATIVE_ENDPOINT;
     }
 
     @SuppressWarnings({"all"})
     private HttpEntity createHttpEntity(final SponsorDto updatedDto) {
 
         return new HttpEntity(updatedDto);
-    }
-
-    private String createUrl() {
-
-        return HOSTNAME + this.port + RELATIVE_ENDPOINT;
     }
 
 }

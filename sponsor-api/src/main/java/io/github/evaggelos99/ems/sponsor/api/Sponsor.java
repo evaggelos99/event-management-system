@@ -28,31 +28,26 @@ public final class Sponsor extends AbstractDomainObject {
         this.website = website;
         this.financialContribution = financialContribution;
         this.contactInformation = contactInformation;
-
     }
 
     public String getName() {
 
         return name;
-
     }
 
     public String getWebsite() {
 
         return website;
-
     }
 
     public Integer getFinancialContribution() {
 
         return financialContribution;
-
     }
 
     public ContactInformation getContactInformation() {
 
         return contactInformation;
-
     }
 
     @Override
@@ -68,7 +63,6 @@ public final class Sponsor extends AbstractDomainObject {
         return new EqualsBuilder().appendSuper(super.equals(that)).append(name, that.name).append(website, that.website)
                 .append(financialContribution, that.financialContribution)
                 .append(contactInformation, that.contactInformation).build();
-
     }
 
     @Override
@@ -76,7 +70,6 @@ public final class Sponsor extends AbstractDomainObject {
 
         return new HashCodeBuilder(17, 37).appendSuper(super.hashCode()).append(name).append(website)
                 .append(financialContribution).append(contactInformation).build();
-
     }
 
     @Override
@@ -85,7 +78,6 @@ public final class Sponsor extends AbstractDomainObject {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).appendSuper(super.toString())
                 .append("name", name).append("website", website).append("financialContribution", financialContribution)
                 .append("contactInformation", contactInformation).toString();
-
     }
 
 }

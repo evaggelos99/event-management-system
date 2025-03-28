@@ -4,9 +4,12 @@ import io.github.evaggelos99.ems.sponsor.api.Sponsor;
 import io.github.evaggelos99.ems.sponsor.api.SponsorDto;
 import io.github.evaggelos99.ems.sponsor.api.repo.ISponsorRepository;
 import io.github.evaggelos99.ems.sponsor.api.util.SponsorObjectGenerator;
+import jakarta.annotation.security.RolesAllowed;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -19,7 +22,7 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-@ExtendWith({SpringExtension.class})
+@ExtendWith(SpringExtension.class)
 class SponsorServiceTest {
 
     private final ISponsorRepository sponsorRepository = sponsorRepositoryMock();
@@ -33,6 +36,7 @@ class SponsorServiceTest {
     }
 
     @Test
+    @WithMockUser(roles = {"CREATE_SPONSOR", "UPDATE_SPONSOR", "DELETE_SPONSOR", "READ_SPONSOR"})
     void add_edit_delete_existsById_whenInvokedWithValidSponsorDto_thenExpectSponsorToBeCorrectThenDeletedThenNotFetched() {
 
         final UUID sponsorId = UUID.randomUUID();
@@ -65,10 +69,10 @@ class SponsorServiceTest {
         StepVerifier.create(service.delete(sponsorDto.uuid())).expectNext(true).verifyComplete();
 
         StepVerifier.create(service.existsById(sponsorDto.uuid())).expectNext(false).verifyComplete();
-
     }
 
     @Test
+    @WithMockUser(roles = {"CREATE_SPONSOR", "UPDATE_SPONSOR", "DELETE_SPONSOR", "READ_SPONSOR"})
     void add_get_getAll_delete_whenInvokedWithValidSponsorDto_thenExpectSponsorToBeFetchedThenFetchAllAvailableSponsorsThenDeleted() {
 
         final UUID sponsorId = UUID.randomUUID();
@@ -96,19 +100,16 @@ class SponsorServiceTest {
             assertEquals(sponsorDto.contactInformation(), sponsor.getContactInformation());
         }).verifyComplete();
 
-        StepVerifier.create(service.getAll()).assertNext(sponsor -> {
-            assertNotNull(sponsor);
-        }).expectNextCount(0).verifyComplete();
+        StepVerifier.create(service.getAll()).assertNext(Assertions::assertNotNull).expectNextCount(0).verifyComplete();
 
         StepVerifier.create(service.delete(sponsorDto.uuid())).expectNext(true).verifyComplete();
-
     }
 
     private ISponsorRepository sponsorRepositoryMock() {
 
         return new ISponsorRepository() {
 
-            Map<UUID, Sponsor> list = new HashMap<>();
+            private final Map<UUID, Sponsor> list = new HashMap<>();
 
             @Override
             public Mono<Sponsor> save(final SponsorDto dto) {

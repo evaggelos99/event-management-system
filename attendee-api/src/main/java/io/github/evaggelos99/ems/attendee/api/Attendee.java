@@ -27,17 +27,14 @@ public final class Attendee extends AbstractDomainObject {
     }
 
     public String getFirstName() {
-
         return firstName;
     }
 
     public String getLastName() {
-
         return lastName;
     }
 
     public List<UUID> getTicketIDs() {
-
         return Collections.unmodifiableList(ticketIDs);
     }
 
@@ -54,7 +51,6 @@ public final class Attendee extends AbstractDomainObject {
                 .append(lastName, that.lastName)
                 .append(ticketIDs, that.ticketIDs)
                 .build();
-
     }
 
     @Override
@@ -65,7 +61,6 @@ public final class Attendee extends AbstractDomainObject {
                 .append(lastName)
                 .append(ticketIDs)
                 .build();
-
     }
 
     @Override
@@ -76,7 +71,6 @@ public final class Attendee extends AbstractDomainObject {
                 .append("lastName", lastName)
                 .append("ticketIDs", ticketIDs)
                 .toString();
-
     }
 
 }

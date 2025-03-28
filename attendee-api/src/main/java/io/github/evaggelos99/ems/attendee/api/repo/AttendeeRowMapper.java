@@ -19,7 +19,7 @@ public class AttendeeRowMapper implements BiFunction<Row, RowMetadata, Attendee>
     private final Function<UUID[], List<UUID>> arrayToListOfUuidConverter;
 
     public AttendeeRowMapper(
-            @Autowired @Qualifier("arrayToListOfUuidConverter") final Function<UUID[], List<UUID>> arrayToListOfUuidConverter) {
+            @Qualifier("arrayToListOfUuidConverter") final Function<UUID[], List<UUID>> arrayToListOfUuidConverter) {
 
         this.arrayToListOfUuidConverter = arrayToListOfUuidConverter;
     }

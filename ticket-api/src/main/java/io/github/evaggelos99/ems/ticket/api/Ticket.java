@@ -33,37 +33,31 @@ public final class Ticket extends AbstractDomainObject {
         this.price = price;
         this.transferable = transferable;
         this.seatingInformation = seatingInformation;
-
     }
 
     public UUID getEventID() {
 
         return eventID;
-
     }
 
     public TicketType getTicketType() {
 
         return ticketType;
-
     }
 
     public Integer getPrice() {
 
         return price;
-
     }
 
     public Boolean getTransferable() {
 
         return transferable;
-
     }
 
     public SeatingInformation getSeatingInformation() {
 
         return seatingInformation;
-
     }
 
     @Override
@@ -79,7 +73,6 @@ public final class Ticket extends AbstractDomainObject {
         return new EqualsBuilder().appendSuper(super.equals(that)).append(eventID, that.eventID)
                 .append(ticketType, that.ticketType).append(price, that.price).append(transferable, that.transferable)
                 .append(seatingInformation, that.seatingInformation).build();
-
     }
 
     @Override
@@ -87,7 +80,6 @@ public final class Ticket extends AbstractDomainObject {
 
         return new HashCodeBuilder(17, 37).appendSuper(super.hashCode()).append(eventID).append(ticketType)
                 .append(price).append(transferable).append(seatingInformation).build();
-
     }
 
     @Override
@@ -96,7 +88,6 @@ public final class Ticket extends AbstractDomainObject {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).appendSuper(super.toString())
                 .append("eventID", eventID).append("ticketType", ticketType).append("price", price)
                 .append("transferable", transferable).append("seat information", seatingInformation).toString();
-
     }
 
 }

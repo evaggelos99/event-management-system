@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import java.io.Serial;
 import java.util.UUID;
 
 import static java.util.Objects.requireNonNull;
@@ -16,6 +17,7 @@ import static java.util.Objects.requireNonNull;
 @ResponseStatus(value = HttpStatus.NOT_FOUND, reason = "No such Object found")
 public class ObjectNotFoundException extends GenericRestOperationFailedException {
 
+    @Serial
     private static final long serialVersionUID = -4696167699698324726L;
     private static final int CODE = 404;
     private static final HttpStatusCode STATUS_CODE = HttpStatusCode.valueOf(CODE);

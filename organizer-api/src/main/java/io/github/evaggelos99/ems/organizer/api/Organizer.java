@@ -39,19 +39,16 @@ public final class Organizer extends AbstractDomainObject {
     public String getName() {
 
         return name;
-
     }
 
     public String getWebsite() {
 
         return website;
-
     }
 
     public String getInformation() {
 
         return information;
-
     }
 
     public List<EventType> getEventTypes() {
@@ -62,7 +59,6 @@ public final class Organizer extends AbstractDomainObject {
     public ContactInformation getContactInformation() {
 
         return contactInformation;
-
     }
 
     @Override
@@ -78,7 +74,6 @@ public final class Organizer extends AbstractDomainObject {
         return new EqualsBuilder().appendSuper(super.equals(that)).append(name, that.name).append(website, that.website)
                 .append(information, that.information).append(eventTypes, that.eventTypes)
                 .append(contactInformation, that.contactInformation).build();
-
     }
 
     @Override
@@ -86,7 +81,6 @@ public final class Organizer extends AbstractDomainObject {
 
         return new HashCodeBuilder(17, 37).appendSuper(super.hashCode()).append(name).append(website)
                 .append(information).append(eventTypes).append(contactInformation).build();
-
     }
 
     @Override
@@ -95,7 +89,6 @@ public final class Organizer extends AbstractDomainObject {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).appendSuper(super.toString())
                 .append("name", name).append("website", website).append("information", information)
                 .append("eventTypes", eventTypes).append("contactInformation", contactInformation).toString();
-
     }
 
 }

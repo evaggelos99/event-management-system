@@ -70,41 +70,6 @@ public class TestConfiguration {
         };
     }
 
-//	@Bean("eventRowMapper")
-//	EventRowMapper eventRowMapper() {
-//
-//		return new EventRowMapper(null) {
-//
-//			@Override
-//			public Event apply(final Row rs, final RowMetadata u) {
-//
-//				final Object[] attendeesIds = (Object[]) rs.get("attendee_ids");
-//				final LinkedList<UUID> attendees = new LinkedList<>();
-//
-//				for (final Object uuid : attendeesIds) {
-//					attendees.add((UUID) uuid);
-//				}
-//
-//				final Object[] sponsorIds = (Object[]) rs.get("sponsors_ids");
-//				final LinkedList<UUID> sponsors = new LinkedList<>();
-//
-//				for (final Object uuid : sponsorIds) {
-//					sponsors.add((UUID) uuid);
-//				}
-//
-//				final Duration duration = rs.get("duration", io.r2dbc.postgresql.codec.Interval.class).getDuration();
-//
-//				return new Event(UUID.fromString(rs.get("id", String.class)),
-//						rs.get("created_at", OffsetDateTime.class).toInstant(),
-//						rs.get("last_updated", OffsetDateTime.class).toInstant(), rs.get("name", String.class),
-//						rs.get("place", String.class), EventType.valueOf(rs.get("event_type", String.class)), attendees,
-//						UUID.fromString(rs.get("organizer_id", String.class)), rs.get("limit_of_people", Integer.class),
-//						sponsors, rs.get("start_time", OffsetDateTime.class).toLocalDateTime(), duration);
-//
-//			}
-//		};
-//	}
-
     @Bean
     ConnectionFactory postgresqlConnectionFactory() {
 

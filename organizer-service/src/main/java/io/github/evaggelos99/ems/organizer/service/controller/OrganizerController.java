@@ -4,7 +4,6 @@ import io.github.evaggelos99.ems.common.api.service.IService;
 import io.github.evaggelos99.ems.organizer.api.IOrganizerController;
 import io.github.evaggelos99.ems.organizer.api.Organizer;
 import io.github.evaggelos99.ems.organizer.api.OrganizerDto;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -37,7 +36,7 @@ public class OrganizerController implements IOrganizerController {
      *                                         operations
      * @param organizerToOrganizerDtoConverter DTO to organizer
      */
-    public OrganizerController(@Autowired final IService<Organizer, OrganizerDto> organizerService, @Autowired @Qualifier("organizerToOrganizerDtoConverter") final Function<Organizer, OrganizerDto> organizerToOrganizerDtoConverter) {
+    public OrganizerController(final IService<Organizer, OrganizerDto> organizerService, @Qualifier("organizerToOrganizerDtoConverter") final Function<Organizer, OrganizerDto> organizerToOrganizerDtoConverter) {
 
         this.organizerService = requireNonNull(organizerService);
         this.organizerToOrganizerDtoConverter = requireNonNull(organizerToOrganizerDtoConverter);
@@ -74,7 +73,7 @@ public class OrganizerController implements IOrganizerController {
     @Override
     public Mono<Boolean> ping() {
 
-        return pingService();
+        return organizerService.ping().onErrorReturn(false);
     }
 
     /**
@@ -93,17 +92,6 @@ public class OrganizerController implements IOrganizerController {
     public Mono<OrganizerDto> putOrganizer(final UUID organizerId, final OrganizerDto organizerDto) {
 
         return organizerService.edit(organizerId, organizerDto).map(organizerToOrganizerDtoConverter);
-    }
-
-    private Mono<Boolean> pingService() {
-
-        try {
-
-            return organizerService.ping().onErrorReturn(false);
-        } catch (final Exception e) {
-
-            return Mono.just(false);
-        }
     }
 
 }

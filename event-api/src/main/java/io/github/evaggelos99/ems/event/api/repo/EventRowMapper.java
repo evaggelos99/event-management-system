@@ -22,7 +22,7 @@ public class EventRowMapper implements BiFunction<Row, RowMetadata, Event> {
     private final Function<UUID[], List<UUID>> arrayToListOfUuidConverter;
 
     public EventRowMapper(
-            @Autowired @Qualifier("arrayToListOfUuidConverter") final Function<UUID[], List<UUID>> arrayToListOfUuid) {
+            @Qualifier("arrayToListOfUuidConverter") final Function<UUID[], List<UUID>> arrayToListOfUuid) {
 
         this.arrayToListOfUuidConverter = arrayToListOfUuid;
     }

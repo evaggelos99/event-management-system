@@ -31,17 +31,19 @@
     <modules>
         <module>common-api</module>
         <module>sponsor-api</module>
-        <module>sponsor-service</module>
         <module>attendee-api</module>
-        <module>attendee-service</module>
         <module>organizer-api</module>
-        <module>organizer-service</module>
         <module>event-api</module>
-        <module>event-service</module>
         <module>ticket-api</module>
-        <module>ticket-service</module>
         <module>kafka-lib</module>
         <module>testcontainer-kafka-lib</module>
+        <module>security-lib</module>
+        <module>flyway-script-migrator</module>
+        <module>sponsor-service</module>
+        <module>attendee-service</module>
+        <module>organizer-service</module>
+        <module>event-service</module>
+        <module>ticket-service</module>
     </modules>
 
     <dependencies>
