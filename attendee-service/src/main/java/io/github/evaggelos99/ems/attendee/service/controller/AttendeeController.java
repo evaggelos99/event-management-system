@@ -14,6 +14,7 @@ import reactor.core.publisher.Mono;
 import java.util.UUID;
 import java.util.function.Function;
 
+import static io.github.evaggelos99.ems.attendee.service.beans.Constants.ATTENDEE_PATH;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -22,10 +23,9 @@ import static java.util.Objects.requireNonNull;
  * @author Evangelos Georgiou
  */
 @RestController
-@RequestMapping(AttendeeController.ATTENDEE_PATH)
+@RequestMapping(ATTENDEE_PATH)
 public class AttendeeController implements IAttendeeController {
 
-    static final String ATTENDEE_PATH = "/attendee";
     private final IAttendeeService attendeeService;
     private final Function<Attendee, AttendeeDto> attendeeToAttendeeDtoConverter;
 

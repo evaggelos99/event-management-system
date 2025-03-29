@@ -19,7 +19,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
-@ConditionalOnProperty(prefix = "kafka", name = "enabled", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "kafka", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class Config {
 
 //    @Value("${io.github.evaggelos99.ems.event.topic.add-attendee}")

@@ -35,7 +35,6 @@
         <dependency>
             <groupId>io.github.evaggelos99</groupId>
             <artifactId>organizer-api</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>
@@ -81,7 +80,6 @@
         <dependency>
             <groupId>io.github.evaggelos99</groupId>
             <artifactId>security-lib</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
         </dependency>
 
         <!-- test dependencies -->

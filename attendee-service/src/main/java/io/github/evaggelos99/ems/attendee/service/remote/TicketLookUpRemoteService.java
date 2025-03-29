@@ -1,9 +1,9 @@
 package io.github.evaggelos99.ems.attendee.service.remote;
 
+import io.github.evaggelos99.ems.attendee.api.service.remote.ITicketLookUpServiceClient;
 import io.github.evaggelos99.ems.ticket.api.TicketDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;

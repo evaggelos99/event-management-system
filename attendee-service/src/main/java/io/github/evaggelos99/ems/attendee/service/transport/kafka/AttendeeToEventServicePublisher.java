@@ -19,8 +19,8 @@ public class AttendeeToEventServicePublisher {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AttendeeToEventServicePublisher.class);
 
-    private final String topicName;
     private final KafkaTemplate<String, Serializable> template;
+    private final String topicName;
 
     /**
      * C-or
