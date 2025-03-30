@@ -1,14 +1,10 @@
 package io.github.evaggelos99.ems.attendee.service.beans;
 
-import io.github.evaggelos99.ems.attendee.service.MyWebSocketHandler;
 import io.github.evaggelos99.ems.common.api.db.CrudQueriesOperations;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.web.reactive.HandlerMapping;
-import org.springframework.web.reactive.handler.SimpleUrlHandlerMapping;
-import org.springframework.web.reactive.socket.server.support.WebSocketHandlerAdapter;
 
 import java.util.Map;
 
@@ -31,16 +27,6 @@ public class QueriesConfiguration {
                 CrudQueriesOperations.GET_ALL, getAll,
                 CrudQueriesOperations.GET_ID, getId,
                 CrudQueriesOperations.DELETE_ID, deleteId);
-    }
-
-    @Bean
-    public HandlerMapping handlerMapping() {
-        return new SimpleUrlHandlerMapping(Map.of("/path", new MyWebSocketHandler()), -1);
-    }
-
-    @Bean
-    public WebSocketHandlerAdapter handlerAdapter() {
-        return new WebSocketHandlerAdapter();
     }
 
     public String getSave() {
