@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>io.github.evaggelos99</groupId>
+    <artifactId>event-management-system-dependencies</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>event-management-system-dependencies</name>
+    <description>Event Management System Dependencies</description>
+    <packaging>pom</packaging>
+
+    <properties>
+        <event-management-system.version>0.0.1-SNAPSHOT</event-management-system.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.github.evaggelos99</groupId>
+                <artifactId>ems-parent</artifactId>
+                <version>${event-management-system.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.evaggelos99</groupId>
+                <artifactId>common-api</artifactId>
+                <version>${event-management-system.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.evaggelos99</groupId>
+                <artifactId>sponsor-api</artifactId>
+                <version>${event-management-system.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.evaggelos99</groupId>
+                <artifactId>attendee-api</artifactId>
+                <version>${event-management-system.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.evaggelos99</groupId>
+                <artifactId>organizer-api</artifactId>
+                <version>${event-management-system.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.evaggelos99</groupId>
+                <artifactId>event-api</artifactId>
+                <version>${event-management-system.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.evaggelos99</groupId>
+                <artifactId>ticket-api</artifactId>
+                <version>${event-management-system.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.evaggelos99</groupId>
+                <artifactId>kafka-lib</artifactId>
+                <version>${event-management-system.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.evaggelos99</groupId>
+                <artifactId>testcontainer-kafka-lib</artifactId>
+                <version>${event-management-system.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.evaggelos99</groupId>
+                <artifactId>security-lib</artifactId>
+                <version>${event-management-system.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.evaggelos99</groupId>
+                <artifactId>flyway-script-migrator</artifactId>
+                <version>${event-management-system.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.evaggelos99</groupId>
+                <artifactId>sponsor-service</artifactId>
+                <version>${event-management-system.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.evaggelos99</groupId>
+                <artifactId>attendee-service</artifactId>
+                <version>${event-management-system.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.evaggelos99</groupId>
+                <artifactId>organizer-service</artifactId>
+                <version>${event-management-system.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.evaggelos99</groupId>
+                <artifactId>event-service</artifactId>
+                <version>${event-management-system.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.evaggelos99</groupId>
+                <artifactId>ticket-service</artifactId>
+                <version>${event-management-system.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+</project>
