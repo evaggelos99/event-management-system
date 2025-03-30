@@ -1,5 +1,6 @@
 package io.github.evaggelos99.ems.attendee.service.remote;
 
+import io.github.evaggelos99.ems.attendee.api.service.remote.IEventServiceClient;
 import io.github.evaggelos99.ems.attendee.service.transport.kafka.AttendeeToEventServicePublisher;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;

@@ -1,8 +1,10 @@
-package io.github.evaggelos99.ems.ticket.service.controller;
+package io.github.evaggelos99.ems.common.api.controller;
 
 import io.github.evaggelos99.ems.common.api.controller.exceptions.DuplicateTicketIdInAttendeeException;
 import io.github.evaggelos99.ems.common.api.controller.exceptions.ObjectNotFoundException;
 import io.github.evaggelos99.ems.common.api.controller.exceptions.UnauthorizedRoleException;
+import io.r2dbc.spi.R2dbcNonTransientException;
+import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -17,7 +19,7 @@ import java.util.Map;
 @RestControllerAdvice
 public class ControllerExceptionAdvice {
 
-    private static final String TIME_STAMP = "timeStamp";
+    private static final String TIME_STAMP = "timestamp";
 
     /**
      * Handle JSON responses that are not valid
@@ -105,6 +107,22 @@ public class ControllerExceptionAdvice {
         errorResponse.put("error", exception.getMessage());
 
         return new ResponseEntity<>(errorResponse, new HttpHeaders(), statusCode);
+    }
+
+    @ExceptionHandler(R2dbcNonTransientException.class)
+    protected ResponseEntity<Map<String, Object>> handleR2dbcNonTransientException(R2dbcNonTransientException e) {
+
+        final Map<String, Object> errorResponse = new HashMap<>();
+        errorResponse.put(TIME_STAMP, Instant.now());
+        errorResponse.put("status", 400);
+        errorResponse.put("error", e.getMessage());
+        errorResponse.put("postgres_error", Map.of(
+                "sql_state", ObjectUtils.defaultIfNull(e.getSqlState(), "null"),
+                "sql", ObjectUtils.defaultIfNull(e.getSql(), "null"),
+                "error_code", e.getErrorCode())
+        );
+
+        return new ResponseEntity<>(errorResponse, new HttpHeaders(), 400);
     }
 
 }

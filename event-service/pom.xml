@@ -35,7 +35,6 @@
         <dependency>
             <groupId>io.github.evaggelos99</groupId>
             <artifactId>event-api</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>
@@ -91,12 +90,10 @@
         <dependency>
             <groupId>io.github.evaggelos99</groupId>
             <artifactId>kafka-lib</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
         </dependency>
         <dependency>
             <groupId>io.github.evaggelos99</groupId>
             <artifactId>security-lib</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
         </dependency>
 
         <!-- test dependencies -->
@@ -119,7 +116,6 @@
         <dependency>
             <groupId>io.github.evaggelos99</groupId>
             <artifactId>testcontainer-kafka-lib</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
             <scope>test</scope>
         </dependency>
         <dependency>

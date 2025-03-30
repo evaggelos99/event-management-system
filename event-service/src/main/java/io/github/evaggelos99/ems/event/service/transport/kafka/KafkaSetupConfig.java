@@ -22,7 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Configuration
-@ConditionalOnProperty(prefix = "kafka", name = "enabled", matchIfMissing = true)
+@ConditionalOnProperty(prefix = "kafka", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class KafkaSetupConfig {
 
     @Bean

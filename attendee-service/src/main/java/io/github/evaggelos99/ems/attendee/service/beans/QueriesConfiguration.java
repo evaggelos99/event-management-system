@@ -1,7 +1,6 @@
 package io.github.evaggelos99.ems.attendee.service.beans;
 
 import io.github.evaggelos99.ems.common.api.db.CrudQueriesOperations;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
