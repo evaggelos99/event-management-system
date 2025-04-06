@@ -5,7 +5,6 @@ import io.github.evaggelos99.ems.event.api.Event;
 import io.r2dbc.postgresql.codec.Interval;
 import io.r2dbc.spi.Row;
 import io.r2dbc.spi.RowMetadata;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 

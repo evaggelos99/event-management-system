@@ -26,6 +26,7 @@
         <org.apache.maven.plugins.version>3.4.0</org.apache.maven.plugins.version>
         <hibernate.core.version>6.1.7.Final</hibernate.core.version>
         <postgres.version>42.7.3</postgres.version>
+        <io.swagger.core.v3.version>2.2.22</io.swagger.core.v3.version>
     </properties>
 
     <modules>
@@ -40,6 +41,7 @@
         <module>testcontainer-kafka-lib</module>
         <module>security-lib</module>
         <module>flyway-script-migrator</module>
+        <module>event-simulator</module>
         <module>sponsor-service</module>
         <module>attendee-service</module>
         <module>organizer-service</module>
@@ -77,7 +79,14 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <dependency>
+                <groupId>io.swagger.core.v3</groupId>
+                <artifactId>swagger-annotations-jakarta</artifactId>
+                <version>${io.swagger.core.v3.version}</version>
+            </dependency>
         </dependencies>
+
+
     </dependencyManagement>
 
     <build>

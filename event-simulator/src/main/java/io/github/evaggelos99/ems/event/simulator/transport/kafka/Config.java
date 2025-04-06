@@ -1,4 +1,4 @@
-package io.github.evaggelos99.ems.attendee.service.transport.kafka;
+package io.github.evaggelos99.ems.event.simulator.transport.kafka;
 
 import io.github.evaggelos99.ems.kafka.lib.serializer.ByteArraySerializer;
 import org.apache.kafka.clients.admin.AdminClientConfig;
@@ -21,9 +21,6 @@ import java.util.Map;
 @Configuration
 @ConditionalOnProperty(prefix = "kafka", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class Config {
-
-//    @Value("${io.github.evaggelos99.ems.event.topic.add-attendee}")
-//    private String topicToBeCreated;
 
     @Bean
     KafkaAdmin kafkaAdmin(@Value("${spring.kafka.producer.bootstrap-servers}") final String bootstrapServers) {
@@ -50,16 +47,9 @@ public class Config {
         return new KafkaTemplate<>(producerConfigs);
     }
 
-//    @Bean
-//    NewTopic createTopic() {
-//
-//        return new NewTopic(topicToBeCreated, 0, (short) 0);
-//    }
-
     @Bean
     WebClient.Builder webClientBuilder() {
 
-        return WebClient.builder()
-                .filter(new CustomTokenBearerInterceptor());
+        return WebClient.builder();
     }
 }

@@ -1,6 +1,6 @@
 package io.github.evaggelos99.ems.event.service.transport.kafka;
 
-import io.github.evaggelos99.ems.kafka.lib.object.deserializer.ObjectDeserializer;
+import io.github.evaggelos99.ems.kafka.lib.deserializer.ObjectDeserializer;
 import io.github.evaggelos99.ems.kafka.lib.serializer.ByteArraySerializer;
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.admin.NewTopic;

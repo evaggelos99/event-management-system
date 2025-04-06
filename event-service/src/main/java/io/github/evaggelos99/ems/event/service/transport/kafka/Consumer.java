@@ -1,9 +1,10 @@
 package io.github.evaggelos99.ems.event.service.transport.kafka;
 
 import io.github.evaggelos99.ems.common.api.transport.AttendeeToEventPayload;
+import io.github.evaggelos99.ems.common.api.transport.EventStreamPayload;
 import io.github.evaggelos99.ems.event.api.service.IEventService;
 import io.github.evaggelos99.ems.event.service.EventService;
-import io.github.evaggelos99.ems.kafka.lib.object.deserializer.ObjectDeserializer;
+import io.github.evaggelos99.ems.kafka.lib.deserializer.ObjectDeserializer;
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,6 +50,19 @@ public class Consumer {
 
         LOGGER.trace("Result of the event {} -> {}", topicName, result);
     }
+
+    @KafkaListener(topics = "${io.github.evaggelos99.ems.event.topic.event-streaming}", groupId = "default-group",
+            containerFactory = "kafkaManualAckListenerContainerFactory")
+    void consumeEventContent(final ConsumerRecord<String, byte[]> payload, Acknowledgment ack, @Value("${io.github.evaggelos99.ems.event.topic.event-streaming}") String topicName) {
+
+        final EventStreamPayload attendeeToEventPayload = (EventStreamPayload) objectDeserializer.convertBytesToObject(payload.value());
+        LOGGER.trace("we just got an event for topic {} and message {}", topicName, attendeeToEventPayload);
+
+        // have business logic here FIXME
+        ack.acknowledge();
+    }
+
+
 
 
 }

@@ -37,6 +37,20 @@ services:
     networks:
       - backend
 
+  kafdrop:
+    image: obsidiandynamics/kafdrop:latest
+    restart: "no"
+    ports:
+      - "9000:9000"
+    environment:
+      KAFKA_BROKERCONNECT: "broker:9092"
+      JVM_OPTS: -Xms32M -Xmx64M
+      SERVER_SERVLET_CONTEXTPATH: "/"
+    depends_on:
+      - broker
+    networks:
+      - backend
+
   #  topic-creation:
   #    image: apache/kafka:latest
   #    command: >
@@ -208,6 +222,23 @@ services:
       - db
     ports:
       - "12345:8080"
+    networks:
+      - backend
+
+  event-simulator:
+    container_name: event-simulator
+    hostname: event-simulator
+    image: 'evaggelosg99/event-simulator:latest'
+    restart: "no"
+    environment:
+      spring.kafka.producer.bootstrap-servers: "broker:9092"
+      io.github.evaggelos99.ems.event.simulator.topic.uuid: "de38e52b-a5bb-4417-af47-c3baea3f238c"
+      io.github.evaggelos99.ems.event.simulator.event-service-url: "http://event-service:8080/event"
+      io.github.evaggelos99.ems.event.simulator.enabled: false
+    depends_on:
+      - db
+    ports:
+      - "8085:8080"
     networks:
       - backend
 

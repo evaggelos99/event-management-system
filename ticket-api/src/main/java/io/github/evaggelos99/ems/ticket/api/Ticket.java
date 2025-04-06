@@ -20,7 +20,6 @@ public final class Ticket extends AbstractDomainObject {
     private final Integer price;
     private final Boolean transferable;
     private final SeatingInformation seatingInformation;
-    // TODO create QR code referenceing this ticket
 
     public Ticket(final UUID uuid, final Instant createdAt, final Instant lastUpdated, @NotNull final UUID eventID,
                   @NotNull final TicketType ticketType,

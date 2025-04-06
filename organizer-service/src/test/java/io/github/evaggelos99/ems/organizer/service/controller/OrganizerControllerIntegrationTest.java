@@ -132,7 +132,7 @@ class OrganizerControllerIntegrationTest {
         final OrganizerDto updatedDto = OrganizerDto.builder()
                 .uuid(actualDto.uuid())
                 .name(UUID.randomUUID().toString())
-                .website(UUID.randomUUID().toString())
+                .website("http://www."+UUID.randomUUID() + ".com")
                 .information(UUID.randomUUID().toString())
                 .eventTypes(eventTypes)
                 .contactInformation(contactInformation).build();

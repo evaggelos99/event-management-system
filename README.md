@@ -16,7 +16,8 @@ TODO:
 - [ ] Direct messaging between the attendees of the events(group chats) can be implemented by websockets maybe try in GOlang?
 - [ ] Push notifications for attendees that can subscribe to organizers or sponsors with kafka maybe? Email, telephone?
   - [ ] Also push notifications for any changes in the event?
-- [ ] Authentication/authorisation (fusionauth)
-  - [ ] Add roles: Sponsor, Organizer, User, Admin
+- [x] Authentication/authorisation (fusionauth)
+  - [x] Add roles: Sponsor, Organizer, User, Admin
+  - [x] Added roles for each CRUD operation on the different objects
 - [ ] e commerce eshop for buying tickets to the events. Stripe for buying tickets?
 - [ ] Add controllers that use web-sockets

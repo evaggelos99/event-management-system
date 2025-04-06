@@ -50,7 +50,7 @@ public class EventService implements IEventService {
     @Override
     public Mono<Event> add(final EventDto event) {
 
-        return SecurityContextHelper.filterRoles(ROLE_CREATE_EVENT) //TODO extract 
+        return SecurityContextHelper.filterRoles(ROLE_CREATE_EVENT) 
                 .flatMap(x -> PublisherValidator.validateBooleanMono(x, () -> eventRepository.save(event)));
     }
 
@@ -60,7 +60,7 @@ public class EventService implements IEventService {
     @Override
     public Mono<Event> get(final UUID uuid) {
 
-        return SecurityContextHelper.filterRoles(ROLE_READ_EVENT) //TODO extract 
+        return SecurityContextHelper.filterRoles(ROLE_READ_EVENT) 
                 .flatMap(x -> PublisherValidator.validateBooleanMono(x, () -> eventRepository.findById(uuid)));
     }
 
@@ -70,7 +70,7 @@ public class EventService implements IEventService {
     @Override
     public Mono<Boolean> delete(final UUID uuid) {
 
-        return SecurityContextHelper.filterRoles(ROLE_DELETE_EVENT) //TODO extract 
+        return SecurityContextHelper.filterRoles(ROLE_DELETE_EVENT) 
                 .flatMap(x -> PublisherValidator.validateBooleanMono(x, () -> eventRepository.deleteById(uuid)));
     }
 
@@ -81,7 +81,7 @@ public class EventService implements IEventService {
     public Mono<Event> edit(final UUID uuid, final EventDto event) {
 
         return ObjectUtils.notEqual(uuid, event.uuid()) ? Mono.error(() -> new ObjectNotFoundException(uuid, EventDto.class)) :
-                SecurityContextHelper.filterRoles(ROLE_UPDATE_EVENT) //TODO extract
+                SecurityContextHelper.filterRoles(ROLE_UPDATE_EVENT)
                         .flatMap(x -> PublisherValidator.validateBooleanMono(x, () -> eventRepository.edit(event)));
     }
 
@@ -91,7 +91,7 @@ public class EventService implements IEventService {
     @Override
     public Flux<Event> getAll() {
 
-        return SecurityContextHelper.filterRoles(ROLE_READ_EVENT) //TODO extract 
+        return SecurityContextHelper.filterRoles(ROLE_READ_EVENT) 
                 .flatMapMany(x -> PublisherValidator.validateBooleanFlux(x, eventRepository::findAll));
     }
 
@@ -101,7 +101,7 @@ public class EventService implements IEventService {
     @Override
     public Mono<Boolean> existsById(final UUID eventId) {
 
-        return SecurityContextHelper.filterRoles(ROLE_READ_EVENT) //TODO extract 
+        return SecurityContextHelper.filterRoles(ROLE_READ_EVENT) 
                 .flatMap(x -> PublisherValidator.validateBooleanMono(x, () -> eventRepository.existsById(eventId)));
     }
 

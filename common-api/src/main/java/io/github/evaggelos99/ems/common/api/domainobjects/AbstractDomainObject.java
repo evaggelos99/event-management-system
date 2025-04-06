@@ -16,9 +16,7 @@ import java.util.UUID;
 public abstract class AbstractDomainObject {
 
     private final Instant createdAt;
-
     private final Instant lastUpdated;
-
     private final UUID uuid;
 
     protected AbstractDomainObject(final UUID uuid, final Instant createdAt, final Instant lastUpdated) {
@@ -47,7 +45,6 @@ public abstract class AbstractDomainObject {
     public int hashCode() {
 
         return new HashCodeBuilder(17, 37).append(uuid).build();
-
     }
 
     @Override
@@ -61,7 +58,6 @@ public abstract class AbstractDomainObject {
         }
 
         final AbstractDomainObject that = (AbstractDomainObject) o;
-
         return new EqualsBuilder().append(uuid, that.uuid).build();
     }
 
@@ -70,7 +66,6 @@ public abstract class AbstractDomainObject {
 
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).append("uuid", uuid)
                 .append("createdAt", createdAt).append("lastUpdated", lastUpdated).toString();
-
     }
 
 }

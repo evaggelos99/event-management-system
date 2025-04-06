@@ -65,7 +65,7 @@ public class AttendeeService implements IAttendeeService {
     @Override
     public Mono<Attendee> add(final AttendeeDto attendee) {
 
-        return SecurityContextHelper.filterRoles(ROLE_CREATE_ATTENDEE) //TODO extract 
+        return SecurityContextHelper.filterRoles(ROLE_CREATE_ATTENDEE) 
                 .flatMap(x -> PublisherValidator.validateBooleanMono(x, () -> attendeeRepository.save(attendee)));
     }
 
@@ -75,7 +75,7 @@ public class AttendeeService implements IAttendeeService {
     @Override
     public Mono<Attendee> get(final UUID uuid) {
 
-        return SecurityContextHelper.filterRoles(ROLE_READ_ATTENDEE) //TODO extract 
+        return SecurityContextHelper.filterRoles(ROLE_READ_ATTENDEE) 
                 .flatMap(x -> PublisherValidator.validateBooleanMono(x, () -> attendeeRepository.findById(uuid)));
     }
 
@@ -85,7 +85,7 @@ public class AttendeeService implements IAttendeeService {
     @Override
     public Mono<Boolean> delete(final UUID uuid) {
 
-        return SecurityContextHelper.filterRoles(ROLE_DELETE_ATTENDEE) //TODO extract 
+        return SecurityContextHelper.filterRoles(ROLE_DELETE_ATTENDEE) 
                 .flatMap(x -> PublisherValidator.validateBooleanMono(x, () -> attendeeRepository.deleteById(uuid)));
     }
 
@@ -96,7 +96,7 @@ public class AttendeeService implements IAttendeeService {
     public Mono<Attendee> edit(final UUID uuid, final AttendeeDto attendee) {
 
         return notEqual(uuid, attendee.uuid()) ? Mono.error(() -> new ObjectNotFoundException(uuid, AttendeeDto.class))
-                : SecurityContextHelper.filterRoles(ROLE_UPDATE_ATTENDEE) //TODO extract 
+                : SecurityContextHelper.filterRoles(ROLE_UPDATE_ATTENDEE) 
                 .flatMap(x -> PublisherValidator.validateBooleanMono(x, () -> attendeeRepository.edit(attendee)));
     }
 
@@ -106,7 +106,7 @@ public class AttendeeService implements IAttendeeService {
     @Override
     public Flux<Attendee> getAll() {
 
-        return SecurityContextHelper.filterRoles(ROLE_READ_ATTENDEE) //TODO extract 
+        return SecurityContextHelper.filterRoles(ROLE_READ_ATTENDEE) 
                 .flatMapMany(x -> PublisherValidator.validateBooleanFlux(x, attendeeRepository::findAll));
     }
 
@@ -116,7 +116,7 @@ public class AttendeeService implements IAttendeeService {
     @Override
     public Mono<Boolean> existsById(final UUID attendeeId) {
 
-        return SecurityContextHelper.filterRoles(ROLE_READ_ATTENDEE) //TODO extract 
+        return SecurityContextHelper.filterRoles(ROLE_READ_ATTENDEE) 
                 .flatMap(x -> PublisherValidator.validateBooleanMono(x, () -> attendeeRepository.existsById(attendeeId)));
     }
 
