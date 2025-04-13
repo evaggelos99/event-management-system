@@ -30,7 +30,7 @@ public class SimulatorExecutor {
 
         while (enabled) {
             try {
-                Thread.sleep(25);
+                Thread.sleep(50);
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }

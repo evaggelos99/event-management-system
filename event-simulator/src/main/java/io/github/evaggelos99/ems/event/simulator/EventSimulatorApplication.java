@@ -10,8 +10,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  *
  * @author Evangelos Georgiou
  */
-//@SpringBootApplication(scanBasePackages = {"io.github.evaggelos99.ems.common.api",
-//        "io.github.evaggelos99.ems.attendee.api", "io.github.evaggelos99.ems.attendee.service", "io.github.evaggelos99.ems.security.lib"})
 @SpringBootApplication
 public class EventSimulatorApplication {
 

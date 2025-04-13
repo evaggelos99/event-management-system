@@ -22,10 +22,6 @@ public class QueriesConfiguration {
     @Bean
     Map<CrudQueriesOperations, String> queriesProperties() {
 
-        System.out.println(
-                "fdsfdsfsdfs"
-        );System.out.println(deleteId);
-
         return Map.of(CrudQueriesOperations.SAVE, save,
                 CrudQueriesOperations.EDIT, edit,
                 CrudQueriesOperations.GET_ALL, getAll,

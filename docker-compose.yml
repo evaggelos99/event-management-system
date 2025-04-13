@@ -235,6 +235,7 @@ services:
       io.github.evaggelos99.ems.event.simulator.topic.uuid: "de38e52b-a5bb-4417-af47-c3baea3f238c"
       io.github.evaggelos99.ems.event.simulator.event-service-url: "http://event-service:8080/event"
       io.github.evaggelos99.ems.event.simulator.enabled: false
+      io.github.evaggelos99.ems.event.simulator.fusionAuthClient: ${JWT_ISSUER_URI}
     depends_on:
       - db
     ports:
