@@ -9,6 +9,8 @@ import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.ByteArrayDeserializer;
 import org.apache.kafka.common.serialization.StringDeserializer;
 import org.apache.kafka.common.serialization.StringSerializer;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Bean;
@@ -54,7 +56,7 @@ public class KafkaSetupConfig {
     }
 
     @Bean
-    ConsumerFactory<String, String> consumerFactory(@Value("${spring.kafka.consumer.bootstrap-servers}") final String consumerBootstrapServers) {
+    Map<String, Object> kafkaConsumerProperties(@Value("${spring.kafka.consumer.bootstrap-servers}") final String consumerBootstrapServers) {
 
         final Map<String, Object> props = new HashMap<>();
         props.put(ConsumerConfig.BOOTSTRAP_SERVERS_CONFIG, consumerBootstrapServers);
@@ -63,7 +65,13 @@ public class KafkaSetupConfig {
         props.put(ConsumerConfig.KEY_DESERIALIZER_CLASS_CONFIG, StringDeserializer.class);
         props.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, ByteArrayDeserializer.class);
 
-        return new DefaultKafkaConsumerFactory<>(props);
+        return props;
+    }
+
+    @Bean
+    ConsumerFactory<String, String> consumerFactory(@Autowired @Qualifier("kafkaConsumerProperties") Map<String, Object> kafkaConsumerProperties) {
+
+        return new DefaultKafkaConsumerFactory<>(kafkaConsumerProperties);
     }
 
     @Bean

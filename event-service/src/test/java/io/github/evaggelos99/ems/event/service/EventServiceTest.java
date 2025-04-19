@@ -1,7 +1,9 @@
 package io.github.evaggelos99.ems.event.service;
 
+import io.github.evaggelos99.ems.common.api.transport.EventStreamPayload;
 import io.github.evaggelos99.ems.event.api.Event;
 import io.github.evaggelos99.ems.event.api.EventDto;
+import io.github.evaggelos99.ems.event.api.EventStreamEntity;
 import io.github.evaggelos99.ems.event.api.converters.EventToEventDtoConverter;
 import io.github.evaggelos99.ems.event.api.repo.IEventRepository;
 import io.github.evaggelos99.ems.event.api.util.EventObjectGenerator;
@@ -16,6 +18,7 @@ import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.function.Function;
@@ -160,6 +163,16 @@ class EventServiceTest {
 
         return new IEventRepository() {
 
+            @Override
+            public Mono<EventStreamEntity> saveOneEventStreamPayload(final EventStreamPayload payload) {
+                return null;
+            }
+
+            @Override
+            public Flux<EventStreamEntity> saveMultipleEventStreamPayload(final List<EventStreamPayload> payload) {
+                return null;
+            }
+
             private final Map<UUID, Event> list = new HashMap<>();
 
             @Override
@@ -167,7 +180,7 @@ class EventServiceTest {
 
                 final Event event = new Event(dto.uuid(), dto.createdAt(), dto.lastUpdated(), dto.name(), dto.place(),
                         dto.eventType(), dto.attendeesIds(), dto.organizerId(), dto.limitOfPeople(), dto.sponsorsIds(),
-                        dto.startTimeOfEvent(), dto.duration());
+                        dto.streamable(), dto.startTimeOfEvent(), dto.duration());
                 list.put(dto.uuid(), event);
 
                 return Mono.just(event);
@@ -206,7 +219,7 @@ class EventServiceTest {
 
                 final Event event = new Event(dto.uuid(), dto.createdAt(), dto.lastUpdated(), dto.name(), dto.place(),
                         dto.eventType(), dto.attendeesIds(), dto.organizerId(), dto.limitOfPeople(), dto.sponsorsIds(),
-                        dto.startTimeOfEvent(), dto.duration());
+                        dto.streamable(), dto.startTimeOfEvent(), dto.duration());
                 list.put(dto.uuid(), event);
 
                 return Mono.just(event);

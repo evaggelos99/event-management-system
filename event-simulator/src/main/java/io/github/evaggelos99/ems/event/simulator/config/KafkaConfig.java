@@ -1,4 +1,4 @@
-package io.github.evaggelos99.ems.event.simulator.transport.kafka;
+package io.github.evaggelos99.ems.event.simulator.config;
 
 import io.github.evaggelos99.ems.kafka.lib.serializer.ByteArraySerializer;
 import org.apache.kafka.clients.admin.AdminClientConfig;
@@ -20,7 +20,7 @@ import java.util.Map;
 
 @Configuration
 @ConditionalOnProperty(prefix = "kafka", name = "enabled", havingValue = "true", matchIfMissing = true)
-public class Config {
+public class KafkaConfig {
 
     @Bean
     KafkaAdmin kafkaAdmin(@Value("${spring.kafka.producer.bootstrap-servers}") final String bootstrapServers) {
@@ -45,11 +45,5 @@ public class Config {
     KafkaTemplate<String, Serializable> kafkaTemplate(final ProducerFactory<String, Serializable> producerConfigs) {
 
         return new KafkaTemplate<>(producerConfigs);
-    }
-
-    @Bean
-    WebClient.Builder webClientBuilder() {
-
-        return WebClient.builder();
     }
 }

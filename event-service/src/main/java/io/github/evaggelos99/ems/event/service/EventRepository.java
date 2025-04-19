@@ -4,12 +4,22 @@ import io.github.evaggelos99.ems.common.api.db.CrudQueriesOperations;
 import io.github.evaggelos99.ems.common.api.db.DurationToIntervalConverter;
 import io.github.evaggelos99.ems.common.api.domainobjects.AbstractDomainObject;
 import io.github.evaggelos99.ems.common.api.domainobjects.EventType;
+import io.github.evaggelos99.ems.common.api.transport.EventStreamPayload;
 import io.github.evaggelos99.ems.event.api.Event;
 import io.github.evaggelos99.ems.event.api.EventDto;
+import io.github.evaggelos99.ems.event.api.EventStreamEntity;
 import io.github.evaggelos99.ems.event.api.converters.EventDtoToEventConverter;
+import io.github.evaggelos99.ems.event.api.converters.EventStreamPayloadToEventStreamEntityConverter;
 import io.github.evaggelos99.ems.event.api.repo.EventRowMapper;
+import io.github.evaggelos99.ems.event.api.repo.EventStreamQueriesOperations;
+import io.github.evaggelos99.ems.event.api.repo.EventStreamRowMapper;
 import io.github.evaggelos99.ems.event.api.repo.IEventRepository;
 import io.r2dbc.postgresql.codec.Interval;
+import io.r2dbc.postgresql.codec.Json;
+import io.r2dbc.spi.Connection;
+import io.r2dbc.spi.Statement;
+import org.reactivestreams.Publisher;
+import org.reactivestreams.Subscriber;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.stereotype.Component;
@@ -32,6 +42,9 @@ public class EventRepository implements IEventRepository {
     private final Function<EventDto, Event> eventDtoToEventConverter;
     private final Map<CrudQueriesOperations, String> eventQueriesProperties;
     private final Function<Duration, Object> durationToIntervalConverter;
+    private final Map<EventStreamQueriesOperations, String> eventStreamQueriesOperations;
+    private final EventStreamPayloadToEventStreamEntityConverter eventPayloadToEventStreamConverter;
+    private final EventStreamRowMapper eventStreamRowMapper;
 
     /**
      * C-or
@@ -54,13 +67,19 @@ public class EventRepository implements IEventRepository {
                            @Qualifier("eventRowMapper") final EventRowMapper eventRowMapperFunction,
                            @Qualifier("eventDtoToEventConverter") final Function<EventDto, Event> eventDtoToEventConverter,
                            @Qualifier("queriesProperties") final Map<CrudQueriesOperations, String> eventQueriesProperties,
-                           @Qualifier("durationToIntervalConverter") final Function<Duration, Object> durationToIntervalConverter) {
+                           @Qualifier("durationToIntervalConverter") final Function<Duration, Object> durationToIntervalConverter,
+                           @Qualifier("saveEventStreamQueriesProperties") final Map<EventStreamQueriesOperations, String> eventStreamQueriesOperations,
+                           final EventStreamPayloadToEventStreamEntityConverter eventPayloadToEventStreamConverter,
+                           @Qualifier("eventStreamRowMapper") final EventStreamRowMapper eventStreamRowMapper) {
 
         this.databaseClient = requireNonNull(databaseClient);
         this.eventRowMapper = requireNonNull(eventRowMapperFunction);
         this.eventDtoToEventConverter = requireNonNull(eventDtoToEventConverter);
         this.eventQueriesProperties = requireNonNull(eventQueriesProperties);
         this.durationToIntervalConverter = requireNonNull(durationToIntervalConverter);
+        this.eventStreamQueriesOperations = requireNonNull(eventStreamQueriesOperations);
+        this.eventPayloadToEventStreamConverter = eventPayloadToEventStreamConverter;
+        this.eventStreamRowMapper=eventStreamRowMapper;
     }
 
     @Override
@@ -102,6 +121,17 @@ public class EventRepository implements IEventRepository {
         return editEvent(eventDto);
     }
 
+    @Override
+    public Mono<EventStreamEntity> saveOneEventStreamPayload(final EventStreamPayload payload) {
+        return addEventStream(payload);
+    }
+
+
+    @Override
+    public Flux<EventStreamEntity> saveMultipleEventStreamPayload(final List<EventStreamPayload> payload) {
+        return addEventStreams(payload);
+    }
+
     private Mono<Event> editEvent(final EventDto event) {
 
         final UUID uuid = event.uuid();
@@ -118,11 +148,13 @@ public class EventRepository implements IEventRepository {
         final Object interval = durationToIntervalConverter.apply(duration);
         final UUID[] attendees = convertToArray(attendeesIds);
         final UUID[] sponsors = convertToArray(sponsorIds);
+        final boolean streamable = event.streamable();
+
         final Mono<Long> rowsAffected = databaseClient
                 .sql(eventQueriesProperties.get(CrudQueriesOperations.EDIT)).bind(0, uuid)
                 .bind(1, updatedAt).bind(2, name).bind(3, place).bind(4, eventType).bind(5, attendees)
                 .bind(6, organizerId).bind(7, limitOfPeople).bind(8, sponsors).bind(9, startTimeOfEvent)
-                .bind(10, interval).bind(11, uuid).fetch().rowsUpdated();
+                .bind(10, interval).bind(11, streamable).bind(12, uuid).fetch().rowsUpdated();
 
         return rowsAffected.filter(this::rowsAffectedAreMoreThanOne).flatMap(rowNum -> findById(uuid))
                 .map(AbstractDomainObject::getCreatedAt)
@@ -136,6 +168,7 @@ public class EventRepository implements IEventRepository {
                         .attendeesIds(attendeesIds)
                         .organizerId(organizerId)
                         .limitOfPeople(limitOfPeople)
+                        .streamable(streamable)
                         .sponsorsIds(sponsorIds)
                         .startTimeOfEvent(startTimeOfEvent)
                         .duration(duration)
@@ -159,11 +192,12 @@ public class EventRepository implements IEventRepository {
         final Object interval = durationToIntervalConverter.apply(duration);
         final UUID[] attendees = convertToArray(attendeesIds);
         final UUID[] sponsors = convertToArray(sponsorIds);
+        final boolean streamable = event.streamable();
 
         final Mono<Long> rowsAffected = databaseClient
                 .sql(eventQueriesProperties.get(CrudQueriesOperations.SAVE)).bind(0, uuid).bind(1, now)
                 .bind(2, now).bind(3, name).bind(4, place).bind(5, eventType).bind(6, attendees).bind(7, organizerId)
-                .bind(8, limitOfPeople).bind(9, sponsors).bind(10, startTimeOfEvent).bind(11, interval).fetch()
+                .bind(8, limitOfPeople).bind(9, sponsors).bind(10, startTimeOfEvent).bind(11, interval).bind(12, streamable).fetch()
                 .rowsUpdated();
 
         return rowsAffected.filter(this::rowsAffectedAreMoreThanOne)
@@ -178,9 +212,79 @@ public class EventRepository implements IEventRepository {
                         .organizerId(organizerId)
                         .limitOfPeople(limitOfPeople)
                         .sponsorsIds(sponsorIds)
+                        .streamable(streamable)
                         .startTimeOfEvent(startTimeOfEvent)
                         .duration(duration)
                         .build()));
+    }
+
+    private Mono<EventStreamEntity> addEventStream(final EventStreamPayload payload) {
+
+        final Instant createdAt = Instant.now();
+
+        final Mono<Long> rowsAffected = databaseClient.sql(eventStreamQueriesOperations.get(EventStreamQueriesOperations.ADD))
+                .bind(0, payload.getUuid())
+                .bind(1, createdAt)
+                .bind(2, createdAt)
+                .bind(3, payload.getStreamType())
+                .bind(4, payload.getTime())
+                .bind(5, payload.getMessageType())
+                .bind(6, payload.getContent())
+                .bind(7, payload.getLanguage())
+                .bind(8, payload.getImportant())
+                .bind(9, Json.of(payload.getMetadata()))
+                .fetch()
+                .rowsUpdated();
+
+        return rowsAffected.filter(this::rowsAffectedAreMoreThanOne)
+                .map(num -> eventPayloadToEventStreamConverter.convert(payload, createdAt));
+    }
+
+    private Flux<EventStreamEntity> addEventStreams(final List<EventStreamPayload> payloads) {
+        return databaseClient.inConnectionMany(conn -> batchEventStreamInsertion(payloads, conn));
+    }
+
+    private Flux<EventStreamEntity> batchEventStreamInsertion(final List<EventStreamPayload> payloads, final Connection conn) {
+
+        if (payloads.isEmpty()) {
+            return Flux.empty();
+        }
+        final Statement statement = conn.createStatement(eventStreamQueriesOperations.get(EventStreamQueriesOperations.ADD));
+
+
+        for (int i = 0; i< payloads.size()-1; i++) {
+
+            final EventStreamPayload payload = payloads.get(i);
+
+            final Instant createdAt = Instant.now();
+
+            statement.bind(0, payload.getUuid())
+                    .bind(1, createdAt)
+                    .bind(2, createdAt)
+                    .bind(3, payload.getStreamType())
+                    .bind(4, payload.getTime())
+                    .bind(5, payload.getMessageType())
+                    .bind(6, payload.getContent())
+                    .bind(7, payload.getLanguage())
+                    .bind(8, payload.getImportant())
+                    .bind(9, Json.of(payload.getMetadata())).add();
+        }
+
+        final EventStreamPayload payload = payloads.get(payloads.size()-1);
+        final Instant createdAt = Instant.now();
+        statement.bind(0, payload.getUuid())
+                .bind(1, createdAt)
+                .bind(2, createdAt)
+                .bind(3, payload.getStreamType())
+                .bind(4, payload.getTime())
+                .bind(5, payload.getMessageType())
+                .bind(6, payload.getContent())
+                .bind(7, payload.getLanguage())
+                .bind(8, payload.getImportant())
+                .bind(9, Json.of(payload.getMetadata()));
+
+        return Flux.from(statement.execute())
+                .flatMap(result -> result.map(eventStreamRowMapper));
     }
 
     private UUID[] convertToArray(final List<UUID> ids) {
@@ -200,4 +304,5 @@ public class EventRepository implements IEventRepository {
 
         return x >= 1;
     }
+
 }

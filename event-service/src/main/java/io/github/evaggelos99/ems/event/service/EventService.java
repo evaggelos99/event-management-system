@@ -131,7 +131,7 @@ public class EventService implements IEventService {
         final LinkedList<UUID> list = new LinkedList<>(ids);
         list.add(attendeeId);
 
-        return new Event(eventId, event.getCreatedAt(), Instant.now(), event.getName(), event.getPlace(), event.getEventType(), list, event.getOrganizerID(), event.getLimitOfPeople(), event.getSponsorsIds(), event.getStartTime(), event.getDuration());
+        return new Event(eventId, event.getCreatedAt(), Instant.now(), event.getName(), event.getPlace(), event.getEventType(), list, event.getOrganizerID(), event.getLimitOfPeople(), event.getSponsorsIds(), event.isStreamable(), event.getStartTime(), event.getDuration());
     }
 
     @Override

@@ -23,13 +23,14 @@ public final class Event extends AbstractDomainObject {
     private final UUID organizerId;
     private final Integer limitOfPeople;
     private final List<UUID> sponsorsIds;
+    private final boolean streamable;
     private final LocalDateTime startTime;
     private final Duration duration;
 
     public Event(final UUID uuid, final Instant createdAt, final Instant lastUpdated, @NotNull final String name,
                  @NotNull final String place, @NotNull final EventType eventType, @NotNull final List<UUID> attendeesIds,
                  @NotNull final UUID organizerId, @NotNull final Integer limitOfPeople, final List<UUID> sponsorsIds,
-                 @NotNull final LocalDateTime startTime, @NotNull final Duration duration) {
+                 @NotNull final boolean streamable, @NotNull final LocalDateTime startTime, @NotNull final Duration duration) {
 
         super(uuid, createdAt, lastUpdated);
         this.name = name;
@@ -39,6 +40,7 @@ public final class Event extends AbstractDomainObject {
         this.organizerId = organizerId;
         this.limitOfPeople = limitOfPeople;
         this.sponsorsIds = sponsorsIds;
+        this.streamable=streamable;
         this.startTime = startTime;
         this.duration = duration;
     }
@@ -76,6 +78,10 @@ public final class Event extends AbstractDomainObject {
     public List<UUID> getSponsorsIds() {
 
         return sponsorsIds;
+    }
+
+    public boolean isStreamable() {
+        return streamable;
     }
 
     public LocalDateTime getStartTime() {
@@ -122,5 +128,4 @@ public final class Event extends AbstractDomainObject {
                 .append("limitOfPeople", limitOfPeople).append("sponsorID", sponsorsIds).append("startTime", startTime)
                 .append("duration", duration).toString();
     }
-
 }

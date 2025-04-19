@@ -23,6 +23,7 @@ public class EventToEventDtoConverter implements Function<Event, EventDto> {
                 .organizerId(event.getOrganizerID())
                 .limitOfPeople(event.getLimitOfPeople())
                 .sponsorsIds(event.getSponsorsIds())
+                .streamable(event.isStreamable())
                 .startTimeOfEvent(event.getStartTime())
                 .duration(event.getDuration())
                 .build();

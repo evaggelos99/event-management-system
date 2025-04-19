@@ -51,18 +51,4 @@ public class Consumer {
         LOGGER.trace("Result of the event {} -> {}", topicName, result);
     }
 
-    @KafkaListener(topics = "${io.github.evaggelos99.ems.event.topic.event-streaming}", groupId = "default-group",
-            containerFactory = "kafkaManualAckListenerContainerFactory")
-    void consumeEventContent(final ConsumerRecord<String, byte[]> payload, Acknowledgment ack, @Value("${io.github.evaggelos99.ems.event.topic.event-streaming}") String topicName) {
-
-        final EventStreamPayload attendeeToEventPayload = (EventStreamPayload) objectDeserializer.convertBytesToObject(payload.value());
-        LOGGER.trace("we just got an event for topic {} and message {}", topicName, attendeeToEventPayload);
-
-        // have business logic here FIXME
-        ack.acknowledge();
-    }
-
-
-
-
 }

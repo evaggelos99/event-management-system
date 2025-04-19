@@ -5,6 +5,6 @@ import reactor.core.publisher.Mono;
 
 public interface ITokenRetriever {
 
-    Mono<ITokenPayload> getToken();
+    Mono<String> getToken();
 
 }

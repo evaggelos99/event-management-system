@@ -11,6 +11,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  * @author Evangelos Georgiou
  */
 @SpringBootApplication
+@EnableScheduling
 public class EventSimulatorApplication {
 
     public static void main(final String[] args) {

@@ -2,20 +2,21 @@ package io.github.evaggelos99.ems.event.simulator.remote;
 
 import io.github.evaggelos99.ems.common.api.service.remote.IRemoteServiceClient;
 import io.github.evaggelos99.ems.common.api.transport.EventStreamPayload;
+import io.github.evaggelos99.ems.event.api.EventDto;
+import org.apache.kafka.clients.admin.NewTopic;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.kafka.core.KafkaAdmin;
 import org.springframework.kafka.core.KafkaTemplate;
-import org.springframework.kafka.support.SendResult;
 import org.springframework.stereotype.Service;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.io.Serializable;
 import java.time.Instant;
-import java.util.Map;
-import java.util.Random;
-import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
+import java.util.*;
+import java.util.stream.IntStream;
 
 /**
  * @author Evangelos Georgiou
@@ -36,35 +37,39 @@ public class EventStreamingPublisher implements IRemoteServiceClient {
             "est", "laborum."};
 
     private final KafkaTemplate<String, Serializable> template;
-    private final String topicName;
+    private final KafkaAdmin kafkaAdmin;
+    private final String topicNamePrefix;
 
     public EventStreamingPublisher(final KafkaTemplate<String, Serializable> template,
-                                   @Value("${io.github.evaggelos99.ems.event.simulator.topic.event-streaming}") final String topicName) {
+                                   KafkaAdmin kafkaAdmin,
+                                   @Value("${io.github.evaggelos99.ems.event.simulator.topic.event-streaming-prefix}") final String topicNamePrefix) {
 
         this.template = template;
-        this.topicName = topicName;
+        this.kafkaAdmin=kafkaAdmin;
+        this.topicNamePrefix = topicNamePrefix;
     }
 
     /**
      * {@inheritDoc}
      */
-    public Mono<Boolean> streamEvent(final UUID eventId) {
+    public Flux<Boolean> streamEvents(final EventDto eventDto) {
 
-        LOGGER.trace("Publishing data to topic: {}", topicName);
+        kafkaAdmin.createOrModifyTopics(new NewTopic(topicNamePrefix+eventDto.uuid(),3, (short) 1));
 
-        final CompletableFuture<SendResult<String, Serializable>> fut = template.send(topicName, randomizeEventStream(eventId));
-        // return hook?
-        return Mono.fromFuture(fut)
+        LOGGER.trace("Publishing data to topic: {}", topicNamePrefix + eventDto.uuid());
+
+        return Flux.fromStream(IntStream.range(0, 15000)
+                .mapToObj(num -> template.send(topicNamePrefix + eventDto.uuid(), randomizeEventStream(eventDto))))
                 .map(x -> true)
                 .doOnError(error -> LOGGER.error("Could not reach send message to EventService", error))
                 .onErrorReturn(false);
     }
 
-    private Serializable randomizeEventStream(final UUID eventId) {
+    private Serializable randomizeEventStream(final EventDto eventDto) {
 
         var random = new Random();
-        return new EventStreamPayload(eventId, "text", Instant.now(), "body", randomWords[random.nextInt(randomWords.length - 1)],
-                "EN", random.nextBoolean(), Map.of());
+        return new EventStreamPayload(eventDto.uuid(), "text", Instant.now(), "body", randomWords[random.nextInt(randomWords.length - 1)],
+                "EN", random.nextBoolean(), "{}");
     }
 
     @Override

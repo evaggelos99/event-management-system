@@ -52,6 +52,7 @@ public class TestConfiguration {
                         rs.get("last_updated", OffsetDateTime.class).toInstant(), rs.get("name", String.class),
                         rs.get("place", String.class), EventType.valueOf(rs.get("event_type", String.class)), attendees,
                         rs.get("organizer_id", UUID.class), rs.get("limit_of_people", Integer.class), sponsors,
+                        Boolean.TRUE.equals(rs.get("streamable", Boolean.class)),
                         rs.get("start_time", OffsetDateTime.class).toLocalDateTime(), duration);
             }
 

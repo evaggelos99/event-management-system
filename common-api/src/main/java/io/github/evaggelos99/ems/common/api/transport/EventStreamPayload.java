@@ -31,7 +31,7 @@ public class EventStreamPayload implements Serializable {
     private String content;
     private String language;
     private Boolean isImportant;
-    private Map<String, String> metadata;
+    private String metadata;
 
     /**
      * C-or used for serializing the object
@@ -51,7 +51,7 @@ public class EventStreamPayload implements Serializable {
      * @param isImportant
      * @param metadata
      */
-    public EventStreamPayload(UUID uuid, String streamType, Instant time, String messageType, String content, String language, Boolean isImportant, Map<String, String> metadata) {
+    public EventStreamPayload(UUID uuid, String streamType, Instant time, String messageType, String content, String language, Boolean isImportant, String metadata) {
 
         this.uuid = uuid;
         this.streamType = streamType;
@@ -66,5 +66,37 @@ public class EventStreamPayload implements Serializable {
     @Override
     public String toString() {
         return ToStringBuilder.reflectionToString(this);
+    }
+
+    public UUID getUuid() {
+        return uuid;
+    }
+
+    public String getStreamType() {
+        return streamType;
+    }
+
+    public Instant getTime() {
+        return time;
+    }
+
+    public String getMessageType() {
+        return messageType;
+    }
+
+    public String getContent() {
+        return content;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public Boolean getImportant() {
+        return isImportant;
+    }
+
+    public String getMetadata() {
+        return metadata;
     }
 }

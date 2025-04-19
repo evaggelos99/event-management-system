@@ -14,3 +14,6 @@ CREATE TABLE IF NOT EXISTS ems_event.events (
   start_time TIMESTAMP WITH TIME ZONE NOT NULL,
   duration INTERVAL DAY TO SECOND NOT NULL
 );
+
+ALTER TABLE ems_event.events
+    ADD COLUMN streamable BOOLEAN DEFAULT FALSE;

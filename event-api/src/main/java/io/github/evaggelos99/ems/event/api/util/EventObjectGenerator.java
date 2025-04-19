@@ -40,6 +40,7 @@ public final class EventObjectGenerator {
                 .organizerId(organizerId)
                 .limitOfPeople(RANDOM.nextInt(1500))
                 .sponsorsIds(listSponsors)
+                .streamable(RANDOM.nextBoolean())
                 .startTimeOfEvent(LocalDateTime.now().plusDays(5).truncatedTo(ChronoUnit.SECONDS))
                 .duration(Duration.ofHours(5))
                 .build();
@@ -61,6 +62,7 @@ public final class EventObjectGenerator {
                 .organizerId(organizerId)
                 .limitOfPeople(RANDOM.nextInt(1500))
                 .sponsorsIds(listSponsors)
+                .streamable(RANDOM.nextBoolean())
                 .startTimeOfEvent(LocalDateTime.now().plusDays(5).truncatedTo(ChronoUnit.SECONDS))
                 .duration(Duration.ofHours(5))
                 .build();
@@ -73,6 +75,7 @@ public final class EventObjectGenerator {
 
         return new Event(UUID.randomUUID(), now, now, UUID.randomUUID().toString(), UUID.randomUUID().toString(),
                 randomTicketType, List.of(attendeeId), organizerId, RANDOM.nextInt(1500), List.of(sponsorId),
+                RANDOM.nextBoolean(),
                 LocalDateTime.now().plusDays(5), Duration.ofHours(5));
     }
 
@@ -92,6 +95,7 @@ public final class EventObjectGenerator {
                 .organizerId(organizerId)
                 .limitOfPeople(RANDOM.nextInt(1500))
                 .sponsorsIds(listSponsors)
+                .streamable(RANDOM.nextBoolean())
                 .startTimeOfEvent(LocalDateTime.now().plusDays(5).truncatedTo(ChronoUnit.SECONDS))
                 .duration(Duration.ofHours(5))
                 .build();

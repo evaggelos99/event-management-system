@@ -30,6 +30,7 @@ public record EventDto(@Schema(hidden = true, description = "The UUID of the Att
                        @NotNull @Schema(description = "The organizer of the event", example = "61ee265a-f3d8-400a-8ae4-5e806b3eba92") UUID organizerId,
                        @NotNull @Schema(example = "500", description = "The limit people the event can hold") Integer limitOfPeople,
                        @Schema(description = "The sponsors of the event") List<UUID> sponsorsIds,
+                       @NotNull @Schema(example = "false", description = "If the event can be streamed.") boolean streamable,
                        @NotNull @Schema(description = "The start time of the Event") LocalDateTime startTimeOfEvent,
                        @NotNull @Schema(description = "The duration of the Event", example = "PT5H")
                        @JsonDeserialize(using = DurationDeserializer.class)
@@ -51,6 +52,7 @@ public record EventDto(@Schema(hidden = true, description = "The UUID of the Att
         private List<UUID> attendeesIds;
         private UUID organizerId;
         private Integer limitOfPeople;
+        private boolean streamable;
         private List<UUID> sponsorsIds;
         private LocalDateTime startTimeOfEvent;
         private Duration duration;
@@ -61,7 +63,7 @@ public record EventDto(@Schema(hidden = true, description = "The UUID of the Att
 
         public EventDto build() {
 
-            return new EventDto(uuid, createdAt, lastUpdated, name, place, eventType, attendeesIds, organizerId, limitOfPeople, sponsorsIds, startTimeOfEvent, duration);
+            return new EventDto(uuid, createdAt, lastUpdated, name, place, eventType, attendeesIds, organizerId, limitOfPeople, sponsorsIds,streamable, startTimeOfEvent, duration);
         }
 
         public Builder uuid(final UUID uuid) {
@@ -106,6 +108,11 @@ public record EventDto(@Schema(hidden = true, description = "The UUID of the Att
 
         public Builder limitOfPeople(final Integer limitOfPeople) {
             this.limitOfPeople = limitOfPeople;
+            return this;
+        }
+
+        public Builder streamable(final boolean streamable) {
+            this.streamable = streamable;
             return this;
         }
 
