@@ -16,6 +16,7 @@ import reactor.core.publisher.Mono;
 import java.io.Serializable;
 import java.time.Instant;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 /**
@@ -58,7 +59,7 @@ public class EventStreamingPublisher implements IRemoteServiceClient {
 
         LOGGER.trace("Publishing data to topic: {}", topicNamePrefix + eventDto.uuid());
 
-        return Flux.fromStream(IntStream.range(0, 15000)
+        return Flux.fromStream(IntStream.range(0, 1000)
                 .mapToObj(num -> template.send(topicNamePrefix + eventDto.uuid(), randomizeEventStream(eventDto))))
                 .map(x -> true)
                 .doOnError(error -> LOGGER.error("Could not reach send message to EventService", error))
@@ -68,8 +69,15 @@ public class EventStreamingPublisher implements IRemoteServiceClient {
     private Serializable randomizeEventStream(final EventDto eventDto) {
 
         var random = new Random();
-        return new EventStreamPayload(eventDto.uuid(), "text", Instant.now(), "body", randomWords[random.nextInt(randomWords.length - 1)],
+
+        return new EventStreamPayload(eventDto.uuid(), "text", Instant.now(), "body", constructMessage(random),
                 "EN", random.nextBoolean(), "{}");
+    }
+
+    private String constructMessage(final Random random) {
+
+        return IntStream.range(0,10).mapToObj(x -> randomWords[random.nextInt(randomWords.length - 1)])
+                .collect(Collectors.joining(" ", "","."));
     }
 
     @Override

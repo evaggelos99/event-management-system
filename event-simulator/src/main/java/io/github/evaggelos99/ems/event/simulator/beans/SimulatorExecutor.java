@@ -23,7 +23,7 @@ public class SimulatorExecutor {
         this.enabled = enabled;
     }
 
-    @Scheduled(cron = "*/20 * * * * *")
+    @Scheduled(cron = "*/4 * * * * *")
     private void foo() {
 
         lookUpRemoteService.getAllEventDtos().filter(EventDto::streamable)

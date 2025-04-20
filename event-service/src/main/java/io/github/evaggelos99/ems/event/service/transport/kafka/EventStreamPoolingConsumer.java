@@ -2,7 +2,6 @@ package io.github.evaggelos99.ems.event.service.transport.kafka;
 
 import io.github.evaggelos99.ems.common.api.transport.EventStreamPayload;
 import io.github.evaggelos99.ems.event.api.service.IEventMessagingService;
-import io.github.evaggelos99.ems.event.service.EventService;
 import io.github.evaggelos99.ems.kafka.lib.deserializer.ObjectDeserializer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
@@ -16,16 +15,18 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.stereotype.Component;
 
 import java.time.Duration;
+import java.time.Instant;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 @Component
-public class PoolingConsumer implements ApplicationListener<ApplicationReadyEvent> {
+public class EventStreamPoolingConsumer implements ApplicationListener<ApplicationReadyEvent> {
 
-    public static final Duration POLL_DURATION = Duration.ofMillis(500);
-    public static final int MAX_POLL_RECORDS = Integer.MAX_VALUE / 2;
-    private static final Logger LOGGER = LoggerFactory.getLogger(PoolingConsumer.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(EventStreamPoolingConsumer.class);
+    private static final Duration POLL_DURATION = Duration.ofMillis(500);
+    private static final int MAX_POLL_RECORDS = Integer.MAX_VALUE / 2;
+
     private final IEventMessagingService eventMessagingService;
     private final ObjectDeserializer objectDeserializer;
     private final KafkaConsumer<String, byte[]> consumer;
@@ -34,21 +35,20 @@ public class PoolingConsumer implements ApplicationListener<ApplicationReadyEven
 
     /**
      * C-or
-     *
-     * @param eventMessagingService the {@link EventService}
+     * @param eventMessagingService the event service that handles messaging
+     * @param objectDeserializer deserializer that converts from binary to java objects
+     * @param kafkaConsumerProperties general properties for consumers
+     * @param topicNamePrefix text prefix for event streaming topics
      */
-    public PoolingConsumer(final IEventMessagingService eventMessagingService,
-                           final ObjectDeserializer objectDeserializer,
-                           @Qualifier("kafkaConsumerProperties") Map<String, Object> kafkaConsumerProperties,
-                           @Value("${io.github.evaggelos99.ems.event.topic.event-streaming-prefix}") String topicNamePrefix) {
+    public EventStreamPoolingConsumer(final IEventMessagingService eventMessagingService,
+                                      final ObjectDeserializer objectDeserializer,
+                                      @Qualifier("kafkaConsumerProperties") Map<String, Object> kafkaConsumerProperties,
+                                      @Value("${io.github.evaggelos99.ems.event.topic.event-streaming-prefix}") String topicNamePrefix) {
 
         this.eventMessagingService = eventMessagingService;
         this.objectDeserializer = objectDeserializer;
         this.topicNamePrefix = topicNamePrefix;
-        kafkaConsumerProperties.put(ConsumerConfig.GROUP_ID_CONFIG, "event-service-event-stream-group");
-        kafkaConsumerProperties.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, MAX_POLL_RECORDS);
-        kafkaConsumerProperties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
-        consumer = new KafkaConsumer<>(kafkaConsumerProperties);
+        this.consumer = new KafkaConsumer<>(setupKafkaConsumer(kafkaConsumerProperties));
     }
 
 
@@ -92,6 +92,13 @@ public class PoolingConsumer implements ApplicationListener<ApplicationReadyEven
 
             consumer.commitAsync();
         }
+    }
+
+    private Map<String, Object> setupKafkaConsumer(final Map<String, Object> kafkaConsumerProperties) {
+        kafkaConsumerProperties.put(ConsumerConfig.GROUP_ID_CONFIG, "event-service-event-stream-group");
+        kafkaConsumerProperties.put(ConsumerConfig.MAX_POLL_RECORDS_CONFIG, MAX_POLL_RECORDS);
+        kafkaConsumerProperties.put(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest");
+        return kafkaConsumerProperties;
     }
 }
 
