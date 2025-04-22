@@ -4,6 +4,7 @@ import io.github.evaggelos99.ems.common.api.transport.EventStreamPayload;
 import io.github.evaggelos99.ems.event.api.service.IEventMessagingService;
 import io.github.evaggelos99.ems.kafka.lib.deserializer.ObjectDeserializer;
 import org.apache.kafka.clients.consumer.ConsumerConfig;
+import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.KafkaConsumer;
 import org.apache.kafka.common.TopicPartition;
 import org.slf4j.Logger;
@@ -51,7 +52,6 @@ public class EventStreamPoolingConsumer implements ApplicationListener<Applicati
         this.consumer = new KafkaConsumer<>(setupKafkaConsumer(kafkaConsumerProperties));
     }
 
-
     //    @Scheduled(cron = "*/10 * * * * *")
     @Override
     public void onApplicationEvent(final ApplicationReadyEvent event) {
@@ -83,15 +83,17 @@ public class EventStreamPoolingConsumer implements ApplicationListener<Applicati
 
                 final List<EventStreamPayload> eventStreamPayloadsToBeProcessed = new LinkedList<>();
                 var records = consumer.poll(POLL_DURATION);
-                records.forEach(record -> {
-                    eventStreamPayloadsToBeProcessed.add((EventStreamPayload) objectDeserializer.convertBytesToObject(record.value()));
-                });
+                records.forEach(record -> addMessageToList(record, eventStreamPayloadsToBeProcessed));
 
                 eventMessagingService.saveMultipleEventStreamPayload(eventStreamPayloadsToBeProcessed);
             }
 
             consumer.commitAsync();
         }
+    }
+
+    private boolean addMessageToList(final ConsumerRecord<String, byte[]> record, final List<EventStreamPayload> eventStreamPayloadsToBeProcessed) {
+        return eventStreamPayloadsToBeProcessed.add((EventStreamPayload) objectDeserializer.convertBytesToObject(record.value()));
     }
 
     private Map<String, Object> setupKafkaConsumer(final Map<String, Object> kafkaConsumerProperties) {

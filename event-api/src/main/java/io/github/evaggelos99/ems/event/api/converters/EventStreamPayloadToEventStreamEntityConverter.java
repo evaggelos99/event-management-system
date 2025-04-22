@@ -1,7 +1,7 @@
 package io.github.evaggelos99.ems.event.api.converters;
 
 import io.github.evaggelos99.ems.common.api.transport.EventStreamPayload;
-import io.github.evaggelos99.ems.event.api.EventStreamEntity;
+import io.github.evaggelos99.ems.event.api.EventStream;
 import io.r2dbc.postgresql.codec.Json;
 import org.springframework.stereotype.Component;
 
@@ -10,9 +10,9 @@ import java.time.Instant;
 @Component
 public class EventStreamPayloadToEventStreamEntityConverter {
 
-    public EventStreamEntity convert(final EventStreamPayload eventStreamPayload, Instant createdAt) {
+    public EventStream convert(final EventStreamPayload eventStreamPayload, Instant createdAt) {
 
-        return new EventStreamEntity(eventStreamPayload.getUuid(), createdAt, createdAt,
+        return new EventStream(eventStreamPayload.getUuid(), createdAt, createdAt,
                 eventStreamPayload.getStreamType(),
                 eventStreamPayload.getTime(),
                 eventStreamPayload.getMessageType(),

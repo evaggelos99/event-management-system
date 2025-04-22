@@ -3,6 +3,8 @@ package io.github.evaggelos99.ems.event.api.service;
 import io.github.evaggelos99.ems.common.api.service.IService;
 import io.github.evaggelos99.ems.event.api.Event;
 import io.github.evaggelos99.ems.event.api.EventDto;
+import io.github.evaggelos99.ems.event.api.EventStream;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.util.UUID;
@@ -19,5 +21,7 @@ public interface IEventService extends IService<Event, EventDto> {
      * {@link Boolean#FALSE}
      */
     Mono<Boolean> addAttendee(UUID eventId, UUID attendeeId);
+
+    Flux<EventStream> getEventStreams(UUID eventId);
 
 }

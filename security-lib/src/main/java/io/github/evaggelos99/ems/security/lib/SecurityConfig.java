@@ -41,6 +41,7 @@ public class SecurityConfig {
     private void setupRequestMatchers2(ServerHttpSecurity.AuthorizeExchangeSpec authorizeExchangeSpec) {
 
         authorizeExchangeSpec.pathMatchers("/event/**").authenticated();
+        authorizeExchangeSpec.pathMatchers("/event-stream/**").authenticated();
         authorizeExchangeSpec.pathMatchers("/sponsor/**").authenticated();
         authorizeExchangeSpec.pathMatchers("/attendee/**").authenticated();
         authorizeExchangeSpec.pathMatchers("/organizer/**").authenticated();

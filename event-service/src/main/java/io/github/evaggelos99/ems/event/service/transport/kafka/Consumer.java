@@ -21,7 +21,6 @@ public class Consumer {
     private final IEventService eventService;
     private final ObjectDeserializer objectDeserializer;
 
-
     /**
      * C-or
      *

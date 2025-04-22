@@ -225,19 +225,19 @@ services:
     networks:
       - backend
 
-  event-simulator:
-    container_name: event-simulator
-    hostname: event-simulator
-    image: 'evaggelosg99/event-simulator:latest'
+  event-stream-simulator:
+    container_name: event-stream-simulator
+    hostname: event-stream-simulator
+    image: 'evaggelosg99/event-stream-simulator:latest'
     restart: "no"
     environment:
       spring.kafka.producer.bootstrap-servers: "broker:9092"
-      io.github.evaggelos99.ems.event.simulator.topic.uuid: "de38e52b-a5bb-4417-af47-c3baea3f238c"
       io.github.evaggelos99.ems.event.simulator.event-service-url: "http://event-service:8080/event"
-      io.github.evaggelos99.ems.event.simulator.enabled: false
+      io.github.evaggelos99.ems.event.simulator.enabled: true
       io.github.evaggelos99.ems.event.simulator.fusionAuthClient: ${JWT_ISSUER_URI}
     depends_on:
-      - db
+      - broker
+      - fusionauth
     ports:
       - "8085:8080"
     networks:

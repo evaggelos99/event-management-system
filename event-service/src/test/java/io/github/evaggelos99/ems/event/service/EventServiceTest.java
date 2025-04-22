@@ -3,7 +3,7 @@ package io.github.evaggelos99.ems.event.service;
 import io.github.evaggelos99.ems.common.api.transport.EventStreamPayload;
 import io.github.evaggelos99.ems.event.api.Event;
 import io.github.evaggelos99.ems.event.api.EventDto;
-import io.github.evaggelos99.ems.event.api.EventStreamEntity;
+import io.github.evaggelos99.ems.event.api.EventStream;
 import io.github.evaggelos99.ems.event.api.converters.EventToEventDtoConverter;
 import io.github.evaggelos99.ems.event.api.repo.IEventRepository;
 import io.github.evaggelos99.ems.event.api.util.EventObjectGenerator;
@@ -164,12 +164,17 @@ class EventServiceTest {
         return new IEventRepository() {
 
             @Override
-            public Mono<EventStreamEntity> saveOneEventStreamPayload(final EventStreamPayload payload) {
+            public Mono<EventStream> saveOneEventStreamPayload(final EventStreamPayload payload) {
                 return null;
             }
 
             @Override
-            public Flux<EventStreamEntity> saveMultipleEventStreamPayload(final List<EventStreamPayload> payload) {
+            public Flux<EventStream> saveMultipleEventStreamPayload(final List<EventStreamPayload> payload) {
+                return null;
+            }
+
+            @Override
+            public Flux<EventStream> findAllEventStreams(final UUID eventId) {
                 return null;
             }
 

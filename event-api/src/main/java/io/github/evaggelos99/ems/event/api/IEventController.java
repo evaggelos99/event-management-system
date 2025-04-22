@@ -95,4 +95,14 @@ public interface IEventController extends IGenericController {
     @PutMapping("/{eventId}/addAttendee")
     Mono<Boolean> addAttendee(@PathVariable UUID eventId, @RequestParam UUID attendeeId);
 
+
+    /**
+     * Method that gets all Event Stream objects from the DB
+     */
+    @Operation(summary = "GET operation that returns all event stream object", description = "retrieves all Event Stream objects from the data source")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "successful operation")})
+    @ResponseStatus(value = HttpStatus.OK)
+    @GetMapping("/event-stream/{eventId}")
+    Flux<EventStreamDto> getEventStreams(@PathVariable UUID eventId);
+
 }

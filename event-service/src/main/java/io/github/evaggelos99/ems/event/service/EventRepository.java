@@ -7,7 +7,7 @@ import io.github.evaggelos99.ems.common.api.domainobjects.EventType;
 import io.github.evaggelos99.ems.common.api.transport.EventStreamPayload;
 import io.github.evaggelos99.ems.event.api.Event;
 import io.github.evaggelos99.ems.event.api.EventDto;
-import io.github.evaggelos99.ems.event.api.EventStreamEntity;
+import io.github.evaggelos99.ems.event.api.EventStream;
 import io.github.evaggelos99.ems.event.api.converters.EventDtoToEventConverter;
 import io.github.evaggelos99.ems.event.api.converters.EventStreamPayloadToEventStreamEntityConverter;
 import io.github.evaggelos99.ems.event.api.repo.EventRowMapper;
@@ -18,8 +18,6 @@ import io.r2dbc.postgresql.codec.Interval;
 import io.r2dbc.postgresql.codec.Json;
 import io.r2dbc.spi.Connection;
 import io.r2dbc.spi.Statement;
-import org.reactivestreams.Publisher;
-import org.reactivestreams.Subscriber;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.stereotype.Component;
@@ -32,6 +30,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.function.Function;
 
+import static io.github.evaggelos99.ems.event.api.repo.EventStreamQueriesOperations.GET_STREAM;
 import static java.util.Objects.requireNonNull;
 
 @Component
@@ -122,14 +121,19 @@ public class EventRepository implements IEventRepository {
     }
 
     @Override
-    public Mono<EventStreamEntity> saveOneEventStreamPayload(final EventStreamPayload payload) {
+    public Mono<EventStream> saveOneEventStreamPayload(final EventStreamPayload payload) {
         return addEventStream(payload);
     }
 
 
     @Override
-    public Flux<EventStreamEntity> saveMultipleEventStreamPayload(final List<EventStreamPayload> payload) {
+    public Flux<EventStream> saveMultipleEventStreamPayload(final List<EventStreamPayload> payload) {
         return addEventStreams(payload);
+    }
+
+    @Override
+    public Flux<EventStream> findAllEventStreams(final UUID eventId) {
+        return databaseClient.sql(eventStreamQueriesOperations.get(GET_STREAM)).bind(0,eventId).map(eventStreamRowMapper).all();
     }
 
     private Mono<Event> editEvent(final EventDto event) {
@@ -218,7 +222,7 @@ public class EventRepository implements IEventRepository {
                         .build()));
     }
 
-    private Mono<EventStreamEntity> addEventStream(final EventStreamPayload payload) {
+    private Mono<EventStream> addEventStream(final EventStreamPayload payload) {
 
         final Instant createdAt = Instant.now();
 
@@ -240,11 +244,11 @@ public class EventRepository implements IEventRepository {
                 .map(num -> eventPayloadToEventStreamConverter.convert(payload, createdAt));
     }
 
-    private Flux<EventStreamEntity> addEventStreams(final List<EventStreamPayload> payloads) {
+    private Flux<EventStream> addEventStreams(final List<EventStreamPayload> payloads) {
         return databaseClient.inConnectionMany(conn -> batchEventStreamInsertion(payloads, conn));
     }
 
-    private Flux<EventStreamEntity> batchEventStreamInsertion(final List<EventStreamPayload> payloads, final Connection conn) {
+    private Flux<EventStream> batchEventStreamInsertion(final List<EventStreamPayload> payloads, final Connection conn) {
 
         if (payloads.isEmpty()) {
             return Flux.empty();

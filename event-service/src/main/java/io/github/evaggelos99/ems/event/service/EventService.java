@@ -5,6 +5,7 @@ import io.github.evaggelos99.ems.common.api.controller.exceptions.ObjectNotFound
 import io.github.evaggelos99.ems.common.api.domainobjects.validators.constraints.PublisherValidator;
 import io.github.evaggelos99.ems.event.api.Event;
 import io.github.evaggelos99.ems.event.api.EventDto;
+import io.github.evaggelos99.ems.event.api.EventStream;
 import io.github.evaggelos99.ems.event.api.converters.EventToEventDtoConverter;
 import io.github.evaggelos99.ems.event.api.repo.IEventRepository;
 import io.github.evaggelos99.ems.event.api.service.IEventService;
@@ -117,6 +118,19 @@ public class EventService implements IEventService {
                 .flatMap(eventRepository::edit)
                 .map(x -> x.getAttendeesIDs().contains(attendeeId))
                 .onErrorReturn(false);
+    }
+
+    @Override
+    public Flux<EventStream> getEventStreams(final UUID eventId) {
+
+        // FIXME add business logic for attendee
+        // if attendee is registered to the event
+        // if attendee has ticket to event
+        // if ticket is eligible for streaming
+        // todo
+        return SecurityContextHelper.filterRoles(ROLE_READ_EVENT)
+                .filter(Boolean.TRUE::equals)
+                .flatMapMany(x -> eventRepository.findAllEventStreams(eventId));
     }
 
     private Event addAttendeeIdToExistingList(final UUID eventId, final UUID attendeeId, final Event event) {
