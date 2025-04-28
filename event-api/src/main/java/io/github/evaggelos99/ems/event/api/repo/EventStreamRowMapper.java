@@ -16,8 +16,8 @@ public class EventStreamRowMapper implements BiFunction<Row, RowMetadata, EventS
     @Override
     public EventStream apply(final Row rs, final RowMetadata rmd) {
 
-        return new EventStream(rs.get("uuid", UUID.class), rs.get("created_at", OffsetDateTime.class).toInstant(),
-                rs.get("last_updated", OffsetDateTime.class).toInstant(),
+        return new EventStream(rs.get("uuid", UUID.class), rs.get("created_at", OffsetDateTime.class),
+                rs.get("last_updated", OffsetDateTime.class),
                 rs.get("stream_type", String.class),
                 rs.get("inception_time", OffsetDateTime.class).toInstant(),
                 rs.get("message_type", String.class),

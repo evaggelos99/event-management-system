@@ -24,6 +24,7 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
@@ -63,7 +64,7 @@ public class EventControllerIntegrationTest {
     @WithMockUser(roles = {"CREATE_EVENT", "UPDATE_EVENT", "DELETE_EVENT", "READ_EVENT"})
     void postEvent_getEvent_deleteEvent_getEvent_whenInvokedWithValidEventDto_thenExpectForEventToBeAddedFetchedAndDeleted() {
 
-        final Instant currentTime = Instant.now();
+        final OffsetDateTime currentTime = OffsetDateTime.now();
 
         final UUID attendeeId = UUID.randomUUID();
         final UUID organizerId = UUID.randomUUID();
@@ -133,7 +134,7 @@ public class EventControllerIntegrationTest {
     @WithMockUser(roles = {"CREATE_EVENT", "UPDATE_EVENT", "DELETE_EVENT", "READ_EVENT"})
     void postEvent_putEvent_getEvent_deleteEvent_getAll_whenInvokedWithValidEventDto_thenExpectForEventToBeAddedThenEditedThenDeleted() {
 
-        final Instant currentTime = Instant.now();
+        final OffsetDateTime currentTime = OffsetDateTime.now();
 
         final UUID attendeeId = UUID.randomUUID();
         final UUID organizerId = UUID.randomUUID();
@@ -199,7 +200,7 @@ public class EventControllerIntegrationTest {
     @WithMockUser(roles = {"CREATE_EVENT", "UPDATE_EVENT", "DELETE_EVENT", "READ_EVENT"})
     void postEvent_addAttendee_deleteEvent_whenInvokedWithValidEventDto_thenExpectForEventToBeAddedThenEditedWithAddAttendeeThenDeleted() {
 
-        final Instant currentTime = Instant.now();
+        final OffsetDateTime currentTime = OffsetDateTime.now();
 
         final UUID attendeeId = UUID.randomUUID();
         final UUID organizerId = UUID.randomUUID();

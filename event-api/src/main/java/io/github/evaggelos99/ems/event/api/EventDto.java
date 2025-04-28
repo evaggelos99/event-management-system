@@ -13,6 +13,7 @@ import jakarta.validation.constraints.Null;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,7 +23,7 @@ import java.util.UUID;
  * @author Evangelos Georgiou
  */
 public record EventDto(@Schema(hidden = true, description = "The UUID of the Attendee") UUID uuid,
-                       @Null @Schema(hidden = true) Instant createdAt, @Null @Schema(hidden = true) Instant lastUpdated,
+                       @Null @Schema(hidden = true) OffsetDateTime createdAt, @Null @Schema(hidden = true) OffsetDateTime lastUpdated,
                        @NotBlank @Schema(example = "in voluptate velit", description = "Name of the Event") String name,
                        @NotBlank @Schema(example = "anim id est laborum", description = "The place of the Event") String place,
                        @NotNull @Schema(example = "OTHER", description = "The type of the Event") EventType eventType,
@@ -44,8 +45,8 @@ public record EventDto(@Schema(hidden = true, description = "The UUID of the Att
     public static final class Builder {
 
         private UUID uuid;
-        private Instant createdAt;
-        private Instant lastUpdated;
+        private OffsetDateTime createdAt;
+        private OffsetDateTime lastUpdated;
         private String name;
         private String place;
         private EventType eventType;
@@ -71,12 +72,12 @@ public record EventDto(@Schema(hidden = true, description = "The UUID of the Att
             return this;
         }
 
-        public Builder createdAt(final Instant createdAt) {
+        public Builder createdAt(final OffsetDateTime createdAt) {
             this.createdAt = createdAt;
             return this;
         }
 
-        public Builder lastUpdated(final Instant lastUpdated) {
+        public Builder lastUpdated(final OffsetDateTime lastUpdated) {
             this.lastUpdated = lastUpdated;
             return this;
         }

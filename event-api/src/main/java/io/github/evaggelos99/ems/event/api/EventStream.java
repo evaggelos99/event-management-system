@@ -4,6 +4,7 @@ import io.github.evaggelos99.ems.common.api.domainobjects.AbstractDomainObject;
 import io.r2dbc.postgresql.codec.Json;
 
 import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 public class EventStream extends AbstractDomainObject {
@@ -16,7 +17,7 @@ public class EventStream extends AbstractDomainObject {
     private final Boolean isImportant;
     private final String metadata;
 
-    public EventStream(final UUID uuid, final Instant createdAt, final Instant lastUpdated, final String streamType, final Instant inceptionTime, final String messageType, final String content, final String language, final Boolean isImportant, final Json metadata) {
+    public EventStream(final UUID uuid, final OffsetDateTime createdAt, final OffsetDateTime lastUpdated, final String streamType, final Instant inceptionTime, final String messageType, final String content, final String language, final Boolean isImportant, final Json metadata) {
 
         super(uuid, createdAt, lastUpdated);
 

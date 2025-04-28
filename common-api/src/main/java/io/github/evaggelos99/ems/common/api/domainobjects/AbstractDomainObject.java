@@ -6,6 +6,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 /**
@@ -15,23 +16,23 @@ import java.util.UUID;
  */
 public abstract class AbstractDomainObject {
 
-    private final Instant createdAt;
-    private final Instant lastUpdated;
     private final UUID uuid;
+    private final OffsetDateTime createdAt;
+    private final OffsetDateTime lastUpdated;
 
-    protected AbstractDomainObject(final UUID uuid, final Instant createdAt, final Instant lastUpdated) {
+    protected AbstractDomainObject(final UUID uuid, final OffsetDateTime createdAt, final OffsetDateTime lastUpdated) {
 
         this.uuid = uuid;
         this.createdAt = createdAt;
         this.lastUpdated = lastUpdated;
     }
 
-    public Instant getCreatedAt() {
+    public OffsetDateTime getCreatedAt() {
 
         return createdAt;
     }
 
-    public Instant getLastUpdated() {
+    public OffsetDateTime getLastUpdated() {
 
         return lastUpdated;
     }

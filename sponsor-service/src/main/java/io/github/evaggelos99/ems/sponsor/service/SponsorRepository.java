@@ -15,6 +15,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -97,7 +98,7 @@ public class SponsorRepository implements ISponsorRepository {
     private Mono<Sponsor> editSponsor(final SponsorDto sponsor) {
 
         final UUID uuid = sponsor.uuid();
-        final Instant updatedAt = Instant.now();
+        final OffsetDateTime updatedAt = OffsetDateTime.now();
         final String name = sponsor.name();
         final String website = sponsor.website();
         final Integer financialContribution = sponsor.financialContribution();
@@ -124,7 +125,7 @@ public class SponsorRepository implements ISponsorRepository {
     private Mono<Sponsor> saveSponsor(final SponsorDto sponsor) {
 
         final UUID sponsorUuid = sponsor.uuid();
-        final Instant instantNow = Instant.now();
+        final OffsetDateTime now = now.now();
 
         final UUID uuid = sponsorUuid != null ? sponsorUuid : UUID.randomUUID();
         final String name = sponsor.name();
@@ -134,13 +135,13 @@ public class SponsorRepository implements ISponsorRepository {
 
         final Mono<Long> rowsAffected = databaseClient
                 .sql(sponsorQueriesProperties.get(CrudQueriesOperations.SAVE)).bind(0, uuid)
-                .bind(1, instantNow).bind(2, instantNow).bind(3, name).bind(4, website).bind(5, financialContribution)
+                .bind(1, now).bind(2, now).bind(3, name).bind(4, website).bind(5, financialContribution)
                 .bind(6, contactInformation.email()).bind(7, contactInformation.phoneNumber())
                 .bind(8, contactInformation.physicalAddress()).fetch().rowsUpdated();
 
         return rowsAffected.filter(this::rowsAffectedAreMoreThanOne)
-                .map(rowNum -> sponsorDtoToSponsorConverter.apply(SponsorDto.builder().uuid(uuid).createdAt(instantNow)
-                        .lastUpdated(instantNow).name(name).website(website)
+                .map(rowNum -> sponsorDtoToSponsorConverter.apply(SponsorDto.builder().uuid(uuid).createdAt(now)
+                        .lastUpdated(now).name(name).website(website)
                         .financialContribution(financialContribution).contactInformation(contactInformation).build()));
     }
 

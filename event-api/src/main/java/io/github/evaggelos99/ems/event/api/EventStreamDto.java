@@ -5,12 +5,13 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 public record EventStreamDto(
         @NotBlank @Schema(example = "d68a65ca-1f66-409c-9083-795260c16fe4", description = "The UUID of the event") UUID uuid,
-        @NotNull @Schema(description = "Timestamp created at") Instant creartedAt,
-        @NotNull @Schema(description = "Timestamp updated at") Instant updatedAt,
+        @NotNull @Schema(description = "Timestamp created at") OffsetDateTime creartedAt,
+        @NotNull @Schema(description = "Timestamp updated at") OffsetDateTime updatedAt,
         @NotBlank @Schema(examples = {"text", "video"}, description = "What kind of type is the stream") String streamType,
         @NotBlank @Schema(description = "Inception time of the message") Instant time,
         @NotBlank @Schema(examples = {"advertisement", "announcement"}, description = "What is the type of the message") String messageType,
@@ -35,8 +36,8 @@ public record EventStreamDto(
         private String language;
         private Boolean isImportant;
         private String metadata;
-        private Instant createdAt;
-        private Instant updatedAt;
+        private OffsetDateTime createdAt;
+        private OffsetDateTime updatedAt;
 
         private Builder() {
 
@@ -95,12 +96,12 @@ public record EventStreamDto(
             return this;
         }
 
-        public Builder updatedAt(final Instant updatedAt) {
+        public Builder updatedAt(final OffsetDateTime updatedAt) {
             this.updatedAt = updatedAt;
             return this;
         }
 
-        public Builder createdAt(final Instant createdAt) {
+        public Builder createdAt(final OffsetDateTime createdAt) {
             this.createdAt = createdAt;
             return this;
         }

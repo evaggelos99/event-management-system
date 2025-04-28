@@ -27,6 +27,7 @@ import reactor.core.publisher.Mono;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.function.Function;
 
@@ -139,7 +140,7 @@ public class EventRepository implements IEventRepository {
     private Mono<Event> editEvent(final EventDto event) {
 
         final UUID uuid = event.uuid();
-        final Instant updatedAt = Instant.now();
+        final OffsetDateTime updatedAt = OffsetDateTime.now();
         final String name = event.name();
         final String place = event.place();
         final EventType eventType = event.eventType();
@@ -182,7 +183,7 @@ public class EventRepository implements IEventRepository {
     private Mono<Event> saveEvent(final EventDto event) {
 
         final UUID eventUuid = event.uuid();
-        final Instant now = Instant.now();
+        final OffsetDateTime now = OffsetDateTime.now();
         final UUID uuid = eventUuid != null ? eventUuid : UUID.randomUUID();
         final String name = event.name();
         final String place = event.place();
@@ -224,7 +225,7 @@ public class EventRepository implements IEventRepository {
 
     private Mono<EventStream> addEventStream(final EventStreamPayload payload) {
 
-        final Instant createdAt = Instant.now();
+        final OffsetDateTime createdAt = OffsetDateTime.now();
 
         final Mono<Long> rowsAffected = databaseClient.sql(eventStreamQueriesOperations.get(EventStreamQueriesOperations.ADD))
                 .bind(0, payload.getUuid())
@@ -260,7 +261,7 @@ public class EventRepository implements IEventRepository {
 
             final EventStreamPayload payload = payloads.get(i);
 
-            final Instant createdAt = Instant.now();
+            final OffsetDateTime createdAt = OffsetDateTime.now();
 
             statement.bind(0, payload.getUuid())
                     .bind(1, createdAt)
@@ -275,7 +276,7 @@ public class EventRepository implements IEventRepository {
         }
 
         final EventStreamPayload payload = payloads.get(payloads.size()-1);
-        final Instant createdAt = Instant.now();
+        final OffsetDateTime createdAt = OffsetDateTime.now();
         statement.bind(0, payload.getUuid())
                 .bind(1, createdAt)
                 .bind(2, createdAt)

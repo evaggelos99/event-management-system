@@ -14,6 +14,7 @@ import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -113,7 +114,7 @@ class TicketServiceTest {
             @Override
             public Mono<Ticket> save(final TicketDto dto) {
 
-                final Ticket sponsor = new Ticket(dto.uuid(), Instant.now(), Instant.now(), dto.eventID(),
+                final Ticket sponsor = new Ticket(dto.uuid(), OffsetDateTime.now(), OffsetDateTime.now(), dto.eventID(),
                         dto.ticketType(), dto.price(), dto.transferable(), dto.seatInformation());
 
                 list.put(dto.uuid(), sponsor);

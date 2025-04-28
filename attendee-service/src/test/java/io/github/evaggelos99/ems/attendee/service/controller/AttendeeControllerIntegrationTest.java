@@ -31,6 +31,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import reactor.core.publisher.Mono;
 
 import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
@@ -72,7 +73,7 @@ class AttendeeControllerIntegrationTest {
     @WithMockUser(roles = {"CREATE_ATTENDEE", "UPDATE_ATTENDEE", "DELETE_ATTENDEE", "READ_ATTENDEE"})
     void postAttendee_getAttendee_deleteAttendee_getAttendee_whenInvokedWithValidAttendeeDto_thenExpectForAttendeeToBeAddedFetchedAndDeleted() {
 
-        final Instant currentTime = Instant.now();
+        final OffsetDateTime currentTime = OffsetDateTime.now();
         final AttendeeDto dto = AttendeeObjectGenerator.generateAttendeeDtoWithoutTimestamps(null);
         // postAttendee
         final ResponseEntity<AttendeeDto> actualEntity = restTemplate.postForEntity(createUrl(), dto,
@@ -121,7 +122,7 @@ class AttendeeControllerIntegrationTest {
     @WithMockUser(roles = {"CREATE_ATTENDEE", "UPDATE_ATTENDEE", "DELETE_ATTENDEE", "READ_ATTENDEE"})
     void postAttendee_putAttendee_getAttendee_deleteAttendee_getAll_whenInvokedWithValidAttendeeDto_thenExpectForAttendeeToBeAddedThenEditedThenDeleted() {
 
-        final Instant currentTime = Instant.now();
+        final OffsetDateTime currentTime = OffsetDateTime.now();
         final UUID ticketId = UUID.randomUUID();
         final AttendeeDto dto = AttendeeObjectGenerator.generateAttendeeDtoWithoutTimestamps(null, ticketId);
         // postAttendee
@@ -177,7 +178,7 @@ class AttendeeControllerIntegrationTest {
     @WithMockUser(roles = {"CREATE_ATTENDEE", "UPDATE_ATTENDEE", "DELETE_ATTENDEE", "READ_ATTENDEE"})
     void postAttendee_addTicket_deleteAttendee_whenInvokedWithValidAttendeeDto_thenExpectForAttendeeToBeAddedThenEditedWithAddTicketThenDeleted() {
 
-        final Instant currentTime = Instant.now();
+        final OffsetDateTime currentTime = OffsetDateTime.now();
         final UUID ticketId = UUID.randomUUID();
         final AttendeeDto dto = AttendeeObjectGenerator.generateAttendeeDtoWithoutTimestamps(null);
         // postAttendee

@@ -16,6 +16,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -102,7 +103,7 @@ public class TicketRepository implements ITicketRepository {
     private Mono<Ticket> saveTicket(final TicketDto ticket) {
 
         final UUID ticketUuid = ticket.uuid();
-        final Instant now = Instant.now();
+        final OffsetDateTime now = OffsetDateTime.now();
         final UUID uuid = ticketUuid != null ? ticketUuid : UUID.randomUUID();
 
         final UUID eventId = ticket.eventID();
@@ -123,7 +124,7 @@ public class TicketRepository implements ITicketRepository {
     private Mono<Ticket> editTicket(final TicketDto ticket) {
 
         final UUID uuid = ticket.uuid();
-        final Instant updatedAt = Instant.now();
+        final OffsetDateTime updatedAt = OffsetDateTime.now();
 
         final UUID eventId = ticket.eventID();
         final TicketType ticketType = ticket.ticketType();

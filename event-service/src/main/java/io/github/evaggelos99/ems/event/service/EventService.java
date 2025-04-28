@@ -17,6 +17,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
@@ -124,10 +125,14 @@ public class EventService implements IEventService {
     public Flux<EventStream> getEventStreams(final UUID eventId) {
 
         // FIXME add business logic for attendee
+        //
         // if attendee is registered to the event
         // if attendee has ticket to event
         // if ticket is eligible for streaming
         // todo
+
+
+
         return SecurityContextHelper.filterRoles(ROLE_READ_EVENT)
                 .filter(Boolean.TRUE::equals)
                 .flatMapMany(x -> eventRepository.findAllEventStreams(eventId));
@@ -145,7 +150,7 @@ public class EventService implements IEventService {
         final LinkedList<UUID> list = new LinkedList<>(ids);
         list.add(attendeeId);
 
-        return new Event(eventId, event.getCreatedAt(), Instant.now(), event.getName(), event.getPlace(), event.getEventType(), list, event.getOrganizerID(), event.getLimitOfPeople(), event.getSponsorsIds(), event.isStreamable(), event.getStartTime(), event.getDuration());
+        return new Event(eventId, event.getCreatedAt(), OffsetDateTime.now(), event.getName(), event.getPlace(), event.getEventType(), list, event.getOrganizerID(), event.getLimitOfPeople(), event.getSponsorsIds(), event.isStreamable(), event.getStartTime(), event.getDuration());
     }
 
     @Override

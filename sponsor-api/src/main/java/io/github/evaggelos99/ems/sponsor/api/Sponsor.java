@@ -10,6 +10,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 public final class Sponsor extends AbstractDomainObject {
@@ -19,7 +20,7 @@ public final class Sponsor extends AbstractDomainObject {
     private final Integer financialContribution;
     private final ContactInformation contactInformation;
 
-    public Sponsor(final UUID uuid, final Instant createdAt, final Instant lastUpdated, @NotNull final String name,
+    public Sponsor(final UUID uuid, final OffsetDateTime createdAt, final OffsetDateTime lastUpdated, @NotNull final String name,
                    @NotNull final String website, @NotNull @NotNegative final Integer financialContribution,
                    @NotNull final ContactInformation contactInformation) {
 

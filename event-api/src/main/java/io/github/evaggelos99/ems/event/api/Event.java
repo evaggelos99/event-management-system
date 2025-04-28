@@ -11,6 +11,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,7 +28,7 @@ public final class Event extends AbstractDomainObject {
     private final LocalDateTime startTime;
     private final Duration duration;
 
-    public Event(final UUID uuid, final Instant createdAt, final Instant lastUpdated, @NotNull final String name,
+    public Event(final UUID uuid, final OffsetDateTime createdAt, final OffsetDateTime lastUpdated, @NotNull final String name,
                  @NotNull final String place, @NotNull final EventType eventType, @NotNull final List<UUID> attendeesIds,
                  @NotNull final UUID organizerId, @NotNull final Integer limitOfPeople, final List<UUID> sponsorsIds,
                  @NotNull final boolean streamable, @NotNull final LocalDateTime startTime, @NotNull final Duration duration) {

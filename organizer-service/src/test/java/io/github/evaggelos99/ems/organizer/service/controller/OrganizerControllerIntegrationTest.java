@@ -23,6 +23,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
@@ -52,7 +53,7 @@ class OrganizerControllerIntegrationTest {
     @WithMockUser(roles = {"CREATE_ORGANIZER", "UPDATE_ORGANIZER", "DELETE_ORGANIZER", "READ_ORGANIZER"})
     void postOrganizer_getOrganizer_deleteOrganizer_getOrganizer_whenInvokedWithValidOrganizerDto_thenExpectForOrganizerToBeAddedFetchedAndDeleted() {
 
-        final Instant currentTime = Instant.now();
+        final OffsetDateTime currentTime = OffsetDateTime.now();
         final OrganizerDto dto = OrganizerObjectGenerator.generateOrganizerDtoWithoutTimestamps();
         // postOrganizer
         final ResponseEntity<OrganizerDto> actualEntity = restTemplate.postForEntity(createUrl(), dto,
@@ -106,7 +107,7 @@ class OrganizerControllerIntegrationTest {
     @WithMockUser(roles = {"CREATE_ORGANIZER", "UPDATE_ORGANIZER", "DELETE_ORGANIZER", "READ_ORGANIZER"})
     void postOrganizer_putOrganizer_getOrganizer_deleteOrganizer_getAll_whenInvokedWithValidOrganizerDto_thenExpectForOrganizerToBeAddedThenEditedThenDeleted() {
 
-        final Instant currentTime = Instant.now();
+        final OffsetDateTime currentTime = OffsetDateTime.now();
         final OrganizerDto dto = OrganizerObjectGenerator.generateOrganizerDtoWithoutTimestamps(EventType.OTHER);
         // postOrganizer
         final ResponseEntity<OrganizerDto> actualEntity = restTemplate.postForEntity(createUrl(), dto,

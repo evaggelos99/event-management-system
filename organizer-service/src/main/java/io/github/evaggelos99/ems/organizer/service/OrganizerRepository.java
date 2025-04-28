@@ -16,6 +16,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.function.Function;
 
@@ -100,7 +101,7 @@ public class OrganizerRepository implements IOrganizerRepository {
     private Mono<Organizer> editOrganizer(final OrganizerDto organizer) {
 
         final UUID uuid = organizer.uuid();
-        final Instant updatedAt = Instant.now();
+        final OffsetDateTime updatedAt = OffsetDateTime.now();
 
         final String name = organizer.name();
         final String website = organizer.website();
@@ -132,7 +133,7 @@ public class OrganizerRepository implements IOrganizerRepository {
         final UUID organizerUuid = organizer.uuid();
         final UUID uuid = organizerUuid != null ? organizerUuid : UUID.randomUUID();
 
-        final Instant instantNow = Instant.now();
+        final OffsetDateTime now = OffsetDateTime.now();
 
         final String name = organizer.name();
         final String website = organizer.website();
@@ -143,15 +144,15 @@ public class OrganizerRepository implements IOrganizerRepository {
 
         final Mono<Long> rowsAffected = databaseClient
                 .sql(organizerQueriesProperties.get(CrudQueriesOperations.SAVE)).bind(0, uuid)
-                .bind(1, instantNow).bind(2, instantNow).bind(3, name).bind(4, website).bind(5, information)
+                .bind(1, now).bind(2, now).bind(3, name).bind(4, website).bind(5, information)
                 .bind(6, eventTypesArray).bind(7, contactInformation.email()).bind(8, contactInformation.phoneNumber())
                 .bind(9, contactInformation.physicalAddress()).fetch().rowsUpdated();
 
         return rowsAffected.filter(this::rowsAffectedAreMoreThanOne)
                 .map(rowNum -> organizerDtoToOrganizerConverter.apply(OrganizerDto.builder()
                         .uuid(uuid)
-                        .createdAt(instantNow)
-                        .lastUpdated(instantNow)
+                        .createdAt(now)
+                        .lastUpdated(now)
                         .eventTypes(listOfEventTypes)
                         .name(name).website(website).information(information)
                         .contactInformation(contactInformation).build()));

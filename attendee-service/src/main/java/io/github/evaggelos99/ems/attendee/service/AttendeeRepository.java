@@ -15,6 +15,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.function.Function;
 
@@ -98,7 +99,7 @@ public class AttendeeRepository implements IAttendeeRepository {
     private Mono<Attendee> editAttendee(final AttendeeDto attendee) {
 
         final UUID uuid = attendee.uuid();
-        final Instant updatedAt = Instant.now();
+        final OffsetDateTime updatedAt = OffsetDateTime.now();
         final List<UUID> ticketIds = attendee.ticketIDs() != null ? attendee.ticketIDs() : List.of();
         final UUID[] uuids = convertToArray(ticketIds);
         final Mono<Long> rowsAffected = databaseClient
@@ -121,7 +122,7 @@ public class AttendeeRepository implements IAttendeeRepository {
     private Mono<Attendee> saveAttendee(final AttendeeDto attendee) {
 
         final UUID attendeeId = attendee.uuid();
-        final Instant instantNow = Instant.now();
+        final OffsetDateTime instantNow = OffsetDateTime.now();
         final UUID uuid = attendeeId != null ? attendeeId : UUID.randomUUID();
         final List<UUID> ticketIds = attendee.ticketIDs() != null ? attendee.ticketIDs() : List.of();
         final UUID[] uuids = convertToArray(ticketIds);

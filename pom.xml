@@ -37,6 +37,7 @@
         <module>organizer-api</module>
         <module>event-api</module>
         <module>ticket-api</module>
+        <module>user-api</module>
         <module>kafka-lib</module>
         <module>testcontainer-kafka-lib</module>
         <module>security-lib</module>
@@ -47,6 +48,7 @@
         <module>organizer-service</module>
         <module>event-service</module>
         <module>ticket-service</module>
+        <module>user-service</module>
     </modules>
 
     <dependencies>

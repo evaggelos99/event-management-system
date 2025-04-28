@@ -7,6 +7,7 @@ import io.github.evaggelos99.ems.event.api.EventDto;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Random;
@@ -25,7 +26,7 @@ public final class EventObjectGenerator {
                                             final UUID sponsorId) {
 
         final EventType randomTicketType = ALL_EVENT_TYPES.get(RANDOM.nextInt(ALL_EVENT_TYPES.size()));
-        final Instant timestamp = Instant.now();
+        final OffsetDateTime timestamp = OffsetDateTime.now();
         final List<UUID> listSponsors = sponsorId != null ? List.of(sponsorId) : List.of();
         final List<UUID> listAttendees = attendeeId != null ? List.of(attendeeId) : List.of();
 
@@ -71,7 +72,7 @@ public final class EventObjectGenerator {
     public static Event generateEvent(final UUID attendeeId, final UUID organizerId, final UUID sponsorId) {
 
         final EventType randomTicketType = ALL_EVENT_TYPES.get(RANDOM.nextInt(ALL_EVENT_TYPES.size()));
-        final Instant now = Instant.now();
+        final OffsetDateTime now = OffsetDateTime.now();
 
         return new Event(UUID.randomUUID(), now, now, UUID.randomUUID().toString(), UUID.randomUUID().toString(),
                 randomTicketType, List.of(attendeeId), organizerId, RANDOM.nextInt(1500), List.of(sponsorId),

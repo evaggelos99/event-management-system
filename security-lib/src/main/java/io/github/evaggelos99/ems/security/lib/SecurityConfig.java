@@ -46,6 +46,8 @@ public class SecurityConfig {
         authorizeExchangeSpec.pathMatchers("/attendee/**").authenticated();
         authorizeExchangeSpec.pathMatchers("/organizer/**").authenticated();
         authorizeExchangeSpec.pathMatchers("/ticket/**").authenticated();
+        authorizeExchangeSpec.pathMatchers("/user/**").authenticated();
+        authorizeExchangeSpec.pathMatchers("/path/**").authenticated();
         authorizeExchangeSpec.pathMatchers("/swagger-ui.html").permitAll();
         authorizeExchangeSpec.pathMatchers("/webjars/**").permitAll();
         authorizeExchangeSpec.pathMatchers("/v3/api-docs/**").permitAll();

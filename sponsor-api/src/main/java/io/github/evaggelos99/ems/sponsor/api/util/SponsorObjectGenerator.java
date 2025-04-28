@@ -5,6 +5,7 @@ import io.github.evaggelos99.ems.sponsor.api.Sponsor;
 import io.github.evaggelos99.ems.sponsor.api.SponsorDto;
 
 import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.util.Random;
 import java.util.UUID;
 
@@ -20,8 +21,8 @@ public final class SponsorObjectGenerator {
 
         return SponsorDto.builder()
                 .uuid(sponsorId != null ? sponsorId : UUID.randomUUID())
-                .createdAt(Instant.now())
-                .lastUpdated(Instant.now())
+                .createdAt(OffsetDateTime.now())
+                .lastUpdated(OffsetDateTime.now())
                 .name(UUID.randomUUID().toString())
                 .website(UUID.randomUUID().toString())
                 .financialContribution(RANDOM.nextInt(500))
@@ -38,7 +39,7 @@ public final class SponsorObjectGenerator {
 
     public static Sponsor generateSponsor() {
 
-        final Instant now = Instant.now();
+        final OffsetDateTime now = OffsetDateTime.now();
         return new Sponsor(UUID.randomUUID(), now, now, UUID.randomUUID().toString(), UUID.randomUUID().toString(),
                 RANDOM.nextInt(500), generateContactInformation());
 

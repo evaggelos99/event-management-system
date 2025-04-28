@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Null;
 
 import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 /**
@@ -16,8 +17,8 @@ import java.util.UUID;
  * @author Evangelos Georgiou
  */
 public record TicketDto(@Schema(hidden = true, description = "The UUID of the Attendee") UUID uuid,
-                        @Null @Schema(hidden = true) Instant createdAt,
-                        @Null @Schema(hidden = true) Instant lastUpdated,
+                        @Null @Schema(hidden = true) OffsetDateTime createdAt,
+                        @Null @Schema(hidden = true) OffsetDateTime lastUpdated,
                         @NotNull @Schema(example = "61ee465a-f3d8-400a-8ae4-5e806b3eba92", description = "The uuid of the event") UUID eventID,
                         @NotNull @Schema(description = "What kind of ticket type it is") TicketType ticketType,
                         @NotNegative @Schema(example = "150", description = "The price of the ticket") Integer price,
@@ -32,8 +33,8 @@ public record TicketDto(@Schema(hidden = true, description = "The UUID of the At
     public static final class Builder {
 
         private UUID uuid;
-        private Instant createdAt;
-        private Instant lastUpdated;
+        private OffsetDateTime createdAt;
+        private OffsetDateTime lastUpdated;
         private UUID eventID;
         private TicketType ticketType;
         private Integer price;
@@ -54,12 +55,12 @@ public record TicketDto(@Schema(hidden = true, description = "The UUID of the At
             return this;
         }
 
-        public Builder createdAt(final Instant createdAt) {
+        public Builder createdAt(final OffsetDateTime createdAt) {
             this.createdAt = createdAt;
             return this;
         }
 
-        public Builder lastUpdated(final Instant lastUpdated) {
+        public Builder lastUpdated(final OffsetDateTime lastUpdated) {
             this.lastUpdated = lastUpdated;
             return this;
         }

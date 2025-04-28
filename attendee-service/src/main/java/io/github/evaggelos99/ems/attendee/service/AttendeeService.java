@@ -17,6 +17,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
@@ -125,7 +126,7 @@ public class AttendeeService implements IAttendeeService {
      */
     @Override
     public Mono<Boolean> addTicket(final UUID attendeeId, final UUID ticketId) {
-        // FIXME add role and investigate if we can propagate token
+
         return lookUpTicketService.ping().filter(Boolean.TRUE::equals)
                 .flatMap(x -> eventService.ping()).filter(Boolean.TRUE::equals)
                 .flatMap(x -> attendeeRepository.findById(attendeeId))
@@ -144,7 +145,7 @@ public class AttendeeService implements IAttendeeService {
             final LinkedList<UUID> newList = new LinkedList<>(list);
             newList.add(ticketId);
 
-            return new Attendee(attendeeId, attendee.getCreatedAt(), Instant.now(), attendee.getFirstName(),
+            return new Attendee(attendeeId, attendee.getCreatedAt(), OffsetDateTime.now(), attendee.getFirstName(),
                     attendee.getLastName(), newList);
         }
 

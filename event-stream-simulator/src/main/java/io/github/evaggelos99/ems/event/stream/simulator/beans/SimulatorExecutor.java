@@ -28,7 +28,7 @@ public class SimulatorExecutor {
         this.enabled = enabled;
     }
 
-    @Scheduled(cron = "0 */30 * * * *")
+    @Scheduled(cron = "0 */1 * * * *")
     private void streamEvents() {
         if (enabled) {
             lookUpRemoteService.getAllEventDtos()

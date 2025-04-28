@@ -11,6 +11,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 public final class Ticket extends AbstractDomainObject {
@@ -21,7 +22,7 @@ public final class Ticket extends AbstractDomainObject {
     private final Boolean transferable;
     private final SeatingInformation seatingInformation;
 
-    public Ticket(final UUID uuid, final Instant createdAt, final Instant lastUpdated, @NotNull final UUID eventID,
+    public Ticket(final UUID uuid, final OffsetDateTime createdAt, final OffsetDateTime lastUpdated, @NotNull final UUID eventID,
                   @NotNull final TicketType ticketType,
                   @NotNull @NotNegative(message = "cannot be negative") final Integer price,
                   @NotNull final Boolean transferable, @NotNull final SeatingInformation seatingInformation) {

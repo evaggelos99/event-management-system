@@ -8,6 +8,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Null;
 
 import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 /**
@@ -16,8 +17,8 @@ import java.util.UUID;
  * @author Evangelos Georgiou
  */
 public record SponsorDto(@Schema(hidden = true, description = "The UUID of the Attendee") UUID uuid, //
-                         @Null @Schema(hidden = true) Instant createdAt, //
-                         @Null @Schema(hidden = true) Instant lastUpdated, //
+                         @Null @Schema(hidden = true) OffsetDateTime createdAt, //
+                         @Null @Schema(hidden = true) OffsetDateTime lastUpdated, //
                          @NotBlank @Schema(example = "dolore", description = "Name of the Sponsor") String name, //
                          @NotBlank @Schema(example = "www.deserunt.com", description = "Website of the Sponsor") String website,
                          @NotNegative @Schema(example = "85000", description = "How much money the sponsor gave") Integer financialContribution,
@@ -32,8 +33,8 @@ public record SponsorDto(@Schema(hidden = true, description = "The UUID of the A
     public static final class Builder {
 
         private UUID uuid;
-        private Instant createdAt;
-        private Instant lastUpdated;
+        private OffsetDateTime createdAt;
+        private OffsetDateTime lastUpdated;
         private String name;
         private String website;
         private Integer financialContribution;
@@ -53,12 +54,12 @@ public record SponsorDto(@Schema(hidden = true, description = "The UUID of the A
             return this;
         }
 
-        public Builder createdAt(final Instant createdAt) {
+        public Builder createdAt(final OffsetDateTime createdAt) {
             this.createdAt = createdAt;
             return this;
         }
 
-        public Builder lastUpdated(final Instant lastUpdated) {
+        public Builder lastUpdated(final OffsetDateTime lastUpdated) {
             this.lastUpdated = lastUpdated;
             return this;
         }

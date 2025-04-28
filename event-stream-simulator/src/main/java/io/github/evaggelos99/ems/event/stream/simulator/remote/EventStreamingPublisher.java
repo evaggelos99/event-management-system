@@ -59,7 +59,7 @@ public class EventStreamingPublisher implements IRemoteServiceClient {
 
         LOGGER.trace("Publishing data to topic: {}", topicNamePrefix + eventDto.uuid());
 
-        return Flux.fromStream(IntStream.range(0, 1000)
+        return Flux.fromStream(IntStream.range(0, 5)
                 .mapToObj(num -> template.send(topicNamePrefix + eventDto.uuid(), randomizeEventStream(eventDto))))
                 .map(x -> true)
                 .doOnError(error -> LOGGER.error("Could not reach send message to EventService", error))

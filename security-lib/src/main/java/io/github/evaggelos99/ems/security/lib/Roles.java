@@ -30,5 +30,8 @@ public enum Roles {
     ROLE_READ_ORGANIZER,
     ROLE_DELETE_ORGANIZER,
 
-
+    /**
+     * Used to onboard users into the system
+     */
+    ROLE_ADMIN
 }

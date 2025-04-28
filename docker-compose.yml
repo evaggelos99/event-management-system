@@ -78,7 +78,7 @@ services:
 
   fusionauth:
     hostname: fusionauth
-    image: fusionauth/fusionauth-app:latest
+    image: fusionauth/fusionauth-app:1.55.1
     environment:
       DATABASE_URL: jdbc:postgresql://db-fusion:6543/fusionauth
       DATABASE_ROOT_USERNAME: ${POSTGRES_USER}
@@ -204,6 +204,24 @@ services:
       - flyway
     ports:
       - "8084:8080"
+    networks:
+      - backend
+
+  user-service:
+    container_name: user-service
+    hostname: user-service
+    image: 'evaggelosg99/user-service:latest'
+    environment:
+      org.com.ems.db.port: 5432
+      org.com.ems.db.host: db
+      server.port: 8080
+      spring.security.oauth2.resourceserver.jwt.jwk-set-uri: ${JWK_SET_URI}
+      spring.security.oauth2.resourceserver.jwt.issuer-uri: ${JWT_ISSUER_URI}
+    depends_on:
+      - db
+      - flyway
+    ports:
+      - "8086:8080"
     networks:
       - backend
 

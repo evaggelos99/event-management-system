@@ -23,6 +23,7 @@ import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,7 +59,7 @@ class AttendeeServiceTest {
         final UUID ticketId = UUID.randomUUID();
         final UUID eventId = UUID.randomUUID();
         final UUID attendeeId = UUID.randomUUID();
-        final Instant createdAt = Instant.now();
+        final OffsetDateTime createdAt = OffsetDateTime.now();
         final AttendeeDto dto = AttendeeDto.builder()
                 .uuid(attendeeId)
                 .createdAt(createdAt)
@@ -152,7 +153,7 @@ class AttendeeServiceTest {
         final UUID updatedTicketId = UUID.randomUUID();
         final String updatedFirstName = UUID.randomUUID().toString();
         final String updatedLastName = UUID.randomUUID().toString();
-        final Instant updatedTimestamp = Instant.now();
+        final OffsetDateTime updatedTimestamp = OffsetDateTime.now();
         final AttendeeDto newDto = AttendeeDto.builder()
                 .uuid(dto.uuid())
                 .createdAt(dto.createdAt())

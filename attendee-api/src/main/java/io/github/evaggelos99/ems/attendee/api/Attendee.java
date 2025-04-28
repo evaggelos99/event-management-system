@@ -8,6 +8,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -18,7 +19,7 @@ public final class Attendee extends AbstractDomainObject {
     private final String lastName;
     private final List<UUID> ticketIDs;
 
-    public Attendee(final UUID uuid, final Instant createdAt, final Instant lastUpdated, @NotNull final String firstName, @NotNull final String lastName, final List<UUID> ticketIDs) {
+    public Attendee(final UUID uuid, final OffsetDateTime createdAt, final OffsetDateTime lastUpdated, @NotNull final String firstName, @NotNull final String lastName, final List<UUID> ticketIDs) {
 
         super(uuid, createdAt, lastUpdated);
         this.firstName = firstName;
