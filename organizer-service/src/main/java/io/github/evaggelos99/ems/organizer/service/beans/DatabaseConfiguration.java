@@ -26,12 +26,12 @@ public class DatabaseConfiguration {
     private final String host;
     private final String schema;
 
-    public DatabaseConfiguration(@Value("${org.com.ems.db.username}") final String username,
-                                 @Value("${org.com.ems.db.password}") final String password,
-                                 @Value("${org.com.ems.db.port}") final String port,
-                                 @Value("${org.com.ems.db.database}") final String database,
-                                 @Value("${org.com.ems.db.host}") final String host,
-                                 @Value("${org.com.ems.db.schema") final String schema) {
+    public DatabaseConfiguration(@Value("${io.github.evaggelos99.ems.organizer-service.db.username}") final String username,
+                                 @Value("${io.github.evaggelos99.ems.organizer-service.db.password}") final String password,
+                                 @Value("${io.github.evaggelos99.ems.organizer-service.db.port}") final String port,
+                                 @Value("${io.github.evaggelos99.ems.organizer-service.db.database}") final String database,
+                                 @Value("${io.github.evaggelos99.ems.organizer-service.db.host}") final String host,
+                                 @Value("${io.github.evaggelos99.ems.organizer-service.db.schema") final String schema) {
 
         this.username = username;
         this.password = password;
