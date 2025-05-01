@@ -13,12 +13,13 @@ import java.util.UUID;
 
 public class FusionAuthApiTest {
 
+    final String apiKey = "";
+    final String baseUrl = "http://localhost:9011";
+
     @Test
     @Disabled
     public void createMultipleRoles() {
 
-        final String apiKey = "jUH_OWviFOIiRsNeN0GQ0uBwWdh8-QdMu2zLEkcKu3ghEfDICG9zO9Bi";
-        final String baseUrl = "http://localhost:9011";
         final FusionAuthClient client = new FusionAuthClient(apiKey, baseUrl);
 
         UUID applicationId = UUID.fromString("99c404e4-2877-4296-9c85-a89191d19e21");
@@ -46,8 +47,6 @@ public class FusionAuthApiTest {
     @Disabled
     public void createOneRole() {
 
-        final String apiKey = "jUH_OWviFOIiRsNeN0GQ0uBwWdh8-QdMu2zLEkcKu3ghEfDICG9zO9Bi";
-        final String baseUrl = "http://localhost:9011";
         final FusionAuthClient client = new FusionAuthClient(apiKey, baseUrl);
 
         UUID applicationId = UUID.fromString("99c404e4-2877-4296-9c85-a89191d19e21");
