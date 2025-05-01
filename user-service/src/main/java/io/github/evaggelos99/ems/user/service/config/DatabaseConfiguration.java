@@ -23,21 +23,18 @@ public class DatabaseConfiguration {
     private final String port;
     private final String database;
     private final String host;
-    private final String schema;
 
     public DatabaseConfiguration(@Value("${io.github.evaggelos99.ems.user-service.db.username}") final String username,
                                  @Value("${io.github.evaggelos99.ems.user-service.db.password}") final String password,
                                  @Value("${io.github.evaggelos99.ems.user-service.db.port}") final String port,
                                  @Value("${io.github.evaggelos99.ems.user-service.db.database}") final String database,
-                                 @Value("${io.github.evaggelos99.ems.user-service.db.host}") final String host,
-                                 @Value("${io.github.evaggelos99.ems.user-service.db.schema") final String schema) {
+                                 @Value("${io.github.evaggelos99.ems.user-service.db.host}") final String host) {
 
         this.username = username;
         this.password = password;
         this.port = port;
         this.database = database;
         this.host = host;
-        this.schema = schema;
     }
 
     @Bean
@@ -53,7 +50,6 @@ public class DatabaseConfiguration {
                 .codecRegistrar(EnumCodec.builder()
                         .withEnum("user_role_enum", UserRole.class)
                         .build())
-                .schema(schema)
                 .tcpKeepAlive(true)
                 .build());
     }

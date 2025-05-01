@@ -1,6 +1,7 @@
 package io.github.evaggelos99.ems.user.service.config;
 
 import io.github.evaggelos99.ems.common.api.db.CrudQueriesOperations;
+import io.github.evaggelos99.ems.common.api.db.ReportQueriesOperations;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,7 +11,7 @@ import java.util.Map;
 
 @Configuration
 @PropertySource("classpath:properties/queries.properties")
-@ConfigurationProperties(prefix = "org.com.ems.queries.user")
+@ConfigurationProperties(prefix = "io.github.evaggelos99.ems.user-service.db")
 public class QueriesConfiguration {
 
     private String save;
@@ -18,6 +19,7 @@ public class QueriesConfiguration {
     private String getAll;
     private String getId;
     private String deleteId;
+    private String attendeesCameToAllEvents;
 
     @Bean
     Map<CrudQueriesOperations, String> queriesProperties() {
@@ -27,6 +29,12 @@ public class QueriesConfiguration {
                 CrudQueriesOperations.GET_ALL, getAll,
                 CrudQueriesOperations.GET_ID, getId,
                 CrudQueriesOperations.DELETE_ID, deleteId);
+    }
+
+    @Bean
+    Map<ReportQueriesOperations, String> reportQueriesProperties() {
+
+        return Map.of(ReportQueriesOperations.ATTENDEES_CAME_TO_ALL_EVENTS, attendeesCameToAllEvents);
     }
 
     public String getSave() {
@@ -69,4 +77,11 @@ public class QueriesConfiguration {
         this.deleteId = deleteId;
     }
 
+    public void setAttendeesCameToAllEvents(String attendeesCameToAllEvents) {
+        this.attendeesCameToAllEvents = attendeesCameToAllEvents;
+    }
+
+    public String getAttendeesCameToAllEvents() {
+        return attendeesCameToAllEvents;
+    }
 }

@@ -1,0 +1,2 @@
+ALTER TABLE ems_ticket.tickets
+    ADD COLUMN used BOOLEAN NOT NULL DEFAULT FALSE;

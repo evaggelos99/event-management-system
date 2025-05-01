@@ -2,7 +2,7 @@
 CREATE TYPE user_role_enum AS ENUM ('ATTENDEE', 'SPONSOR', 'ORGANIZER', 'ADMIN');
 
 CREATE TABLE IF NOT EXISTS ems_admin.users(
-  id UUID NOT NULL, -- corresponds to FusionAuth
+  id UUID PRIMARY KEY, -- corresponds to FusionAuth
   created_at TIMESTAMP WITH TIME ZONE NOT NULL,
   last_updated TIMESTAMP WITH TIME ZONE NOT NULL,
   username TEXT UNIQUE NOT NULL,

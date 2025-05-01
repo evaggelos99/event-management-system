@@ -35,8 +35,8 @@ public class TestConfiguration {
 				for (final Object uuid : ticketIds) {
 					ll.add((UUID) uuid);
 				}
-				return new Attendee(row.get("id", UUID.class), row.get("created_at", OffsetDateTime.class).toInstant(),
-						row.get("last_updated", OffsetDateTime.class).toInstant(), row.get("first_name", String.class),
+				return new Attendee(row.get("id", UUID.class), row.get("created_at", OffsetDateTime.class),
+						row.get("last_updated", OffsetDateTime.class), row.get("first_name", String.class),
 						row.get("last_name", String.class), ll);
 			}
 		};

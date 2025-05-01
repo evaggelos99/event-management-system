@@ -7,7 +7,6 @@ import io.github.evaggelos99.ems.attendee.api.repo.AttendeeRowMapper;
 import io.github.evaggelos99.ems.attendee.api.repo.IAttendeeRepository;
 import io.github.evaggelos99.ems.common.api.db.CrudQueriesOperations;
 import io.github.evaggelos99.ems.common.api.domainobjects.AbstractDomainObject;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.stereotype.Component;

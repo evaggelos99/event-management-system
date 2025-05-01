@@ -24,3 +24,6 @@ docker buildx build -t evaggelosg99/flyway:latest .
 cd ../event-stream-simulator
 mvn clean package spring-boot:repackage -DskipTests
 docker buildx build -t evaggelosg99/event-stream-simulator:latest .
+cd ../user-service
+mvn clean package spring-boot:repackage -DskipTests
+docker buildx build -t evaggelosg99/user-service:latest .

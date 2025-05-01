@@ -25,7 +25,6 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.Duration;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.util.*;
@@ -99,7 +98,7 @@ public class EventRepository implements IEventRepository {
     public Mono<Boolean> deleteById(final UUID uuid) {
 
         return databaseClient.sql(eventQueriesProperties.get(CrudQueriesOperations.DELETE_ID))
-                .bind(0, uuid).fetch().rowsUpdated().map(this::rowsAffectedAreMoreThanOne);
+                .bind(0, uuid).fetch().rowsUpdated().map(this::rowsAffectedIsOne);
     }
 
     @Override
@@ -161,7 +160,7 @@ public class EventRepository implements IEventRepository {
                 .bind(6, organizerId).bind(7, limitOfPeople).bind(8, sponsors).bind(9, startTimeOfEvent)
                 .bind(10, interval).bind(11, streamable).bind(12, uuid).fetch().rowsUpdated();
 
-        return rowsAffected.filter(this::rowsAffectedAreMoreThanOne).flatMap(rowNum -> findById(uuid))
+        return rowsAffected.filter(this::rowsAffectedIsOne).flatMap(rowNum -> findById(uuid))
                 .map(AbstractDomainObject::getCreatedAt)
                 .map(createdAt -> eventDtoToEventConverter.apply(EventDto.builder()
                         .uuid(uuid)
@@ -205,7 +204,7 @@ public class EventRepository implements IEventRepository {
                 .bind(8, limitOfPeople).bind(9, sponsors).bind(10, startTimeOfEvent).bind(11, interval).bind(12, streamable).fetch()
                 .rowsUpdated();
 
-        return rowsAffected.filter(this::rowsAffectedAreMoreThanOne)
+        return rowsAffected.filter(this::rowsAffectedIsOne)
                 .map(rowNum -> eventDtoToEventConverter.apply(EventDto.builder()
                         .uuid(uuid)
                         .createdAt(now)
@@ -241,7 +240,7 @@ public class EventRepository implements IEventRepository {
                 .fetch()
                 .rowsUpdated();
 
-        return rowsAffected.filter(this::rowsAffectedAreMoreThanOne)
+        return rowsAffected.filter(this::rowsAffectedIsOne)
                 .map(num -> eventPayloadToEventStreamConverter.convert(payload, createdAt));
     }
 
@@ -254,6 +253,7 @@ public class EventRepository implements IEventRepository {
         if (payloads.isEmpty()) {
             return Flux.empty();
         }
+
         final Statement statement = conn.createStatement(eventStreamQueriesOperations.get(EventStreamQueriesOperations.ADD));
 
 
@@ -305,9 +305,9 @@ public class EventRepository implements IEventRepository {
         return uuids;
     }
 
-    private boolean rowsAffectedAreMoreThanOne(final Long x) {
+    private boolean rowsAffectedIsOne(final Long x) {
 
-        return x >= 1;
+        return x == 1;
     }
 
 }

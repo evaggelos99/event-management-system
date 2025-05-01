@@ -115,10 +115,11 @@ public class TicketRepository implements ITicketRepository {
         final Mono<Long> rowsAffected = databaseClient
                 .sql(ticketQueriesProperties.get(CrudQueriesOperations.SAVE)).bind(0, uuid).bind(1, now)
                 .bind(2, now).bind(3, eventId).bind(4, ticketType).bind(5, price).bind(6, isTransferable)
-                .bind(7, seatInformation.seat()).bind(8, seatInformation.section()).fetch().rowsUpdated();
+                .bind(7, seatInformation.seat()).bind(8, seatInformation.section())
+                .bind(9, ticket.used()).fetch().rowsUpdated();
 
         return rowsAffected.filter(this::rowsAffectedAreMoreThanOne).map(rowNum -> ticketDtoToTicketConverter
-                .apply(new TicketDto(uuid, now, now, eventId, ticketType, price, isTransferable, seatInformation)));
+                .apply(new TicketDto(uuid, now, now, eventId, ticketType, price, isTransferable, seatInformation, ticket.used())));
     }
 
     private Mono<Ticket> editTicket(final TicketDto ticket) {
@@ -135,12 +136,14 @@ public class TicketRepository implements ITicketRepository {
         final Mono<Long> rowsAffected = databaseClient
                 .sql(ticketQueriesProperties.get(CrudQueriesOperations.EDIT)).bind(0, uuid)
                 .bind(1, updatedAt).bind(2, eventId).bind(3, ticketType).bind(4, price).bind(5, isTransferable)
-                .bind(6, seatInformation.seat()).bind(7, seatInformation.section()).bind(8, uuid).fetch().rowsUpdated();
+                .bind(6, seatInformation.seat()).bind(7, seatInformation.section())
+                .bind(8, ticket.used())
+                .bind(9, uuid).fetch().rowsUpdated();
 
         return rowsAffected.filter(this::rowsAffectedAreMoreThanOne).flatMap(rowNum -> findById(uuid))
                 .map(AbstractDomainObject::getCreatedAt)
                 .map(monoCreatedAt -> ticketDtoToTicketConverter.apply(new TicketDto(uuid, monoCreatedAt, updatedAt,
-                        eventId, ticketType, price, isTransferable, seatInformation)));
+                        eventId, ticketType, price, isTransferable, seatInformation, ticket.used())));
     }
 
     private boolean rowsAffectedAreMoreThanOne(final Long x) {

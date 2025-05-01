@@ -1,5 +1,3 @@
-// curl -X GET "http://localhost:9011/api/tenant" \
-//      -H "Authorization: API_KEY"
 {
   "tenants": [
     {
@@ -209,6 +207,7 @@
           "type": "randomAlphaNumeric"
         },
         "externalAuthenticationIdTimeToLiveInSeconds": 300,
+        "loginIntentTimeToLiveInSeconds": 1800,
         "oneTimePasswordTimeToLiveInSeconds": 60,
         "passwordlessLoginGenerator": { "length": 32, "type": "randomBytes" },
         "passwordlessLoginTimeToLiveInSeconds": 180,
@@ -265,9 +264,11 @@
         "accessTokenKeyId": "2de54551-5ae3-4b5b-973e-9a786c7d5d75",
         "idTokenKeyId": "2de54551-5ae3-4b5b-973e-9a786c7d5d75",
         "refreshTokenExpirationPolicy": "Fixed",
+        "refreshTokenOneTimeUseConfiguration": { "gracePeriodInSeconds": 0 },
         "refreshTokenRevocationPolicy": {
           "onLoginPrevented": true,
           "onMultiFactorEnable": false,
+          "onOneTimeTokenReuse": false,
           "onPasswordChanged": true
         },
         "refreshTokenSlidingWindowConfiguration": {
@@ -588,6 +589,7 @@
           "type": "randomAlphaNumeric"
         },
         "externalAuthenticationIdTimeToLiveInSeconds": 300,
+        "loginIntentTimeToLiveInSeconds": 1800,
         "oneTimePasswordTimeToLiveInSeconds": 60,
         "passwordlessLoginGenerator": { "length": 32, "type": "randomBytes" },
         "passwordlessLoginTimeToLiveInSeconds": 180,
@@ -644,9 +646,11 @@
         "accessTokenKeyId": "2de54551-5ae3-4b5b-973e-9a786c7d5d75",
         "idTokenKeyId": "2de54551-5ae3-4b5b-973e-9a786c7d5d75",
         "refreshTokenExpirationPolicy": "Fixed",
+        "refreshTokenOneTimeUseConfiguration": { "gracePeriodInSeconds": 0 },
         "refreshTokenRevocationPolicy": {
           "onLoginPrevented": true,
           "onMultiFactorEnable": false,
+          "onOneTimeTokenReuse": false,
           "onPasswordChanged": true
         },
         "refreshTokenSlidingWindowConfiguration": {

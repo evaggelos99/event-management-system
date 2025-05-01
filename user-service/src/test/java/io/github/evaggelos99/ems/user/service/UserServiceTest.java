@@ -4,7 +4,6 @@ import io.github.evaggelos99.ems.security.lib.IOnboardingIdentityManagerService;
 import io.github.evaggelos99.ems.user.api.User;
 import io.github.evaggelos99.ems.user.api.UserDto;
 import io.github.evaggelos99.ems.user.api.repo.IUserRepository;
-import io.github.evaggelos99.ems.user.api.util.UserObjectGenerator;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -14,14 +13,12 @@ import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
-import reactor.test.StepVerifier;
 
-import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith({SpringExtension.class, MockitoExtension.class})
 class UserServiceTest {
@@ -32,7 +29,6 @@ class UserServiceTest {
     private IOnboardingIdentityManagerService onboardingIdentityManagerServiceMock;
 
     private UserService service;
-
 
 
     @BeforeEach
@@ -64,7 +60,7 @@ class UserServiceTest {
             @Override
             public Mono<User> save(final UserDto userDto) {
 
-                final User sponsor =new User(userDto.uuid(), userDto.createdAt(), userDto.lastUpdated(),
+                final User sponsor = new User(userDto.uuid(), userDto.createdAt(), userDto.lastUpdated(),
                         userDto.username(),
                         userDto.email(),
                         userDto.firstName(),

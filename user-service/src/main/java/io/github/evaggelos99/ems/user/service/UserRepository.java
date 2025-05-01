@@ -107,7 +107,7 @@ public class UserRepository implements IUserRepository {
                 .bind(7, dto.birthDate())
                 .bind(8, dto.uuid())
                 .fetch().rowsUpdated()
-                .filter(this::rowsAffectedAreIsOne).flatMap(_ -> findById(dto.uuid()))
+                .filter(this::rowsAffectedAreIsOne).flatMap(x -> findById(dto.uuid()))
                 .map(AbstractDomainObject::getCreatedAt)
                 .map(createdAt -> userDtoToUserConverter.apply(
                         UserDto.from(dto)

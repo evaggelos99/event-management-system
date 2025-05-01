@@ -125,7 +125,7 @@ public class SponsorRepository implements ISponsorRepository {
     private Mono<Sponsor> saveSponsor(final SponsorDto sponsor) {
 
         final UUID sponsorUuid = sponsor.uuid();
-        final OffsetDateTime now = now.now();
+        final OffsetDateTime now = OffsetDateTime.now();
 
         final UUID uuid = sponsorUuid != null ? sponsorUuid : UUID.randomUUID();
         final String name = sponsor.name();

@@ -17,12 +17,10 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.util.Assert;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -73,11 +71,14 @@ class AttendeeServiceTest {
         Mockito.when(lookUpTicketServiceMock.lookUpTicket(ticketId))
                 .thenReturn(Mono.just(TicketObjectGenerator.generateTicketDto(null, eventId)));
         Mockito.when(eventServiceMock.addAttendee(eventId, attendeeId)).thenReturn(Mono.just(true));
-        StepVerifier.create(Assertions.assertDoesNotThrow(() -> service.add(dto))).assertNext(Assertions::assertNotNull).verifyComplete();
+        StepVerifier.create(Assertions.assertDoesNotThrow(() -> service.add(dto)))
+                .assertNext(Assertions::assertNotNull)
+                .verifyComplete();
         StepVerifier.create(service.addTicket(dto.uuid(), ticketId))
                 .assertNext(Assertions::assertTrue)
                 .verifyComplete();
-        StepVerifier.create(Assertions.assertDoesNotThrow(() -> service.delete(dto.uuid()))).assertNext(Assertions::assertTrue);
+        StepVerifier.create(Assertions.assertDoesNotThrow(() -> service.delete(dto.uuid())))
+                .assertNext(Assertions::assertTrue);
     }
 
     private String generateString() {
@@ -95,9 +96,14 @@ class AttendeeServiceTest {
         Mockito.when(eventServiceMock.ping()).thenReturn(Mono.just(true));
         Mockito.when(lookUpTicketServiceMock.lookUpTicket(ticketId)).thenReturn(Mono.empty());
 
-        StepVerifier.create(Assertions.assertDoesNotThrow(() -> service.add(dto))).assertNext(Assertions::assertNotNull).verifyComplete();
-        StepVerifier.create(service.addTicket(dto.uuid(), ticketId)).assertNext(Assertions::assertFalse).verifyComplete();
-        StepVerifier.create(Assertions.assertDoesNotThrow(() -> service.delete(dto.uuid()))).assertNext(Assertions::assertTrue);
+        StepVerifier.create(Assertions.assertDoesNotThrow(() -> service.add(dto)))
+                .assertNext(Assertions::assertNotNull)
+                .verifyComplete();
+        StepVerifier.create(service.addTicket(dto.uuid(), ticketId))
+                .assertNext(Assertions::assertFalse)
+                .verifyComplete();
+        StepVerifier.create(Assertions.assertDoesNotThrow(() -> service.delete(dto.uuid())))
+                .assertNext(Assertions::assertTrue);
     }
 
     @Test
@@ -108,9 +114,11 @@ class AttendeeServiceTest {
         final AttendeeDto dto2 = AttendeeObjectGenerator.generateAttendeeDto(null);
 
         StepVerifier.create(Assertions.assertDoesNotThrow(() -> service.add(dto)))
-                .assertNext(x -> Assertions.assertEquals(dto.uuid(), x.getUuid())).verifyComplete();
+                .assertNext(x -> Assertions.assertEquals(dto.uuid(), x.getUuid()))
+                .verifyComplete();
         StepVerifier.create(Assertions.assertDoesNotThrow(() -> service.add(dto2)))
-                .assertNext(x -> Assertions.assertEquals(dto2.uuid(), x.getUuid())).verifyComplete();
+                .assertNext(x -> Assertions.assertEquals(dto2.uuid(), x.getUuid()))
+                .verifyComplete();
         final Flux<Attendee> allAttendees = Assertions.assertDoesNotThrow(() -> service.getAll());
 
         StepVerifier.create(allAttendees)
@@ -169,7 +177,9 @@ class AttendeeServiceTest {
             Assertions.assertEquals(updatedLastName, updatedAttendee.getLastName());
         }).verifyComplete();
 
-        StepVerifier.create(Assertions.assertDoesNotThrow(() -> service.delete(dto.uuid()))).assertNext(Assertions::assertTrue).verifyComplete();
+        StepVerifier.create(Assertions.assertDoesNotThrow(() -> service.delete(dto.uuid())))
+                .assertNext(Assertions::assertTrue)
+                .verifyComplete();
     }
 
     @Test
@@ -179,8 +189,11 @@ class AttendeeServiceTest {
         final AttendeeDto dto = AttendeeObjectGenerator.generateAttendeeDto(null);
         final Mono<Attendee> monoAttendee = Assertions.assertDoesNotThrow(() -> service.add(dto));
         StepVerifier.create(monoAttendee.flatMap(attendee -> service.get(attendee.getUuid())))
-                .assertNext(Assertions::assertNotNull).verifyComplete();
-        StepVerifier.create(Assertions.assertDoesNotThrow(() -> service.delete(dto.uuid()))).expectNext(true).verifyComplete();
+                .assertNext(Assertions::assertNotNull)
+                .verifyComplete();
+        StepVerifier.create(Assertions.assertDoesNotThrow(() -> service.delete(dto.uuid())))
+                .expectNext(true)
+                .verifyComplete();
     }
 
     IAttendeeRepository attendeeRepositoryMock() {

@@ -115,7 +115,7 @@ class TicketServiceTest {
             public Mono<Ticket> save(final TicketDto dto) {
 
                 final Ticket sponsor = new Ticket(dto.uuid(), OffsetDateTime.now(), OffsetDateTime.now(), dto.eventID(),
-                        dto.ticketType(), dto.price(), dto.transferable(), dto.seatInformation());
+                        dto.ticketType(), dto.price(), dto.transferable(), dto.seatInformation(), dto.used());
 
                 list.put(dto.uuid(), sponsor);
 
@@ -154,7 +154,7 @@ class TicketServiceTest {
             public Mono<Ticket> edit(final TicketDto dto) {
 
                 final Ticket sponsor = new Ticket(dto.uuid(), dto.createdAt(), dto.lastUpdated(), dto.eventID(),
-                        dto.ticketType(), dto.price(), dto.transferable(), dto.seatInformation());
+                        dto.ticketType(), dto.price(), dto.transferable(), dto.seatInformation(), dto.used());
 
                 list.put(dto.uuid(), sponsor);
 

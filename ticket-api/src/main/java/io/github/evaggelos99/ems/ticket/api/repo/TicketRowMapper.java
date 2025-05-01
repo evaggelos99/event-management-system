@@ -23,7 +23,7 @@ public class TicketRowMapper implements BiFunction<Row, RowMetadata, Ticket> {
         return new Ticket(row.get("id", UUID.class), row.get("created_at", OffsetDateTime.class),
                 row.get("last_updated", OffsetDateTime.class), row.get("event_id", UUID.class),
                 TicketType.valueOf(row.get("ticket_type", String.class)), row.get("price", Integer.class),
-                row.get("transferable", Boolean.class), seatingInformation);
+                row.get("transferable", Boolean.class), seatingInformation, row.get("used", Boolean.class));
     }
 
 }
