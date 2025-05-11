@@ -30,7 +30,7 @@ public class EventRowMapper implements BiFunction<Row, RowMetadata, Event> {
     public Event apply(final Row rs, final RowMetadata rmd) {
 
         final List<UUID> attendees = arrayToListOfUuidConverter.apply((UUID[]) rs.get("attendee_ids"));
-        final List<UUID> sponsors = arrayToListOfUuidConverter.apply((UUID[]) rs.get("sponsors_ids"));
+        final List<UUID> sponsors = arrayToListOfUuidConverter.apply((UUID[]) rs.get("sponsor_ids"));
 
         final Duration duration = rs.get("duration", Interval.class).getDuration();
 

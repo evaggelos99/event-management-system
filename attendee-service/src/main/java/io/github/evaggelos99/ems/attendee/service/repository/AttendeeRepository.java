@@ -1,7 +1,8 @@
-package io.github.evaggelos99.ems.attendee.service;
+package io.github.evaggelos99.ems.attendee.service.repository;
 
 import io.github.evaggelos99.ems.attendee.api.Attendee;
 import io.github.evaggelos99.ems.attendee.api.AttendeeDto;
+import io.github.evaggelos99.ems.attendee.api.AttendeeTicketMapping;
 import io.github.evaggelos99.ems.attendee.api.converters.AttendeeDtoToAttendeeConverter;
 import io.github.evaggelos99.ems.attendee.api.repo.AttendeeRowMapper;
 import io.github.evaggelos99.ems.attendee.api.repo.IAttendeeRepository;
@@ -12,13 +13,14 @@ import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.util.function.Tuple2;
 
-import java.time.Instant;
 import java.time.OffsetDateTime;
-import java.util.*;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.UUID;
 import java.util.function.Function;
-
-import static java.util.Objects.requireNonNull;
 
 @Component
 public class AttendeeRepository implements IAttendeeRepository {
@@ -27,6 +29,7 @@ public class AttendeeRepository implements IAttendeeRepository {
     private final AttendeeRowMapper attendeeRowMapper;
     private final Function<AttendeeDto, Attendee> attendeeDtoToAttendeeConverter;
     private final Map<CrudQueriesOperations, String> attendeeQueriesProperties;
+    private final TicketMappingRepository ticketMappingRepository;
 
     /**
      * C-or
@@ -48,12 +51,14 @@ public class AttendeeRepository implements IAttendeeRepository {
     public AttendeeRepository(final DatabaseClient databaseClient,
                               @Qualifier("attendeeRowMapper") final AttendeeRowMapper attendeeRowMapper,
                               @Qualifier("attendeeDtoToAttendeeConverter") final Function<AttendeeDto, Attendee> attendeeDtoToAttendeeConverter,
-                              @Qualifier("queriesProperties") final Map<CrudQueriesOperations, String> attendeeQueriesProperties) {
+                              @Qualifier("queriesProperties") final Map<CrudQueriesOperations, String> attendeeQueriesProperties,
+                              final TicketMappingRepository ticketMappingRepository) {
 
-        this.databaseClient = requireNonNull(databaseClient);
-        this.attendeeRowMapper = requireNonNull(attendeeRowMapper);
-        this.attendeeDtoToAttendeeConverter = requireNonNull(attendeeDtoToAttendeeConverter);
-        this.attendeeQueriesProperties = requireNonNull(attendeeQueriesProperties);
+        this.databaseClient = databaseClient;
+        this.attendeeRowMapper = attendeeRowMapper;
+        this.attendeeDtoToAttendeeConverter = attendeeDtoToAttendeeConverter;
+        this.attendeeQueriesProperties = attendeeQueriesProperties;
+        this.ticketMappingRepository = ticketMappingRepository;
     }
 
     @Override
@@ -72,8 +77,9 @@ public class AttendeeRepository implements IAttendeeRepository {
     @Override
     public Mono<Boolean> deleteById(final UUID uuid) {
 
-        return databaseClient.sql(attendeeQueriesProperties.get(CrudQueriesOperations.DELETE_ID))
-                .bind(0, uuid).fetch().rowsUpdated().map(this::rowsAffectedAreMoreThanOne);
+        return ticketMappingRepository.deleteMapping(uuid).flatMap(x-> databaseClient.sql(
+                        attendeeQueriesProperties.get(CrudQueriesOperations.DELETE_ID))
+                .bind(0, uuid).fetch().rowsUpdated()).map(this::rowsAffectedIsOne);
     }
 
     @Override
@@ -101,11 +107,14 @@ public class AttendeeRepository implements IAttendeeRepository {
         final OffsetDateTime updatedAt = OffsetDateTime.now();
         final List<UUID> ticketIds = attendee.ticketIDs() != null ? attendee.ticketIDs() : List.of();
         final UUID[] uuids = convertToArray(ticketIds);
-        final Mono<Long> rowsAffected = databaseClient
-                .sql(attendeeQueriesProperties.get(CrudQueriesOperations.EDIT)).bind(0, uuid)
-                .bind(1, updatedAt).bind(2, attendee.firstName()).bind(3, attendee.lastName()).bind(4, uuids)
-                .bind(5, uuid).fetch().rowsUpdated();
-        return rowsAffected.filter(this::rowsAffectedAreMoreThanOne).flatMap(rowNum -> findById(uuid))
+
+        final Mono<Tuple2<Long, List<AttendeeTicketMapping>>> res = Mono.zip(databaseClient
+                        .sql(attendeeQueriesProperties.get(CrudQueriesOperations.EDIT))
+                        .bind(0, updatedAt).bind(1, attendee.firstName()).bind(2, attendee.lastName())
+                        .bind(3, uuid).fetch().rowsUpdated(),
+                ticketMappingRepository.editMapping(uuid, uuids).collectList());
+
+        return res.map(Tuple2::getT1).filter(this::rowsAffectedIsOne).flatMap(rowNum -> findById(uuid))
                 .map(AbstractDomainObject::getCreatedAt)
                 .map(createdAt -> attendeeDtoToAttendeeConverter.apply(
                         AttendeeDto.builder()
@@ -125,17 +134,26 @@ public class AttendeeRepository implements IAttendeeRepository {
         final UUID uuid = attendeeId != null ? attendeeId : UUID.randomUUID();
         final List<UUID> ticketIds = attendee.ticketIDs() != null ? attendee.ticketIDs() : List.of();
         final UUID[] uuids = convertToArray(ticketIds);
-        final Mono<Long> rowsAffected = databaseClient
-                .sql(attendeeQueriesProperties.get(CrudQueriesOperations.SAVE)).bind(0, uuid)
-                .bind(1, instantNow).bind(2, instantNow).bind(3, attendee.firstName()).bind(4, attendee.lastName())
-                .bind(5, uuids).fetch().rowsUpdated();
-        return rowsAffected.filter(this::rowsAffectedAreMoreThanOne).map(rowNum -> attendeeDtoToAttendeeConverter.apply(
+
+
+        final Mono<Tuple2<Long, List<AttendeeTicketMapping>>> res = Mono.zip(
+                databaseClient.sql(attendeeQueriesProperties.get(CrudQueriesOperations.SAVE))
+                        .bind(0, uuid)
+                        .bind(1, instantNow)
+                        .bind(2, instantNow)
+                        .bind(3, attendee.firstName())
+                        .bind(4, attendee.lastName())
+                        .fetch()
+                        .rowsUpdated(), ticketMappingRepository.saveMapping(uuid, uuids).collectList());
+
+        return res.map(Tuple2::getT1).filter(this::rowsAffectedIsOne)
+                .map(rowNum -> attendeeDtoToAttendeeConverter.apply(
                 AttendeeDto.builder().uuid(uuid)
                         .createdAt(instantNow)
                         .lastUpdated(instantNow)
                         .firstName(attendee.firstName())
                         .lastName(attendee.lastName())
-                        .ticketIDs(ticketIds)
+                        .ticketIDs(List.of(uuids))
                         .build()));
     }
 
@@ -152,8 +170,8 @@ public class AttendeeRepository implements IAttendeeRepository {
         return uuids;
     }
 
-    private boolean rowsAffectedAreMoreThanOne(final Long x) {
+    private boolean rowsAffectedIsOne(final Long x) {
 
-        return x >= 1;
+        return x == 1;
     }
 }

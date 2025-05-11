@@ -1,6 +1,7 @@
 package io.github.evaggelos99.ems.user.api;
 
 import io.github.evaggelos99.ems.common.api.dto.EventAttendanceReport;
+import reactor.core.publisher.Mono;
 
 import java.time.Instant;
 import java.util.List;
@@ -12,7 +13,7 @@ public interface IReportService {
      * Generate a report about how many attendees actually came to events
      */
     //  TODO create specific response
-    EventAttendanceReport generateAttendeesCame(List<UUID> eventUuidList);
+    Mono<EventAttendanceReport> generateAttendeesCame(List<UUID> eventUuidList);
 
     /**
      * Generate a report about the total number of events organized within a specific time period.

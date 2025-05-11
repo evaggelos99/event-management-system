@@ -88,9 +88,15 @@ public class EventController implements IEventController {
     }
 
     @Override
-    public Mono<Boolean> addAttendee(final UUID eventId, final UUID attendeeId) {
+    public Mono<Boolean> removeSponsor(final UUID eventId, final UUID sponsorId) {
 
-        return eventService.addAttendee(eventId, attendeeId);
+        return eventService.removeSponsor(eventId, sponsorId);
+    }
+
+    @Override
+    public Mono<Boolean> addSponsor(final UUID eventId, final UUID sponsorId) {
+
+        return eventService.addSponsor(eventId, sponsorId);
     }
 
     @Override

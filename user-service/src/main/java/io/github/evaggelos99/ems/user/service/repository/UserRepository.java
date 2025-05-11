@@ -1,4 +1,4 @@
-package io.github.evaggelos99.ems.user.service;
+package io.github.evaggelos99.ems.user.service.repository;
 
 import io.github.evaggelos99.ems.common.api.db.CrudQueriesOperations;
 import io.github.evaggelos99.ems.common.api.domainobjects.AbstractDomainObject;
@@ -71,7 +71,7 @@ public class UserRepository implements IUserRepository {
     @Override
     public Mono<Boolean> deleteById(final UUID uuid) {
 
-        return databaseClient.sql(userQueriesProperties.get(CrudQueriesOperations.DELETE_ID)).bind(0, uuid).fetch().rowsUpdated().filter(this::rowsAffectedAreIsOne).map(x-> Boolean.TRUE);
+        return databaseClient.sql(userQueriesProperties.get(CrudQueriesOperations.DELETE_ID)).bind(0, uuid).fetch().rowsUpdated().filter(this::rowsAffectedIsOne).map(x-> Boolean.TRUE);
     }
 
     @Override
@@ -107,7 +107,7 @@ public class UserRepository implements IUserRepository {
                 .bind(7, dto.birthDate())
                 .bind(8, dto.uuid())
                 .fetch().rowsUpdated()
-                .filter(this::rowsAffectedAreIsOne).flatMap(x -> findById(dto.uuid()))
+                .filter(this::rowsAffectedIsOne).flatMap(x -> findById(dto.uuid()))
                 .map(AbstractDomainObject::getCreatedAt)
                 .map(createdAt -> userDtoToUserConverter.apply(
                         UserDto.from(dto)
@@ -133,10 +133,10 @@ public class UserRepository implements IUserRepository {
                 .bind(7, newDto.role())
                 .bind(8, newDto.mobilePhone())
                 .bind(9, newDto.birthDate())
-                .fetch().rowsUpdated().filter(this::rowsAffectedAreIsOne).map(num -> userDtoToUserConverter.apply(newDto));
+                .fetch().rowsUpdated().filter(this::rowsAffectedIsOne).map(num -> userDtoToUserConverter.apply(newDto));
     }
 
-    private boolean rowsAffectedAreIsOne(final Long x) {
+    private boolean rowsAffectedIsOne(final Long x) {
         return x == 1;
     }
 

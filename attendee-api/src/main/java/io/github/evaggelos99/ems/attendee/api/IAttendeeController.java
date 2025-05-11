@@ -79,8 +79,7 @@ public interface IAttendeeController extends IGenericController {
     Mono<Boolean> deleteAttendee(@PathVariable UUID attendeeId);
 
     /**
-     * Method that updates the Event with that eventId If the id does not match any
-     * Event stored in the DB it will return 404
+     * Adds a ticket to the Attendee then cascades and sends a REST call to the Event Service which adds the attendee there
      *
      * @param attendeeId the UUID of the Attendee object
      * @param ticketId   the UUID of the Ticket object
@@ -91,5 +90,18 @@ public interface IAttendeeController extends IGenericController {
     @PutMapping("/{attendeeId}/addTicket")
     @ResponseStatus(value = HttpStatus.CREATED)
     Mono<Boolean> addTicket(@PathVariable UUID attendeeId, @RequestParam UUID ticketId);
+
+    /**
+     * Removes a ticket to the Attendee then cascades and sends a REST call to the Event Service which removes the attendee from there
+     *
+     * @param attendeeId the UUID of the Attendee object
+     * @param ticketId   the UUID of the Ticket object
+     */
+    @Operation(summary = "PUT Operation that adds a ticket to the attendee", description = "Updates the attendee and adds a ticket")
+//    @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "successful operation"),
+//            @ApiResponse(responseCode = "404", description = "could not find the object")})
+    @PutMapping("/{attendeeId}/removeTicket")
+    @ResponseStatus(value = HttpStatus.CREATED)
+    Mono<Boolean> removeTicket(@PathVariable UUID attendeeId, @RequestParam UUID ticketId);
 
 }

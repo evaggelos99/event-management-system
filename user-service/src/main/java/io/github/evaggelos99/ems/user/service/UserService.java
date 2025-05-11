@@ -8,6 +8,7 @@ import io.github.evaggelos99.ems.user.api.IUserService;
 import io.github.evaggelos99.ems.user.api.User;
 import io.github.evaggelos99.ems.user.api.UserDto;
 import io.github.evaggelos99.ems.user.api.repo.IUserRepository;
+import io.github.evaggelos99.ems.user.service.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;

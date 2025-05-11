@@ -40,6 +40,8 @@ public class TestConfiguration {
             @Override
             public Event apply(final Row rs, final RowMetadata rmd) {
 
+
+                // TODO FIXME
                 final List<UUID> attendees = foo((Object[]) rs.get("attendee_ids"));
 
                 final List<UUID> sponsors = foo((Object[]) rs.get("sponsors_ids"));
@@ -48,8 +50,8 @@ public class TestConfiguration {
                 final Duration duration = Duration.of(dur.getNanosOfSecond(), ChronoUnit.NANOS)
                         .plusSeconds(dur.getSeconds()).plusHours(dur.getHours());
 
-                return new Event(rs.get("id", UUID.class), rs.get("created_at", OffsetDateTime.class).toInstant(),
-                        rs.get("last_updated", OffsetDateTime.class).toInstant(), rs.get("name", String.class),
+                return new Event(rs.get("id", UUID.class), rs.get("created_at", OffsetDateTime.class),
+                        rs.get("last_updated", OffsetDateTime.class), rs.get("name", String.class),
                         rs.get("place", String.class), EventType.valueOf(rs.get("event_type", String.class)), attendees,
                         rs.get("organizer_id", UUID.class), rs.get("limit_of_people", Integer.class), sponsors,
                         Boolean.TRUE.equals(rs.get("streamable", Boolean.class)),

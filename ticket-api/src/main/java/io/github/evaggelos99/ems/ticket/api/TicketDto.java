@@ -33,6 +33,20 @@ public record TicketDto(@Schema(hidden = true, description = "The UUID of the At
         return new Builder();
     }
 
+    public static Builder from(final TicketDto obj) {
+
+        return new Builder()
+                .uuid(obj.uuid)
+                .createdAt(obj.createdAt)
+                .lastUpdated(obj.lastUpdated)
+                .eventID(obj.eventID)
+                .ticketType(obj.ticketType)
+                .price(obj.price)
+                .transferable(obj.transferable)
+                .seatInformation(obj.seatInformation)
+                .used(obj.used);
+    }
+
     public static final class Builder {
 
         private UUID uuid;

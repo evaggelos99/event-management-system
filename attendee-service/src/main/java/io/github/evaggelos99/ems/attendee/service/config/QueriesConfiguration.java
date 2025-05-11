@@ -1,6 +1,7 @@
-package io.github.evaggelos99.ems.attendee.service.beans;
+package io.github.evaggelos99.ems.attendee.service.config;
 
 import io.github.evaggelos99.ems.common.api.db.CrudQueriesOperations;
+import io.github.evaggelos99.ems.common.api.db.MappingQueriesOperations;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,6 +19,10 @@ public class QueriesConfiguration {
     private String getAll;
     private String getId;
     private String deleteId;
+    private String saveTicketMappings;
+    private String deleteTicketMappings;
+    private String getTickets;
+    private String deleteTicketSingularMapping;
 
     @Bean
     Map<CrudQueriesOperations, String> queriesProperties() {
@@ -27,6 +32,15 @@ public class QueriesConfiguration {
                 CrudQueriesOperations.GET_ALL, getAll,
                 CrudQueriesOperations.GET_ID, getId,
                 CrudQueriesOperations.DELETE_ID, deleteId);
+    }
+
+    @Bean
+    Map<MappingQueriesOperations, String> mappingQueriesProperties() {
+
+        return Map.of(MappingQueriesOperations.SAVE_MAPPING, saveTicketMappings,
+                MappingQueriesOperations.DELETE_MAPPINGS, deleteTicketMappings,
+                MappingQueriesOperations.DELETE_SINGULAR_MAPPING, deleteTicketSingularMapping,
+                MappingQueriesOperations.GET_MAPPINGS, getTickets);
     }
 
     public String getSave() {
@@ -69,4 +83,35 @@ public class QueriesConfiguration {
         this.deleteId = deleteId;
     }
 
+    public void setSaveTicketMappings(final String saveTicketMapping) {
+        this.saveTicketMappings = saveTicketMapping;
+    }
+
+    public String getSaveTicketMappings() {
+        return saveTicketMappings;
+    }
+
+    public void setDeleteTicketMappings(final String deleteTicketMappings) {
+        this.deleteTicketMappings = deleteTicketMappings;
+    }
+
+    public String getDeleteTicketMappings() {
+        return deleteTicketMappings;
+    }
+
+    public void setGetTickets(final String getTickets) {
+        this.getTickets = getTickets;
+    }
+
+    public String getGetTickets() {
+        return getTickets;
+    }
+
+    public void setDeleteTicketSingularMapping(final String deleteTicketSingularMapping) {
+        this.deleteTicketSingularMapping = deleteTicketSingularMapping;
+    }
+
+    public String getDeleteTicketSingularMapping() {
+        return deleteTicketSingularMapping;
+    }
 }

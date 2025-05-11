@@ -1,4 +1,4 @@
-package io.github.evaggelos99.ems.attendee.service.beans;
+package io.github.evaggelos99.ems.attendee.service.config;
 
 public class Constants {
 

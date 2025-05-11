@@ -1,9 +1,8 @@
 package io.github.evaggelos99.ems.event.service;
 
+import io.github.evaggelos99.ems.common.api.db.IMappingRepository;
 import io.github.evaggelos99.ems.common.api.transport.EventStreamPayload;
-import io.github.evaggelos99.ems.event.api.Event;
-import io.github.evaggelos99.ems.event.api.EventDto;
-import io.github.evaggelos99.ems.event.api.EventStream;
+import io.github.evaggelos99.ems.event.api.*;
 import io.github.evaggelos99.ems.event.api.converters.EventToEventDtoConverter;
 import io.github.evaggelos99.ems.event.api.repo.IEventRepository;
 import io.github.evaggelos99.ems.event.api.util.EventObjectGenerator;
@@ -29,14 +28,16 @@ import static org.junit.jupiter.api.Assertions.*;
 class EventServiceTest {
 
     private final IEventRepository eventRepository = eventRepositoryMock();
-    private final Function<Event, EventDto> eventToEventDtoConverter = new EventToEventDtoConverter();
 
+    private IMappingRepository<AttendeeEventMapping> attendeeEventMappingRepository;
+
+    private IMappingRepository<SponsorEventMapping> sponsorEventMappingRepository;
     private EventService service;
 
     @BeforeEach
     void setUp() {
 
-        service = new EventService(eventRepository, eventToEventDtoConverter);
+        service = new EventService(eventRepository, null, null);
     }
 
     @Test
@@ -163,6 +164,8 @@ class EventServiceTest {
 
         return new IEventRepository() {
 
+            private final Map<UUID, Event> list = new HashMap<>();
+
             @Override
             public Mono<EventStream> saveOneEventStreamPayload(final EventStreamPayload payload) {
                 return null;
@@ -177,8 +180,6 @@ class EventServiceTest {
             public Flux<EventStream> findAllEventStreams(final UUID eventId) {
                 return null;
             }
-
-            private final Map<UUID, Event> list = new HashMap<>();
 
             @Override
             public Mono<Event> save(final EventDto dto) {

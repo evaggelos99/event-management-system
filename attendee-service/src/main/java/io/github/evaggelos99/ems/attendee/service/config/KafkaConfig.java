@@ -1,5 +1,6 @@
-package io.github.evaggelos99.ems.attendee.service.transport.kafka;
+package io.github.evaggelos99.ems.attendee.service.config;
 
+import io.github.evaggelos99.ems.attendee.service.transport.kafka.CustomTokenBearerInterceptor;
 import io.github.evaggelos99.ems.kafka.lib.serializer.ByteArraySerializer;
 import org.apache.kafka.clients.admin.AdminClientConfig;
 import org.apache.kafka.clients.producer.ProducerConfig;
@@ -20,7 +21,7 @@ import java.util.Map;
 
 @Configuration
 @ConditionalOnProperty(prefix = "kafka", name = "enabled", havingValue = "true", matchIfMissing = true)
-public class Config {
+public class KafkaConfig {
 
 //    @Value("${io.github.evaggelos99.ems.event.topic.add-attendee}")
 //    private String topicToBeCreated;

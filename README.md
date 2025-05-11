@@ -21,3 +21,4 @@ TODO:
   - [x] Added roles for each CRUD operation on the different objects
 - [ ] e commerce eshop for buying tickets to the events. Stripe for buying tickets?
 - [ ] Add controllers that use web-sockets
+- [ ] Remove the functionality to edit fields that contain arrays/lists add controller methods that add/remove to the array

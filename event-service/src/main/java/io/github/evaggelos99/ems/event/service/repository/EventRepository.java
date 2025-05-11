@@ -1,13 +1,11 @@
-package io.github.evaggelos99.ems.event.service;
+package io.github.evaggelos99.ems.event.service.repository;
 
 import io.github.evaggelos99.ems.common.api.db.CrudQueriesOperations;
 import io.github.evaggelos99.ems.common.api.db.DurationToIntervalConverter;
 import io.github.evaggelos99.ems.common.api.domainobjects.AbstractDomainObject;
 import io.github.evaggelos99.ems.common.api.domainobjects.EventType;
 import io.github.evaggelos99.ems.common.api.transport.EventStreamPayload;
-import io.github.evaggelos99.ems.event.api.Event;
-import io.github.evaggelos99.ems.event.api.EventDto;
-import io.github.evaggelos99.ems.event.api.EventStream;
+import io.github.evaggelos99.ems.event.api.*;
 import io.github.evaggelos99.ems.event.api.converters.EventDtoToEventConverter;
 import io.github.evaggelos99.ems.event.api.converters.EventStreamPayloadToEventStreamEntityConverter;
 import io.github.evaggelos99.ems.event.api.repo.EventRowMapper;
@@ -23,6 +21,8 @@ import org.springframework.r2dbc.core.DatabaseClient;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.util.function.Tuple2;
+import reactor.util.function.Tuple3;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -31,7 +31,6 @@ import java.util.*;
 import java.util.function.Function;
 
 import static io.github.evaggelos99.ems.event.api.repo.EventStreamQueriesOperations.GET_STREAM;
-import static java.util.Objects.requireNonNull;
 
 @Component
 public class EventRepository implements IEventRepository {
@@ -44,6 +43,8 @@ public class EventRepository implements IEventRepository {
     private final Map<EventStreamQueriesOperations, String> eventStreamQueriesOperations;
     private final EventStreamPayloadToEventStreamEntityConverter eventPayloadToEventStreamConverter;
     private final EventStreamRowMapper eventStreamRowMapper;
+    private final AttendeeMappingRepository attendeeMappingRepository;
+    private final SponsorMappingRepository sponsorMappingRepository;
 
     /**
      * C-or
@@ -69,16 +70,18 @@ public class EventRepository implements IEventRepository {
                            @Qualifier("durationToIntervalConverter") final Function<Duration, Object> durationToIntervalConverter,
                            @Qualifier("saveEventStreamQueriesProperties") final Map<EventStreamQueriesOperations, String> eventStreamQueriesOperations,
                            final EventStreamPayloadToEventStreamEntityConverter eventPayloadToEventStreamConverter,
-                           @Qualifier("eventStreamRowMapper") final EventStreamRowMapper eventStreamRowMapper) {
+                           @Qualifier("eventStreamRowMapper") final EventStreamRowMapper eventStreamRowMapper, final AttendeeMappingRepository attendeeMappingRepository, final SponsorMappingRepository sponsorMappingRepository) {
 
-        this.databaseClient = requireNonNull(databaseClient);
-        this.eventRowMapper = requireNonNull(eventRowMapperFunction);
-        this.eventDtoToEventConverter = requireNonNull(eventDtoToEventConverter);
-        this.eventQueriesProperties = requireNonNull(eventQueriesProperties);
-        this.durationToIntervalConverter = requireNonNull(durationToIntervalConverter);
-        this.eventStreamQueriesOperations = requireNonNull(eventStreamQueriesOperations);
+        this.databaseClient = databaseClient;
+        this.eventRowMapper = eventRowMapperFunction;
+        this.eventDtoToEventConverter = eventDtoToEventConverter;
+        this.eventQueriesProperties = eventQueriesProperties;
+        this.durationToIntervalConverter = durationToIntervalConverter;
+        this.eventStreamQueriesOperations = eventStreamQueriesOperations;
         this.eventPayloadToEventStreamConverter = eventPayloadToEventStreamConverter;
         this.eventStreamRowMapper=eventStreamRowMapper;
+        this.attendeeMappingRepository = attendeeMappingRepository;
+        this.sponsorMappingRepository = sponsorMappingRepository;
     }
 
     @Override
@@ -154,13 +157,15 @@ public class EventRepository implements IEventRepository {
         final UUID[] sponsors = convertToArray(sponsorIds);
         final boolean streamable = event.streamable();
 
-        final Mono<Long> rowsAffected = databaseClient
-                .sql(eventQueriesProperties.get(CrudQueriesOperations.EDIT)).bind(0, uuid)
-                .bind(1, updatedAt).bind(2, name).bind(3, place).bind(4, eventType).bind(5, attendees)
-                .bind(6, organizerId).bind(7, limitOfPeople).bind(8, sponsors).bind(9, startTimeOfEvent)
-                .bind(10, interval).bind(11, streamable).bind(12, uuid).fetch().rowsUpdated();
+        final Mono<Tuple3<Long, List<AttendeeEventMapping>, List<SponsorEventMapping>>> res = Mono.zip(databaseClient
+                        .sql(eventQueriesProperties.get(CrudQueriesOperations.EDIT))
+                        .bind(0, updatedAt).bind(1, name).bind(2, place).bind(3, eventType)
+                        .bind(4, organizerId).bind(5, limitOfPeople).bind(6, startTimeOfEvent)
+                        .bind(7, interval).bind(8, streamable).bind(9, uuid).fetch().rowsUpdated(),
+                attendeeMappingRepository.saveMapping(uuid, attendees).collectList(),
+                sponsorMappingRepository.saveMapping(uuid, sponsors).collectList());
 
-        return rowsAffected.filter(this::rowsAffectedIsOne).flatMap(rowNum -> findById(uuid))
+        return res.map(Tuple2::getT1).filter(this::rowsAffectedIsOne).flatMap(rowNum -> findById(uuid))
                 .map(AbstractDomainObject::getCreatedAt)
                 .map(createdAt -> eventDtoToEventConverter.apply(EventDto.builder()
                         .uuid(uuid)
@@ -194,17 +199,21 @@ public class EventRepository implements IEventRepository {
         final LocalDateTime startTimeOfEvent = event.startTimeOfEvent();
         final Duration duration = event.duration();
         final Object interval = durationToIntervalConverter.apply(duration);
-        final UUID[] attendees = convertToArray(attendeesIds);
-        final UUID[] sponsors = convertToArray(sponsorIds);
         final boolean streamable = event.streamable();
 
-        final Mono<Long> rowsAffected = databaseClient
-                .sql(eventQueriesProperties.get(CrudQueriesOperations.SAVE)).bind(0, uuid).bind(1, now)
-                .bind(2, now).bind(3, name).bind(4, place).bind(5, eventType).bind(6, attendees).bind(7, organizerId)
-                .bind(8, limitOfPeople).bind(9, sponsors).bind(10, startTimeOfEvent).bind(11, interval).bind(12, streamable).fetch()
-                .rowsUpdated();
+        final UUID[] attendees = convertToArray(attendeesIds);
+        final UUID[] sponsors = convertToArray(sponsorIds);
 
-        return rowsAffected.filter(this::rowsAffectedIsOne)
+        final Mono<Tuple3<Long, List<AttendeeEventMapping>, List<SponsorEventMapping>>> res = Mono.zip(
+                databaseClient
+                        .sql(eventQueriesProperties.get(CrudQueriesOperations.SAVE)).bind(0, uuid).bind(1, now)
+                        .bind(2, now).bind(3, name).bind(4, place).bind(5, eventType).bind(6, organizerId)
+                        .bind(7, limitOfPeople).bind(8, startTimeOfEvent).bind(9, interval).bind(10, streamable).fetch()
+                        .rowsUpdated(),
+                attendeeMappingRepository.saveMapping(uuid, attendees).collectList(),
+                sponsorMappingRepository.saveMapping(uuid, sponsors).collectList());
+
+        return res.map(Tuple3::getT1).filter(this::rowsAffectedIsOne)
                 .map(rowNum -> eventDtoToEventConverter.apply(EventDto.builder()
                         .uuid(uuid)
                         .createdAt(now)

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.Objects;
 import java.util.UUID;
 import java.util.function.Function;
 
@@ -75,6 +76,15 @@ public class TicketController implements ITicketController {
     public Mono<Boolean> deleteTicket(final UUID ticketId) {
 
         return ticketService.delete(ticketId);
+    }
+
+    @Override
+    public Mono<Boolean> useTicket(final UUID ticketId) {
+
+        return ticketService.get(ticketId)
+                .map(ticketToTicketDtoConverter)
+                .map(dto -> ticketService.edit(ticketId, TicketDto.from(dto).build()))
+                .map(Objects::nonNull);
     }
 
     /**

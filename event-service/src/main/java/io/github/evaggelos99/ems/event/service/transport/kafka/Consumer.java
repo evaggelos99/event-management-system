@@ -34,11 +34,29 @@ public class Consumer {
 
     @KafkaListener(topics = "${io.github.evaggelos99.ems.event.topic.add-attendee}", groupId = "default-group",
             containerFactory = "kafkaManualAckListenerContainerFactory")
-    void consume(final ConsumerRecord<String, byte[]> payload, Acknowledgment ack, @Value("${io.github.evaggelos99.ems.event.topic.add-attendee}") String topicName) {
+    void consumeAddAttendeeMessage(final ConsumerRecord<String, byte[]> payload, Acknowledgment ack, @Value("${io.github.evaggelos99.ems.event.topic.add-attendee}") String topicName) {
 
         final AttendeeToEventPayload attendeeToEventPayload = (AttendeeToEventPayload) objectDeserializer.convertBytesToObject(payload.value());
         LOGGER.trace("we just got an event for topic {} and message {}", topicName, attendeeToEventPayload);
         final boolean result = Boolean.TRUE.equals(eventService.addAttendee(attendeeToEventPayload.eventId(), attendeeToEventPayload.attendeeId())
+                .doOnError(error -> LOGGER.error("Could not add attendee to event,", error))
+                .block());
+
+        if (result) {
+
+            ack.acknowledge();
+        }
+
+        LOGGER.trace("Result of the event {} -> {}", topicName, result);
+    }
+
+    @KafkaListener(topics = "${io.github.evaggelos99.ems.event.topic.remove-attendee}", groupId = "default-group",
+            containerFactory = "kafkaManualAckListenerContainerFactory")
+    void consumeRemoveAttendeeMessage(final ConsumerRecord<String, byte[]> payload, Acknowledgment ack, @Value("${io.github.evaggelos99.ems.event.topic.remove-attendee}") String topicName) {
+
+        final AttendeeToEventPayload attendeeToEventPayload = (AttendeeToEventPayload) objectDeserializer.convertBytesToObject(payload.value());
+        LOGGER.trace("we just got an event for topic {} and message {}", topicName, attendeeToEventPayload);
+        final boolean result = Boolean.TRUE.equals(eventService.removeAttendee(attendeeToEventPayload.eventId(), attendeeToEventPayload.attendeeId())
                 .doOnError(error -> LOGGER.error("Could not add attendee to event,", error))
                 .block());
 

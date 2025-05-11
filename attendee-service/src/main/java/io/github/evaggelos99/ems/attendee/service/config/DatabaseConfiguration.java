@@ -1,4 +1,4 @@
-package io.github.evaggelos99.ems.attendee.service.beans;
+package io.github.evaggelos99.ems.attendee.service.config;
 
 import io.github.evaggelos99.ems.common.api.domainobjects.EventType;
 import io.github.evaggelos99.ems.common.api.domainobjects.TicketType;
@@ -11,7 +11,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.r2dbc.core.DatabaseClient;
-import org.springframework.r2dbc.core.binding.BindMarkersFactory;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.time.Duration;

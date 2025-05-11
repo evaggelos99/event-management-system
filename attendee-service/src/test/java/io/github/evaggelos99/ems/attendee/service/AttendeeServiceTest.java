@@ -2,11 +2,13 @@ package io.github.evaggelos99.ems.attendee.service;
 
 import io.github.evaggelos99.ems.attendee.api.Attendee;
 import io.github.evaggelos99.ems.attendee.api.AttendeeDto;
+import io.github.evaggelos99.ems.attendee.api.AttendeeTicketMapping;
 import io.github.evaggelos99.ems.attendee.api.converters.AttendeeToAttendeeDtoConverter;
 import io.github.evaggelos99.ems.attendee.api.repo.IAttendeeRepository;
 import io.github.evaggelos99.ems.attendee.api.util.AttendeeObjectGenerator;
 import io.github.evaggelos99.ems.attendee.service.remote.EventServicePublisher;
 import io.github.evaggelos99.ems.attendee.service.remote.TicketLookUpRemoteService;
+import io.github.evaggelos99.ems.common.api.db.IMappingRepository;
 import io.github.evaggelos99.ems.ticket.api.util.TicketObjectGenerator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -32,7 +34,6 @@ import java.util.function.Function;
 class AttendeeServiceTest {
 
     private final IAttendeeRepository attendeeRepository = attendeeRepositoryMock();
-    private final Function<Attendee, AttendeeDto> attendeeToAttendeeDtoConverter = new AttendeeToAttendeeDtoConverter();
 
     @Mock
     private EventServicePublisher eventServiceMock;
@@ -40,12 +41,15 @@ class AttendeeServiceTest {
     @Mock
     private TicketLookUpRemoteService lookUpTicketServiceMock;
 
+    @Mock
+    private IMappingRepository<AttendeeTicketMapping> attendeeTicketMappingRepository;
+
     private AttendeeService service;
 
     @BeforeEach
     void setUp() {
 
-        service = new AttendeeService(attendeeRepository, attendeeToAttendeeDtoConverter, eventServiceMock, lookUpTicketServiceMock);
+        service = new AttendeeService(attendeeRepository, eventServiceMock, lookUpTicketServiceMock, attendeeTicketMappingRepository);
     }
 
     @Test
@@ -66,6 +70,7 @@ class AttendeeServiceTest {
                 .lastName(lastName)
                 .ticketIDs(List.of())
                 .build();
+
         Mockito.when(lookUpTicketServiceMock.ping()).thenReturn(Mono.just(true));
         Mockito.when(eventServiceMock.ping()).thenReturn(Mono.just(true));
         Mockito.when(lookUpTicketServiceMock.lookUpTicket(ticketId))
