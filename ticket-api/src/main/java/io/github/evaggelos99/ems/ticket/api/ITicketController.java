@@ -22,22 +22,22 @@ import java.util.UUID;
 public interface ITicketController extends IGenericController {
 
     /**
-     * Method that creates an Ticket object and saves it in the DB
+     * Method that creates a Ticket object and saves it in the DB
      *
      * @param ticketDto
      */
-    @Operation(summary = "POST operation that creates an ticket object", description = "creates an Ticket object and stores it in the data source")
+    @Operation(summary = "POST operation that creates a Ticket object", description = "creates a Ticket object and stores it in the data source")
     @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "successful operation")})
     @ResponseStatus(value = HttpStatus.CREATED)
     @PostMapping
     Mono<TicketDto> postTicket(@Valid @RequestBody TicketDto ticketDto);
 
     /**
-     * Method that gets an Ticket object from the DB
+     * Method that gets a Ticket object from the DB
      *
      * @param ticketId the UUID that will be used to search for the Ticket
      */
-    @Operation(summary = "GET operation that returns an ticket object", description = "retrieves an Ticket object from the data source")
+    @Operation(summary = "GET operation that returns a Ticket object", description = "retrieves a Ticket object from the data source")
     @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "successful operation"),
             @ApiResponse(responseCode = "404", description = "could not find the object")})
     @ResponseStatus(value = HttpStatus.OK)
@@ -59,7 +59,7 @@ public interface ITicketController extends IGenericController {
      *
      * @param ticketId the UUID of the Ticket object
      */
-    @Operation(summary = "PUT operation that updates or creates an ticket object", description = "updates or creates an Ticket object and stores it in the data source")
+    @Operation(summary = "PUT operation that updates or creates a Ticket object", description = "updates or creates a Ticket object and stores it in the data source")
     @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "successful operation"),
             @ApiResponse(responseCode = "404", description = "could not find the object")})
     @ResponseStatus(value = HttpStatus.CREATED)
@@ -71,7 +71,7 @@ public interface ITicketController extends IGenericController {
      *
      * @param ticketId the UUID of the Ticket object
      */
-    @Operation(summary = "DELETE operation that deletes an ticket object", description = "deletes an Ticket object")
+    @Operation(summary = "DELETE operation that deletes a Ticket object", description = "deletes a Ticket object")
     @ApiResponses(value = {@ApiResponse(responseCode = "204", description = "successful operation")})
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @DeleteMapping("/{ticketId}")
@@ -82,7 +82,7 @@ public interface ITicketController extends IGenericController {
      *
      * @param ticketId the UUID of the Ticket object
      */
-    @Operation(summary = "PUT operation that makes ticket used", description = "deletes an Ticket object")
+    @Operation(summary = "PUT operation that makes ticket used", description = "deletes a Ticket object")
     @ApiResponses(value = {@ApiResponse(responseCode = "204", description = "successful operation")})
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @DeleteMapping("/use/{ticketId}")

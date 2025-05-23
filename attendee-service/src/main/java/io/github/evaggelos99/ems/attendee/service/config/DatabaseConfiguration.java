@@ -34,7 +34,7 @@ public class DatabaseConfiguration {
                                  @Value("${io.github.evaggelos99.ems.attendee-service.db.port}") final String port,
                                  @Value("${io.github.evaggelos99.ems.attendee-service.db.database}") final String database,
                                  @Value("${io.github.evaggelos99.ems.attendee-service.db.host}") final String host,
-                                 @Value("${io.github.evaggelos99.ems.attendee-service.db.schema") final String schema) {
+                                 @Value("${io.github.evaggelos99.ems.attendee-service.db.schema}") final String schema) {
 
         this.username = username;
         this.password = password;
@@ -66,6 +66,7 @@ public class DatabaseConfiguration {
                         .withEnum("ticket_type_enum", TicketType.class)
                         .build())
                 .schema(schema)
+                .tcpKeepAlive(true)
                 .build());
     }
 

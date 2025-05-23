@@ -45,7 +45,7 @@ class SponsorControllerIntegrationTest {
     @BeforeAll
     void beforeAll() {
 
-        this.sqlScriptExecutor.setup();
+        sqlScriptExecutor.setup("migration/h2-schema.sql");
     }
 
     @Test

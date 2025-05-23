@@ -2,7 +2,7 @@ package io.github.evaggelos99.ems.user.service;
 
 import io.github.evaggelos99.ems.common.api.controller.exceptions.ObjectNotFoundException;
 import io.github.evaggelos99.ems.common.api.domainobjects.validators.constraints.PublisherValidator;
-import io.github.evaggelos99.ems.security.lib.IOnboardingIdentityManagerService;
+import io.github.evaggelos99.ems.security.lib.OnboardingIdentityManagerService;
 import io.github.evaggelos99.ems.security.lib.SecurityContextHelper;
 import io.github.evaggelos99.ems.user.api.IUserService;
 import io.github.evaggelos99.ems.user.api.User;
@@ -21,7 +21,7 @@ import static io.github.evaggelos99.ems.security.lib.Roles.ROLE_ADMIN;
 public class UserService implements IUserService {
 
     private final IUserRepository userRepository;
-    private final IOnboardingIdentityManagerService onboardingIdentityManagerService;
+    private final OnboardingIdentityManagerService onboardingIdentityManagerService;
 
     /**
      * C-or
@@ -30,7 +30,7 @@ public class UserService implements IUserService {
      *                                         communicates with the database
      * @param onboardingIdentityManagerService
      */
-    public UserService(final IUserRepository userRepository, final IOnboardingIdentityManagerService onboardingIdentityManagerService) {
+    public UserService(final IUserRepository userRepository, final OnboardingIdentityManagerService onboardingIdentityManagerService) {
 
         this.userRepository = userRepository;
         this.onboardingIdentityManagerService = onboardingIdentityManagerService;

@@ -3,13 +3,11 @@ package io.github.evaggelos99.ems.attendee.service;
 import io.github.evaggelos99.ems.attendee.api.Attendee;
 import io.github.evaggelos99.ems.attendee.api.AttendeeDto;
 import io.github.evaggelos99.ems.attendee.api.AttendeeTicketMapping;
-import io.github.evaggelos99.ems.attendee.api.converters.AttendeeToAttendeeDtoConverter;
 import io.github.evaggelos99.ems.attendee.api.repo.IAttendeeRepository;
 import io.github.evaggelos99.ems.attendee.api.service.IAttendeeService;
 import io.github.evaggelos99.ems.attendee.service.remote.EventServicePublisher;
 import io.github.evaggelos99.ems.attendee.service.remote.TicketLookUpRemoteService;
 import io.github.evaggelos99.ems.attendee.service.repository.AttendeeRepository;
-import io.github.evaggelos99.ems.common.api.controller.exceptions.DuplicateTicketIdInAttendeeException;
 import io.github.evaggelos99.ems.common.api.controller.exceptions.ObjectNotFoundException;
 import io.github.evaggelos99.ems.common.api.db.IMappingRepository;
 import io.github.evaggelos99.ems.common.api.domainobjects.validators.constraints.PublisherValidator;
@@ -35,14 +33,14 @@ public class AttendeeService implements IAttendeeService {
     /**
      * C-or
      *
-     * @param attendeeRepository             {@link AttendeeRepository} the
-     *                                       repository that communicates with the
-     *                                       database
-     *                                       that converts Attendee to AttendeeDto
-     * @param eventService                   the {@link EventServicePublisher} used for
-     *                                       cascading adding attendee to it's event
-     * @param lookUpTicketService            the {@link TicketLookUpRemoteService} as a lookup
-     *                                       for the tickets
+     * @param attendeeRepository  {@link AttendeeRepository} the
+     *                            repository that communicates with the
+     *                            database
+     *                            that converts Attendee to AttendeeDto
+     * @param eventService        the {@link EventServicePublisher} used for
+     *                            cascading adding attendee to it's event
+     * @param lookUpTicketService the {@link TicketLookUpRemoteService} as a lookup
+     *                            for the tickets
      */
     public AttendeeService(final IAttendeeRepository attendeeRepository,
                            final EventServicePublisher eventService,
@@ -61,7 +59,7 @@ public class AttendeeService implements IAttendeeService {
     @Override
     public Mono<Attendee> add(final AttendeeDto attendee) {
 
-        return SecurityContextHelper.filterRoles(ROLE_CREATE_ATTENDEE) 
+        return SecurityContextHelper.filterRoles(ROLE_CREATE_ATTENDEE)
                 .flatMap(x -> PublisherValidator.validateBooleanMono(x, () -> attendeeRepository.save(attendee)));
     }
 
@@ -71,7 +69,7 @@ public class AttendeeService implements IAttendeeService {
     @Override
     public Mono<Attendee> get(final UUID uuid) {
 
-        return SecurityContextHelper.filterRoles(ROLE_READ_ATTENDEE) 
+        return SecurityContextHelper.filterRoles(ROLE_READ_ATTENDEE)
                 .flatMap(x -> PublisherValidator.validateBooleanMono(x, () -> attendeeRepository.findById(uuid)));
     }
 
@@ -81,7 +79,7 @@ public class AttendeeService implements IAttendeeService {
     @Override
     public Mono<Boolean> delete(final UUID uuid) {
 
-        return SecurityContextHelper.filterRoles(ROLE_DELETE_ATTENDEE) 
+        return SecurityContextHelper.filterRoles(ROLE_DELETE_ATTENDEE)
                 .flatMap(x -> PublisherValidator.validateBooleanMono(x, () -> attendeeRepository.deleteById(uuid)));
     }
 
@@ -92,7 +90,7 @@ public class AttendeeService implements IAttendeeService {
     public Mono<Attendee> edit(final UUID uuid, final AttendeeDto attendee) {
 
         return notEqual(uuid, attendee.uuid()) ? Mono.error(() -> new ObjectNotFoundException(uuid, AttendeeDto.class))
-                : SecurityContextHelper.filterRoles(ROLE_UPDATE_ATTENDEE) 
+                : SecurityContextHelper.filterRoles(ROLE_UPDATE_ATTENDEE)
                 .flatMap(x -> PublisherValidator.validateBooleanMono(x, () -> attendeeRepository.edit(attendee)));
     }
 
@@ -102,7 +100,7 @@ public class AttendeeService implements IAttendeeService {
     @Override
     public Flux<Attendee> getAll() {
 
-        return SecurityContextHelper.filterRoles(ROLE_READ_ATTENDEE) 
+        return SecurityContextHelper.filterRoles(ROLE_READ_ATTENDEE)
                 .flatMapMany(x -> PublisherValidator.validateBooleanFlux(x, attendeeRepository::findAll));
     }
 
@@ -112,7 +110,7 @@ public class AttendeeService implements IAttendeeService {
     @Override
     public Mono<Boolean> existsById(final UUID attendeeId) {
 
-        return SecurityContextHelper.filterRoles(ROLE_READ_ATTENDEE) 
+        return SecurityContextHelper.filterRoles(ROLE_READ_ATTENDEE)
                 .flatMap(x -> PublisherValidator.validateBooleanMono(x, () -> attendeeRepository.existsById(attendeeId)));
     }
 
@@ -124,7 +122,7 @@ public class AttendeeService implements IAttendeeService {
 
         return SecurityContextHelper.filterRoles(ROLE_UPDATE_ATTENDEE)
                 .filter(Boolean::booleanValue)
-                .flatMap(x-> attendeeTicketMappingRepository.saveSingularMapping(attendeeId,ticketId))
+                .flatMap(x -> attendeeTicketMappingRepository.saveSingularMapping(attendeeId, ticketId))
                 .flatMap(x -> lookUpTicketService.lookUpTicket(ticketId))
                 .flatMap(ticketDto -> eventService.addAttendee(ticketDto.eventID(), attendeeId)).defaultIfEmpty(false);
     }
@@ -137,9 +135,10 @@ public class AttendeeService implements IAttendeeService {
 
         return SecurityContextHelper.filterRoles(ROLE_UPDATE_ATTENDEE)
                 .filter(Boolean::booleanValue)
-                .flatMap(x-> attendeeTicketMappingRepository.deleteSingularMapping(attendeeId, ticketId))
+                .flatMap(x -> attendeeTicketMappingRepository.deleteSingularMapping(attendeeId, ticketId))
                 .flatMap(x -> lookUpTicketService.lookUpTicket(ticketId))
-                .flatMap(ticketDto -> eventService.removeAttendee(ticketDto.eventID(), attendeeId)).defaultIfEmpty(false);
+                .flatMap(ticketDto -> eventService.removeAttendee(ticketDto.eventID(), attendeeId))
+                .defaultIfEmpty(false);
     }
 
     @Override

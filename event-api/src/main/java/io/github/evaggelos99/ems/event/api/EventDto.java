@@ -131,6 +131,24 @@ public record EventDto(@Schema(hidden = true, description = "The UUID of the Att
             this.duration = duration;
             return this;
         }
+
+        public Builder from(final EventDto eventDto) {
+            this.uuid = eventDto.uuid();
+            this.createdAt = eventDto.createdAt();
+            this.lastUpdated = eventDto.lastUpdated();
+            this.name = eventDto.name();
+            this.place = eventDto.place();
+            this.eventType = eventDto.eventType();
+            this.attendeesIds = eventDto.attendeesIds();
+            this.organizerId = eventDto.organizerId();
+            this.limitOfPeople = eventDto.limitOfPeople();
+            this.streamable = eventDto.streamable();
+            this.sponsorsIds = eventDto.sponsorsIds();
+            this.startTimeOfEvent = eventDto.startTimeOfEvent();
+            this.duration = eventDto.duration();
+            return this;
+        }
+
     }
 
 }

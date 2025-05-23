@@ -13,6 +13,7 @@ import io.r2dbc.spi.RowMetadata;
 import org.springframework.boot.r2dbc.ConnectionFactoryBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.r2dbc.core.DatabaseClient;
 
 import java.time.OffsetDateTime;
@@ -21,6 +22,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Configuration
+@Profile("test")
 public class TestConfiguration {
 
     @Bean("organizerRowMapper")
@@ -50,7 +52,7 @@ public class TestConfiguration {
         };
     }
 
-    @Bean
+    @Bean("postgresqlConnectionFactory")
     ConnectionFactory postgresqlConnectionFactory() {
 
         final Builder connectionFactoryOptionsBuilder = ConnectionFactoryOptions.builder()
@@ -62,7 +64,7 @@ public class TestConfiguration {
         return ConnectionFactoryBuilder.withOptions(connectionFactoryOptionsBuilder).build();
     }
 
-    @Bean
+    @Bean("databaseClient")
     DatabaseClient databaseClient(final ConnectionFactory postgresqlConnectionFactory) {
 
         return DatabaseClient.builder().connectionFactory(postgresqlConnectionFactory).build();

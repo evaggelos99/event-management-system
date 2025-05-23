@@ -4,6 +4,7 @@ import io.github.evaggelos99.ems.common.api.domainobjects.UserRole;
 import io.r2dbc.postgresql.PostgresqlConnectionConfiguration;
 import io.r2dbc.postgresql.PostgresqlConnectionFactory;
 import io.r2dbc.postgresql.codec.EnumCodec;
+import io.r2dbc.spi.ConnectionFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -38,7 +39,7 @@ public class DatabaseConfiguration {
     }
 
     @Bean
-    PostgresqlConnectionFactory postgresqlConnectionFactory() {
+    ConnectionFactory postgresqlConnectionFactory() {
 
         return new PostgresqlConnectionFactory(PostgresqlConnectionConfiguration.builder()
                 .host(host)
@@ -55,7 +56,7 @@ public class DatabaseConfiguration {
     }
 
     @Bean
-    DatabaseClient databaseClient(final PostgresqlConnectionFactory postgresqlConnectionFactory) {
+    DatabaseClient databaseClient(final ConnectionFactory postgresqlConnectionFactory) {
 
         return DatabaseClient.builder().connectionFactory(postgresqlConnectionFactory).build();
     }

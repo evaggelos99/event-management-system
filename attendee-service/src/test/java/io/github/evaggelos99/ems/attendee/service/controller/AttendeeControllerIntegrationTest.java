@@ -6,8 +6,6 @@ import io.github.evaggelos99.ems.attendee.service.AttendeeServiceApplication;
 import io.github.evaggelos99.ems.attendee.service.remote.TicketLookUpRemoteService;
 import io.github.evaggelos99.ems.attendee.service.util.SqlScriptExecutor;
 import io.github.evaggelos99.ems.attendee.service.util.TestConfiguration;
-import io.github.evaggelos99.ems.event.api.EventDto;
-import io.github.evaggelos99.ems.event.api.util.EventObjectGenerator;
 import io.github.evaggelos99.ems.testcontainerkafka.lib.ExtendedKafkaContainer;
 import io.github.evaggelos99.ems.ticket.api.TicketDto;
 import io.github.evaggelos99.ems.ticket.api.util.TicketObjectGenerator;
@@ -23,6 +21,9 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -30,7 +31,6 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import reactor.core.publisher.Mono;
 
-import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -39,10 +39,12 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
-@SpringBootTest(classes = {AttendeeServiceApplication.class,
-        TestConfiguration.class}, webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = {AttendeeServiceApplication.class, TestConfiguration.class},
+        properties = "spring.main.allow-bean-definition-overriding=true",
+        webEnvironment = WebEnvironment.RANDOM_PORT)
 @TestInstance(Lifecycle.PER_CLASS)
 @Testcontainers
+@ActiveProfiles("test")
 class AttendeeControllerIntegrationTest {
 
     private static final String HOSTNAME = "http://localhost:";
@@ -57,16 +59,33 @@ class AttendeeControllerIntegrationTest {
     @MockitoBean
     private TicketLookUpRemoteService ticketLookUpRemoteServiceMock;
 
-    AttendeeControllerIntegrationTest() {
-        KAFKA.start();
+    static {
 
-        System.setProperty("spring.kafka.producer.bootstrap-servers", KAFKA.getBootstrapServers());
+        KAFKA.start();
+    }
+
+    @DynamicPropertySource
+    static void configureKafkaProperties(DynamicPropertyRegistry registry) {
+
+        registry.add("spring.kafka.producer.bootstrap-servers", () -> KAFKA.getHost() + ":" + KAFKA.getFirstMappedPort());
+    }
+
+    @Test
+    void postAttendeeWithNoRole() {
+
+        final AttendeeDto dto = AttendeeObjectGenerator.generateAttendeeDto(UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID(), UUID.randomUUID());
+        try {
+            restTemplate.postForEntity(createUrl(), dto, AttendeeDto.class);
+        } catch (HttpClientErrorException.Unauthorized e) {
+            return;
+        }
+        throw new AssertionError("The request status is not 401");
     }
 
     @BeforeAll
     void beforeAll() {
 
-        sqlScriptExecutor.setup();
+        sqlScriptExecutor.setup("migration/h2-schema.sql");
     }
 
     @Test
@@ -76,8 +95,7 @@ class AttendeeControllerIntegrationTest {
         final OffsetDateTime currentTime = OffsetDateTime.now();
         final AttendeeDto dto = AttendeeObjectGenerator.generateAttendeeDtoWithoutTimestamps(null);
         // postAttendee
-        final ResponseEntity<AttendeeDto> actualEntity = restTemplate.postForEntity(createUrl(), dto,
-                AttendeeDto.class);
+        final ResponseEntity<AttendeeDto> actualEntity = restTemplate.postForEntity(createUrl(), dto, AttendeeDto.class);
         assertTrue(actualEntity.getStatusCode().is2xxSuccessful());
         final AttendeeDto actualDto = actualEntity.getBody();
         // assert
@@ -89,17 +107,16 @@ class AttendeeControllerIntegrationTest {
         assertEquals(dto.lastName(), actualDto.lastName());
         assertTrue(actualDto.ticketIDs().isEmpty());
         // getAttendee
-        final ResponseEntity<AttendeeDto> actualGetEntity = restTemplate
-                .getForEntity(createUrl() + "/{uuid}", AttendeeDto.class, actualDto.uuid());
+        final ResponseEntity<AttendeeDto> actualGetEntity = restTemplate.getForEntity(createUrl() + "/{uuid}", AttendeeDto.class, actualDto.uuid());
         // assert
         assertTrue(actualGetEntity.getStatusCode().is2xxSuccessful());
         final AttendeeDto getDto = actualGetEntity.getBody();
         assertNotNull(getDto);
         assertEquals(actualDto.uuid(), getDto.uuid());
-        assertEquals(actualDto.createdAt().truncatedTo(ChronoUnit.MILLIS),
-                getDto.createdAt().truncatedTo(ChronoUnit.MILLIS)); // for Github action tests
-        assertEquals(actualDto.lastUpdated().truncatedTo(ChronoUnit.MILLIS),
-                getDto.lastUpdated().truncatedTo(ChronoUnit.MILLIS)); // for Github action tests
+        assertEquals(actualDto.createdAt().truncatedTo(ChronoUnit.MILLIS), getDto.createdAt()
+                .truncatedTo(ChronoUnit.MILLIS)); // for Github action tests
+        assertEquals(actualDto.lastUpdated().truncatedTo(ChronoUnit.MILLIS), getDto.lastUpdated()
+                .truncatedTo(ChronoUnit.MILLIS)); // for Github action tests
         assertEquals(actualDto.firstName(), getDto.firstName());
         assertEquals(actualDto.lastName(), getDto.lastName());
         assertEquals(actualDto.ticketIDs(), getDto.ticketIDs());
@@ -107,15 +124,9 @@ class AttendeeControllerIntegrationTest {
         // deleteAttendee
         restTemplate.delete(createUrl() + "/{uuid}", actualDto.uuid());
         // assertThat it cannot be found
-        final ResponseEntity<AttendeeDto> deletedDto = restTemplate
-                .getForEntity(createUrl() + "/{uuid}", AttendeeDto.class, actualDto.uuid());
+        final ResponseEntity<AttendeeDto> deletedDto = restTemplate.getForEntity(createUrl() + "/{uuid}", AttendeeDto.class, actualDto.uuid());
         assertTrue(deletedDto.getStatusCode().is2xxSuccessful());
         assertNull(deletedDto.getBody());
-    }
-
-    private String createUrl() {
-
-        return HOSTNAME + port + RELATIVE_ENDPOINT;
     }
 
     @Test
@@ -126,8 +137,7 @@ class AttendeeControllerIntegrationTest {
         final UUID ticketId = UUID.randomUUID();
         final AttendeeDto dto = AttendeeObjectGenerator.generateAttendeeDtoWithoutTimestamps(null, ticketId);
         // postAttendee
-        final ResponseEntity<AttendeeDto> actualEntity = restTemplate.postForEntity(createUrl(), dto,
-                AttendeeDto.class);
+        final ResponseEntity<AttendeeDto> actualEntity = restTemplate.postForEntity(createUrl(), dto, AttendeeDto.class);
 
         assertTrue(actualEntity.getStatusCode().is2xxSuccessful());
         final AttendeeDto actualDto = actualEntity.getBody();
@@ -143,16 +153,14 @@ class AttendeeControllerIntegrationTest {
         // putAttendee
         final UUID differentTicketId = UUID.randomUUID();
         final AttendeeDto updatedDto = AttendeeObjectGenerator.generateAttendeeDtoWithoutTimestamps(actualDto.uuid(), differentTicketId);
-        final ResponseEntity<AttendeeDto> actualPutEntity = restTemplate.exchange(
-                createUrl() + "/{uuid}", HttpMethod.PUT, createHttpEntity(updatedDto),
-                AttendeeDto.class, actualDto.uuid());
+        final ResponseEntity<AttendeeDto> actualPutEntity = restTemplate.exchange(createUrl() + "/{uuid}", HttpMethod.PUT, createHttpEntity(updatedDto), AttendeeDto.class, actualDto.uuid());
         final AttendeeDto actualPutDto = actualPutEntity.getBody();
         // assert
         assertTrue(actualPutEntity.getStatusCode().is2xxSuccessful());
         assertNotNull(actualPutDto);
         assertEquals(actualPutDto.uuid(), actualDto.uuid());
-        assertEquals(actualDto.createdAt().truncatedTo(ChronoUnit.MILLIS),
-                actualPutDto.createdAt().truncatedTo(ChronoUnit.MILLIS));
+        assertEquals(actualDto.createdAt().truncatedTo(ChronoUnit.MILLIS), actualPutDto.createdAt()
+                .truncatedTo(ChronoUnit.MILLIS));
         assertTrue(actualPutDto.lastUpdated().isAfter(actualDto.lastUpdated()));
         assertEquals(updatedDto.firstName(), actualPutDto.firstName());
         assertEquals(updatedDto.lastName(), actualPutDto.lastName());
@@ -168,12 +176,6 @@ class AttendeeControllerIntegrationTest {
         assertTrue(body.isEmpty());
     }
 
-    @SuppressWarnings({"all"})
-    private HttpEntity createHttpEntity(final AttendeeDto updatedDto) {
-
-        return new HttpEntity(updatedDto);
-    }
-
     @Test
     @WithMockUser(roles = {"CREATE_ATTENDEE", "UPDATE_ATTENDEE", "DELETE_ATTENDEE", "READ_ATTENDEE"})
     void postAttendee_addTicket_deleteAttendee_whenInvokedWithValidAttendeeDto_thenExpectForAttendeeToBeAddedThenEditedWithAddTicketThenDeleted() {
@@ -182,8 +184,7 @@ class AttendeeControllerIntegrationTest {
         final UUID ticketId = UUID.randomUUID();
         final AttendeeDto dto = AttendeeObjectGenerator.generateAttendeeDtoWithoutTimestamps(null);
         // postAttendee
-        final ResponseEntity<AttendeeDto> actualEntity = restTemplate.postForEntity(createUrl(), dto,
-                AttendeeDto.class);
+        final ResponseEntity<AttendeeDto> actualEntity = restTemplate.postForEntity(createUrl(), dto, AttendeeDto.class);
         assertTrue(actualEntity.getStatusCode().is2xxSuccessful());
         final AttendeeDto actualDto = actualEntity.getBody();
         // assert
@@ -199,9 +200,7 @@ class AttendeeControllerIntegrationTest {
         when(ticketLookUpRemoteServiceMock.lookUpTicket(ticketId)).thenReturn(Mono.just(ticket));
         when(ticketLookUpRemoteServiceMock.ping()).thenReturn(Mono.just(true));
 
-        final ResponseEntity<Boolean> actualPutEntity = restTemplate.exchange(
-                createUrl() + "/" + "{attendeeId}/addTicket?ticketId={ticketId}", HttpMethod.PUT, null,
-                Boolean.class, actualDto.uuid(), ticketId);
+        final ResponseEntity<Boolean> actualPutEntity = restTemplate.exchange(createUrl() + "/" + "{attendeeId}/addTicket?ticketId={ticketId}", HttpMethod.PUT, null, Boolean.class, actualDto.uuid(), ticketId);
 
         assertTrue(actualPutEntity.getStatusCode().is2xxSuccessful());
         assertEquals(Boolean.TRUE, actualPutEntity.getBody());
@@ -222,15 +221,14 @@ class AttendeeControllerIntegrationTest {
         throw new AssertionError("The request status is not 403");
     }
 
-    @Test
-    void postAttendeeWithNoRole() {
+    private String createUrl() {
 
-        final AttendeeDto dto = AttendeeObjectGenerator.generateAttendeeDto(UUID.randomUUID(),UUID.randomUUID(),UUID.randomUUID(),UUID.randomUUID());
-        try {
-            restTemplate.postForEntity(createUrl(), dto, AttendeeDto.class);
-        } catch (HttpClientErrorException.Unauthorized e) {
-            return;
-        }
-        throw new AssertionError("The request status is not 401");
+        return HOSTNAME + port + RELATIVE_ENDPOINT;
+    }
+
+    @SuppressWarnings({"all"})
+    private HttpEntity createHttpEntity(final AttendeeDto updatedDto) {
+
+        return new HttpEntity(updatedDto);
     }
 }

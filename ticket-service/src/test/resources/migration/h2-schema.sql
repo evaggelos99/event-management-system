@@ -1,4 +1,4 @@
-CREATE SCHEMA ems_ticket;
+CREATE SCHEMA IF NOT EXISTS ems_ticket;
 
 CREATE TABLE IF NOT EXISTS ems_ticket.tickets (
   id UUID PRIMARY KEY,
@@ -11,3 +11,6 @@ CREATE TABLE IF NOT EXISTS ems_ticket.tickets (
   seat VARCHAR NOT NULL,
   section VARCHAR NOT NULL
 );
+
+ALTER TABLE ems_ticket.tickets
+    ADD COLUMN used BOOLEAN NOT NULL DEFAULT FALSE;

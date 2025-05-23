@@ -15,10 +15,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
@@ -30,9 +32,11 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest(classes = {OrganizerServiceApplication.class,
-        TestConfiguration.class}, webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = {OrganizerServiceApplication.class, TestConfiguration.class},
+        properties = "spring.main.allow-bean-definition-overriding=true",
+        webEnvironment = WebEnvironment.RANDOM_PORT)
 @TestInstance(Lifecycle.PER_CLASS)
+@ActiveProfiles("test")
 class OrganizerControllerIntegrationTest {
 
     private static final String HOSTNAME = "http://localhost:";
@@ -46,7 +50,7 @@ class OrganizerControllerIntegrationTest {
     @BeforeAll
     void beforeAll() {
 
-        sqlScriptExecutor.setup();
+        sqlScriptExecutor.setup("migration/h2-schema.sql");
     }
 
     @Test
@@ -155,12 +159,14 @@ class OrganizerControllerIntegrationTest {
         assertEquals(eventTypes, actualPutDto.eventTypes());
 
         // deleteOrganizer
-        restTemplate.delete(createUrl() + "/{uuid}", actualDto.uuid());
+        System.out.println(updatedDto.uuid());
+        restTemplate.delete(createUrl() + "/{uuid}", updatedDto.uuid());
         // assertThat the list returned is empty
         @SuppressWarnings("rawtypes") final ResponseEntity<List> listOfOrganizers = restTemplate.getForEntity(createUrl(), List.class);
         assertTrue(listOfOrganizers.getStatusCode().is2xxSuccessful());
         final List<?> body = listOfOrganizers.getBody();
         assertNotNull(body);
+        System.out.println(body);
         assertTrue(body.isEmpty());
     }
 

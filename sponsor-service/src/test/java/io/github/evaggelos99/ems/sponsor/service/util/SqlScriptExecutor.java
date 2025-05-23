@@ -17,9 +17,9 @@ public class SqlScriptExecutor {
     /**
      * Sets up the H2 database
      */
-    public void setup() {
+    public void setup(String path) {
 
-        executeScriptBlocking(new ClassPathResource("schema.sql"));
+        executeScriptBlocking(new ClassPathResource(path));
     }
 
     private void executeScriptBlocking(final Resource sqlScript) {

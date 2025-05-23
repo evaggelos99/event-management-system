@@ -22,8 +22,8 @@ import static io.github.evaggelos99.ems.security.lib.Roles.*;
 public class EventService implements IEventService {
 
     private final IEventRepository eventRepository;
-    private final IMappingRepository<AttendeeEventMapping> attendeeEventMappingRepository;
-    private final IMappingRepository<SponsorEventMapping> sponsorEventMappingRepository;
+    private final IMappingRepository<EventAttendeeMapping> attendeeEventMappingRepository;
+    private final IMappingRepository<EventSponsorMapping> sponsorEventMappingRepository;
 
     /**
      * C-or
@@ -31,7 +31,7 @@ public class EventService implements IEventService {
      * @param eventRepository {@link EventRepository} the repository that
      *                        communicates with the database
      */
-    public EventService(final IEventRepository eventRepository, final IMappingRepository<AttendeeEventMapping> attendeeEventMappingRepository, final IMappingRepository<SponsorEventMapping> sponsorEventMappingRepository) {
+    public EventService(final IEventRepository eventRepository, final IMappingRepository<EventAttendeeMapping> attendeeEventMappingRepository, final IMappingRepository<EventSponsorMapping> sponsorEventMappingRepository) {
 
         this.eventRepository = eventRepository;
         this.attendeeEventMappingRepository = attendeeEventMappingRepository;
@@ -136,7 +136,7 @@ public class EventService implements IEventService {
     @Override
     public Mono<Boolean> removeSponsor(final UUID eventId, final UUID sponsorId) {
 
-        return sponsorEventMappingRepository.deleteSingularMapping(eventId, sponsorId).map(Objects::nonNull);
+        return sponsorEventMappingRepository.deleteSingularMapping(eventId, sponsorId);
     }
 
     /**

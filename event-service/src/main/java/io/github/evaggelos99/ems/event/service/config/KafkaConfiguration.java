@@ -83,7 +83,7 @@ public class KafkaConfiguration {
     @Bean
     NewTopic createTopic(@Value("${io.github.evaggelos99.ems.event.topic.add-attendee}") final String topicToBeCreated) {
 
-        return new NewTopic(topicToBeCreated, 1, (short) 0);
+        return new NewTopic(topicToBeCreated, 1, (short) 1);
     }
 
     @Bean
@@ -91,4 +91,5 @@ public class KafkaConfiguration {
 
         return new ObjectDeserializer();
     }
+
 }

@@ -1,4 +1,4 @@
-CREATE SCHEMA ems_admin;
+CREATE SCHEMA IF NOT EXISTS ems_admin;
 
 CREATE TABLE IF NOT EXISTS ems_admin.users(
   id UUID NOT NULL, -- corresponds to FusionAuth

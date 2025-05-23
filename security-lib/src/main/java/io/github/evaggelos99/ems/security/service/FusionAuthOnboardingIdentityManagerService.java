@@ -12,7 +12,7 @@ import io.fusionauth.domain.api.UserRequest;
 import io.fusionauth.domain.api.UserResponse;
 import io.fusionauth.domain.api.user.RegistrationRequest;
 import io.fusionauth.domain.search.ApplicationSearchCriteria;
-import io.github.evaggelos99.ems.security.lib.IOnboardingIdentityManagerService;
+import io.github.evaggelos99.ems.security.lib.OnboardingIdentityManagerService;
 import io.github.evaggelos99.ems.security.lib.IdentityUserDto;
 import io.github.evaggelos99.ems.security.lib.Roles;
 import io.github.evaggelos99.ems.user.api.UserDto;
@@ -28,7 +28,7 @@ import java.util.TreeSet;
 import java.util.UUID;
 import java.util.stream.Stream;
 
-public class FusionAuthOnboardingIdentityManagerService implements IOnboardingIdentityManagerService {
+public class FusionAuthOnboardingIdentityManagerService implements OnboardingIdentityManagerService {
 
     public static final String PASSWORD_SUFFIX = "changeme";
     private static final Logger LOGGER = LoggerFactory.getLogger(FusionAuthOnboardingIdentityManagerService.class);

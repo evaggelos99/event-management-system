@@ -81,6 +81,8 @@ public class TicketController implements ITicketController {
     @Override
     public Mono<Boolean> useTicket(final UUID ticketId) {
 
+        // TODO FIXME add some kind of integrity check something that makes sense business wise idk
+
         return ticketService.get(ticketId)
                 .map(ticketToTicketDtoConverter)
                 .map(dto -> ticketService.edit(ticketId, TicketDto.from(dto).build()))

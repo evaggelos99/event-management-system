@@ -13,6 +13,7 @@ import org.h2.api.Interval;
 import org.springframework.boot.r2dbc.ConnectionFactoryBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.r2dbc.core.DatabaseClient;
 
 import java.time.Duration;
@@ -24,6 +25,7 @@ import java.util.UUID;
 import java.util.function.Function;
 
 @Configuration
+@Profile("test")
 public class TestConfiguration {
 
     @Bean("durationToIntervalConverter")
@@ -40,11 +42,9 @@ public class TestConfiguration {
             @Override
             public Event apply(final Row rs, final RowMetadata rmd) {
 
-
-                // TODO FIXME
                 final List<UUID> attendees = foo((Object[]) rs.get("attendee_ids"));
 
-                final List<UUID> sponsors = foo((Object[]) rs.get("sponsors_ids"));
+                final List<UUID> sponsors = foo((Object[]) rs.get("sponsor_ids"));
 
                 final var dur = rs.get("duration", Interval.class);
                 final Duration duration = Duration.of(dur.getNanosOfSecond(), ChronoUnit.NANOS)
@@ -61,6 +61,11 @@ public class TestConfiguration {
             private List<UUID> foo(final Object[] objects) {
 
                 final List<UUID> list = new LinkedList<>();
+
+                if (objects == null) {
+
+                    return list;
+                }
 
                 for (final var obj : objects) {
 

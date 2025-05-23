@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 import java.util.UUID;
 
@@ -38,7 +39,7 @@ public final class EventObjectGenerator {
                 .place(UUID.randomUUID().toString())
                 .eventType(randomTicketType)
                 .attendeesIds(listAttendees)
-                .organizerId(organizerId)
+                .organizerId(Objects.requireNonNull(organizerId))
                 .limitOfPeople(RANDOM.nextInt(1500))
                 .sponsorsIds(listSponsors)
                 .streamable(RANDOM.nextBoolean())

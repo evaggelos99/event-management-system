@@ -15,11 +15,11 @@ public class SqlScriptExecutor {
     ConnectionFactory connectionFactory;
 
     /**
-     * Sets up the H2 database
+     * Sets up the database
      */
-    public void setup() {
+    public void setup(String path) {
 
-        executeScriptBlocking(new ClassPathResource("schema.sql"));
+        executeScriptBlocking(new ClassPathResource(path));
     }
 
     private void executeScriptBlocking(final Resource sqlScript) {

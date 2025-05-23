@@ -1,8 +1,9 @@
 package io.github.evaggelos99.ems.testcontainerkafka.lib;
 
 import org.testcontainers.containers.wait.strategy.HostPortWaitStrategy;
+import org.testcontainers.kafka.KafkaContainer;
 
-public class ExtendedKafkaContainer extends org.testcontainers.kafka.KafkaContainer {
+public class ExtendedKafkaContainer extends KafkaContainer {
 
     /**
      * C-or overriding a specific env

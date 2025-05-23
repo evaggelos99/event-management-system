@@ -1,10 +1,10 @@
-package io.github.evaggelos99.ems.organizer.service.beans;
+package io.github.evaggelos99.ems.organizer.service.config;
 
 import io.github.evaggelos99.ems.common.api.domainobjects.EventType;
-import io.github.evaggelos99.ems.common.api.domainobjects.TicketType;
 import io.r2dbc.postgresql.PostgresqlConnectionConfiguration;
 import io.r2dbc.postgresql.PostgresqlConnectionFactory;
 import io.r2dbc.postgresql.codec.EnumCodec;
+import io.r2dbc.spi.ConnectionFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -31,7 +31,7 @@ public class DatabaseConfiguration {
                                  @Value("${io.github.evaggelos99.ems.organizer-service.db.port}") final String port,
                                  @Value("${io.github.evaggelos99.ems.organizer-service.db.database}") final String database,
                                  @Value("${io.github.evaggelos99.ems.organizer-service.db.host}") final String host,
-                                 @Value("${io.github.evaggelos99.ems.organizer-service.db.schema") final String schema) {
+                                 @Value("${io.github.evaggelos99.ems.organizer-service.db.schema}") final String schema) {
 
         this.username = username;
         this.password = password;
@@ -39,31 +39,33 @@ public class DatabaseConfiguration {
         this.database = database;
         this.host = host;
         this.schema = schema;
-
     }
 
     @Bean
-    PostgresqlConnectionFactory postgresqlConnectionFactory() {
+    ConnectionFactory postgresqlConnectionFactory() {
 
-        return new PostgresqlConnectionFactory(
-                PostgresqlConnectionConfiguration.builder()
-                        .host(host)
-                        .port(Integer.parseInt(port))
-                        .database(database)
-                        .username(username)
-                        .password(password)
-                        .connectTimeout(Duration.ofSeconds(5))
-                        .codecRegistrar(EnumCodec.builder()
-                                .withEnum("event_type_enum", EventType.class)
-                                .withEnum("ticket_type_enum", TicketType.class)
-                                .build())
-                        .schema(schema)
-                        .tcpKeepAlive(true)
-                        .build());
+        return new PostgresqlConnectionFactory(PostgresqlConnectionConfiguration.builder()
+                .host(host)
+                .port(Integer.parseInt(port))
+                .database(database)
+                .username(username)
+                .password(password)
+                .connectTimeout(Duration.ofSeconds(5))
+                .codecRegistrar(EnumCodec.builder()
+                        .withEnum("event_type_enum", EventType.class)
+                        .build())
+                .schema(schema)
+                .tcpKeepAlive(true)
+                .build());
+
+//        return ConnectionFactoryBuilder.withUrl(String.format("r2dbc:postgresql://%s:%s/%s?schema=%s", host, port, database, schema))
+//                .username(username)
+//                .password(password)
+//                .build();
     }
 
     @Bean
-    DatabaseClient databaseClient(final PostgresqlConnectionFactory postgresqlConnectionFactory) {
+    DatabaseClient databaseClient(final ConnectionFactory postgresqlConnectionFactory) {
 
         return DatabaseClient.builder().connectionFactory(postgresqlConnectionFactory).build();
     }

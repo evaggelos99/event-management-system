@@ -1,7 +1,6 @@
-package io.github.evaggelos99.ems.organizer.service.beans;
+package io.github.evaggelos99.ems.sponsor.service.config;
 
 import io.github.evaggelos99.ems.common.api.db.CrudQueriesOperations;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,7 +10,7 @@ import java.util.Map;
 
 @Configuration
 @PropertySource("classpath:properties/queries.properties")
-@ConfigurationProperties(prefix = "org.com.ems.queries.organizer")
+@ConfigurationProperties(prefix = "org.com.ems.queries.sponsor")
 public class QueriesConfiguration {
 
     private String save;

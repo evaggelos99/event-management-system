@@ -26,7 +26,6 @@ class TicketServiceTest {
 
     private final ITicketRepository ticketRepository = ticketRepositoryMock();
 
-
     private TicketService service;
 
     @BeforeEach

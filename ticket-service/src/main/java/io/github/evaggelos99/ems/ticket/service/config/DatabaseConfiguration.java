@@ -1,10 +1,11 @@
-package io.github.evaggelos99.ems.sponsor.service.beans;
+package io.github.evaggelos99.ems.ticket.service.config;
 
 import io.github.evaggelos99.ems.common.api.domainobjects.EventType;
 import io.github.evaggelos99.ems.common.api.domainobjects.TicketType;
 import io.r2dbc.postgresql.PostgresqlConnectionConfiguration;
 import io.r2dbc.postgresql.PostgresqlConnectionFactory;
 import io.r2dbc.postgresql.codec.EnumCodec;
+import io.r2dbc.spi.ConnectionFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,12 +27,12 @@ public class DatabaseConfiguration {
     private final String host;
     private final String schema;
 
-    public DatabaseConfiguration(@Value("${io.github.evaggelos99.ems.sponsor-service.db.username}") final String username,
-                                 @Value("${io.github.evaggelos99.ems.sponsor-service.db.password}") final String password,
-                                 @Value("${io.github.evaggelos99.ems.sponsor-service.db.port}") final String port,
-                                 @Value("${io.github.evaggelos99.ems.sponsor-service.db.database}") final String database,
-                                 @Value("${io.github.evaggelos99.ems.sponsor-service.db.host}") final String host,
-                                 @Value("${io.github.evaggelos99.ems.sponsor-service.db.schema") final String schema) {
+    public DatabaseConfiguration(@Value("${io.github.evaggelos99.ems.ticket-service.db.username}") final String username,
+                                 @Value("${io.github.evaggelos99.ems.ticket-service.db.password}") final String password,
+                                 @Value("${io.github.evaggelos99.ems.ticket-service.db.port}") final String port,
+                                 @Value("${io.github.evaggelos99.ems.ticket-service.db.database}") final String database,
+                                 @Value("${io.github.evaggelos99.ems.ticket-service.db.host}") final String host,
+                                 @Value("${io.github.evaggelos99.ems.ticket-service.db.schema}") final String schema) {
 
         this.username = username;
         this.password = password;
@@ -42,7 +43,7 @@ public class DatabaseConfiguration {
     }
 
     @Bean
-    PostgresqlConnectionFactory postgresqlConnectionFactory() {
+    ConnectionFactory postgresqlConnectionFactory() {
 
         return new PostgresqlConnectionFactory(PostgresqlConnectionConfiguration.builder()
                 .host(host)
@@ -61,7 +62,7 @@ public class DatabaseConfiguration {
     }
 
     @Bean
-    DatabaseClient databaseClient(final PostgresqlConnectionFactory postgresqlConnectionFactory) {
+    DatabaseClient databaseClient(final ConnectionFactory postgresqlConnectionFactory) {
 
         return DatabaseClient.builder().connectionFactory(postgresqlConnectionFactory).build();
     }

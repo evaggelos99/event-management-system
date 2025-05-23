@@ -85,7 +85,7 @@ public class AttendeeRepository implements IAttendeeRepository {
     @Override
     public Mono<Boolean> existsById(final UUID uuid) {
 
-        return findById(uuid).map(Objects::nonNull);
+        return findById(uuid).map(Objects::nonNull).defaultIfEmpty(false);
     }
 
     @Override
@@ -134,7 +134,6 @@ public class AttendeeRepository implements IAttendeeRepository {
         final UUID uuid = attendeeId != null ? attendeeId : UUID.randomUUID();
         final List<UUID> ticketIds = attendee.ticketIDs() != null ? attendee.ticketIDs() : List.of();
         final UUID[] uuids = convertToArray(ticketIds);
-
 
         final Mono<Tuple2<Long, List<AttendeeTicketMapping>>> res = Mono.zip(
                 databaseClient.sql(attendeeQueriesProperties.get(CrudQueriesOperations.SAVE))

@@ -6,9 +6,7 @@ You can manage events such as Conferences, Weddings, Night-outs and more. A user
 TODO:
 - [ ] QR code for ticket and add validation for it.
 - [x] Postgres
-  - [ ] Roles within the Database
 - [x] Microservices
-  - [ ] Some type of service discovery
   - [x] Kafka used as a transport layer
 - [ ] Redis for caching front page stuff.
 - [ ] UI Simple JS or Angular
@@ -21,4 +19,3 @@ TODO:
   - [x] Added roles for each CRUD operation on the different objects
 - [ ] e commerce eshop for buying tickets to the events. Stripe for buying tickets?
 - [ ] Add controllers that use web-sockets
-- [ ] Remove the functionality to edit fields that contain arrays/lists add controller methods that add/remove to the array

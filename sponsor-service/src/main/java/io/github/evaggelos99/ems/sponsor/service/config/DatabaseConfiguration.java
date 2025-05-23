@@ -1,4 +1,4 @@
-package io.github.evaggelos99.ems.ticket.service.beans;
+package io.github.evaggelos99.ems.sponsor.service.config;
 
 import io.github.evaggelos99.ems.common.api.domainobjects.EventType;
 import io.github.evaggelos99.ems.common.api.domainobjects.TicketType;
@@ -26,12 +26,12 @@ public class DatabaseConfiguration {
     private final String host;
     private final String schema;
 
-    public DatabaseConfiguration(@Value("${io.github.evaggelos99.ems.ticket-service.db.username}") final String username,
-                                 @Value("${io.github.evaggelos99.ems.ticket-service.db.password}") final String password,
-                                 @Value("${io.github.evaggelos99.ems.ticket-service.db.port}") final String port,
-                                 @Value("${io.github.evaggelos99.ems.ticket-service.db.database}") final String database,
-                                 @Value("${io.github.evaggelos99.ems.ticket-service.db.host}") final String host,
-                                 @Value("${io.github.evaggelos99.ems.ticket-service.db.schema") final String schema) {
+    public DatabaseConfiguration(@Value("${io.github.evaggelos99.ems.sponsor-service.db.username}") final String username,
+                                 @Value("${io.github.evaggelos99.ems.sponsor-service.db.password}") final String password,
+                                 @Value("${io.github.evaggelos99.ems.sponsor-service.db.port}") final String port,
+                                 @Value("${io.github.evaggelos99.ems.sponsor-service.db.database}") final String database,
+                                 @Value("${io.github.evaggelos99.ems.sponsor-service.db.host}") final String host,
+                                 @Value("${io.github.evaggelos99.ems.sponsor-service.db.schema}") final String schema) {
 
         this.username = username;
         this.password = password;

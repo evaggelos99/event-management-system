@@ -23,9 +23,6 @@ import java.util.Map;
 @ConditionalOnProperty(prefix = "kafka", name = "enabled", havingValue = "true", matchIfMissing = true)
 public class KafkaConfig {
 
-//    @Value("${io.github.evaggelos99.ems.event.topic.add-attendee}")
-//    private String topicToBeCreated;
-
     @Bean
     KafkaAdmin kafkaAdmin(@Value("${spring.kafka.producer.bootstrap-servers}") final String bootstrapServers) {
 

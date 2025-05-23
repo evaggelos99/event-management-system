@@ -79,7 +79,7 @@ public class SponsorRepository implements ISponsorRepository {
     @Override
     public Mono<Boolean> existsById(final UUID uuid) {
 
-        return findById(uuid).map(Objects::nonNull);
+        return findById(uuid).map(Objects::nonNull).defaultIfEmpty(false);
     }
 
     @Override

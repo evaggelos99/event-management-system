@@ -10,6 +10,6 @@ public record IdentityUserDto(UUID id,
                               String email,
                               LocalDate birthDate,
                               String mobilePhone,
-                              List<String> list) {
+                              List<String> roles) {
 
 }

@@ -2,8 +2,7 @@ package io.github.evaggelos99.ems.event.service.repository;
 
 import io.github.evaggelos99.ems.common.api.db.IMappingRepository;
 import io.github.evaggelos99.ems.common.api.db.MappingQueriesOperations;
-import io.github.evaggelos99.ems.event.api.AttendeeEventMapping;
-import io.github.evaggelos99.ems.event.api.SponsorEventMapping;
+import io.github.evaggelos99.ems.event.api.EventSponsorMapping;
 import io.github.evaggelos99.ems.event.api.repo.SponsorMappingRowMapper;
 import io.r2dbc.spi.Connection;
 import io.r2dbc.spi.Statement;
@@ -18,7 +17,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Component
-public class SponsorMappingRepository implements IMappingRepository<SponsorEventMapping> {
+public class SponsorMappingRepository implements IMappingRepository<EventSponsorMapping> {
 
     private final DatabaseClient databaseClient;
     private final Map<MappingQueriesOperations, String> mappingQueriesProperties;
@@ -34,24 +33,24 @@ public class SponsorMappingRepository implements IMappingRepository<SponsorEvent
     }
 
     @Override
-    public Flux<SponsorEventMapping> saveMapping(UUID entityUuid, UUID[] secondaryUuids) {
+    public Flux<EventSponsorMapping> saveMapping(UUID entityUuid, UUID[] secondaryUuids) {
 
         return databaseClient.inConnectionMany(conn -> executeBatchAttendeeTicketsMapping(conn, entityUuid, secondaryUuids));
     }
 
     @Override
-    public Mono<SponsorEventMapping> saveSingularMapping(final UUID entityUuid, final UUID secondaryUuid) {
+    public Mono<EventSponsorMapping> saveSingularMapping(final UUID entityUuid, final UUID secondaryUuid) {
 
         return databaseClient.sql(mappingQueriesProperties.get(MappingQueriesOperations.SAVE_MAPPING))
                 .bind(0,entityUuid)
                 .bind(1, secondaryUuid)
                 .fetch().rowsUpdated().map(x-> x==1)
                 .filter(Boolean::booleanValue)
-                .map(x-> new SponsorEventMapping(entityUuid, secondaryUuid));
+                .map(x-> new EventSponsorMapping(entityUuid, secondaryUuid));
     }
 
     @Override
-    public Flux<SponsorEventMapping> editMapping(final UUID entityUuid, final UUID[] uuids) {
+    public Flux<EventSponsorMapping> editMapping(final UUID entityUuid, final UUID[] uuids) {
 
         return deleteMapping(entityUuid).filter(Boolean::booleanValue)
                 .flatMapMany(x -> saveMapping(entityUuid, uuids));
@@ -74,11 +73,11 @@ public class SponsorMappingRepository implements IMappingRepository<SponsorEvent
                 .bind(0, entityUuid)
                 .bind(1, secondaryUuid)
                 .fetch()
-                .one()
-                .map(Objects::nonNull);
+                .rowsUpdated()
+                .map(x -> x==1);
     }
 
-    private Flux<SponsorEventMapping> executeBatchAttendeeTicketsMapping(final Connection conn, final UUID uuid, final UUID[] uuids) {
+    private Flux<EventSponsorMapping> executeBatchAttendeeTicketsMapping(final Connection conn, final UUID uuid, final UUID[] uuids) {
 
         if (uuids.length == 0) {
             return Flux.empty();

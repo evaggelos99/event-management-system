@@ -8,7 +8,7 @@ import java.util.UUID;
 /**
  * Interface that should be extended by the identity managers the services support
  */
-public interface IOnboardingIdentityManagerService {
+public interface OnboardingIdentityManagerService {
 
     Mono<IdentityUserDto> enrollUser(UserDto userDto);
 

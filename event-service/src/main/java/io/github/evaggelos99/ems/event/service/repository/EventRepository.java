@@ -70,7 +70,9 @@ public class EventRepository implements IEventRepository {
                            @Qualifier("durationToIntervalConverter") final Function<Duration, Object> durationToIntervalConverter,
                            @Qualifier("saveEventStreamQueriesProperties") final Map<EventStreamQueriesOperations, String> eventStreamQueriesOperations,
                            final EventStreamPayloadToEventStreamEntityConverter eventPayloadToEventStreamConverter,
-                           @Qualifier("eventStreamRowMapper") final EventStreamRowMapper eventStreamRowMapper, final AttendeeMappingRepository attendeeMappingRepository, final SponsorMappingRepository sponsorMappingRepository) {
+                           @Qualifier("eventStreamRowMapper") final EventStreamRowMapper eventStreamRowMapper,
+                           final AttendeeMappingRepository attendeeMappingRepository,
+                           final SponsorMappingRepository sponsorMappingRepository) {
 
         this.databaseClient = databaseClient;
         this.eventRowMapper = eventRowMapperFunction;
@@ -107,7 +109,7 @@ public class EventRepository implements IEventRepository {
     @Override
     public Mono<Boolean> existsById(final UUID uuid) {
 
-        return findById(uuid).map(Objects::nonNull);
+        return findById(uuid).map(Objects::nonNull).defaultIfEmpty(false);
     }
 
     @Override
@@ -157,13 +159,13 @@ public class EventRepository implements IEventRepository {
         final UUID[] sponsors = convertToArray(sponsorIds);
         final boolean streamable = event.streamable();
 
-        final Mono<Tuple3<Long, List<AttendeeEventMapping>, List<SponsorEventMapping>>> res = Mono.zip(databaseClient
+        final Mono<Tuple3<Long, List<EventAttendeeMapping>, List<EventSponsorMapping>>> res = Mono.zip(databaseClient
                         .sql(eventQueriesProperties.get(CrudQueriesOperations.EDIT))
                         .bind(0, updatedAt).bind(1, name).bind(2, place).bind(3, eventType)
                         .bind(4, organizerId).bind(5, limitOfPeople).bind(6, startTimeOfEvent)
                         .bind(7, interval).bind(8, streamable).bind(9, uuid).fetch().rowsUpdated(),
-                attendeeMappingRepository.saveMapping(uuid, attendees).collectList(),
-                sponsorMappingRepository.saveMapping(uuid, sponsors).collectList());
+                attendeeMappingRepository.editMapping(uuid, attendees).collectList(),
+                sponsorMappingRepository.editMapping(uuid, sponsors).collectList());
 
         return res.map(Tuple2::getT1).filter(this::rowsAffectedIsOne).flatMap(rowNum -> findById(uuid))
                 .map(AbstractDomainObject::getCreatedAt)
@@ -204,7 +206,7 @@ public class EventRepository implements IEventRepository {
         final UUID[] attendees = convertToArray(attendeesIds);
         final UUID[] sponsors = convertToArray(sponsorIds);
 
-        final Mono<Tuple3<Long, List<AttendeeEventMapping>, List<SponsorEventMapping>>> res = Mono.zip(
+        final Mono<Tuple3<Long, List<EventAttendeeMapping>, List<EventSponsorMapping>>> res = Mono.zip(
                 databaseClient
                         .sql(eventQueriesProperties.get(CrudQueriesOperations.SAVE)).bind(0, uuid).bind(1, now)
                         .bind(2, now).bind(3, name).bind(4, place).bind(5, eventType).bind(6, organizerId)
@@ -245,7 +247,7 @@ public class EventRepository implements IEventRepository {
                 .bind(6, payload.getContent())
                 .bind(7, payload.getLanguage())
                 .bind(8, payload.getImportant())
-                .bind(9, Json.of(payload.getMetadata()))
+                .bind(9, getJson(payload.getMetadata()))
                 .fetch()
                 .rowsUpdated();
 
@@ -281,7 +283,7 @@ public class EventRepository implements IEventRepository {
                     .bind(6, payload.getContent())
                     .bind(7, payload.getLanguage())
                     .bind(8, payload.getImportant())
-                    .bind(9, Json.of(payload.getMetadata())).add();
+                    .bind(9, getJson(payload.getMetadata())).add();
         }
 
         final EventStreamPayload payload = payloads.get(payloads.size()-1);
@@ -295,10 +297,15 @@ public class EventRepository implements IEventRepository {
                 .bind(6, payload.getContent())
                 .bind(7, payload.getLanguage())
                 .bind(8, payload.getImportant())
-                .bind(9, Json.of(payload.getMetadata()));
+                .bind(9, getJson(payload.getMetadata()));
 
         return Flux.from(statement.execute())
                 .flatMap(result -> result.map(eventStreamRowMapper));
+    }
+
+    private Json getJson(final String metaData) {
+
+        return metaData == null || metaData.isBlank() ? Json.of("{}") : Json.of(metaData);
     }
 
     private UUID[] convertToArray(final List<UUID> ids) {

@@ -4,6 +4,6 @@ import io.github.evaggelos99.ems.common.api.domainobjects.IMapping;
 
 import java.util.UUID;
 
-public record AttendeeEventMapping(UUID attendeeId, UUID eventId) implements IMapping {
+public record EventAttendeeMapping(UUID eventId, UUID attendeeId) implements IMapping {
 
 }

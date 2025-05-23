@@ -4,7 +4,6 @@ import io.github.evaggelos99.ems.attendee.api.AttendeeTicketMapping;
 import io.github.evaggelos99.ems.attendee.api.repo.TicketMappingRowMapper;
 import io.github.evaggelos99.ems.common.api.db.IMappingRepository;
 import io.github.evaggelos99.ems.common.api.db.MappingQueriesOperations;
-import io.github.evaggelos99.ems.event.api.SponsorEventMapping;
 import io.r2dbc.spi.Connection;
 import io.r2dbc.spi.Statement;
 import org.springframework.beans.factory.annotation.Qualifier;

@@ -44,7 +44,7 @@ class TicketControllerIntegrationTest {
     @BeforeAll
     public void beforeAll() {
 
-        sqlScriptExecutor.setup();
+        sqlScriptExecutor.setup("migration/h2-schema.sql");
     }
 
     @Test

@@ -1,4 +1,4 @@
-package io.github.evaggelos99.ems.ticket.service.beans;
+package io.github.evaggelos99.ems.ticket.service.config;
 
 import io.github.evaggelos99.ems.common.api.db.CrudQueriesOperations;
 import org.springframework.boot.context.properties.ConfigurationProperties;

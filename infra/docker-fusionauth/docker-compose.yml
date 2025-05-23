@@ -23,9 +23,19 @@ services:
       - db_net
     restart: unless-stopped
     ports:
-      - "9011:9011"
+      - 9011:9011
     volumes:
       - fusionauth_config:/usr/local/fusionauth/config
+
+  fake-smtp:
+    hostname: smtp-server
+    image: reachfive/fake-smtp-server
+    ports:
+      - 1025:1025
+      - 1080:1080
+    networks:
+      - db_net
+
 
 networks:
   db_net:

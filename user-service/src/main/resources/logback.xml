@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <configuration>
 
+    <statusListener class="ch.qos.logback.core.status.NopStatusListener" />
+
     <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
         <layout class="ch.qos.logback.classic.PatternLayout">
             <Pattern>
@@ -14,12 +16,10 @@
         <appender-ref ref="CONSOLE"/>
     </logger>
 
-    <!-- Logger for Kafka-related classes -->
     <logger name="io.github.evaggelos99" level="info" additivity="false">
         <appender-ref ref="CONSOLE"/>
     </logger>
 
-    <!-- Logger for attendee service -->
     <logger name="io.github.evaggelos99.ems.user" level="trace" additivity="false">
         <appender-ref ref="CONSOLE"/>
     </logger>

@@ -33,7 +33,7 @@ public final class TicketObjectGenerator {
                 .price(RANDOM.nextInt(500))
                 .transferable(RANDOM.nextBoolean())
                 .seatInformation(generateSeatingInformation())
-                .used(RANDOM.nextBoolean()).build();
+                .used(false).build();
     }
 
     public static SeatingInformation generateSeatingInformation() {
@@ -47,7 +47,7 @@ public final class TicketObjectGenerator {
         final TicketType randomTicketType = ALL_TICKET_TYPES.get(RANDOM.nextInt(ALL_TICKET_TYPES.size()));
         final OffsetDateTime now = OffsetDateTime.now();
         return new Ticket(UUID.randomUUID(), now, now, eventId, randomTicketType, RANDOM.nextInt(500),
-                RANDOM.nextBoolean(), generateSeatingInformation(), RANDOM.nextBoolean());
+                RANDOM.nextBoolean(), generateSeatingInformation(), false);
 
     }
 
@@ -61,7 +61,7 @@ public final class TicketObjectGenerator {
                 .price(RANDOM.nextInt(500))
                 .transferable(RANDOM.nextBoolean())
                 .seatInformation(generateSeatingInformation())
-                .used(RANDOM.nextBoolean())
+                .used(false)
                 .build();
     }
 }
