@@ -1,17 +1,12 @@
 package io.github.evaggelos99.ems.user.api;
 
 import io.github.evaggelos99.ems.common.api.domainobjects.AbstractDomainObject;
-import io.github.evaggelos99.ems.common.api.domainobjects.SeatingInformation;
-import io.github.evaggelos99.ems.common.api.domainobjects.TicketType;
 import io.github.evaggelos99.ems.common.api.domainobjects.UserRole;
-import io.github.evaggelos99.ems.common.api.domainobjects.validators.constraints.NotNegative;
 import jakarta.validation.constraints.NotNull;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
 
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.UUID;
@@ -46,6 +41,20 @@ public final class User extends AbstractDomainObject {
     }
 
     @Override
+    public int hashCode() {
+
+        return new HashCodeBuilder(17, 37).appendSuper(super.hashCode())
+                .append(username)
+                .append(email)
+                .append(firstName)
+                .append(lastName)
+                .append(role)
+                .append(mobilePhone)
+                .append(birthDate)
+                .toHashCode();
+    }
+
+    @Override
     public boolean equals(final Object o) {
 
         if (this == o) return true;
@@ -61,20 +70,6 @@ public final class User extends AbstractDomainObject {
                 .append(mobilePhone, user.mobilePhone)
                 .append(birthDate, user.birthDate)
                 .isEquals();
-    }
-
-    @Override
-    public int hashCode() {
-
-        return new HashCodeBuilder(17, 37).appendSuper(super.hashCode())
-                .append(username)
-                .append(email)
-                .append(firstName)
-                .append(lastName)
-                .append(role)
-                .append(mobilePhone)
-                .append(birthDate)
-                .toHashCode();
     }
 
     @Override

@@ -16,7 +16,7 @@ import reactor.core.publisher.Mono;
 import java.util.Objects;
 import java.util.UUID;
 
-import static io.github.evaggelos99.ems.security.lib.Roles.*;
+import static io.github.evaggelos99.ems.user.api.Roles.*;
 
 @Service
 public class EventService implements IEventService {
@@ -106,7 +106,8 @@ public class EventService implements IEventService {
     public Mono<Boolean> addAttendee(final UUID eventId, final UUID attendeeId) {
         // TODO add role and add whatever is needed
 
-        return attendeeEventMappingRepository.saveSingularMapping(eventId, attendeeId)
+        return SecurityContextHelper.filterRoles(ROLE_UPDATE_EVENT)
+                .flatMap(x -> PublisherValidator.validateBooleanMono(x, () -> attendeeEventMappingRepository.saveSingularMapping(eventId, attendeeId)))
                 .map(Objects::nonNull)
                 .onErrorReturn(false);
     }
@@ -117,7 +118,8 @@ public class EventService implements IEventService {
     @Override
     public Mono<Boolean> removeAttendee(final UUID eventId, final UUID attendeeId) {
 
-        return attendeeEventMappingRepository.deleteSingularMapping(eventId, attendeeId)
+        return SecurityContextHelper.filterRoles(ROLE_UPDATE_EVENT)
+                .flatMap(x -> PublisherValidator.validateBooleanMono(x, () -> attendeeEventMappingRepository.deleteSingularMapping(eventId, attendeeId)))
                 .onErrorReturn(false);
     }
 
@@ -127,7 +129,9 @@ public class EventService implements IEventService {
     @Override
     public Mono<Boolean> addSponsor(final UUID eventId, final UUID sponsorId) {
 
-        return sponsorEventMappingRepository.saveSingularMapping(eventId, sponsorId).map(Objects::nonNull);
+        return SecurityContextHelper.filterRoles(ROLE_UPDATE_EVENT)
+                .flatMap(x -> sponsorEventMappingRepository.saveSingularMapping(eventId, sponsorId)
+                        .map(Objects::nonNull));
     }
 
     /**
@@ -136,7 +140,8 @@ public class EventService implements IEventService {
     @Override
     public Mono<Boolean> removeSponsor(final UUID eventId, final UUID sponsorId) {
 
-        return sponsorEventMappingRepository.deleteSingularMapping(eventId, sponsorId);
+        return SecurityContextHelper.filterRoles(ROLE_UPDATE_EVENT)
+                .flatMap(x -> sponsorEventMappingRepository.deleteSingularMapping(eventId, sponsorId));
     }
 
     /**
@@ -153,8 +158,7 @@ public class EventService implements IEventService {
         // todo
 
         return SecurityContextHelper.filterRoles(ROLE_READ_EVENT)
-                .filter(Boolean.TRUE::equals)
-                .flatMapMany(x -> eventRepository.findAllEventStreams(eventId));
+                .flatMapMany(x -> PublisherValidator.validateBooleanFlux(x, () -> eventRepository.findAllEventStreams(eventId)));
     }
 
     /**

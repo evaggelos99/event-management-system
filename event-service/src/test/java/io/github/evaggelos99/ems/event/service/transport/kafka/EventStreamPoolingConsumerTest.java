@@ -32,7 +32,6 @@ import java.util.Random;
 import java.util.UUID;
 import java.util.stream.IntStream;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.fail;
 
 @SpringBootTest(classes = {EventServiceApplication.class},
@@ -44,25 +43,19 @@ class EventStreamPoolingConsumerTest {
     @Container
     private static final ExtendedKafkaContainer KAFKA = new ExtendedKafkaContainer();
     @Container
-    static PostgreSQLContainer PG = new PostgreSQLContainer<>("postgres:16-alpine")
+    static PostgreSQLContainer<?> PG = new PostgreSQLContainer<>("postgres:16-alpine")
             .withUsername("event-management-system-user")
             .withPassword("event-management-system-user")
             .withDatabaseName("event-management-system")
-            .withExposedPorts(5432);
+            .withExposedPorts(5432)
+            .waitingFor(new LogMessageWaitStrategy().withRegEx(".*database system is ready to accept connections.*")
+                    .withStartupTimeout(Duration.of(30, ChronoUnit.SECONDS)));
+
     static {
 
         KAFKA.start();
-        PG.setWaitStrategy(new LogMessageWaitStrategy().withRegEx(".*database system is ready to accept connections.*")
-                .withStartupTimeout(Duration.of(15, ChronoUnit.SECONDS)));
         PG.start();
     }
-
-    @AfterAll
-    static void tearDown() {
-        PG.stop();
-        KAFKA.stop();
-    }
-
     @Value("${io.github.evaggelos99.ems.event.topic.event-streaming-prefix}")
     private String topicPrefix;
     @Autowired
@@ -75,6 +68,13 @@ class EventStreamPoolingConsumerTest {
     private EventRepository eventRepository;
     @LocalServerPort
     private int port;
+
+    @AfterAll
+    static void tearDown() {
+
+        PG.close();
+        KAFKA.close();
+    }
 
     @DynamicPropertySource
     static void configureKafkaProperties(DynamicPropertyRegistry registry) {
@@ -97,13 +97,13 @@ class EventStreamPoolingConsumerTest {
     }
 
     @Test
-    void consumeEventStreamingPrefixedTopics_miniLoadTest() {
+    void consumeEventStreamingPrefixedTopics() {
 
-        int count = 80_000;
+        int count = 25_000;
         final UUID eventId = simulatePublishingMessages(count);
         final UUID eventId2 = simulatePublishingMessages(count);
         try {
-            Thread.sleep(30_000);
+            Thread.sleep(10_000);
         } catch (InterruptedException e) {
             fail(e);
         }

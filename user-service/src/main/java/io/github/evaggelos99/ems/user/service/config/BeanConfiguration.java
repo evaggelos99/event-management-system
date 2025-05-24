@@ -1,7 +1,7 @@
 package io.github.evaggelos99.ems.user.service.config;
 
-import io.github.evaggelos99.ems.security.lib.OnboardingIdentityManagerService;
-import io.github.evaggelos99.ems.security.service.FusionAuthOnboardingIdentityManagerService;
+import io.github.evaggelos99.ems.user.api.OnboardingIdentityManagerService;
+import io.github.evaggelos99.ems.user.service.FusionAuthOnboardingIdentityManagerService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,7 +11,6 @@ public class BeanConfiguration {
 
     /**
      * Depending on a configuration return fusionauth/keycloak
-     *
      */
     @Bean
     OnboardingIdentityManagerService onboardingIdentityManagerService(@Value("${io.github.evaggelos99.ems.user.service.fusionauth.api-key}") final String apiKey,

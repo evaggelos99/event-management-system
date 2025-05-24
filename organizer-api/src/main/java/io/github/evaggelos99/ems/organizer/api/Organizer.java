@@ -19,7 +19,6 @@ import java.util.UUID;
 public final class Organizer extends AbstractDomainObject {
 
     private final String name;
-    // TODO add regex validation
     private final String website;
     private final String information;
     private final List<EventType> eventTypes;

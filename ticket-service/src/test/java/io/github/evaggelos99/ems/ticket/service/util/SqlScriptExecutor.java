@@ -8,6 +8,8 @@ import org.springframework.r2dbc.connection.init.ScriptUtils;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
+import java.time.Duration;
+
 @Component
 public class SqlScriptExecutor {
 
@@ -25,6 +27,6 @@ public class SqlScriptExecutor {
     private void executeScriptBlocking(final Resource sqlScript) {
 
         Mono.from(connectionFactory.create()).flatMap(connection -> ScriptUtils.executeSqlScript(connection, sqlScript))
-                .block();
+                .block(Duration.ofSeconds(10));
     }
 }

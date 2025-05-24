@@ -29,38 +29,37 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class OrganizerRepositoryTest {
 
     @Container
-    static PostgreSQLContainer PG = new PostgreSQLContainer<>("postgres:16-alpine")
+    static PostgreSQLContainer<?> PG = new PostgreSQLContainer<>("postgres:16-alpine")
             .withUsername("event-management-system-user")
             .withPassword("event-management-system-user")
             .withDatabaseName("event-management-system")
-            .withExposedPorts(5432);
+            .withExposedPorts(5432)
+            .waitingFor(new LogMessageWaitStrategy().withRegEx(".*database system is ready to accept connections.*")
+                    .withStartupTimeout(Duration.of(30, ChronoUnit.SECONDS)));
 
     static {
 
-        PG.setWaitStrategy(new LogMessageWaitStrategy().withRegEx(".*database system is ready to accept connections.*")
-                .withStartupTimeout(Duration.of(15, ChronoUnit.SECONDS)));
         PG.start();
     }
+    private final AtomicInteger ai = new AtomicInteger(0);
+    @Autowired
+    private OrganizerRepository repository;
+    @Autowired
+    private SqlScriptExecutor sqlScriptExecutor;
 
     @AfterAll
     static void tearDown() {
+
         PG.stop();
+        PG.close();
     }
-
-    private final AtomicInteger ai = new AtomicInteger(0);
-
-    @Autowired
-    private OrganizerRepository repository;
-
-    @Autowired
-    private SqlScriptExecutor sqlScriptExecutor;
 
     @BeforeAll
     void beforeAll() {
 
         sqlScriptExecutor.setup("migration/pg-schema.sql");
     }
-    
+
     @DynamicPropertySource
     static void configureDbProperties(DynamicPropertyRegistry registry) {
 
@@ -165,7 +164,7 @@ class OrganizerRepositoryTest {
         final OrganizerDto editedExpected = OrganizerObjectGenerator.generateOrganizerDto(expected.uuid(), EventType.SPORT, EventType.CONFERENCE, EventType.OTHER);
 
         StepVerifier.create(repository.edit(editedExpected))
-                .assertNext(organizer ->{
+                .assertNext(organizer -> {
                     assertOrganizerEquals(organizer, editedExpected);
                     assertEquals(organizer.getEventTypes(), editedExpected.eventTypes());
                 }).verifyComplete();

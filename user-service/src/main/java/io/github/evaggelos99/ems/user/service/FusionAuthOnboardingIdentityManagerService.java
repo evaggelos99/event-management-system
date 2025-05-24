@@ -1,4 +1,4 @@
-package io.github.evaggelos99.ems.security.service;
+package io.github.evaggelos99.ems.user.service;
 
 import com.inversoft.error.Errors;
 import com.inversoft.rest.ClientResponse;
@@ -12,9 +12,9 @@ import io.fusionauth.domain.api.UserRequest;
 import io.fusionauth.domain.api.UserResponse;
 import io.fusionauth.domain.api.user.RegistrationRequest;
 import io.fusionauth.domain.search.ApplicationSearchCriteria;
-import io.github.evaggelos99.ems.security.lib.OnboardingIdentityManagerService;
-import io.github.evaggelos99.ems.security.lib.IdentityUserDto;
-import io.github.evaggelos99.ems.security.lib.Roles;
+import io.github.evaggelos99.ems.user.api.IdpUserProperties;
+import io.github.evaggelos99.ems.user.api.OnboardingIdentityManagerService;
+import io.github.evaggelos99.ems.user.api.Roles;
 import io.github.evaggelos99.ems.user.api.UserDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +49,7 @@ public class FusionAuthOnboardingIdentityManagerService implements OnboardingIde
     }
 
     @Override
-    public Mono<IdentityUserDto> enrollUser(final UserDto userDto) {
+    public Mono<IdpUserProperties> enrollUser(final UserDto userDto) {
 
         final UUID userId = Objects.isNull(userDto.uuid()) ? UUID.randomUUID() : userDto.uuid();
         final User fusionAuthUser = populateUser(userDto);
@@ -70,34 +70,34 @@ public class FusionAuthOnboardingIdentityManagerService implements OnboardingIde
                 .filter(Objects::nonNull)
                 .map(res -> Pair.of(res.user, res.registration))
                 .map(pair ->
-                        new IdentityUserDto(pair.getLeft().id, pair.getLeft().firstName, pair.getLeft().lastName, pair.getLeft().email, pair.getLeft().birthDate, pair.getLeft().mobilePhone, pair.getRight().roles.stream()
+                        new IdpUserProperties(pair.getLeft().id, pair.getLeft().firstName, pair.getLeft().lastName, pair.getLeft().email, pair.getLeft().birthDate, pair.getLeft().mobilePhone, pair.getRight().roles.stream()
                                 .toList()));
     }
 
     @Override
-    public Mono<IdentityUserDto> editUser(final UserDto userDto) {
+    public Mono<IdpUserProperties> editUser(final UserDto userDto) {
 
         return Mono.zip(Mono.just(getApplication()),
-                Mono.just(fusionAuthClient.updateUser(userDto.uuid(), new UserRequest(populateEditUser(userDto)))))
+                        Mono.just(fusionAuthClient.updateUser(userDto.uuid(), new UserRequest(populateEditUser(userDto)))))
                 .filter(tuple -> tuple.getT2().getSuccessResponse() != null)
                 .map(this::mapToIdentityUserDto);
     }
 
     @Override
-    public Mono<IdentityUserDto> getUser(final UUID uuid) {
+    public Mono<IdpUserProperties> getUser(final UUID uuid) {
 
         return Mono.zip(Mono.just(getApplication()), Mono.just(fusionAuthClient.retrieveUser(uuid)))
                 .filter(x -> x.getT2().getSuccessResponse() != null)
                 .map(this::mapToUserAndUserReg)
-                .map(x -> new IdentityUserDto(x.getT1().id, x.getT1().firstName, x.getT1().lastName, x.getT1().email, x.getT1().birthDate, x.getT1().mobilePhone, x.getT2().roles.stream()
-                                .toList()));
+                .map(x -> new IdpUserProperties(x.getT1().id, x.getT1().firstName, x.getT1().lastName, x.getT1().email, x.getT1().birthDate, x.getT1().mobilePhone, x.getT2().roles.stream()
+                        .toList()));
     }
 
-    private IdentityUserDto mapToIdentityUserDto(final Tuple2<Application, ClientResponse<UserResponse, Errors>> tuple) {
+    private IdpUserProperties mapToIdentityUserDto(final Tuple2<Application, ClientResponse<UserResponse, Errors>> tuple) {
 
         final User user = tuple.getT2().getSuccessResponse().user;
         final UserRegistration userRegistrationFromApplication = user.getRegistrationForApplication(tuple.getT1().id);
-        return new IdentityUserDto(user.id, user.firstName, user.lastName, user.email, user.birthDate, user.mobilePhone, userRegistrationFromApplication.roles.stream()
+        return new IdpUserProperties(user.id, user.firstName, user.lastName, user.email, user.birthDate, user.mobilePhone, userRegistrationFromApplication.roles.stream()
                 .toList());
     }
 

@@ -19,6 +19,7 @@ import reactor.test.StepVerifier;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
+import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -30,22 +31,24 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class AttendeeRepositoryTest {
 
     @Container
-    static PostgreSQLContainer PG = new PostgreSQLContainer<>("postgres:16-alpine")
+    static PostgreSQLContainer<?> PG = new PostgreSQLContainer<>("postgres:16-alpine")
             .withUsername("event-management-system-user")
             .withPassword("event-management-system-user")
             .withDatabaseName("event-management-system")
-            .withExposedPorts(5432);
+
+            .waitingFor(new LogMessageWaitStrategy().withRegEx(".*database system is ready to accept connections.*")
+                    .withStartupTimeout(Duration.of(30, ChronoUnit.SECONDS)));
 
     static {
 
-        PG.setWaitStrategy(new LogMessageWaitStrategy().withRegEx(".*database system is ready to accept connections.*")
-                .withStartupTimeout(Duration.of(15, ChronoUnit.SECONDS)));
         PG.start();
     }
 
     @AfterAll
     static void tearDown() {
+
         PG.stop();
+        PG.close();
     }
 
     private final AtomicInteger ai = new AtomicInteger(0);

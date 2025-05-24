@@ -20,7 +20,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @SpringBootTest(classes = {TicketServiceApplication.class}, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -28,30 +28,30 @@ import static org.junit.jupiter.api.Assertions.*;
 class TicketRepositoryTest {
 
     @Container
-    static PostgreSQLContainer PG = new PostgreSQLContainer<>("postgres:16-alpine")
+    static PostgreSQLContainer<?> PG = new PostgreSQLContainer<>("postgres:16-alpine")
             .withUsername("event-management-system-user")
             .withPassword("event-management-system-user")
             .withDatabaseName("event-management-system")
-            .withExposedPorts(5432);
+            .withExposedPorts(5432)
+            .waitingFor(new LogMessageWaitStrategy().withRegEx(".*database system is ready to accept connections.*")
+                    .withStartupTimeout(Duration.of(30, ChronoUnit.SECONDS)));
 
     static {
 
-        PG.setWaitStrategy(new LogMessageWaitStrategy().withRegEx(".*database system is ready to accept connections.*")
-                .withStartupTimeout(Duration.of(15, ChronoUnit.SECONDS)));
         PG.start();
     }
+    private final AtomicInteger ai = new AtomicInteger(0);
+    @Autowired
+    SqlScriptExecutor sqlScriptExecutor;
+    @Autowired
+    private TicketRepository repository;
 
     @AfterAll
     static void tearDown() {
+
         PG.stop();
+        PG.close();
     }
-
-    private final AtomicInteger ai = new AtomicInteger(0);
-
-    @Autowired
-    private TicketRepository repository;
-    @Autowired
-    SqlScriptExecutor sqlScriptExecutor;
 
     @BeforeAll
     void beforeAll() {

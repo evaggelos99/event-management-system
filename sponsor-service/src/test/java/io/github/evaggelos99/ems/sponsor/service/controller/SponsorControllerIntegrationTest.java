@@ -33,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
         TestConfiguration.class}, webEnvironment = WebEnvironment.RANDOM_PORT)
 @TestInstance(Lifecycle.PER_CLASS)
 class SponsorControllerIntegrationTest {
-
+    
     private static final String HOSTNAME = "http://localhost:";
     private static final String RELATIVE_ENDPOINT = "/sponsor";
     private final RestTemplate restTemplate = new RestTemplate();

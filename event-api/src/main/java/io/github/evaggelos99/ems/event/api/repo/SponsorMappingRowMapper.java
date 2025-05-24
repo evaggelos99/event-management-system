@@ -14,7 +14,6 @@ public class SponsorMappingRowMapper implements BiFunction<Row, RowMetadata, Eve
     @Override
     public EventSponsorMapping apply(final Row row, final RowMetadata rowMetadata) {
 
-        // TODO this returns list it will break
         return new EventSponsorMapping(row.get("event_id", UUID.class), row.get("sponsor_id", UUID.class));
     }
 }

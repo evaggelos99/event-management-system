@@ -6,7 +6,7 @@ DOCKER_COMPOSE_FILE := docker-compose.yml
 run: build-services up
 
 test:
-	mvn clean install -T 2
+	mvn clean test
 
 build-services:
 	sh ./infra/boot-up.sh

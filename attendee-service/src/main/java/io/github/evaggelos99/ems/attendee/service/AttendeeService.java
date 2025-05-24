@@ -18,7 +18,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.UUID;
 
-import static io.github.evaggelos99.ems.security.lib.Roles.*;
+import static io.github.evaggelos99.ems.user.api.Roles.*;
 import static java.util.Objects.requireNonNull;
 import static org.apache.commons.lang3.ObjectUtils.notEqual;
 
@@ -121,8 +121,7 @@ public class AttendeeService implements IAttendeeService {
     public Mono<Boolean> addTicket(final UUID attendeeId, final UUID ticketId) {
 
         return SecurityContextHelper.filterRoles(ROLE_UPDATE_ATTENDEE)
-                .filter(Boolean::booleanValue)
-                .flatMap(x -> attendeeTicketMappingRepository.saveSingularMapping(attendeeId, ticketId))
+                .flatMap(x -> PublisherValidator.validateBooleanMono(x, () -> attendeeTicketMappingRepository.saveSingularMapping(attendeeId, ticketId)))
                 .flatMap(x -> lookUpTicketService.lookUpTicket(ticketId))
                 .flatMap(ticketDto -> eventService.addAttendee(ticketDto.eventID(), attendeeId)).defaultIfEmpty(false);
     }
@@ -134,8 +133,7 @@ public class AttendeeService implements IAttendeeService {
     public Mono<Boolean> removeTicket(final UUID attendeeId, final UUID ticketId) {
 
         return SecurityContextHelper.filterRoles(ROLE_UPDATE_ATTENDEE)
-                .filter(Boolean::booleanValue)
-                .flatMap(x -> attendeeTicketMappingRepository.deleteSingularMapping(attendeeId, ticketId))
+                .flatMap(x -> PublisherValidator.validateBooleanMono(x, () -> attendeeTicketMappingRepository.deleteSingularMapping(attendeeId, ticketId)))
                 .flatMap(x -> lookUpTicketService.lookUpTicket(ticketId))
                 .flatMap(ticketDto -> eventService.removeAttendee(ticketDto.eventID(), attendeeId))
                 .defaultIfEmpty(false);

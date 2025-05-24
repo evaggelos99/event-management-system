@@ -1,4 +1,4 @@
-package io.github.evaggelos99.ems.security.lib;
+package io.github.evaggelos99.ems.user.api;
 
 /**
  * Enum that contains all the authentication roles

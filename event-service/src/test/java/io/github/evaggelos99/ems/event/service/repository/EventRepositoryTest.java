@@ -32,29 +32,30 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class EventRepositoryTest {
 
     @Container
-    static PostgreSQLContainer PG = new PostgreSQLContainer<>("postgres:16-alpine")
+    static PostgreSQLContainer<?> PG = new PostgreSQLContainer<>("postgres:16-alpine")
             .withUsername("event-management-system-user")
             .withPassword("event-management-system-user")
             .withDatabaseName("event-management-system")
-            .withExposedPorts(5432);
+            .withExposedPorts(5432)
+            .waitingFor(new LogMessageWaitStrategy().withRegEx(".*database system is ready to accept connections.*")
+                    .withStartupTimeout(Duration.of(30, ChronoUnit.SECONDS)));
 
     static {
 
-        PG.setWaitStrategy(new LogMessageWaitStrategy().withRegEx(".*database system is ready to accept connections.*")
-                .withStartupTimeout(Duration.of(15, ChronoUnit.SECONDS)));
         PG.start();
     }
-
-    @AfterAll
-    static void tearDown() {
-        PG.stop();
-    }
-
     private final AtomicInteger ai = new AtomicInteger(0);
     @Autowired
     private EventRepository repository;
     @Autowired
     private SqlScriptExecutor sqlScriptExecutor;
+
+    @AfterAll
+    static void tearDown() {
+
+        PG.stop();
+        PG.close();
+    }
 
     @DynamicPropertySource
     static void configureKafkaProperties(DynamicPropertyRegistry registry) {

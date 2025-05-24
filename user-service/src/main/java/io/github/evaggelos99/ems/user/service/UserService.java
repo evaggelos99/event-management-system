@@ -2,20 +2,19 @@ package io.github.evaggelos99.ems.user.service;
 
 import io.github.evaggelos99.ems.common.api.controller.exceptions.ObjectNotFoundException;
 import io.github.evaggelos99.ems.common.api.domainobjects.validators.constraints.PublisherValidator;
-import io.github.evaggelos99.ems.security.lib.OnboardingIdentityManagerService;
 import io.github.evaggelos99.ems.security.lib.SecurityContextHelper;
-import io.github.evaggelos99.ems.user.api.IUserService;
-import io.github.evaggelos99.ems.user.api.User;
-import io.github.evaggelos99.ems.user.api.UserDto;
+import io.github.evaggelos99.ems.user.api.*;
 import io.github.evaggelos99.ems.user.api.repo.IUserRepository;
 import io.github.evaggelos99.ems.user.service.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
+import reactor.util.function.Tuple2;
 
 import java.util.UUID;
 
-import static io.github.evaggelos99.ems.security.lib.Roles.ROLE_ADMIN;
+import static io.github.evaggelos99.ems.user.api.Roles.ROLE_ADMIN;
+
 
 @Service
 public class UserService implements IUserService {
@@ -43,8 +42,8 @@ public class UserService implements IUserService {
     public Mono<User> add(final UserDto userDto) {
 
         return SecurityContextHelper.filterRoles(ROLE_ADMIN)
-                .flatMap( x-> PublisherValidator.validateBooleanMono(x, () ->onboardingIdentityManagerService.enrollUser(userDto)))
-                .map(x-> UserDto.from(userDto).uuid(x.id()).build())
+                .flatMap(x -> PublisherValidator.validateBooleanMono(x, () -> onboardingIdentityManagerService.enrollUser(userDto)))
+                .map(x -> UserDto.from(userDto).uuid(x.id()).build())
                 .flatMap(userRepository::save);
     }
 
@@ -55,8 +54,9 @@ public class UserService implements IUserService {
     public Mono<User> get(final UUID uuid) {
 
         return SecurityContextHelper.filterRoles(ROLE_ADMIN)
-                .flatMap( x-> PublisherValidator.validateBooleanMono(x, () -> onboardingIdentityManagerService.getUser(uuid)))
-                .flatMap(x -> userRepository.findById(uuid)); // TODO involve fusion auth DTO
+                .flatMap(x -> PublisherValidator.validateBooleanMono(x, () -> onboardingIdentityManagerService.getUser(uuid)))
+                .zipWith(userRepository.findById(uuid))
+                .map(this::mapToUserObject);
     }
 
     /**
@@ -77,7 +77,7 @@ public class UserService implements IUserService {
 
         return !uuid.equals(userDto.uuid()) ? Mono.error(() -> new ObjectNotFoundException(uuid, UserDto.class))
                 : SecurityContextHelper.filterRoles(ROLE_ADMIN)
-                .flatMap( x-> PublisherValidator.validateBooleanMono(x, () -> onboardingIdentityManagerService.editUser(userDto)))
+                .flatMap(x -> PublisherValidator.validateBooleanMono(x, () -> onboardingIdentityManagerService.editUser(userDto)))
                 .flatMap(dto -> userRepository.edit(userDto));
     }
 
@@ -105,6 +105,14 @@ public class UserService implements IUserService {
     public Mono<Boolean> ping() {
 
         return Mono.just(true);
+    }
+
+    private User mapToUserObject(Tuple2<IdpUserProperties, User> tuple) {
+
+        // TODO
+        var idpUser = tuple.getT1();
+        var user = tuple.getT2();
+        return user;
     }
 
 }

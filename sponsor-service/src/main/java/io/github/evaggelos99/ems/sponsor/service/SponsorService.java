@@ -13,7 +13,7 @@ import reactor.core.publisher.Mono;
 
 import java.util.UUID;
 
-import static io.github.evaggelos99.ems.security.lib.Roles.*;
+import static io.github.evaggelos99.ems.user.api.Roles.*;
 import static java.util.Objects.requireNonNull;
 
 @Service
