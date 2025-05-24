@@ -1,304 +1,5 @@
-// curl -X GET "http://localhost:9011/api/application" \
-//  -H "Authorization: API_KEY"
 {
   "applications": [
-    {
-      "accessControlConfiguration": {},
-      "active": true,
-      "authenticationTokenConfiguration": { "enabled": false },
-      "data": {},
-      "emailConfiguration": {},
-      "externalIdentifierConfiguration": {},
-      "formConfiguration": {
-        "adminRegistrationFormId": "f06e5624-fef2-8e03-a59d-9c33769cc099",
-        "selfServiceFormConfiguration": {
-          "requireCurrentPasswordOnPasswordChange": false
-        }
-      },
-      "id": "d2d26a15-6484-4f1e-98b7-0c54a6274ad4",
-      "insertInstant": 1742912321431,
-      "jwtConfiguration": {
-        "accessTokenKeyId": "2de54551-5ae3-4b5b-973e-9a786c7d5d75",
-        "enabled": false,
-        "idTokenKeyId": "2de54551-5ae3-4b5b-973e-9a786c7d5d75",
-        "refreshTokenExpirationPolicy": "Fixed",
-        "refreshTokenSlidingWindowConfiguration": {
-          "maximumTimeToLiveInMinutes": 43200
-        },
-        "refreshTokenTimeToLiveInMinutes": 43200,
-        "refreshTokenUsagePolicy": "Reusable",
-        "timeToLiveInSeconds": 3600
-      },
-      "lambdaConfiguration": {},
-      "lastUpdateInstant": 1742912321431,
-      "loginConfiguration": {
-        "allowTokenRefresh": false,
-        "generateRefreshTokens": false,
-        "requireAuthentication": true
-      },
-      "multiFactorConfiguration": { "email": {}, "sms": {} },
-      "name": "event-management-system - copy",
-      "oauthConfiguration": {
-        "authorizedOriginURLs": [],
-        "authorizedRedirectURLs": [],
-        "authorizedURLValidationPolicy": "ExactMatch",
-        "clientAuthenticationPolicy": "Required",
-        "clientId": "d2d26a15-6484-4f1e-98b7-0c54a6274ad4",
-        "clientSecret": "*********",
-        "consentMode": "AlwaysPrompt",
-        "debug": false,
-        "enabledGrants": ["authorization_code", "password", "refresh_token"],
-        "generateRefreshTokens": true,
-        "logoutBehavior": "AllApplications",
-        "proofKeyForCodeExchangePolicy": "NotRequired",
-        "providedScopePolicy": {
-          "address": { "enabled": true, "required": false },
-          "email": { "enabled": true, "required": false },
-          "phone": { "enabled": true, "required": false },
-          "profile": { "enabled": true, "required": false }
-        },
-        "relationship": "FirstParty",
-        "requireClientAuthentication": true,
-        "requireRegistration": false,
-        "scopeHandlingPolicy": "Strict",
-        "unknownScopePolicy": "Reject"
-      },
-      "passwordlessConfiguration": { "enabled": false },
-      "registrationConfiguration": {
-        "birthDate": { "enabled": false, "required": false },
-        "confirmPassword": false,
-        "enabled": false,
-        "firstName": { "enabled": false, "required": false },
-        "fullName": { "enabled": false, "required": false },
-        "lastName": { "enabled": false, "required": false },
-        "loginIdType": "email",
-        "middleName": { "enabled": false, "required": false },
-        "mobilePhone": { "enabled": false, "required": false },
-        "preferredLanguages": { "enabled": false, "required": false },
-        "type": "basic"
-      },
-      "registrationDeletePolicy": {
-        "unverified": { "enabled": false, "numberOfDaysToRetain": 120 }
-      },
-      "roles": [
-        {
-          "id": "f73192dd-9ef5-4cb1-955e-67219a99c4a1",
-          "insertInstant": 1742912321431,
-          "isDefault": true,
-          "isSuperRole": false,
-          "lastUpdateInstant": 1742912321431,
-          "name": "ROLE_CREATE_ATTENDEE"
-        },
-        {
-          "id": "c1660a7d-44f9-470f-b60f-441dbb6f2eea",
-          "insertInstant": 1742912321431,
-          "isDefault": true,
-          "isSuperRole": false,
-          "lastUpdateInstant": 1742912321431,
-          "name": "ROLE_CREATE_EVENT"
-        },
-        {
-          "id": "89279c8d-37ae-48ea-abf6-993e4db031cd",
-          "insertInstant": 1742912321431,
-          "isDefault": true,
-          "isSuperRole": false,
-          "lastUpdateInstant": 1742912321431,
-          "name": "ROLE_CREATE_ORGANIZER"
-        },
-        {
-          "id": "2f28c921-7268-4ea5-941b-c5f73da77307",
-          "insertInstant": 1742912321431,
-          "isDefault": true,
-          "isSuperRole": false,
-          "lastUpdateInstant": 1742912321431,
-          "name": "ROLE_CREATE_SPONSOR"
-        },
-        {
-          "description": "Role that can create tickets",
-          "id": "1436100e-6097-4e77-b5c5-3476941fe4f9",
-          "insertInstant": 1742912321431,
-          "isDefault": true,
-          "isSuperRole": false,
-          "lastUpdateInstant": 1742912321431,
-          "name": "ROLE_CREATE_TICKET"
-        },
-        {
-          "id": "d90ca6d3-1923-4e98-92f9-347323010845",
-          "insertInstant": 1742912321431,
-          "isDefault": true,
-          "isSuperRole": false,
-          "lastUpdateInstant": 1742912321431,
-          "name": "ROLE_DELETE_ATTENDEE"
-        },
-        {
-          "id": "fa1edbc9-5c9d-4990-b32e-77b9f438b77f",
-          "insertInstant": 1742912321431,
-          "isDefault": true,
-          "isSuperRole": false,
-          "lastUpdateInstant": 1742912321431,
-          "name": "ROLE_DELETE_EVENT"
-        },
-        {
-          "id": "12120e2d-231b-4adf-acab-32c1da3bee35",
-          "insertInstant": 1742912321431,
-          "isDefault": true,
-          "isSuperRole": false,
-          "lastUpdateInstant": 1742912321431,
-          "name": "ROLE_DELETE_ORGANIZER"
-        },
-        {
-          "id": "88300348-63f2-4532-8e42-048475539869",
-          "insertInstant": 1742912321431,
-          "isDefault": true,
-          "isSuperRole": false,
-          "lastUpdateInstant": 1742912321431,
-          "name": "ROLE_DELETE_SPONSOR"
-        },
-        {
-          "id": "c08bb0ce-1c42-43c7-b28c-108dac645974",
-          "insertInstant": 1742912321431,
-          "isDefault": true,
-          "isSuperRole": false,
-          "lastUpdateInstant": 1742912321431,
-          "name": "ROLE_DELETE_TICKET"
-        },
-        {
-          "id": "83dabf4f-b11f-4ed9-9339-f8e501cd3ff2",
-          "insertInstant": 1742912321431,
-          "isDefault": true,
-          "isSuperRole": false,
-          "lastUpdateInstant": 1742912321431,
-          "name": "ROLE_READ_ATTENDEE"
-        },
-        {
-          "id": "f1a52930-85dd-4c08-b154-24a5cc22b14c",
-          "insertInstant": 1742912321431,
-          "isDefault": true,
-          "isSuperRole": false,
-          "lastUpdateInstant": 1742912321431,
-          "name": "ROLE_READ_EVENT"
-        },
-        {
-          "id": "8696fa6a-67cf-4335-94fb-ada5733a63b0",
-          "insertInstant": 1742912321431,
-          "isDefault": true,
-          "isSuperRole": false,
-          "lastUpdateInstant": 1742912321431,
-          "name": "ROLE_READ_ORGANIZER"
-        },
-        {
-          "id": "84d9cd7c-8b0b-4792-a805-22dfedd475ec",
-          "insertInstant": 1742912321431,
-          "isDefault": true,
-          "isSuperRole": false,
-          "lastUpdateInstant": 1742912321431,
-          "name": "ROLE_READ_SPONSOR"
-        },
-        {
-          "description": "Role that is able to read tickets",
-          "id": "146fa920-83ac-4652-9f88-35205dc73625",
-          "insertInstant": 1742912321431,
-          "isDefault": true,
-          "isSuperRole": false,
-          "lastUpdateInstant": 1742912321431,
-          "name": "ROLE_READ_TICKET"
-        },
-        {
-          "id": "f852b32a-9606-425f-b11a-1797ccdc2fe5",
-          "insertInstant": 1742912321431,
-          "isDefault": true,
-          "isSuperRole": false,
-          "lastUpdateInstant": 1742912321431,
-          "name": "ROLE_UPDATE_ATTENDEE"
-        },
-        {
-          "id": "afa2981f-91f2-42cb-9bf7-9a62ba4b8257",
-          "insertInstant": 1742912321431,
-          "isDefault": true,
-          "isSuperRole": false,
-          "lastUpdateInstant": 1742912321431,
-          "name": "ROLE_UPDATE_EVENT"
-        },
-        {
-          "id": "4daeb880-463c-4dc2-be08-cf22ee074f00",
-          "insertInstant": 1742912321431,
-          "isDefault": true,
-          "isSuperRole": false,
-          "lastUpdateInstant": 1742912321431,
-          "name": "ROLE_UPDATE_ORGANIZER"
-        },
-        {
-          "id": "a8158aec-237c-4a02-b953-5cc31e4ed0b8",
-          "insertInstant": 1742912321431,
-          "isDefault": true,
-          "isSuperRole": false,
-          "lastUpdateInstant": 1742912321431,
-          "name": "ROLE_UPDATE_SPONSOR"
-        },
-        {
-          "description": "Role that can update tickets",
-          "id": "71bddf9d-ba6c-4cb8-b3ef-a69d6d1947d7",
-          "insertInstant": 1742912321431,
-          "isDefault": true,
-          "isSuperRole": false,
-          "lastUpdateInstant": 1742912321431,
-          "name": "ROLE_UPDATE_TICKET"
-        },
-        {
-          "description": "DEFAULT ROLE",
-          "id": "ac768dcf-6202-4fa0-a860-90e5ac035885",
-          "insertInstant": 1742912321431,
-          "isDefault": true,
-          "isSuperRole": false,
-          "lastUpdateInstant": 1742912321431,
-          "name": "ROLE_USER"
-        }
-      ],
-      "samlv2Configuration": {
-        "assertionEncryptionConfiguration": {
-          "digestAlgorithm": "SHA256",
-          "enabled": false,
-          "encryptionAlgorithm": "AES256GCM",
-          "keyLocation": "Child",
-          "keyTransportAlgorithm": "RSA_OAEP",
-          "maskGenerationFunction": "MGF1_SHA1"
-        },
-        "authorizedRedirectURLs": [],
-        "debug": false,
-        "enabled": false,
-        "initiatedLogin": {
-          "enabled": false,
-          "nameIdFormat": "urn:oasis:names:tc:SAML:2.0:nameid-format:persistent"
-        },
-        "loginHintConfiguration": {
-          "enabled": true,
-          "parameterName": "login_hint"
-        },
-        "logout": {
-          "behavior": "AllParticipants",
-          "requireSignedRequests": false,
-          "singleLogout": {
-            "enabled": false,
-            "xmlSignatureC14nMethod": "exclusive_with_comments"
-          },
-          "xmlSignatureC14nMethod": "exclusive_with_comments"
-        },
-        "requireSignedRequests": false,
-        "xmlSignatureC14nMethod": "exclusive_with_comments",
-        "xmlSignatureLocation": "Assertion"
-      },
-      "scopes": [],
-      "state": "Active",
-      "tenantId": "b69758e6-8962-cf88-1846-973fb53abdb5",
-      "unverified": { "behavior": "Allow" },
-      "verificationStrategy": "ClickableLink",
-      "verifyRegistration": false,
-      "webAuthnConfiguration": {
-        "bootstrapWorkflow": { "enabled": false },
-        "enabled": false,
-        "reauthenticationWorkflow": { "enabled": false }
-      }
-    },
     {
       "accessControlConfiguration": {},
       "active": true,
@@ -319,6 +20,7 @@
         "enabled": false,
         "idTokenKeyId": "2de54551-5ae3-4b5b-973e-9a786c7d5d75",
         "refreshTokenExpirationPolicy": "Fixed",
+        "refreshTokenOneTimeUseConfiguration": { "gracePeriodInSeconds": 0 },
         "refreshTokenSlidingWindowConfiguration": {
           "maximumTimeToLiveInMinutes": 43200
         },
@@ -341,7 +43,7 @@
         "authorizedURLValidationPolicy": "ExactMatch",
         "clientAuthenticationPolicy": "Required",
         "clientId": "99c404e4-2877-4296-9c85-a89191d19e21",
-        "clientSecret": "*********",
+        "clientSecret": "CHANGEME_SECRET",
         "consentMode": "AlwaysPrompt",
         "debug": false,
         "enabledGrants": ["authorization_code", "password", "refresh_token"],
@@ -378,6 +80,15 @@
         "unverified": { "enabled": false, "numberOfDaysToRetain": 120 }
       },
       "roles": [
+        {
+          "description": "ADMIN role that can enroll users",
+          "id": "ea442d28-e7cc-4bbf-a828-c384a0316f81",
+          "insertInstant": 1745584201590,
+          "isDefault": false,
+          "isSuperRole": false,
+          "lastUpdateInstant": 1745584201590,
+          "name": "ROLE_ADMIN"
+        },
         {
           "id": "a3ce7f07-c20c-4c5c-b4be-38e402ac4ce0",
           "insertInstant": 1742910434799,
@@ -616,6 +327,7 @@
         "enabled": true,
         "idTokenKeyId": "092dbedc-30af-4149-9c61-b578f2c72f59",
         "refreshTokenExpirationPolicy": "SlidingWindow",
+        "refreshTokenOneTimeUseConfiguration": { "gracePeriodInSeconds": 0 },
         "refreshTokenSlidingWindowConfiguration": {
           "maximumTimeToLiveInMinutes": 43200
         },
@@ -638,7 +350,7 @@
         "authorizedURLValidationPolicy": "ExactMatch",
         "clientAuthenticationPolicy": "Required",
         "clientId": "3c219e58-ed0e-4b18-ad48-f4f92793ae32",
-        "clientSecret": "*********",
+        "clientSecret": "CHANGEME_SECRET",
         "consentMode": "AlwaysPrompt",
         "debug": false,
         "enabledGrants": ["authorization_code", "refresh_token"],

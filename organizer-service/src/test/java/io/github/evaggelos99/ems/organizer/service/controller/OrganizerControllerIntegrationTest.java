@@ -15,23 +15,28 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.SpringBootTest.WebEnvironment;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest(classes = {OrganizerServiceApplication.class,
-        TestConfiguration.class}, webEnvironment = WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = {OrganizerServiceApplication.class, TestConfiguration.class},
+        properties = "spring.main.allow-bean-definition-overriding=true",
+        webEnvironment = WebEnvironment.RANDOM_PORT)
 @TestInstance(Lifecycle.PER_CLASS)
+@ActiveProfiles("test")
 class OrganizerControllerIntegrationTest {
 
     private static final String HOSTNAME = "http://localhost:";
@@ -45,14 +50,14 @@ class OrganizerControllerIntegrationTest {
     @BeforeAll
     void beforeAll() {
 
-        sqlScriptExecutor.setup();
+        sqlScriptExecutor.setup("migration/h2-schema.sql");
     }
 
     @Test
     @WithMockUser(roles = {"CREATE_ORGANIZER", "UPDATE_ORGANIZER", "DELETE_ORGANIZER", "READ_ORGANIZER"})
     void postOrganizer_getOrganizer_deleteOrganizer_getOrganizer_whenInvokedWithValidOrganizerDto_thenExpectForOrganizerToBeAddedFetchedAndDeleted() {
 
-        final Instant currentTime = Instant.now();
+        final OffsetDateTime currentTime = OffsetDateTime.now();
         final OrganizerDto dto = OrganizerObjectGenerator.generateOrganizerDtoWithoutTimestamps();
         // postOrganizer
         final ResponseEntity<OrganizerDto> actualEntity = restTemplate.postForEntity(createUrl(), dto,
@@ -106,7 +111,7 @@ class OrganizerControllerIntegrationTest {
     @WithMockUser(roles = {"CREATE_ORGANIZER", "UPDATE_ORGANIZER", "DELETE_ORGANIZER", "READ_ORGANIZER"})
     void postOrganizer_putOrganizer_getOrganizer_deleteOrganizer_getAll_whenInvokedWithValidOrganizerDto_thenExpectForOrganizerToBeAddedThenEditedThenDeleted() {
 
-        final Instant currentTime = Instant.now();
+        final OffsetDateTime currentTime = OffsetDateTime.now();
         final OrganizerDto dto = OrganizerObjectGenerator.generateOrganizerDtoWithoutTimestamps(EventType.OTHER);
         // postOrganizer
         final ResponseEntity<OrganizerDto> actualEntity = restTemplate.postForEntity(createUrl(), dto,
@@ -132,7 +137,7 @@ class OrganizerControllerIntegrationTest {
         final OrganizerDto updatedDto = OrganizerDto.builder()
                 .uuid(actualDto.uuid())
                 .name(UUID.randomUUID().toString())
-                .website(UUID.randomUUID().toString())
+                .website("http://www."+UUID.randomUUID() + ".com")
                 .information(UUID.randomUUID().toString())
                 .eventTypes(eventTypes)
                 .contactInformation(contactInformation).build();
@@ -154,12 +159,14 @@ class OrganizerControllerIntegrationTest {
         assertEquals(eventTypes, actualPutDto.eventTypes());
 
         // deleteOrganizer
-        restTemplate.delete(createUrl() + "/{uuid}", actualDto.uuid());
+        System.out.println(updatedDto.uuid());
+        restTemplate.delete(createUrl() + "/{uuid}", updatedDto.uuid());
         // assertThat the list returned is empty
         @SuppressWarnings("rawtypes") final ResponseEntity<List> listOfOrganizers = restTemplate.getForEntity(createUrl(), List.class);
         assertTrue(listOfOrganizers.getStatusCode().is2xxSuccessful());
         final List<?> body = listOfOrganizers.getBody();
         assertNotNull(body);
+        System.out.println(body);
         assertTrue(body.isEmpty());
     }
 

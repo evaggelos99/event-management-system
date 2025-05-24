@@ -1,0 +1,2 @@
+ALTER TABLE ems_event.events
+    ADD COLUMN streamable BOOLEAN NOT NULL DEFAULT FALSE;

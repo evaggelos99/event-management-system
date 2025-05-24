@@ -11,6 +11,7 @@ import org.apache.commons.lang3.builder.ToStringStyle;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -23,13 +24,14 @@ public final class Event extends AbstractDomainObject {
     private final UUID organizerId;
     private final Integer limitOfPeople;
     private final List<UUID> sponsorsIds;
+    private final boolean streamable;
     private final LocalDateTime startTime;
     private final Duration duration;
 
-    public Event(final UUID uuid, final Instant createdAt, final Instant lastUpdated, @NotNull final String name,
+    public Event(final UUID uuid, final OffsetDateTime createdAt, final OffsetDateTime lastUpdated, @NotNull final String name,
                  @NotNull final String place, @NotNull final EventType eventType, @NotNull final List<UUID> attendeesIds,
                  @NotNull final UUID organizerId, @NotNull final Integer limitOfPeople, final List<UUID> sponsorsIds,
-                 @NotNull final LocalDateTime startTime, @NotNull final Duration duration) {
+                 @NotNull final boolean streamable, @NotNull final LocalDateTime startTime, @NotNull final Duration duration) {
 
         super(uuid, createdAt, lastUpdated);
         this.name = name;
@@ -39,6 +41,7 @@ public final class Event extends AbstractDomainObject {
         this.organizerId = organizerId;
         this.limitOfPeople = limitOfPeople;
         this.sponsorsIds = sponsorsIds;
+        this.streamable=streamable;
         this.startTime = startTime;
         this.duration = duration;
     }
@@ -78,6 +81,10 @@ public final class Event extends AbstractDomainObject {
         return sponsorsIds;
     }
 
+    public boolean isStreamable() {
+        return streamable;
+    }
+
     public LocalDateTime getStartTime() {
 
         return startTime;
@@ -102,6 +109,7 @@ public final class Event extends AbstractDomainObject {
                 .append(eventType, that.eventType).append(attendeesIds, that.attendeesIds)
                 .append(organizerId, that.organizerId).append(limitOfPeople, that.limitOfPeople)
                 .append(sponsorsIds, that.sponsorsIds).append(startTime, that.startTime).append(duration, that.duration)
+                .append(streamable, that.streamable)
                 .build();
     }
 
@@ -110,7 +118,7 @@ public final class Event extends AbstractDomainObject {
 
         return new HashCodeBuilder(17, 37).appendSuper(super.hashCode()).append(name).append(place).append(eventType)
                 .append(attendeesIds).append(organizerId).append(limitOfPeople).append(sponsorsIds).append(startTime)
-                .append(duration).build();
+                .append(duration).append(streamable).build();
     }
 
     @Override
@@ -120,7 +128,7 @@ public final class Event extends AbstractDomainObject {
                 .append("name", name).append("place", place).append("eventType", eventType)
                 .append("attendeesIDs", attendeesIds).append("organizerID", organizerId)
                 .append("limitOfPeople", limitOfPeople).append("sponsorID", sponsorsIds).append("startTime", startTime)
-                .append("duration", duration).toString();
+                .append("duration", duration)
+                .append("streamable", streamable).toString();
     }
-
 }

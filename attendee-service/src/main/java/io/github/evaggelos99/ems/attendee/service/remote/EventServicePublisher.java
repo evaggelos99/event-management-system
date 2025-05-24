@@ -27,7 +27,12 @@ public class EventServicePublisher implements IEventServiceClient {
     @Override
     public Mono<Boolean> addAttendee(final UUID eventId, final UUID attendeeId) {
 
-        return publisher.send(eventId, attendeeId);
+        return publisher.sendAddAttendeeMessage(eventId, attendeeId);
+    }
+
+    @Override
+    public Mono<Boolean> removeAttendee(final UUID uuid, final UUID attendeeId) {
+        return publisher.sendRemoveAttendeeMessage(uuid, attendeeId);
     }
 
     @Override

@@ -6,6 +6,7 @@ import io.github.evaggelos99.ems.organizer.api.Organizer;
 import io.github.evaggelos99.ems.organizer.api.OrganizerDto;
 
 import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,13 +18,13 @@ public final class OrganizerObjectGenerator {
 
     public static OrganizerDto generateOrganizerDto(UUID id, final EventType... eventTypes) {
 
-        final Instant timestamp = Instant.now();
+        final OffsetDateTime timestamp = OffsetDateTime.now();
         return OrganizerDto.builder()
                 .uuid(id != null ? id : UUID.randomUUID())
                 .createdAt(timestamp)
                 .lastUpdated(timestamp)
                 .name(UUID.randomUUID().toString())
-                .website(UUID.randomUUID().toString())
+                .website("http://www."+UUID.randomUUID() + ".com")
                 .information(UUID.randomUUID().toString())
                 .eventTypes(List.of(eventTypes))
                 .contactInformation(generateContactInformation())
@@ -38,7 +39,7 @@ public final class OrganizerObjectGenerator {
 
     public static Organizer generateOrganizer(final EventType... eventTypes) {
 
-        final Instant now = Instant.now();
+        final OffsetDateTime now = OffsetDateTime.now();
         return new Organizer(UUID.randomUUID(), now, now, UUID.randomUUID().toString(), UUID.randomUUID().toString(),
                 UUID.randomUUID().toString(), List.of(eventTypes), generateContactInformation());
     }
@@ -48,7 +49,7 @@ public final class OrganizerObjectGenerator {
         return OrganizerDto.builder()
                 .uuid(UUID.randomUUID())
                 .name(UUID.randomUUID().toString())
-                .website(UUID.randomUUID().toString())
+                .website("http://www."+UUID.randomUUID() + ".com")
                 .information(UUID.randomUUID().toString())
                 .eventTypes(List.of(eventTypes))
                 .contactInformation(generateContactInformation())

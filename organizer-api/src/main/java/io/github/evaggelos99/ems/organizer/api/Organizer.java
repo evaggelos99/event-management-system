@@ -11,6 +11,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
@@ -18,13 +19,12 @@ import java.util.UUID;
 public final class Organizer extends AbstractDomainObject {
 
     private final String name;
-    // TODO add regex validation
     private final String website;
     private final String information;
     private final List<EventType> eventTypes;
     private final ContactInformation contactInformation;
 
-    public Organizer(final UUID uuid, final Instant createdAt, final Instant lastUpdated,
+    public Organizer(final UUID uuid, final OffsetDateTime createdAt, final OffsetDateTime lastUpdated,
                      @NotNull @NotBlank final String name, @NotBlank final String website, final String information,
                      @NotNull final List<EventType> eventTypes, @NotNull final ContactInformation contactInformation) {
 

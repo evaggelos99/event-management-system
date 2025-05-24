@@ -11,6 +11,7 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.util.UUID;
 
 public final class Ticket extends AbstractDomainObject {
@@ -20,12 +21,12 @@ public final class Ticket extends AbstractDomainObject {
     private final Integer price;
     private final Boolean transferable;
     private final SeatingInformation seatingInformation;
-    // TODO create QR code referenceing this ticket
+    private final Boolean used;
 
-    public Ticket(final UUID uuid, final Instant createdAt, final Instant lastUpdated, @NotNull final UUID eventID,
+    public Ticket(final UUID uuid, final OffsetDateTime createdAt, final OffsetDateTime lastUpdated, @NotNull final UUID eventID,
                   @NotNull final TicketType ticketType,
                   @NotNull @NotNegative(message = "cannot be negative") final Integer price,
-                  @NotNull final Boolean transferable, @NotNull final SeatingInformation seatingInformation) {
+                  @NotNull final Boolean transferable, @NotNull final SeatingInformation seatingInformation, final Boolean used) {
 
         super(uuid, createdAt, lastUpdated);
         this.eventID = eventID;
@@ -33,6 +34,7 @@ public final class Ticket extends AbstractDomainObject {
         this.price = price;
         this.transferable = transferable;
         this.seatingInformation = seatingInformation;
+        this.used = used;
     }
 
     public UUID getEventID() {
@@ -60,6 +62,10 @@ public final class Ticket extends AbstractDomainObject {
         return seatingInformation;
     }
 
+    public Boolean getUsed() {
+        return used;
+    }
+
     @Override
     public boolean equals(final Object o) {
 
@@ -72,14 +78,15 @@ public final class Ticket extends AbstractDomainObject {
 
         return new EqualsBuilder().appendSuper(super.equals(that)).append(eventID, that.eventID)
                 .append(ticketType, that.ticketType).append(price, that.price).append(transferable, that.transferable)
-                .append(seatingInformation, that.seatingInformation).build();
+                .append(seatingInformation, that.seatingInformation)
+                .append(used, that.used).build();
     }
 
     @Override
     public int hashCode() {
 
         return new HashCodeBuilder(17, 37).appendSuper(super.hashCode()).append(eventID).append(ticketType)
-                .append(price).append(transferable).append(seatingInformation).build();
+                .append(price).append(transferable).append(seatingInformation).append(used).build();
     }
 
     @Override
@@ -87,7 +94,9 @@ public final class Ticket extends AbstractDomainObject {
 
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE).appendSuper(super.toString())
                 .append("eventID", eventID).append("ticketType", ticketType).append("price", price)
-                .append("transferable", transferable).append("seat information", seatingInformation).toString();
+                .append("transferable", transferable).append("seat information", seatingInformation)
+                .append("used", used)
+                .toString();
     }
 
 }

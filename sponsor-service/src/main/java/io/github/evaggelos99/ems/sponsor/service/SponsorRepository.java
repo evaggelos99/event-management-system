@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -73,13 +73,13 @@ public class SponsorRepository implements ISponsorRepository {
     public Mono<Boolean> deleteById(final UUID uuid) {
 
         return databaseClient.sql(sponsorQueriesProperties.get(CrudQueriesOperations.DELETE_ID))
-                .bind(0, uuid).fetch().rowsUpdated().map(this::rowsAffectedAreMoreThanOne);
+                .bind(0, uuid).fetch().rowsUpdated().map(this::rowsAffectedIsOne);
     }
 
     @Override
     public Mono<Boolean> existsById(final UUID uuid) {
 
-        return findById(uuid).map(Objects::nonNull);
+        return findById(uuid).map(Objects::nonNull).defaultIfEmpty(false);
     }
 
     @Override
@@ -97,19 +97,19 @@ public class SponsorRepository implements ISponsorRepository {
     private Mono<Sponsor> editSponsor(final SponsorDto sponsor) {
 
         final UUID uuid = sponsor.uuid();
-        final Instant updatedAt = Instant.now();
+        final OffsetDateTime updatedAt = OffsetDateTime.now();
         final String name = sponsor.name();
         final String website = sponsor.website();
         final Integer financialContribution = sponsor.financialContribution();
         final ContactInformation contactInformation = sponsor.contactInformation();
 
         final Mono<Long> rowsAffected = databaseClient
-                .sql(sponsorQueriesProperties.get(CrudQueriesOperations.EDIT)).bind(0, uuid)
-                .bind(1, updatedAt).bind(2, name).bind(3, website).bind(4, financialContribution)
-                .bind(5, contactInformation.email()).bind(6, contactInformation.phoneNumber())
-                .bind(7, contactInformation.physicalAddress()).bind(8, uuid).fetch().rowsUpdated();
+                .sql(sponsorQueriesProperties.get(CrudQueriesOperations.EDIT))
+                .bind(0, updatedAt).bind(1, name).bind(2, website).bind(3, financialContribution)
+                .bind(4, contactInformation.email()).bind(5, contactInformation.phoneNumber())
+                .bind(6, contactInformation.physicalAddress()).bind(7, uuid).fetch().rowsUpdated();
 
-        return rowsAffected.filter(this::rowsAffectedAreMoreThanOne).flatMap(rowNum -> findById(uuid))
+        return rowsAffected.filter(this::rowsAffectedIsOne).flatMap(rowNum -> findById(uuid))
                 .map(AbstractDomainObject::getCreatedAt)
                 .map(monoCreatedAt -> sponsorDtoToSponsorConverter.apply(SponsorDto.builder()
                         .uuid(uuid)
@@ -124,7 +124,7 @@ public class SponsorRepository implements ISponsorRepository {
     private Mono<Sponsor> saveSponsor(final SponsorDto sponsor) {
 
         final UUID sponsorUuid = sponsor.uuid();
-        final Instant instantNow = Instant.now();
+        final OffsetDateTime now = OffsetDateTime.now();
 
         final UUID uuid = sponsorUuid != null ? sponsorUuid : UUID.randomUUID();
         final String name = sponsor.name();
@@ -134,18 +134,18 @@ public class SponsorRepository implements ISponsorRepository {
 
         final Mono<Long> rowsAffected = databaseClient
                 .sql(sponsorQueriesProperties.get(CrudQueriesOperations.SAVE)).bind(0, uuid)
-                .bind(1, instantNow).bind(2, instantNow).bind(3, name).bind(4, website).bind(5, financialContribution)
+                .bind(1, now).bind(2, now).bind(3, name).bind(4, website).bind(5, financialContribution)
                 .bind(6, contactInformation.email()).bind(7, contactInformation.phoneNumber())
                 .bind(8, contactInformation.physicalAddress()).fetch().rowsUpdated();
 
-        return rowsAffected.filter(this::rowsAffectedAreMoreThanOne)
-                .map(rowNum -> sponsorDtoToSponsorConverter.apply(SponsorDto.builder().uuid(uuid).createdAt(instantNow)
-                        .lastUpdated(instantNow).name(name).website(website)
+        return rowsAffected.filter(this::rowsAffectedIsOne)
+                .map(rowNum -> sponsorDtoToSponsorConverter.apply(SponsorDto.builder().uuid(uuid).createdAt(now)
+                        .lastUpdated(now).name(name).website(website)
                         .financialContribution(financialContribution).contactInformation(contactInformation).build()));
     }
 
-    private boolean rowsAffectedAreMoreThanOne(final Long x) {
+    private boolean rowsAffectedIsOne(final Long x) {
 
-        return x >= 1;
+        return x == 1;
     }
 }

@@ -58,7 +58,7 @@ public interface IOrganizerController extends IGenericController {
      * match any Attendee stored in the DB it will return 404
      *
      * @param organizerId the UUID of the Organizer object
-     * @param organizer   the edited Organizer object
+     * @param organizerDto   the edited Organizer object
      */
     @Operation(summary = "PUT operation that updates or creates an organizer object", description = "updates or creates an Attendee object and stores it in the data source")
     @ApiResponses(value = {@ApiResponse(responseCode = "201", description = "successful operation"),

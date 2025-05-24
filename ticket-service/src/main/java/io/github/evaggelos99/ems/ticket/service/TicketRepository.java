@@ -3,7 +3,6 @@ package io.github.evaggelos99.ems.ticket.service;
 import io.github.evaggelos99.ems.common.api.db.CrudQueriesOperations;
 import io.github.evaggelos99.ems.common.api.domainobjects.AbstractDomainObject;
 import io.github.evaggelos99.ems.common.api.domainobjects.SeatingInformation;
-import io.github.evaggelos99.ems.common.api.domainobjects.TicketType;
 import io.github.evaggelos99.ems.ticket.api.Ticket;
 import io.github.evaggelos99.ems.ticket.api.TicketDto;
 import io.github.evaggelos99.ems.ticket.api.converters.TicketDtoToTicketConverter;
@@ -15,7 +14,7 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.util.Map;
 import java.util.Objects;
 import java.util.UUID;
@@ -83,13 +82,13 @@ public class TicketRepository implements ITicketRepository {
                 .sql(ticketQueriesProperties.get(CrudQueriesOperations.DELETE_ID)).bind(0, uuid).fetch()
                 .rowsUpdated();
 
-        return rows.map(this::rowsAffectedAreMoreThanOne);
+        return rows.map(this::rowsAffectedIsOne);
     }
 
     @Override
     public Mono<Boolean> existsById(final UUID uuid) {
 
-        return findById(uuid).map(Objects::nonNull);
+        return findById(uuid).map(Objects::nonNull).defaultIfEmpty(false);
     }
 
     @Override
@@ -101,49 +100,65 @@ public class TicketRepository implements ITicketRepository {
 
     private Mono<Ticket> saveTicket(final TicketDto ticket) {
 
-        final UUID ticketUuid = ticket.uuid();
-        final Instant now = Instant.now();
-        final UUID uuid = ticketUuid != null ? ticketUuid : UUID.randomUUID();
-
-        final UUID eventId = ticket.eventID();
-        final TicketType ticketType = ticket.ticketType();
-        final Integer price = ticket.price();
-        final Boolean isTransferable = ticket.transferable();
+        final OffsetDateTime now = OffsetDateTime.now();
+        final UUID uuid = ticket.uuid() != null ? ticket.uuid() : UUID.randomUUID();
         final SeatingInformation seatInformation = ticket.seatInformation();
 
-        final Mono<Long> rowsAffected = databaseClient
-                .sql(ticketQueriesProperties.get(CrudQueriesOperations.SAVE)).bind(0, uuid).bind(1, now)
-                .bind(2, now).bind(3, eventId).bind(4, ticketType).bind(5, price).bind(6, isTransferable)
-                .bind(7, seatInformation.seat()).bind(8, seatInformation.section()).fetch().rowsUpdated();
+        final Mono<Long> rowsAffected = databaseClient.sql(ticketQueriesProperties.get(CrudQueriesOperations.SAVE))
+                .bind(0, uuid)
+                .bind(1, now)
+                .bind(2, now)
+                .bind(3, ticket.eventID())
+                .bind(4, ticket.ticketType())
+                .bind(5, ticket.price())
+                .bind(6, ticket.transferable())
+                .bind(7, seatInformation.seat())
+                .bind(8, seatInformation.section())
+                .bind(9, ticket.used())
+                .fetch()
+                .rowsUpdated();
 
-        return rowsAffected.filter(this::rowsAffectedAreMoreThanOne).map(rowNum -> ticketDtoToTicketConverter
-                .apply(new TicketDto(uuid, now, now, eventId, ticketType, price, isTransferable, seatInformation)));
+        return rowsAffected.filter(this::rowsAffectedIsOne)
+                .map(rowNum -> ticketDtoToTicketConverter.apply(
+                        TicketDto.from(ticket)
+                                .uuid(uuid)
+                                .createdAt(now)
+                                .lastUpdated(now)
+                                .build()));
     }
 
     private Mono<Ticket> editTicket(final TicketDto ticket) {
 
         final UUID uuid = ticket.uuid();
-        final Instant updatedAt = Instant.now();
-
-        final UUID eventId = ticket.eventID();
-        final TicketType ticketType = ticket.ticketType();
-        final Integer price = ticket.price();
-        final Boolean isTransferable = ticket.transferable();
+        final OffsetDateTime lastUpdated = OffsetDateTime.now();
         final SeatingInformation seatInformation = ticket.seatInformation();
 
         final Mono<Long> rowsAffected = databaseClient
-                .sql(ticketQueriesProperties.get(CrudQueriesOperations.EDIT)).bind(0, uuid)
-                .bind(1, updatedAt).bind(2, eventId).bind(3, ticketType).bind(4, price).bind(5, isTransferable)
-                .bind(6, seatInformation.seat()).bind(7, seatInformation.section()).bind(8, uuid).fetch().rowsUpdated();
+                .sql(ticketQueriesProperties.get(CrudQueriesOperations.EDIT))
+                .bind(0, lastUpdated)
+                .bind(1, ticket.eventID())
+                .bind(2, ticket.ticketType())
+                .bind(3, ticket.price())
+                .bind(4, ticket.transferable())
+                .bind(5, seatInformation.seat())
+                .bind(6, seatInformation.section())
+                .bind(7, ticket.used())
+                .bind(8, uuid)
+                .fetch()
+                .rowsUpdated();
 
-        return rowsAffected.filter(this::rowsAffectedAreMoreThanOne).flatMap(rowNum -> findById(uuid))
+        return rowsAffected.filter(this::rowsAffectedIsOne)
+                .flatMap(rowNum -> findById(uuid))
                 .map(AbstractDomainObject::getCreatedAt)
-                .map(monoCreatedAt -> ticketDtoToTicketConverter.apply(new TicketDto(uuid, monoCreatedAt, updatedAt,
-                        eventId, ticketType, price, isTransferable, seatInformation)));
+                .map(monoCreatedAt -> ticketDtoToTicketConverter.apply(
+                        TicketDto.from(ticket)
+                                .createdAt(monoCreatedAt)
+                                .lastUpdated(lastUpdated)
+                                .build()));
     }
 
-    private boolean rowsAffectedAreMoreThanOne(final Long x) {
-        return x >= 1;
+    private boolean rowsAffectedIsOne(final Long x) {
+        return x==1;
     }
 
 }

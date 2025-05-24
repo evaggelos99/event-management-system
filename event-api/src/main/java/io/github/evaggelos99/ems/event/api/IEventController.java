@@ -80,19 +80,34 @@ public interface IEventController extends IGenericController {
     Mono<Boolean> deleteEvent(@PathVariable UUID eventId);
 
     /**
-     * Adds an attendee to the event. <br/>
-     * <b>This is NOT a safe operation because it assumes that:</b>
-     * <ul>
-     *  <li>The ticket object already exists, and it has the same event ID as the eventId given</li>
-     *  <li>The attendee object has the ticket ID already</li>
-     * <ul/>
+     * Adds a sponsor to the event. <br/>
      *
-     * @param eventId the event ID that the attendee will be added
-     * @param attendeeId the attendee ID that will be added to the event
+     * @param eventId the event ID that the sponsor will be added
+     * @param sponsorId the sponsor ID that will be added to the event
      * @return {@link Boolean#TRUE} if the operation is successful otherwise {@link Boolean#FALSE}
      */
     @Hidden
-    @PutMapping("/{eventId}/addAttendee")
-    Mono<Boolean> addAttendee(@PathVariable UUID eventId, @RequestParam UUID attendeeId);
+    @PutMapping("/{eventId}/removeSponsor")
+    Mono<Boolean> removeSponsor(@PathVariable UUID eventId, @RequestParam UUID sponsorId);
+
+    /**
+     * Removes a sponsor to the event. <br/>
+     *
+     * @param eventId the event ID that the sponsor will be added
+     * @param sponsorId the sponsor ID that will be added to the event
+     * @return {@link Boolean#TRUE} if the operation is successful otherwise {@link Boolean#FALSE}
+     */
+    @Hidden
+    @PutMapping("/{eventId}/addSponsor")
+    Mono<Boolean> addSponsor(@PathVariable UUID eventId, @RequestParam UUID sponsorId);
+
+    /**
+     * Method that gets all Event Stream objects from the DB
+     */
+    @Operation(summary = "GET operation that returns all event stream object", description = "retrieves all Event Stream objects from the data source")
+    @ApiResponses(value = {@ApiResponse(responseCode = "200", description = "successful operation")})
+    @ResponseStatus(value = HttpStatus.OK)
+    @GetMapping("/event-stream/{eventId}")
+    Flux<EventStreamDto> getEventStreams(@PathVariable UUID eventId);
 
 }

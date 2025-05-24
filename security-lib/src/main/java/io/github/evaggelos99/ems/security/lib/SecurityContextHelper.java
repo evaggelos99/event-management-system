@@ -1,5 +1,6 @@
 package io.github.evaggelos99.ems.security.lib;
 
+import io.github.evaggelos99.ems.user.api.Roles;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.security.core.context.SecurityContext;

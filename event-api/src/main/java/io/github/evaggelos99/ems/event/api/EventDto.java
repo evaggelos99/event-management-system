@@ -13,6 +13,7 @@ import jakarta.validation.constraints.Null;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -22,7 +23,7 @@ import java.util.UUID;
  * @author Evangelos Georgiou
  */
 public record EventDto(@Schema(hidden = true, description = "The UUID of the Attendee") UUID uuid,
-                       @Null @Schema(hidden = true) Instant createdAt, @Null @Schema(hidden = true) Instant lastUpdated,
+                       @Null @Schema(hidden = true) OffsetDateTime createdAt, @Null @Schema(hidden = true) OffsetDateTime lastUpdated,
                        @NotBlank @Schema(example = "in voluptate velit", description = "Name of the Event") String name,
                        @NotBlank @Schema(example = "anim id est laborum", description = "The place of the Event") String place,
                        @NotNull @Schema(example = "OTHER", description = "The type of the Event") EventType eventType,
@@ -30,6 +31,7 @@ public record EventDto(@Schema(hidden = true, description = "The UUID of the Att
                        @NotNull @Schema(description = "The organizer of the event", example = "61ee265a-f3d8-400a-8ae4-5e806b3eba92") UUID organizerId,
                        @NotNull @Schema(example = "500", description = "The limit people the event can hold") Integer limitOfPeople,
                        @Schema(description = "The sponsors of the event") List<UUID> sponsorsIds,
+                       @NotNull @Schema(example = "false", description = "If the event can be streamed.") boolean streamable,
                        @NotNull @Schema(description = "The start time of the Event") LocalDateTime startTimeOfEvent,
                        @NotNull @Schema(description = "The duration of the Event", example = "PT5H")
                        @JsonDeserialize(using = DurationDeserializer.class)
@@ -43,14 +45,15 @@ public record EventDto(@Schema(hidden = true, description = "The UUID of the Att
     public static final class Builder {
 
         private UUID uuid;
-        private Instant createdAt;
-        private Instant lastUpdated;
+        private OffsetDateTime createdAt;
+        private OffsetDateTime lastUpdated;
         private String name;
         private String place;
         private EventType eventType;
         private List<UUID> attendeesIds;
         private UUID organizerId;
         private Integer limitOfPeople;
+        private boolean streamable;
         private List<UUID> sponsorsIds;
         private LocalDateTime startTimeOfEvent;
         private Duration duration;
@@ -61,7 +64,7 @@ public record EventDto(@Schema(hidden = true, description = "The UUID of the Att
 
         public EventDto build() {
 
-            return new EventDto(uuid, createdAt, lastUpdated, name, place, eventType, attendeesIds, organizerId, limitOfPeople, sponsorsIds, startTimeOfEvent, duration);
+            return new EventDto(uuid, createdAt, lastUpdated, name, place, eventType, attendeesIds, organizerId, limitOfPeople, sponsorsIds,streamable, startTimeOfEvent, duration);
         }
 
         public Builder uuid(final UUID uuid) {
@@ -69,12 +72,12 @@ public record EventDto(@Schema(hidden = true, description = "The UUID of the Att
             return this;
         }
 
-        public Builder createdAt(final Instant createdAt) {
+        public Builder createdAt(final OffsetDateTime createdAt) {
             this.createdAt = createdAt;
             return this;
         }
 
-        public Builder lastUpdated(final Instant lastUpdated) {
+        public Builder lastUpdated(final OffsetDateTime lastUpdated) {
             this.lastUpdated = lastUpdated;
             return this;
         }
@@ -109,6 +112,11 @@ public record EventDto(@Schema(hidden = true, description = "The UUID of the Att
             return this;
         }
 
+        public Builder streamable(final boolean streamable) {
+            this.streamable = streamable;
+            return this;
+        }
+
         public Builder sponsorsIds(final List<UUID> sponsorsIds) {
             this.sponsorsIds = sponsorsIds;
             return this;
@@ -123,6 +131,24 @@ public record EventDto(@Schema(hidden = true, description = "The UUID of the Att
             this.duration = duration;
             return this;
         }
+
+        public Builder from(final EventDto eventDto) {
+            this.uuid = eventDto.uuid();
+            this.createdAt = eventDto.createdAt();
+            this.lastUpdated = eventDto.lastUpdated();
+            this.name = eventDto.name();
+            this.place = eventDto.place();
+            this.eventType = eventDto.eventType();
+            this.attendeesIds = eventDto.attendeesIds();
+            this.organizerId = eventDto.organizerId();
+            this.limitOfPeople = eventDto.limitOfPeople();
+            this.streamable = eventDto.streamable();
+            this.sponsorsIds = eventDto.sponsorsIds();
+            this.startTimeOfEvent = eventDto.startTimeOfEvent();
+            this.duration = eventDto.duration();
+            return this;
+        }
+
     }
 
 }

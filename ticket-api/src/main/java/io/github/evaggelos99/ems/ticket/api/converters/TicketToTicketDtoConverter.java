@@ -13,7 +13,7 @@ public class TicketToTicketDtoConverter implements Function<Ticket, TicketDto> {
     public TicketDto apply(final Ticket ticket) {
 
         return new TicketDto(ticket.getUuid(), ticket.getCreatedAt(), ticket.getLastUpdated(), ticket.getEventID(),
-                ticket.getTicketType(), ticket.getPrice(), ticket.getTransferable(), ticket.getSeatingInformation());
+                ticket.getTicketType(), ticket.getPrice(), ticket.getTransferable(), ticket.getSeatingInformation(), ticket.getUsed());
     }
 
 }

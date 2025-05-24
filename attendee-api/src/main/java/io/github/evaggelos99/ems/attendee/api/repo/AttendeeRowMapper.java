@@ -28,8 +28,9 @@ public class AttendeeRowMapper implements BiFunction<Row, RowMetadata, Attendee>
     public Attendee apply(final Row row, final RowMetadata u) {
 
         final List<UUID> ticketIds = arrayToListOfUuidConverter.apply((UUID[]) row.get("ticket_ids"));
-        return new Attendee(row.get("id", UUID.class), row.get("created_at", OffsetDateTime.class).toInstant(),
-                row.get("last_updated", OffsetDateTime.class).toInstant(), row.get("first_name", String.class),
+
+        return new Attendee(row.get("id", UUID.class), row.get("created_at", OffsetDateTime.class),
+                row.get("last_updated", OffsetDateTime.class), row.get("first_name", String.class),
                 row.get("last_name", String.class), ticketIds);
     }
 }

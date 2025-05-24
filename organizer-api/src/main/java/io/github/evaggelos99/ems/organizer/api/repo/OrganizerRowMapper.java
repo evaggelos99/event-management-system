@@ -35,8 +35,8 @@ public class OrganizerRowMapper implements BiFunction<Row, RowMetadata, Organize
         final ContactInformation contactInformation = new ContactInformation(row.get("email", String.class),
                 row.get("phone_number", String.class), row.get("physical_address", String.class));
 
-        return new Organizer(row.get("id", UUID.class), row.get("created_at", OffsetDateTime.class).toInstant(),
-                row.get("last_updated", OffsetDateTime.class).toInstant(), row.get("name", String.class),
+        return new Organizer(row.get("id", UUID.class), row.get("created_at", OffsetDateTime.class),
+                row.get("last_updated", OffsetDateTime.class), row.get("name", String.class),
                 row.get("website", String.class), row.get("information", String.class), eventsTypes,
                 contactInformation);
     }

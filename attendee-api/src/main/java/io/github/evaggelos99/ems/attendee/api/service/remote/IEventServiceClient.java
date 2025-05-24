@@ -1,6 +1,7 @@
 package io.github.evaggelos99.ems.attendee.api.service.remote;
 
 import io.github.evaggelos99.ems.common.api.service.remote.IRemoteServiceClient;
+import jakarta.validation.constraints.NotNull;
 import reactor.core.publisher.Mono;
 
 import java.util.UUID;
@@ -16,4 +17,6 @@ public interface IEventServiceClient extends IRemoteServiceClient {
      * or else {@link Boolean#FALSE}
      */
     Mono<Boolean> addAttendee(final UUID eventId, final UUID attendeeId);
+
+    Mono<Boolean> removeAttendee(UUID uuid, UUID attendeeId);
 }

@@ -17,13 +17,18 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
@@ -31,39 +36,56 @@ import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest(classes = {EventServiceApplication.class,
-        TestConfiguration.class,}, webEnvironment = WebEnvironment.RANDOM_PORT)
+        TestConfiguration.class},
+        properties = "spring.main.allow-bean-definition-overriding=true",
+        webEnvironment = WebEnvironment.RANDOM_PORT)
 @TestInstance(Lifecycle.PER_CLASS)
 @Testcontainers
-public class EventControllerIntegrationTest {
+@ActiveProfiles("test")
+class EventControllerIntegrationTest {
 
     private static final String HOSTNAME = "http://localhost:";
     private static final String RELATIVE_ENDPOINT = "/event";
     @Container
     private static final ExtendedKafkaContainer KAFKA = new ExtendedKafkaContainer();
-    private final RestTemplate restTemplate = new RestTemplate();
     @Autowired
     private SqlScriptExecutor sqlScriptExecutor;
+    private final RestTemplate restTemplate = new RestTemplate();
     @LocalServerPort
     private int port;
 
-    EventControllerIntegrationTest() {
-        KAFKA.start();
+    static {
 
-        System.setProperty("spring.kafka.consumer.bootstrap-servers", KAFKA.getBootstrapServers());
+        KAFKA.start();
     }
 
     @BeforeAll
-    public void beforeAll() {
+    void beforeAll() {
 
-        sqlScriptExecutor.setup();
+        sqlScriptExecutor.setup("migration/h2-schema.sql");
     }
 
+    @DynamicPropertySource
+    static void configureKafkaProperties(DynamicPropertyRegistry registry) {
+
+        final String kafkaUrl = KAFKA.getHost() + ":" + KAFKA.getFirstMappedPort();
+        registry.add("kafka.enabled", () -> true);
+        registry.add("spring.kafka.consumer.bootstrap-servers", () -> kafkaUrl);
+        registry.add("spring.kafka.producer.bootstrap-servers", () -> kafkaUrl);
+    }
+
+    @Test
+    @WithMockUser(roles = {"AUTHENTICATED"})
+    void ping() {
+
+        assertEquals(Boolean.TRUE, restTemplate.getForEntity(createUrl() + "/ping", Boolean.class).getBody());
+    }
 
     @Test
     @WithMockUser(roles = {"CREATE_EVENT", "UPDATE_EVENT", "DELETE_EVENT", "READ_EVENT"})
     void postEvent_getEvent_deleteEvent_getEvent_whenInvokedWithValidEventDto_thenExpectForEventToBeAddedFetchedAndDeleted() {
 
-        final Instant currentTime = Instant.now();
+        final OffsetDateTime currentTime = OffsetDateTime.now();
 
         final UUID attendeeId = UUID.randomUUID();
         final UUID organizerId = UUID.randomUUID();
@@ -133,7 +155,7 @@ public class EventControllerIntegrationTest {
     @WithMockUser(roles = {"CREATE_EVENT", "UPDATE_EVENT", "DELETE_EVENT", "READ_EVENT"})
     void postEvent_putEvent_getEvent_deleteEvent_getAll_whenInvokedWithValidEventDto_thenExpectForEventToBeAddedThenEditedThenDeleted() {
 
-        final Instant currentTime = Instant.now();
+        final OffsetDateTime currentTime = OffsetDateTime.now();
 
         final UUID attendeeId = UUID.randomUUID();
         final UUID organizerId = UUID.randomUUID();
@@ -199,11 +221,11 @@ public class EventControllerIntegrationTest {
     @WithMockUser(roles = {"CREATE_EVENT", "UPDATE_EVENT", "DELETE_EVENT", "READ_EVENT"})
     void postEvent_addAttendee_deleteEvent_whenInvokedWithValidEventDto_thenExpectForEventToBeAddedThenEditedWithAddAttendeeThenDeleted() {
 
-        final Instant currentTime = Instant.now();
+        final OffsetDateTime currentTime = OffsetDateTime.now();
 
-        final UUID attendeeId = UUID.randomUUID();
         final UUID organizerId = UUID.randomUUID();
         final UUID sponsorId = UUID.randomUUID();
+        final UUID sponsorId2 = UUID.randomUUID();
 
         final EventDto dto = EventObjectGenerator.generateEventDtoWithoutTimestamps(null, organizerId, sponsorId);
         // postEvent
@@ -229,10 +251,13 @@ public class EventControllerIntegrationTest {
         assertEquals(dto.startTimeOfEvent(), actualDto.startTimeOfEvent());
         assertEquals(dto.duration(), actualDto.duration());
 
-        final ResponseEntity<Boolean> successfulOperation = restTemplate.exchange(createUrl() + "/{eventId}/addAttendee?attendeeId={attendeeId}", HttpMethod.PUT, null, Boolean.class, actualDto.uuid(), attendeeId);
+        final ResponseEntity<Boolean> successfulAddOperation = restTemplate.exchange(createUrl() + "/{eventId}/addSponsor?sponsorId={sponsorId}", HttpMethod.PUT, null, Boolean.class, actualDto.uuid(), sponsorId2);
+        assertTrue(successfulAddOperation.getStatusCode().is2xxSuccessful());
+        assertEquals(Boolean.TRUE, successfulAddOperation.getBody());
 
-        assertTrue(successfulOperation.getStatusCode().is2xxSuccessful());
-        assertEquals(Boolean.TRUE, successfulOperation.getBody());
+        final ResponseEntity<Boolean> successfulRemoveOperation = restTemplate.exchange(createUrl() + "/{eventId}/removeSponsor?sponsorId={sponsorId}", HttpMethod.PUT, null, Boolean.class, actualDto.uuid(), sponsorId2);
+        assertTrue(successfulRemoveOperation.getStatusCode().is2xxSuccessful());
+        assertEquals(Boolean.TRUE, successfulRemoveOperation.getBody());
 
         restTemplate.delete(createUrl() + "/{eventId}", actualDto.uuid());
     }

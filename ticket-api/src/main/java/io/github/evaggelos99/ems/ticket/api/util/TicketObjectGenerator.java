@@ -6,6 +6,7 @@ import io.github.evaggelos99.ems.ticket.api.Ticket;
 import io.github.evaggelos99.ems.ticket.api.TicketDto;
 
 import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.Random;
 import java.util.UUID;
@@ -22,7 +23,7 @@ public final class TicketObjectGenerator {
     public static TicketDto generateTicketDto(final UUID ticketId, final UUID eventId) {
 
         final TicketType randomTicketType = ALL_TICKET_TYPES.get(RANDOM.nextInt(ALL_TICKET_TYPES.size()));
-        final Instant timestamp = Instant.now();
+        final OffsetDateTime timestamp = OffsetDateTime.now();
         return TicketDto.builder()
                 .uuid(ticketId != null ? ticketId : UUID.randomUUID())
                 .createdAt(timestamp)
@@ -31,7 +32,8 @@ public final class TicketObjectGenerator {
                 .ticketType(randomTicketType)
                 .price(RANDOM.nextInt(500))
                 .transferable(RANDOM.nextBoolean())
-                .seatInformation(generateSeatingInformation()).build();
+                .seatInformation(generateSeatingInformation())
+                .used(false).build();
     }
 
     public static SeatingInformation generateSeatingInformation() {
@@ -43,9 +45,9 @@ public final class TicketObjectGenerator {
     public static Ticket generateTicket(final UUID eventId) {
 
         final TicketType randomTicketType = ALL_TICKET_TYPES.get(RANDOM.nextInt(ALL_TICKET_TYPES.size()));
-        final Instant now = Instant.now();
+        final OffsetDateTime now = OffsetDateTime.now();
         return new Ticket(UUID.randomUUID(), now, now, eventId, randomTicketType, RANDOM.nextInt(500),
-                RANDOM.nextBoolean(), generateSeatingInformation());
+                RANDOM.nextBoolean(), generateSeatingInformation(), false);
 
     }
 
@@ -58,6 +60,8 @@ public final class TicketObjectGenerator {
                 .ticketType(randomTicketType)
                 .price(RANDOM.nextInt(500))
                 .transferable(RANDOM.nextBoolean())
-                .seatInformation(generateSeatingInformation()).build();
+                .seatInformation(generateSeatingInformation())
+                .used(false)
+                .build();
     }
 }

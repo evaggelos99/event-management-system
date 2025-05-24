@@ -13,6 +13,7 @@ import org.h2.api.Interval;
 import org.springframework.boot.r2dbc.ConnectionFactoryBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.r2dbc.core.DatabaseClient;
 
 import java.time.Duration;
@@ -24,6 +25,7 @@ import java.util.UUID;
 import java.util.function.Function;
 
 @Configuration
+@Profile("test")
 public class TestConfiguration {
 
     @Bean("durationToIntervalConverter")
@@ -42,22 +44,28 @@ public class TestConfiguration {
 
                 final List<UUID> attendees = foo((Object[]) rs.get("attendee_ids"));
 
-                final List<UUID> sponsors = foo((Object[]) rs.get("sponsors_ids"));
+                final List<UUID> sponsors = foo((Object[]) rs.get("sponsor_ids"));
 
                 final var dur = rs.get("duration", Interval.class);
                 final Duration duration = Duration.of(dur.getNanosOfSecond(), ChronoUnit.NANOS)
                         .plusSeconds(dur.getSeconds()).plusHours(dur.getHours());
 
-                return new Event(rs.get("id", UUID.class), rs.get("created_at", OffsetDateTime.class).toInstant(),
-                        rs.get("last_updated", OffsetDateTime.class).toInstant(), rs.get("name", String.class),
+                return new Event(rs.get("id", UUID.class), rs.get("created_at", OffsetDateTime.class),
+                        rs.get("last_updated", OffsetDateTime.class), rs.get("name", String.class),
                         rs.get("place", String.class), EventType.valueOf(rs.get("event_type", String.class)), attendees,
                         rs.get("organizer_id", UUID.class), rs.get("limit_of_people", Integer.class), sponsors,
+                        Boolean.TRUE.equals(rs.get("streamable", Boolean.class)),
                         rs.get("start_time", OffsetDateTime.class).toLocalDateTime(), duration);
             }
 
             private List<UUID> foo(final Object[] objects) {
 
                 final List<UUID> list = new LinkedList<>();
+
+                if (objects == null) {
+
+                    return list;
+                }
 
                 for (final var obj : objects) {
 

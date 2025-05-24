@@ -10,7 +10,7 @@ import java.util.UUID;
 public interface IAttendeeService extends IService<Attendee, AttendeeDto> {
 
     /**
-     * This method adds a ticket to the Attendee, cascades and adds the attendee to
+     * This method adds a ticket to the Attendee, cascades and adds the attendee from
      * the {@code Event} as well.
      *
      * @param attendeeId the attendee uuid
@@ -18,5 +18,16 @@ public interface IAttendeeService extends IService<Attendee, AttendeeDto> {
      * @return {@link Boolean#TRUE} if the action succeeded else {@link Boolean#FALSE}
      */
     Mono<Boolean> addTicket(UUID attendeeId, UUID ticketId);
+
+
+    /**
+     * This method removes a ticket from the Attendee, cascades and removes the attendee from
+     * the {@code Event} as well.
+     *
+     * @param attendeeId the attendee uuid
+     * @param ticketId   the ticket uuid
+     * @return {@link Boolean#TRUE} if the action succeeded else {@link Boolean#FALSE}
+     */
+    Mono<Boolean> removeTicket(UUID attendeeId, UUID ticketId);
 
 }

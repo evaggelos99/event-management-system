@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.util.*;
 import java.util.function.Function;
 
@@ -75,13 +75,13 @@ public class OrganizerRepository implements IOrganizerRepository {
     public Mono<Boolean> deleteById(final UUID uuid) {
 
         return databaseClient.sql(organizerQueriesProperties.get(CrudQueriesOperations.DELETE_ID))
-                .bind(0, uuid).fetch().rowsUpdated().map(this::rowsAffectedAreMoreThanOne);
+                .bind(0, uuid).fetch().rowsUpdated().map(this::rowsAffectedIsOne);
     }
 
     @Override
     public Mono<Boolean> existsById(final UUID uuid) {
 
-        return findById(uuid).map(Objects::nonNull);
+        return findById(uuid).map(Objects::nonNull).defaultIfEmpty(false);
     }
 
     @Override
@@ -100,7 +100,7 @@ public class OrganizerRepository implements IOrganizerRepository {
     private Mono<Organizer> editOrganizer(final OrganizerDto organizer) {
 
         final UUID uuid = organizer.uuid();
-        final Instant updatedAt = Instant.now();
+        final OffsetDateTime updatedAt = OffsetDateTime.now();
 
         final String name = organizer.name();
         final String website = organizer.website();
@@ -110,12 +110,12 @@ public class OrganizerRepository implements IOrganizerRepository {
         final EventType[] eventTypesArray = convertToArray(listOfEventTypes);
 
         final Mono<Long> rowsAffected = databaseClient
-                .sql(organizerQueriesProperties.get(CrudQueriesOperations.EDIT)).bind(0, uuid)
-                .bind(1, updatedAt).bind(2, name).bind(3, website).bind(4, information).bind(5, eventTypesArray)
-                .bind(6, contactInformation.email()).bind(7, contactInformation.phoneNumber())
-                .bind(8, contactInformation.physicalAddress()).bind(9, uuid).fetch().rowsUpdated();
+                .sql(organizerQueriesProperties.get(CrudQueriesOperations.EDIT))
+                .bind(0, updatedAt).bind(1, name).bind(2, website).bind(3, information).bind(4, eventTypesArray)
+                .bind(5, contactInformation.email()).bind(6, contactInformation.phoneNumber())
+                .bind(7, contactInformation.physicalAddress()).bind(8, uuid).fetch().rowsUpdated();
 
-        return rowsAffected.filter(this::rowsAffectedAreMoreThanOne).flatMap(rowNum -> findById(uuid))
+        return rowsAffected.filter(this::rowsAffectedIsOne).flatMap(rowNum -> findById(uuid))
                 .map(AbstractDomainObject::getCreatedAt)
                 .map(createdAt -> organizerDtoToOrganizerConverter.apply(
                         OrganizerDto.builder()
@@ -132,7 +132,7 @@ public class OrganizerRepository implements IOrganizerRepository {
         final UUID organizerUuid = organizer.uuid();
         final UUID uuid = organizerUuid != null ? organizerUuid : UUID.randomUUID();
 
-        final Instant instantNow = Instant.now();
+        final OffsetDateTime now = OffsetDateTime.now();
 
         final String name = organizer.name();
         final String website = organizer.website();
@@ -143,15 +143,15 @@ public class OrganizerRepository implements IOrganizerRepository {
 
         final Mono<Long> rowsAffected = databaseClient
                 .sql(organizerQueriesProperties.get(CrudQueriesOperations.SAVE)).bind(0, uuid)
-                .bind(1, instantNow).bind(2, instantNow).bind(3, name).bind(4, website).bind(5, information)
+                .bind(1, now).bind(2, now).bind(3, name).bind(4, website).bind(5, information)
                 .bind(6, eventTypesArray).bind(7, contactInformation.email()).bind(8, contactInformation.phoneNumber())
                 .bind(9, contactInformation.physicalAddress()).fetch().rowsUpdated();
 
-        return rowsAffected.filter(this::rowsAffectedAreMoreThanOne)
+        return rowsAffected.filter(this::rowsAffectedIsOne)
                 .map(rowNum -> organizerDtoToOrganizerConverter.apply(OrganizerDto.builder()
                         .uuid(uuid)
-                        .createdAt(instantNow)
-                        .lastUpdated(instantNow)
+                        .createdAt(now)
+                        .lastUpdated(now)
                         .eventTypes(listOfEventTypes)
                         .name(name).website(website).information(information)
                         .contactInformation(contactInformation).build()));
@@ -174,9 +174,9 @@ public class OrganizerRepository implements IOrganizerRepository {
         return eventTypesArray;
     }
 
-    private boolean rowsAffectedAreMoreThanOne(final Long x) {
+    private boolean rowsAffectedIsOne(final Long x) {
 
-        return x >= 1;
+        return x == 1;
     }
 
 }

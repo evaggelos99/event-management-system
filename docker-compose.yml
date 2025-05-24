@@ -4,8 +4,8 @@ services:
     container_name: db
     hostname: db
     environment:
-      POSTGRES_USER: user
-      POSTGRES_PASSWORD: pass
+      POSTGRES_USER: event-management-system-user
+      POSTGRES_PASSWORD: event-management-system-user
       POSTGRES_DB: event-management-system
     ports:
       - "5433:5432"
@@ -31,9 +31,23 @@ services:
       KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
       KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
       KAFKA_LOG_DIRS: '/tmp/kraft-combined-logs'
-      KAFKA_CREATE_TOPICS: "ems.event.add-attendee:1:1,"
+      KAFKA_CREATE_TOPICS: "ems.event.add-attendee:1:1,ems.event.remove-attendee:1:1,"
     ports:
       - "9092:9092"
+    networks:
+      - backend
+
+  kafdrop:
+    image: obsidiandynamics/kafdrop:latest
+    restart: "no"
+    ports:
+      - "9000:9000"
+    environment:
+      KAFKA_BROKERCONNECT: "broker:9092"
+      JVM_OPTS: -Xms32M -Xmx64M
+      SERVER_SERVLET_CONTEXTPATH: "/"
+    depends_on:
+      - broker
     networks:
       - backend
 
@@ -64,7 +78,7 @@ services:
 
   fusionauth:
     hostname: fusionauth
-    image: fusionauth/fusionauth-app:latest
+    image: fusionauth/fusionauth-app:1.55.1
     environment:
       DATABASE_URL: jdbc:postgresql://db-fusion:6543/fusionauth
       DATABASE_ROOT_USERNAME: ${POSTGRES_USER}
@@ -95,11 +109,12 @@ services:
     image: 'evaggelosg99/attendee-service:latest'
     environment:
       org.com.ems.db.port: 5432
-      org.com.ems.db.host: db
+      io.github.evaggelos99.ems.attendee-service.db.host: db
       server.port: 8080
       io.github.evaggelos99.ems.attendee.ticket-service-url: "http://ticket-service:8080/ticket"
       spring.kafka.producer.bootstrap-servers: broker:9092
       io.github.evaggelos99.ems.event.topic.add-attendee: ems.event.add-attendee
+      io.github.evaggelos99.ems.event.topic.remove-attendee: ems.event.remove-attendee
       spring.kafka.producer.retries: 3
       spring.security.oauth2.resourceserver.jwt.jwk-set-uri: ${JWK_SET_URI}
       spring.security.oauth2.resourceserver.jwt.issuer-uri: ${JWT_ISSUER_URI}
@@ -119,11 +134,12 @@ services:
     environment:
       logging.level.io.github.evaggelos99.ems.event.service.transport.kafka: TRACE
       org.com.ems.db.port: 5432
-      org.com.ems.db.host: db
+      io.github.evaggelos99.ems.event-service.db.host: db
       server.port: 8080
       spring.kafka.producer.bootstrap-servers: broker:9092
       spring.kafka.consumer.bootstrap-servers: broker:9092
       io.github.evaggelos99.ems.event.topic.add-attendee: ems.event.add-attendee
+      io.github.evaggelos99.ems.event.topic.remove-attendee: ems.event.remove-attendee
       spring.kafka.producer.retries: 3
       spring.security.oauth2.resourceserver.jwt.jwk-set-uri: ${JWK_SET_URI}
       spring.security.oauth2.resourceserver.jwt.issuer-uri: ${JWT_ISSUER_URI}
@@ -142,7 +158,7 @@ services:
     image: 'evaggelosg99/organizer-service:latest'
     environment:
       org.com.ems.db.port: 5432
-      org.com.ems.db.host: db
+      io.github.evaggelos99.ems.organizer-service.db.host: db
       server.port: 8080
       spring.security.oauth2.resourceserver.jwt.jwk-set-uri: ${JWK_SET_URI}
       spring.security.oauth2.resourceserver.jwt.issuer-uri: ${JWT_ISSUER_URI}
@@ -161,7 +177,7 @@ services:
     image: 'evaggelosg99/ticket-service:latest'
     environment:
       org.com.ems.db.port: 5432
-      org.com.ems.db.host: db
+      io.github.evaggelos99.ems.ticket-service.db.host: db
       server.port: 8080
       spring.security.oauth2.resourceserver.jwt.jwk-set-uri: ${JWK_SET_URI}
       spring.security.oauth2.resourceserver.jwt.issuer-uri: ${JWT_ISSUER_URI}
@@ -180,7 +196,7 @@ services:
     image: 'evaggelosg99/sponsor-service:latest'
     environment:
       org.com.ems.db.port: 5432
-      org.com.ems.db.host: db
+      io.github.evaggelos99.ems.sponsor-service.db.host: db
       server.port: 8080
       spring.security.oauth2.resourceserver.jwt.jwk-set-uri: ${JWK_SET_URI}
       spring.security.oauth2.resourceserver.jwt.issuer-uri: ${JWT_ISSUER_URI}
@@ -193,6 +209,24 @@ services:
     networks:
       - backend
 
+  user-service:
+    container_name: user-service
+    hostname: user-service
+    image: 'evaggelosg99/user-service:latest'
+    environment:
+      org.com.ems.db.port: 5432
+      io.github.evaggelos99.ems.user-service.db.host: db
+      server.port: 8080
+      spring.security.oauth2.resourceserver.jwt.jwk-set-uri: ${JWK_SET_URI}
+      spring.security.oauth2.resourceserver.jwt.issuer-uri: ${JWT_ISSUER_URI}
+    depends_on:
+      - db
+      - flyway
+    ports:
+      - "8086:8080"
+    networks:
+      - backend
+
   flyway:
     container_name: flyway
     hostname: flyway
@@ -201,13 +235,36 @@ services:
     environment:
       org.com.ems.db.port: 5432
       org.com.ems.db.host: db
-      org.com.ems.db.user: user
-      org.com.ems.db.password: pass
+      org.com.ems.db.user: event-management-system-user
+      org.com.ems.db.password: event-management-system-user
       org.com.ems.db.database: event-management-system
     depends_on:
       - db
     ports:
       - "12345:8080"
+    networks:
+      - backend
+
+  event-stream-simulator:
+    container_name: event-stream-simulator
+    hostname: event-stream-simulator
+    image: 'evaggelosg99/event-stream-simulator:latest'
+    restart: "no"
+    environment:
+      spring.kafka.producer.bootstrap-servers: "broker:9092"
+      io.github.evaggelos99.ems.event.simulator.event-service-url: "http://event-service:8080/event"
+      io.github.evaggelos99.ems.event.simulator.enabled: true
+      io.github.evaggelos99.ems.event.simulator.fusionAuthClient: ${JWT_ISSUER_URI}
+      io.github.evaggelos99.ems.event.simulator.clientSecret: ${JWT_SECRET}
+      io.github.evaggelos99.ems.event.simulator.username: superduper
+      io.github.evaggelos99.ems.event.simulator.password: superduper
+      io.github.evaggelos99.ems.event.simulator.clientId: 99c404e4-2877-4296-9c85-a89191d19e21
+
+    depends_on:
+      - broker
+      - fusionauth
+    ports:
+      - "8085:8080"
     networks:
       - backend
 

@@ -1,0 +1,16 @@
+CREATE SCHEMA IF NOT EXISTS ems_ticket;
+
+CREATE TABLE IF NOT EXISTS ems_ticket.tickets (
+  id UUID PRIMARY KEY,
+  created_at TIMESTAMP WITH TIME ZONE NOT NULL,
+  last_updated TIMESTAMP WITH TIME ZONE NOT NULL,
+  event_id UUID NOT NULL,
+  ticket_type VARCHAR NOT NULL,
+  price INTEGER NOT NULL,
+  transferable BOOLEAN NOT NULL,
+  seat VARCHAR NOT NULL,
+  section VARCHAR NOT NULL
+);
+
+ALTER TABLE ems_ticket.tickets
+    ADD COLUMN used BOOLEAN NOT NULL DEFAULT FALSE;

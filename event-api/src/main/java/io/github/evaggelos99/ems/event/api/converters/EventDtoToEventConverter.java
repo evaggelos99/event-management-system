@@ -14,8 +14,7 @@ public class EventDtoToEventConverter implements Function<EventDto, Event> {
 
         return new Event(eventDto.uuid(), eventDto.createdAt(), eventDto.lastUpdated(), eventDto.name(),
                 eventDto.place(), eventDto.eventType(), eventDto.attendeesIds(), eventDto.organizerId(),
-                eventDto.limitOfPeople(), eventDto.sponsorsIds(), eventDto.startTimeOfEvent(), eventDto.duration());
-
+                eventDto.limitOfPeople(), eventDto.sponsorsIds(), eventDto.streamable(), eventDto.startTimeOfEvent(), eventDto.duration());
     }
 
 }

@@ -4,7 +4,6 @@ import io.github.evaggelos99.ems.attendee.api.Attendee;
 import io.github.evaggelos99.ems.attendee.api.AttendeeDto;
 import io.github.evaggelos99.ems.attendee.api.IAttendeeController;
 import io.github.evaggelos99.ems.attendee.api.service.IAttendeeService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,7 +13,7 @@ import reactor.core.publisher.Mono;
 import java.util.UUID;
 import java.util.function.Function;
 
-import static io.github.evaggelos99.ems.attendee.service.beans.Constants.ATTENDEE_PATH;
+import static io.github.evaggelos99.ems.attendee.service.config.Constants.ATTENDEE_PATH;
 import static java.util.Objects.requireNonNull;
 
 /**
@@ -96,6 +95,12 @@ public class AttendeeController implements IAttendeeController {
     public Mono<Boolean> addTicket(final UUID attendeeId, final UUID ticketId) {
 
         return attendeeService.addTicket(attendeeId, ticketId);
+    }
+
+    @Override
+    public Mono<Boolean> removeTicket(final UUID attendeeId, final UUID ticketId) {
+
+        return attendeeService.removeTicket(attendeeId, ticketId);
     }
 
     @Override

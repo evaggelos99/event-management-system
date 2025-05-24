@@ -8,6 +8,8 @@ import org.springframework.r2dbc.connection.init.ScriptUtils;
 import org.springframework.stereotype.Component;
 import reactor.core.publisher.Mono;
 
+import java.time.Duration;
+
 @Component
 public class SqlScriptExecutor {
 
@@ -15,16 +17,16 @@ public class SqlScriptExecutor {
     ConnectionFactory connectionFactory;
 
     /**
-     * Sets up the H2 database
+     * Sets up the database
      */
-    public void setup() {
+    public void setup(String path) {
 
-        executeScriptBlocking(new ClassPathResource("schema.sql"));
+        executeScriptBlocking(new ClassPathResource(path));
     }
 
     private void executeScriptBlocking(final Resource sqlScript) {
 
         Mono.from(connectionFactory.create()).flatMap(connection -> ScriptUtils.executeSqlScript(connection, sqlScript))
-                .block();
+                .block(Duration.ofSeconds(10));
     }
 }

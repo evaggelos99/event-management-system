@@ -21,6 +21,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
@@ -43,14 +44,14 @@ class TicketControllerIntegrationTest {
     @BeforeAll
     public void beforeAll() {
 
-        sqlScriptExecutor.setup();
+        sqlScriptExecutor.setup("migration/h2-schema.sql");
     }
 
     @Test
     @WithMockUser(roles = {"CREATE_TICKET", "UPDATE_TICKET", "DELETE_TICKET", "READ_TICKET"})
     void postTicket_getTicket_deleteTicket_getTicket_whenInvokedWithValidTicketDto_thenExpectForTicketToBeAddedFetchedAndDeleted() {
 
-        final Instant currentTime = Instant.now();
+        final OffsetDateTime currentTime = OffsetDateTime.now();
         final UUID eventId = UUID.randomUUID();
         final TicketDto dto = TicketObjectGenerator.generateTicketDtoWithoutTimestamps(null, eventId);
 
@@ -102,7 +103,7 @@ class TicketControllerIntegrationTest {
     @WithMockUser(roles = {"CREATE_TICKET", "UPDATE_TICKET", "DELETE_TICKET", "READ_TICKET"})
     void postTicket_putTicket_deleteTicket_getAll_whenInvokedWithValidTicketDto_thenExpectForTicketToBeAddedThenEditedThenDeleted() {
 
-        final Instant currentTime = Instant.now();
+        final OffsetDateTime currentTime = OffsetDateTime.now();
         final UUID eventId = UUID.randomUUID();
         final UUID ticketId = UUID.randomUUID();
         final TicketDto dto = TicketObjectGenerator.generateTicketDtoWithoutTimestamps(ticketId, eventId);

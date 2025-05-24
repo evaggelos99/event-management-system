@@ -4,13 +4,16 @@ import io.github.evaggelos99.ems.common.api.controller.exceptions.DuplicateTicke
 import io.github.evaggelos99.ems.common.api.controller.exceptions.ObjectNotFoundException;
 import io.github.evaggelos99.ems.common.api.controller.exceptions.UnauthorizedRoleException;
 import io.r2dbc.spi.R2dbcNonTransientException;
+import jakarta.validation.ValidationException;
 import org.apache.commons.lang3.ObjectUtils;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.server.ServerWebInputException;
 
 import java.time.Instant;
 import java.util.HashMap;
@@ -123,6 +126,20 @@ public class ControllerExceptionAdvice {
         );
 
         return new ResponseEntity<>(errorResponse, new HttpHeaders(), 400);
+    }
+
+    @ExceptionHandler(ServerWebInputException.class)
+    protected ResponseEntity<Map<String, Object>> handleValidationException(final ServerWebInputException exception) {
+
+        final String message = exception.getMessage();
+        final HttpStatusCode statusCode = exception.getStatusCode();
+
+        final Map<String, Object> errorResponse = new HashMap<>();
+        errorResponse.put(TIME_STAMP, Instant.now());
+        errorResponse.put("status", statusCode.value());
+        errorResponse.put("error", message);
+
+        return new ResponseEntity<>(errorResponse, new HttpHeaders(), statusCode);
     }
 
 }

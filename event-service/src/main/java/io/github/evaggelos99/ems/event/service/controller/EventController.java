@@ -1,8 +1,6 @@
 package io.github.evaggelos99.ems.event.service.controller;
 
-import io.github.evaggelos99.ems.event.api.Event;
-import io.github.evaggelos99.ems.event.api.EventDto;
-import io.github.evaggelos99.ems.event.api.IEventController;
+import io.github.evaggelos99.ems.event.api.*;
 import io.github.evaggelos99.ems.event.api.service.IEventService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -27,6 +25,7 @@ public class EventController implements IEventController {
     static final String EVENT_PATH = "/event";
     private final IEventService eventService;
     private final Function<Event, EventDto> eventToEventDtoConverter;
+    private final Function<EventStream, EventStreamDto> eventStreamToEventStreamDtoConverter;
 
     /**
      * C-or
@@ -35,10 +34,12 @@ public class EventController implements IEventController {
      * @param eventToEventDtoConverter converts event to DTO
      */
     public EventController(final IEventService eventService,
-                           @Qualifier("eventToEventDtoConverter") final Function<Event, EventDto> eventToEventDtoConverter) {
+                           @Qualifier("eventToEventDtoConverter") final Function<Event, EventDto> eventToEventDtoConverter,
+                           @Qualifier("eventStreamToEventStreamDtoConverter") Function<EventStream, EventStreamDto> eventStreamToEventStreamDtoConverter) {
 
         this.eventService = requireNonNull(eventService);
         this.eventToEventDtoConverter = requireNonNull(eventToEventDtoConverter);
+        this.eventStreamToEventStreamDtoConverter = requireNonNull(eventStreamToEventStreamDtoConverter);
     }
 
     /**
@@ -87,9 +88,21 @@ public class EventController implements IEventController {
     }
 
     @Override
-    public Mono<Boolean> addAttendee(final UUID eventId, final UUID attendeeId) {
+    public Mono<Boolean> removeSponsor(final UUID eventId, final UUID sponsorId) {
 
-        return eventService.addAttendee(eventId, attendeeId);
+        return eventService.removeSponsor(eventId, sponsorId);
+    }
+
+    @Override
+    public Mono<Boolean> addSponsor(final UUID eventId, final UUID sponsorId) {
+
+        return eventService.addSponsor(eventId, sponsorId);
+    }
+
+    @Override
+    public Flux<EventStreamDto> getEventStreams(UUID eventId) {
+
+        return eventService.getEventStreams(eventId).map(eventStreamToEventStreamDtoConverter);
     }
 
     @Override

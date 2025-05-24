@@ -10,13 +10,12 @@ import java.time.temporal.ChronoUnit;
 
 class DurationToIntervalConverterTest {
 
-    DurationToIntervalConverter converter;
+    private DurationToIntervalConverter converter;
 
     @BeforeEach
     void setUp() {
 
-        this.converter = new DurationToIntervalConverter();
-
+        converter = new DurationToIntervalConverter();
     }
 
     @Test

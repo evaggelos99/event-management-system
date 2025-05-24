@@ -14,6 +14,7 @@ import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -24,7 +25,6 @@ import static org.junit.jupiter.api.Assertions.*;
 class TicketServiceTest {
 
     private final ITicketRepository ticketRepository = ticketRepositoryMock();
-
 
     private TicketService service;
 
@@ -113,8 +113,8 @@ class TicketServiceTest {
             @Override
             public Mono<Ticket> save(final TicketDto dto) {
 
-                final Ticket sponsor = new Ticket(dto.uuid(), Instant.now(), Instant.now(), dto.eventID(),
-                        dto.ticketType(), dto.price(), dto.transferable(), dto.seatInformation());
+                final Ticket sponsor = new Ticket(dto.uuid(), OffsetDateTime.now(), OffsetDateTime.now(), dto.eventID(),
+                        dto.ticketType(), dto.price(), dto.transferable(), dto.seatInformation(), dto.used());
 
                 list.put(dto.uuid(), sponsor);
 
@@ -153,7 +153,7 @@ class TicketServiceTest {
             public Mono<Ticket> edit(final TicketDto dto) {
 
                 final Ticket sponsor = new Ticket(dto.uuid(), dto.createdAt(), dto.lastUpdated(), dto.eventID(),
-                        dto.ticketType(), dto.price(), dto.transferable(), dto.seatInformation());
+                        dto.ticketType(), dto.price(), dto.transferable(), dto.seatInformation(), dto.used());
 
                 list.put(dto.uuid(), sponsor);
 

@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Null;
 
 import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -14,8 +15,8 @@ import java.util.UUID;
  * @author Evangelos Georgiou
  */
 public record AttendeeDto(@Schema(hidden = true, description = "The UUID of the Attendee") UUID uuid,
-                          @Null @Schema(hidden = true) Instant createdAt, //
-                          @Null @Schema(hidden = true) Instant lastUpdated,
+                          @Null @Schema(hidden = true) OffsetDateTime createdAt, //
+                          @Null @Schema(hidden = true) OffsetDateTime lastUpdated,
                           @NotBlank @Schema(example = "Lorem ipsum dolor sit amet", description = "First name of the Attendee") String firstName,
                           @NotBlank @Schema(example = "aliquip ex ea commodo consequat", description = "Last name of the Attendee") String lastName,
                           @Schema(description = "The UUIDs of tickets of an event belonging to an Attendee") List<UUID> ticketIDs) {
@@ -31,8 +32,8 @@ public record AttendeeDto(@Schema(hidden = true, description = "The UUID of the 
     public static final class Builder {
 
         private UUID uuid;
-        private Instant createdAt;
-        private Instant lastUpdated;
+        private OffsetDateTime createdAt;
+        private OffsetDateTime lastUpdated;
         private String firstName;
         private String lastName;
         private List<UUID> ticketIDs;
@@ -51,12 +52,12 @@ public record AttendeeDto(@Schema(hidden = true, description = "The UUID of the 
             return this;
         }
 
-        public Builder createdAt(final Instant createdAt) {
+        public Builder createdAt(final OffsetDateTime createdAt) {
             this.createdAt = createdAt;
             return this;
         }
 
-        public Builder lastUpdated(final Instant lastUpdated) {
+        public Builder lastUpdated(final OffsetDateTime lastUpdated) {
             this.lastUpdated = lastUpdated;
             return this;
         }

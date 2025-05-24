@@ -22,6 +22,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.Instant;
+import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
@@ -32,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.*;
         TestConfiguration.class}, webEnvironment = WebEnvironment.RANDOM_PORT)
 @TestInstance(Lifecycle.PER_CLASS)
 class SponsorControllerIntegrationTest {
-
+    
     private static final String HOSTNAME = "http://localhost:";
     private static final String RELATIVE_ENDPOINT = "/sponsor";
     private final RestTemplate restTemplate = new RestTemplate();
@@ -44,14 +45,14 @@ class SponsorControllerIntegrationTest {
     @BeforeAll
     void beforeAll() {
 
-        this.sqlScriptExecutor.setup();
+        sqlScriptExecutor.setup("migration/h2-schema.sql");
     }
 
     @Test
     @WithMockUser(roles = {"CREATE_SPONSOR", "UPDATE_SPONSOR", "DELETE_SPONSOR", "READ_SPONSOR"})
     void postSponsor_getSponsor_deleteSponsor_getSponsor_whenInvokedWithValidSponsorDto_thenExpectForSponsorToBeAddedFetchedAndDeleted() {
 
-        final Instant currentTime = Instant.now();
+        final OffsetDateTime currentTime = OffsetDateTime.now();
         final SponsorDto dto = SponsorObjectGenerator.generateSponsorDtoWithoutTimestamps();
 
         final ResponseEntity<SponsorDto> actualEntity = restTemplate.postForEntity(createUrl(), dto, SponsorDto.class);
@@ -99,7 +100,7 @@ class SponsorControllerIntegrationTest {
     @WithMockUser(roles = {"CREATE_SPONSOR", "UPDATE_SPONSOR", "DELETE_SPONSOR", "READ_SPONSOR"})
     void postSponsor_putSponsor_getSponsor_deleteSponsor_getAll_whenInvokedWithValidSponsorDto_thenExpectForSponsorToBeAddedThenEditedThenDeleted() {
 
-        final Instant currentTime = Instant.now();
+        final OffsetDateTime currentTime = OffsetDateTime.now();
         final SponsorDto dto = SponsorObjectGenerator.generateSponsorDtoWithoutTimestamps();
         // postSponsor
         final ResponseEntity<SponsorDto> actualEntity = restTemplate.postForEntity(createUrl(), dto, SponsorDto.class);

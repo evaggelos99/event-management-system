@@ -38,14 +38,14 @@ public class DatabaseMigratorConfiguration {
 
     @Bean
     @ConditionalOnProperty(name = "org.com.ems.db.flyway.enabled")
-    Flyway flyway() {
+    Flyway flyway(@Value("${org.com.ems.db.flyway.schemas}") String[] schemas, @Value("${org.com.ems.db.flyway.locations}") String locations) {
 
         final Flyway flyway = Flyway.configure()
                 .baselineOnMigrate(true)
                 .dataSource(getFullUrl(), username, password)
-                .locations("db/migration")
+                .locations(locations)
                 .createSchemas(true)
-                .schemas("public", "ems_sponsor", "ems_attendee", "ems_organizer", "ems_event", "ems_ticket")
+                .schemas(schemas)
                 .load();
 
         flyway.migrate().getSuccessfulMigrations().forEach(this::logMigration);
