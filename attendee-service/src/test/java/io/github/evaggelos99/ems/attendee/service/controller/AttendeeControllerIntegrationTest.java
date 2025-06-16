@@ -44,6 +44,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest(classes = {AttendeeServiceApplication.class, TestConfiguration.class},
@@ -67,6 +68,8 @@ class AttendeeControllerIntegrationTest {
     private TicketLookUpRemoteService ticketLookUpRemoteServiceMock;
     @MockitoBean
     private UserLookUpRemoteService userLookUpRemoteServiceMock;
+    @MockitoBean
+    private EmailService emailServiceMock;
 
     static {
 
@@ -220,6 +223,7 @@ class AttendeeControllerIntegrationTest {
                 .mobilePhone("1234567890")
                 .birthDate(LocalDate.of(1990, 1, 1))
                 .build()));
+        when(emailServiceMock.sendPurchaseTicketEmail(any(UUID.class),any(TicketDto.class))).thenReturn(Mono.empty());
 
         final ResponseEntity<Void> actualPutEntity = restTemplate.exchange(createUrl() + "/" + "{attendeeId}/addTicket?ticketId={ticketId}", HttpMethod.PUT, null, Void.class, actualDto.uuid(), ticketId);
 
