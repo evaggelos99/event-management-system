@@ -2,6 +2,7 @@ package io.github.evaggelos99.ems.attendee.service.remote;
 
 import io.github.evaggelos99.ems.attendee.api.service.remote.IEventServiceClient;
 import io.github.evaggelos99.ems.attendee.service.transport.kafka.AttendeeToEventServicePublisher;
+import io.github.evaggelos99.ems.ticket.api.TicketDto;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
@@ -24,10 +25,11 @@ public class EventServicePublisher implements IEventServiceClient {
     /**
      * {@inheritDoc}
      */
-    @Override
-    public Mono<Boolean> addAttendee(final UUID eventId, final UUID attendeeId) {
+    public Mono<TicketDto> addAttendee(final TicketDto ticketDto, final UUID attendeeId) {
 
-        return publisher.sendAddAttendeeMessage(eventId, attendeeId);
+        return publisher.sendAddAttendeeMessage(ticketDto.eventID(), attendeeId)
+                .filter(Boolean::booleanValue)
+                .map(x-> ticketDto);
     }
 
     @Override

@@ -13,7 +13,7 @@ import java.util.UUID;
 
 public class FusionAuthApiTest {
 
-    final String apiKey = "";
+    final String apiKey = "local-secret";
     final String baseUrl = "http://localhost:9011";
 
     @Test

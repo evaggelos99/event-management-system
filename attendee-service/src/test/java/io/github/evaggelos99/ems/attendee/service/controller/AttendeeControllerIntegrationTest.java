@@ -3,12 +3,16 @@ package io.github.evaggelos99.ems.attendee.service.controller;
 import io.github.evaggelos99.ems.attendee.api.AttendeeDto;
 import io.github.evaggelos99.ems.attendee.api.util.AttendeeObjectGenerator;
 import io.github.evaggelos99.ems.attendee.service.AttendeeServiceApplication;
+import io.github.evaggelos99.ems.attendee.service.EmailService;
 import io.github.evaggelos99.ems.attendee.service.remote.TicketLookUpRemoteService;
+import io.github.evaggelos99.ems.attendee.service.remote.UserLookUpRemoteService;
 import io.github.evaggelos99.ems.attendee.service.util.SqlScriptExecutor;
 import io.github.evaggelos99.ems.attendee.service.util.TestConfiguration;
+import io.github.evaggelos99.ems.common.api.domainobjects.UserRole;
 import io.github.evaggelos99.ems.testcontainerkafka.lib.ExtendedKafkaContainer;
 import io.github.evaggelos99.ems.ticket.api.TicketDto;
 import io.github.evaggelos99.ems.ticket.api.util.TicketObjectGenerator;
+import io.github.evaggelos99.ems.user.api.UserDto;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -33,12 +37,14 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import reactor.core.publisher.Mono;
 
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @SpringBootTest(classes = {AttendeeServiceApplication.class, TestConfiguration.class},
@@ -60,6 +66,10 @@ class AttendeeControllerIntegrationTest {
     private int port;
     @MockitoBean
     private TicketLookUpRemoteService ticketLookUpRemoteServiceMock;
+    @MockitoBean
+    private UserLookUpRemoteService userLookUpRemoteServiceMock;
+    @MockitoBean
+    private EmailService emailServiceMock;
 
     static {
 
@@ -201,11 +211,23 @@ class AttendeeControllerIntegrationTest {
         final TicketDto ticket = TicketObjectGenerator.generateTicketDto(UUID.randomUUID(), UUID.randomUUID());
         when(ticketLookUpRemoteServiceMock.lookUpTicket(ticketId)).thenReturn(Mono.just(ticket));
         when(ticketLookUpRemoteServiceMock.ping()).thenReturn(Mono.just(true));
+        when(userLookUpRemoteServiceMock.lookUpEntity(dto.uuid())).thenReturn(Mono.just(UserDto.builder()
+                .uuid(UUID.randomUUID())
+                .createdAt(OffsetDateTime.now())
+                .lastUpdated(OffsetDateTime.now())
+                .username("testUser")
+                .email("testUser@example.com")
+                .firstName("Test")
+                .lastName("User")
+                .role(UserRole.ATTENDEE)
+                .mobilePhone("1234567890")
+                .birthDate(LocalDate.of(1990, 1, 1))
+                .build()));
+        when(emailServiceMock.sendPurchaseTicketEmail(any(UUID.class),any(TicketDto.class))).thenReturn(Mono.empty());
 
-        final ResponseEntity<Boolean> actualPutEntity = restTemplate.exchange(createUrl() + "/" + "{attendeeId}/addTicket?ticketId={ticketId}", HttpMethod.PUT, null, Boolean.class, actualDto.uuid(), ticketId);
+        final ResponseEntity<Void> actualPutEntity = restTemplate.exchange(createUrl() + "/" + "{attendeeId}/addTicket?ticketId={ticketId}", HttpMethod.PUT, null, Void.class, actualDto.uuid(), ticketId);
 
         assertTrue(actualPutEntity.getStatusCode().is2xxSuccessful());
-        assertEquals(Boolean.TRUE, actualPutEntity.getBody());
 
         restTemplate.delete(createUrl() + "/" + actualDto.uuid());
     }

@@ -2,8 +2,10 @@ package io.github.evaggelos99.ems.user.service.repository;
 
 import io.github.evaggelos99.ems.common.api.db.CrudQueriesOperations;
 import io.github.evaggelos99.ems.common.api.domainobjects.AbstractDomainObject;
+import io.github.evaggelos99.ems.common.api.domainobjects.UserRole;
 import io.github.evaggelos99.ems.user.api.User;
 import io.github.evaggelos99.ems.user.api.UserDto;
+import io.github.evaggelos99.ems.user.api.UserQueriesOperations;
 import io.github.evaggelos99.ems.user.api.converters.UserDtoToUserConverter;
 import io.github.evaggelos99.ems.user.api.repo.IUserRepository;
 import io.github.evaggelos99.ems.user.api.repo.UserRowMapper;
@@ -25,7 +27,8 @@ public class UserRepository implements IUserRepository {
     private final DatabaseClient databaseClient;
     private final UserRowMapper userRowMapper;
     private final Function<UserDto, User> userDtoToUserConverter;
-    private final Map<CrudQueriesOperations, String> userQueriesProperties;
+    private final Map<CrudQueriesOperations, String> crudQueriesProperties;
+    private final Map<UserQueriesOperations, String> userQueriesProperties;
 
     /**
      * C-or
@@ -38,18 +41,20 @@ public class UserRepository implements IUserRepository {
      * @param userDtoToUserConverter the {@link UserDtoToUserConverter} used
      *                                   for converting {@link UserDto} to
      *                                   {@link User}
-     * @param userQueriesProperties      the {@link Map} which are used for
+     * @param crudQueriesProperties      the {@link Map} which are used for
      *                                   getting the right query CRUD database
      *                                   operations
      */
     public UserRepository(final DatabaseClient databaseClient,
                           @Qualifier("userRowMapper") final UserRowMapper userRowMapper,
                           @Qualifier("userDtoToUserConverter") final Function<UserDto, User> userDtoToUserConverter,
-                          @Qualifier("queriesProperties") final Map<CrudQueriesOperations, String> userQueriesProperties) {
+                          @Qualifier("queriesProperties") final Map<CrudQueriesOperations, String> crudQueriesProperties,
+                          @Qualifier("userQueriesProperties")final Map<UserQueriesOperations, String> userQueriesProperties) {
 
         this.databaseClient = databaseClient;
         this.userRowMapper = userRowMapper;
         this.userDtoToUserConverter = userDtoToUserConverter;
+        this.crudQueriesProperties = crudQueriesProperties;
         this.userQueriesProperties = userQueriesProperties;
     }
 
@@ -62,7 +67,7 @@ public class UserRepository implements IUserRepository {
     @Override
     public Mono<User> findById(final UUID uuid) {
 
-        return databaseClient.sql(userQueriesProperties.get(CrudQueriesOperations.GET_ID))
+        return databaseClient.sql(crudQueriesProperties.get(CrudQueriesOperations.GET_ID))
                 .bind(0, uuid)
                 .map(userRowMapper)
                 .one();
@@ -71,7 +76,7 @@ public class UserRepository implements IUserRepository {
     @Override
     public Mono<Boolean> deleteById(final UUID uuid) {
 
-        return databaseClient.sql(userQueriesProperties.get(CrudQueriesOperations.DELETE_ID)).bind(0, uuid).fetch().rowsUpdated().filter(this::rowsAffectedIsOne).map(x-> Boolean.TRUE);
+        return databaseClient.sql(crudQueriesProperties.get(CrudQueriesOperations.DELETE_ID)).bind(0, uuid).fetch().rowsUpdated().filter(this::rowsAffectedIsOne).map(x-> Boolean.TRUE);
     }
 
     @Override
@@ -83,7 +88,7 @@ public class UserRepository implements IUserRepository {
     @Override
     public Flux<User> findAll() {
 
-        return databaseClient.sql(userQueriesProperties.get(CrudQueriesOperations.GET_ALL)).map(userRowMapper).all();
+        return databaseClient.sql(crudQueriesProperties.get(CrudQueriesOperations.GET_ALL)).map(userRowMapper).all();
     }
 
     @Override
@@ -92,10 +97,39 @@ public class UserRepository implements IUserRepository {
         return editUser(dto);
     }
 
+    @Override
+    public Mono<User> findByEntityId(final UUID entityUuid) {
+        return databaseClient.sql(userQueriesProperties.get(UserQueriesOperations.GET_ENTITY_UUID))
+                .bind(0, entityUuid)
+                .map(userRowMapper)
+                .one();
+}
+
+    @Override
+    public Mono<Void> addEntityUuid(final User userDto, final UUID entityUuid) {
+
+        return databaseClient.sql(userQueriesProperties.get(query(userDto.getRole())))
+                .bind(0, entityUuid)
+                .bind(1, userDto.getUuid())
+                .fetch()
+                .one()
+                .then();
+    }
+
+    private UserQueriesOperations query(final UserRole role) {
+
+        return switch (role) {
+            case SPONSOR -> UserQueriesOperations.ADD_ENTITY_SPONSOR;
+            case ATTENDEE -> UserQueriesOperations.ADD_ENTITY_ATTENDEE;
+            case ORGANIZER -> UserQueriesOperations.ADD_ENTITY_ORGANIZER;
+            case ADMIN -> throw new RuntimeException("Unreachable Code"); // todo refactor
+        };
+    }
+
     private Mono<User> editUser(final UserDto dto) {
 
         OffsetDateTime updatedAt = OffsetDateTime.now();
-        return databaseClient.sql(userQueriesProperties.get(CrudQueriesOperations.EDIT))
+        return databaseClient.sql(crudQueriesProperties.get(CrudQueriesOperations.EDIT))
                 .bind(0, updatedAt)
                 .bind(1, dto.username())
                 .bind(2, dto.email())
@@ -121,7 +155,7 @@ public class UserRepository implements IUserRepository {
 
         final UserDto newDto = UserDto.from(dto).createdAt(createdAt).lastUpdated(createdAt).build();
 
-        return databaseClient.sql(userQueriesProperties.get(CrudQueriesOperations.SAVE))
+        return databaseClient.sql(crudQueriesProperties.get(CrudQueriesOperations.SAVE))
                 .bind(0, newDto.uuid())
                 .bind(1, newDto.createdAt())
                 .bind(2, newDto.lastUpdated())

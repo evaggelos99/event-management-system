@@ -13,3 +13,13 @@ CREATE TABLE IF NOT EXISTS ems_attendee.ticket_mapping(
     ticket_id UUID,
     PRIMARY KEY (attendee_id, ticket_id)
 );
+CREATE TABLE IF NOT EXISTS ems_attendee.email(
+    email_id integer auto_increment PRIMARY KEY,
+    from_email VARCHAR(100) NOT NULL,
+    to_email VARCHAR(100) NOT NULL,
+    cc VARCHAR(100) ARRAY,
+    body TEXT NOT NULL,
+    from_name VARCHAR(100) NOT NULL,
+    to_name VARCHAR(100) NOT NULL,
+    subject VARCHAR(100) NOT NULL
+);

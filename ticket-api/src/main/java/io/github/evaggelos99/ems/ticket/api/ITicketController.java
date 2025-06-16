@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -75,7 +76,7 @@ public interface ITicketController extends IGenericController {
     @ApiResponses(value = {@ApiResponse(responseCode = "204", description = "successful operation")})
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @DeleteMapping("/{ticketId}")
-    Mono<Boolean> deleteTicket(@PathVariable UUID ticketId);
+    Mono<ResponseEntity<Void>> deleteTicket(@PathVariable UUID ticketId);
 
     /**
      * Method that deletes the Ticket with the specific TicketId
@@ -86,6 +87,6 @@ public interface ITicketController extends IGenericController {
     @ApiResponses(value = {@ApiResponse(responseCode = "204", description = "successful operation")})
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @DeleteMapping("/use/{ticketId}")
-    Mono<Boolean> useTicket(@PathVariable UUID ticketId);
+    Mono<ResponseEntity<Void>> useTicket(@PathVariable UUID ticketId);
 
 }

@@ -3,6 +3,7 @@ package io.github.evaggelos99.ems.event.service.controller;
 import io.github.evaggelos99.ems.event.api.*;
 import io.github.evaggelos99.ems.event.api.service.IEventService;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
@@ -82,21 +83,21 @@ public class EventController implements IEventController {
      * {@inheritDoc}
      */
     @Override
-    public Mono<Boolean> deleteEvent(final UUID eventId) {
+    public Mono<ResponseEntity<Void>> deleteEvent(final UUID eventId) {
 
-        return eventService.delete(eventId);
+        return eventService.delete(eventId).filter(Boolean::booleanValue).map(this::mapResponseEntity);
     }
 
     @Override
-    public Mono<Boolean> removeSponsor(final UUID eventId, final UUID sponsorId) {
+    public Mono<ResponseEntity<Void>> removeSponsor(final UUID eventId, final UUID sponsorId) {
 
-        return eventService.removeSponsor(eventId, sponsorId);
+        return eventService.removeSponsor(eventId, sponsorId).filter(Boolean::booleanValue).map(this::mapResponseEntity);
     }
 
     @Override
-    public Mono<Boolean> addSponsor(final UUID eventId, final UUID sponsorId) {
+    public Mono<ResponseEntity<Void>> addSponsor(final UUID eventId, final UUID sponsorId) {
 
-        return eventService.addSponsor(eventId, sponsorId);
+        return eventService.addSponsor(eventId, sponsorId).filter(Boolean::booleanValue).map(this::mapResponseEntity);
     }
 
     @Override
@@ -106,9 +107,13 @@ public class EventController implements IEventController {
     }
 
     @Override
-    public Mono<Boolean> ping() {
+    public Mono<ResponseEntity<Void>> ping() {
 
-        return eventService.ping().onErrorReturn(false);
+        return eventService.ping().filter(Boolean::booleanValue).map(this::mapResponseEntity);
+    }
+
+    private ResponseEntity<Void> mapResponseEntity(Boolean ignored) {
+        return ResponseEntity.ok().build();
     }
 
 }

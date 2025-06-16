@@ -4,7 +4,9 @@ import io.github.evaggelos99.ems.attendee.api.Attendee;
 import io.github.evaggelos99.ems.attendee.api.AttendeeDto;
 import io.github.evaggelos99.ems.attendee.api.IAttendeeController;
 import io.github.evaggelos99.ems.attendee.api.service.IAttendeeService;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
@@ -83,30 +85,34 @@ public class AttendeeController implements IAttendeeController {
      * {@inheritDoc}
      */
     @Override
-    public Mono<Boolean> deleteAttendee(final UUID attendeeId) {
+    public Mono<ResponseEntity<Void>> deleteAttendee(final UUID attendeeId) {
 
-        return attendeeService.delete(attendeeId);
+        return attendeeService.delete(attendeeId).filter(Boolean::booleanValue).map(this::mapResponseEntity);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Mono<Boolean> addTicket(final UUID attendeeId, final UUID ticketId) {
+    public Mono<ResponseEntity<Void>> addTicket(final UUID attendeeId, final UUID ticketId) {
 
-        return attendeeService.addTicket(attendeeId, ticketId);
+        return attendeeService.addTicket(attendeeId, ticketId).filter(Boolean::booleanValue).map(this::mapResponseEntity);
     }
 
     @Override
-    public Mono<Boolean> removeTicket(final UUID attendeeId, final UUID ticketId) {
+    public Mono<ResponseEntity<Void>> removeTicket(final UUID attendeeId, final UUID ticketId) {
 
-        return attendeeService.removeTicket(attendeeId, ticketId);
+        return attendeeService.removeTicket(attendeeId, ticketId).filter(Boolean::booleanValue).map(this::mapResponseEntity);
     }
 
     @Override
-    public Mono<Boolean> ping() {
+    public Mono<ResponseEntity<Void>> ping() {
 
-        return attendeeService.ping().onErrorReturn(false);
+        return attendeeService.ping().filter(Boolean::booleanValue).map(this::mapResponseEntity);
+    }
+
+    private ResponseEntity<Void> mapResponseEntity(Boolean ignored) {
+        return ResponseEntity.ok().build();
     }
 
 }

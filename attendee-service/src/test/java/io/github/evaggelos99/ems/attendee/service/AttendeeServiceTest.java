@@ -8,6 +8,7 @@ import io.github.evaggelos99.ems.attendee.api.util.AttendeeObjectGenerator;
 import io.github.evaggelos99.ems.attendee.service.remote.EventServicePublisher;
 import io.github.evaggelos99.ems.attendee.service.remote.TicketLookUpRemoteService;
 import io.github.evaggelos99.ems.common.api.db.IMappingRepository;
+import io.github.evaggelos99.ems.ticket.api.TicketDto;
 import io.github.evaggelos99.ems.ticket.api.util.TicketObjectGenerator;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,8 +24,10 @@ import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 import java.time.OffsetDateTime;
-import java.util.*;
-import java.util.stream.Stream;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @ExtendWith({SpringExtension.class, MockitoExtension.class})
 class AttendeeServiceTest {
@@ -39,36 +42,41 @@ class AttendeeServiceTest {
     private TicketLookUpRemoteService lookUpTicketServiceMock;
     @Mock
     private IMappingRepository<AttendeeTicketMapping> attendeeTicketMappingRepositoryMock;
+    @Mock
+    private EmailService emailServiceMock;
 
     private AttendeeService service;
 
     @BeforeEach
     void setUp() {
 
-        service = new AttendeeService(attendeeRepository, eventServiceMock, lookUpTicketServiceMock, attendeeTicketMappingRepositoryMock);
+        service = new AttendeeService(attendeeRepository, eventServiceMock, lookUpTicketServiceMock, attendeeTicketMappingRepositoryMock, emailServiceMock);
     }
 
     @Test
     @WithMockUser(roles = {"CREATE_ATTENDEE", "UPDATE_ATTENDEE", "DELETE_ATTENDEE", "READ_ATTENDEE"})
     void add_addTicket_delete_whenInvokedWithAttendeeDtoAndValidTicket_thenExpectToBeSaved_thenExpectTicketToBeAdded_thenDeleteAttendee() {
 
-        final UUID ticketId = UUID.randomUUID();
-        final UUID eventId = UUID.randomUUID();
-        final AttendeeDto dto = AttendeeObjectGenerator.generateAttendeeDto(null, ticketId);
+        final TicketDto ticketDto = TicketObjectGenerator.generateTicketDto(UUID.randomUUID(), UUID.randomUUID());
+        final AttendeeDto dto = AttendeeObjectGenerator.generateAttendeeDto(null, ticketDto.uuid());
 
-        Mockito.when(attendeeTicketMappingRepositoryMock.saveSingularMapping(dto.uuid(), ticketId))
-                .thenReturn(Mono.just(new AttendeeTicketMapping(dto.uuid(), ticketId)));
-        Mockito.when(lookUpTicketServiceMock.lookUpTicket(ticketId))
-                .thenReturn(Mono.just(TicketObjectGenerator.generateTicketDto(ticketId, eventId)));
-        Mockito.when(eventServiceMock.addAttendee(eventId, dto.uuid())).thenReturn(Mono.just(true));
+
+        Mockito.when(attendeeTicketMappingRepositoryMock.saveSingularMapping(dto.uuid(), ticketDto.uuid()))
+                .thenReturn(Mono.just(new AttendeeTicketMapping(dto.uuid(), ticketDto.uuid())));
+        Mockito.when(lookUpTicketServiceMock.lookUpTicket(ticketDto.uuid()))
+                .thenReturn(Mono.just(ticketDto));
+        Mockito.when(eventServiceMock.addAttendee(ticketDto, dto.uuid())).thenReturn(Mono.just(ticketDto));
+        Mockito.when(emailServiceMock.sendPurchaseTicketEmail(dto.uuid(), ticketDto)).thenReturn(Mono.empty());
 
         StepVerifier.create(Assertions.assertDoesNotThrow(() -> service.add(dto)))
                 .assertNext(Assertions::assertNotNull)
                 .verifyComplete();
 
-        StepVerifier.create(service.addTicket(dto.uuid(), ticketId))
-                .assertNext(Assertions::assertTrue)
+        StepVerifier.create(service.addTicket(dto.uuid(), ticketDto.uuid()))
                 .verifyComplete();
+
+        Mockito.verify(emailServiceMock).sendPurchaseTicketEmail(dto.uuid(), ticketDto);
+
         StepVerifier.create(Assertions.assertDoesNotThrow(() -> service.delete(dto.uuid())))
                 .assertNext(Assertions::assertTrue);
     }
@@ -167,25 +175,27 @@ class AttendeeServiceTest {
     @WithMockUser(roles = {"CREATE_ATTENDEE", "UPDATE_ATTENDEE", "DELETE_ATTENDEE", "READ_ATTENDEE"})
     void add_addTicket_get_removeTicket_get_delete_whenInvokedWithAttendeeDtoThenExpectToBeSaved_expectThatCanBeFetched() {
 
-        final UUID ticketId = UUID.randomUUID();
-        final UUID eventId = UUID.randomUUID();
+        TicketDto ticketDto = TicketObjectGenerator.generateTicketDto(UUID.randomUUID(),UUID.randomUUID());
         final AttendeeDto dto = AttendeeObjectGenerator.generateAttendeeDto(null);
 
-        Mockito.when(attendeeTicketMappingRepositoryMock.saveSingularMapping(dto.uuid(), ticketId))
-                .thenReturn(Mono.just(new AttendeeTicketMapping(dto.uuid(), ticketId)));
-        Mockito.when(lookUpTicketServiceMock.lookUpTicket(ticketId))
-                .thenReturn(Mono.just(TicketObjectGenerator.generateTicketDto(ticketId, eventId)));
-        Mockito.when(eventServiceMock.addAttendee(eventId, dto.uuid())).thenReturn(Mono.just(true));
+        Mockito.when(attendeeTicketMappingRepositoryMock.saveSingularMapping(dto.uuid(), ticketDto.uuid()))
+                .thenReturn(Mono.just(new AttendeeTicketMapping(dto.uuid(), ticketDto.uuid())));
+        Mockito.when(lookUpTicketServiceMock.lookUpTicket(ticketDto.uuid()))
+                .thenReturn(Mono.just(ticketDto));
+        Mockito.when(eventServiceMock.addAttendee(ticketDto, dto.uuid())).thenReturn(Mono.just(ticketDto));
+        Mockito.when(emailServiceMock.sendPurchaseTicketEmail(dto.uuid(), ticketDto)).thenReturn(Mono.empty());
+        
 
         StepVerifier.create(Assertions.assertDoesNotThrow(() -> service.add(dto)))
                 .assertNext(Assertions::assertNotNull)
                 .verifyComplete();
 
-        StepVerifier.create(service.addTicket(dto.uuid(), ticketId))
-                .assertNext(Assertions::assertTrue)
+        StepVerifier.create(service.addTicket(dto.uuid(), ticketDto.uuid()))
                 .verifyComplete();
 
-        StepVerifier.create(service.removeTicket(dto.uuid(), ticketId))
+        Mockito.verify(emailServiceMock).sendPurchaseTicketEmail(dto.uuid(), ticketDto);
+
+        StepVerifier.create(service.removeTicket(dto.uuid(), ticketDto.uuid()))
                 .assertNext(Assertions::assertTrue);
 
         StepVerifier.create(Assertions.assertDoesNotThrow(() -> service.delete(dto.uuid())))

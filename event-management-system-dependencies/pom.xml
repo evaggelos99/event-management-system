@@ -13,6 +13,7 @@
     <properties>
         <event-management-system.version>0.0.1-SNAPSHOT</event-management-system.version>
         <org-postgresql.version>1.0.7.RELEASE</org-postgresql.version>
+        <org-simplejavamail.version>8.12.6</org-simplejavamail.version>
     </properties>
 
     <dependencyManagement>
@@ -111,6 +112,11 @@
                 <groupId>io.github.evaggelos99</groupId>
                 <artifactId>user-service</artifactId>
                 <version>${event-management-system.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.simplejavamail</groupId>
+                <artifactId>simple-java-mail</artifactId>
+                <version>${org-simplejavamail.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

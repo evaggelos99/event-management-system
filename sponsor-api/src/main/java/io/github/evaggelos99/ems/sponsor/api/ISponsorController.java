@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -77,6 +78,6 @@ public interface ISponsorController extends IGenericController {
     @ApiResponses(value = {@ApiResponse(responseCode = "204", description = "successful operation")})
     @ResponseStatus(value = HttpStatus.OK)
     @DeleteMapping(path = "/{sponsorId}")
-    Mono<Boolean> deleteSponsor(@PathVariable UUID sponsorId);
+    Mono<ResponseEntity<Void>> deleteSponsor(@PathVariable UUID sponsorId);
 
 }

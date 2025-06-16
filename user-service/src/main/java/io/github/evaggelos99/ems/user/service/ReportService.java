@@ -1,7 +1,7 @@
 package io.github.evaggelos99.ems.user.service;
 
 import io.github.evaggelos99.ems.common.api.dto.EventAttendanceReport;
-import io.github.evaggelos99.ems.user.api.IReportService;
+import io.github.evaggelos99.ems.user.api.service.IReportService;
 import io.github.evaggelos99.ems.user.service.repository.ReportRepository;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;

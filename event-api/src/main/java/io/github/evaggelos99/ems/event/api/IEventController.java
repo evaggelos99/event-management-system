@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -77,7 +78,7 @@ public interface IEventController extends IGenericController {
     @ApiResponses(value = {@ApiResponse(responseCode = "204", description = "successful operation")})
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @DeleteMapping(path = "/{eventId}")
-    Mono<Boolean> deleteEvent(@PathVariable UUID eventId);
+    Mono<ResponseEntity<Void>> deleteEvent(@PathVariable UUID eventId);
 
     /**
      * Adds a sponsor to the event. <br/>
@@ -88,7 +89,7 @@ public interface IEventController extends IGenericController {
      */
     @Hidden
     @PutMapping("/{eventId}/removeSponsor")
-    Mono<Boolean> removeSponsor(@PathVariable UUID eventId, @RequestParam UUID sponsorId);
+    Mono<ResponseEntity<Void>> removeSponsor(@PathVariable UUID eventId, @RequestParam UUID sponsorId);
 
     /**
      * Removes a sponsor to the event. <br/>
@@ -99,7 +100,7 @@ public interface IEventController extends IGenericController {
      */
     @Hidden
     @PutMapping("/{eventId}/addSponsor")
-    Mono<Boolean> addSponsor(@PathVariable UUID eventId, @RequestParam UUID sponsorId);
+    Mono<ResponseEntity<Void>> addSponsor(@PathVariable UUID eventId, @RequestParam UUID sponsorId);
 
     /**
      * Method that gets all Event Stream objects from the DB

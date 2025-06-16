@@ -1,9 +1,8 @@
-package io.github.evaggelos99.ems.user.api;
+package io.github.evaggelos99.ems.user.api.service;
 
 import io.github.evaggelos99.ems.common.api.dto.EventAttendanceReport;
 import reactor.core.publisher.Mono;
 
-import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 

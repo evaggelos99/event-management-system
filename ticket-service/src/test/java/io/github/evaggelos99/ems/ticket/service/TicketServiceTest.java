@@ -2,6 +2,7 @@ package io.github.evaggelos99.ems.ticket.service;
 
 import io.github.evaggelos99.ems.ticket.api.Ticket;
 import io.github.evaggelos99.ems.ticket.api.TicketDto;
+import io.github.evaggelos99.ems.ticket.api.converters.TicketToTicketDtoConverter;
 import io.github.evaggelos99.ems.ticket.api.repo.ITicketRepository;
 import io.github.evaggelos99.ems.ticket.api.util.TicketObjectGenerator;
 import org.junit.jupiter.api.BeforeEach;
@@ -31,7 +32,7 @@ class TicketServiceTest {
     @BeforeEach
     void setUp() {
 
-        service = new TicketService(ticketRepository);
+        service = new TicketService(ticketRepository, new TicketToTicketDtoConverter());
     }
 
     @Test

@@ -5,6 +5,7 @@ import io.github.evaggelos99.ems.sponsor.api.ISponsorController;
 import io.github.evaggelos99.ems.sponsor.api.Sponsor;
 import io.github.evaggelos99.ems.sponsor.api.SponsorDto;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
@@ -81,18 +82,22 @@ public class SponsorController implements ISponsorController {
      * {@inheritDoc}
      */
     @Override
-    public Mono<Boolean> deleteSponsor(final UUID sponsorId) {
+    public Mono<ResponseEntity<Void>> deleteSponsor(final UUID sponsorId) {
 
-        return sponsorService.delete(sponsorId);
+        return sponsorService.delete(sponsorId).filter(Boolean::booleanValue).map(this::mapResponseEntity);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public Mono<Boolean> ping() {
+    public Mono<ResponseEntity<Void>> ping() {
 
-        return sponsorService.ping().onErrorReturn(false);
+        return sponsorService.ping().filter(Boolean::booleanValue).map(x -> ResponseEntity.ok().build());
+    }
+
+    private ResponseEntity<Void> mapResponseEntity(Boolean ignored) {
+        return ResponseEntity.ok().build();
     }
 
 }
