@@ -16,7 +16,7 @@ import java.util.UUID;
  * @author Evangelos Georgiou
  */
 public record UserDto(
-        @Schema(hidden = true, description = "The UUID of the User") UUID uuid,
+        @Null @Schema(hidden = true, description = "The UUID of the User") UUID uuid,
         @Null @Schema(hidden = true) OffsetDateTime createdAt, //
         @Null @Schema(hidden = true) OffsetDateTime lastUpdated,
         @NotNull @Schema(description = "The username of the User") String username,

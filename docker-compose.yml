@@ -103,6 +103,15 @@ services:
     volumes:
       - fusionauth_config:/usr/local/fusionauth/config
 
+  fake-smtp:
+    hostname: smtp-server
+    image: reachfive/fake-smtp-server
+    ports:
+      - "1025:1025"
+      - "1080:1080"
+    networks:
+      - backend
+
   attendee-service:
     container_name: attendee-service
     hostname: attendee-service
@@ -112,6 +121,7 @@ services:
       io.github.evaggelos99.ems.attendee-service.db.host: db
       server.port: 8080
       io.github.evaggelos99.ems.attendee.ticket-service-url: "http://ticket-service:8080/ticket"
+      io.github.evaggelos99.ems.attendee.user-service-url: "http://user-service:8080/user"
       spring.kafka.producer.bootstrap-servers: broker:9092
       io.github.evaggelos99.ems.event.topic.add-attendee: ems.event.add-attendee
       io.github.evaggelos99.ems.event.topic.remove-attendee: ems.event.remove-attendee

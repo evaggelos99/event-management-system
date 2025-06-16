@@ -103,11 +103,13 @@ public class EventService implements IEventService {
      * {@inheritDoc}
      */
     @Override
-    public Mono<Boolean> addAttendee(final UUID eventId, final UUID attendeeId) {
+    public Mono<Boolean>  addAttendee(final UUID eventId, final UUID attendeeId) {
         // TODO add role and add whatever is needed
 
-        return SecurityContextHelper.filterRoles(ROLE_UPDATE_EVENT)
-                .flatMap(x -> PublisherValidator.validateBooleanMono(x, () -> attendeeEventMappingRepository.saveSingularMapping(eventId, attendeeId)))
+        return
+//                SecurityContextHelper.filterRoles(ROLE_UPDATE_EVENT)
+//                .flatMap(x -> PublisherValidator.validateBooleanMono(x, () -> ))
+                attendeeEventMappingRepository.saveSingularMapping(eventId, attendeeId)
                 .map(Objects::nonNull)
                 .onErrorReturn(false);
     }
@@ -118,8 +120,10 @@ public class EventService implements IEventService {
     @Override
     public Mono<Boolean> removeAttendee(final UUID eventId, final UUID attendeeId) {
 
-        return SecurityContextHelper.filterRoles(ROLE_UPDATE_EVENT)
-                .flatMap(x -> PublisherValidator.validateBooleanMono(x, () -> attendeeEventMappingRepository.deleteSingularMapping(eventId, attendeeId)))
+        return
+//                SecurityContextHelper.filterRoles(ROLE_UPDATE_EVENT)
+//                .flatMap(x -> PublisherValidator.validateBooleanMono(x, () -> attendeeEventMappingRepository.deleteSingularMapping(eventId, attendeeId)))
+                attendeeEventMappingRepository.deleteSingularMapping(eventId, attendeeId)
                 .onErrorReturn(false);
     }
 

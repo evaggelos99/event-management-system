@@ -7,6 +7,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -76,7 +77,7 @@ public interface IAttendeeController extends IGenericController {
     @ApiResponses(value = {@ApiResponse(responseCode = "204", description = "successful operation")})
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     @DeleteMapping(path = "/{attendeeId}")
-    Mono<Boolean> deleteAttendee(@PathVariable UUID attendeeId);
+    Mono<ResponseEntity<Void>> deleteAttendee(@PathVariable UUID attendeeId);
 
     /**
      * Adds a ticket to the Attendee then cascades and sends a REST call to the Event Service which adds the attendee there
@@ -89,7 +90,7 @@ public interface IAttendeeController extends IGenericController {
             @ApiResponse(responseCode = "404", description = "could not find the object")})
     @PutMapping("/{attendeeId}/addTicket")
     @ResponseStatus(value = HttpStatus.CREATED)
-    Mono<Boolean> addTicket(@PathVariable UUID attendeeId, @RequestParam UUID ticketId);
+    Mono<ResponseEntity<Void>> addTicket(@PathVariable UUID attendeeId, @RequestParam UUID ticketId);
 
     /**
      * Removes a ticket to the Attendee then cascades and sends a REST call to the Event Service which removes the attendee from there
@@ -102,6 +103,6 @@ public interface IAttendeeController extends IGenericController {
 //            @ApiResponse(responseCode = "404", description = "could not find the object")})
     @PutMapping("/{attendeeId}/removeTicket")
     @ResponseStatus(value = HttpStatus.CREATED)
-    Mono<Boolean> removeTicket(@PathVariable UUID attendeeId, @RequestParam UUID ticketId);
+    Mono<ResponseEntity<Void>> removeTicket(@PathVariable UUID attendeeId, @RequestParam UUID ticketId);
 
 }

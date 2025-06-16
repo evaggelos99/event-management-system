@@ -12,8 +12,8 @@ import io.fusionauth.domain.api.UserRequest;
 import io.fusionauth.domain.api.UserResponse;
 import io.fusionauth.domain.api.user.RegistrationRequest;
 import io.fusionauth.domain.search.ApplicationSearchCriteria;
-import io.github.evaggelos99.ems.user.api.IdpUserProperties;
-import io.github.evaggelos99.ems.user.api.OnboardingIdentityManagerService;
+import io.github.evaggelos99.ems.common.api.dto.IdpUserProperties;
+import io.github.evaggelos99.ems.user.api.service.OnboardingIdentityManagerService;
 import io.github.evaggelos99.ems.user.api.Roles;
 import io.github.evaggelos99.ems.user.api.UserDto;
 import org.slf4j.Logger;
@@ -30,7 +30,6 @@ import java.util.stream.Stream;
 
 public class FusionAuthOnboardingIdentityManagerService implements OnboardingIdentityManagerService {
 
-    public static final String PASSWORD_SUFFIX = "changeme";
     private static final Logger LOGGER = LoggerFactory.getLogger(FusionAuthOnboardingIdentityManagerService.class);
     private final FusionAuthClient fusionAuthClient;
     private final String applicationName;
@@ -126,7 +125,8 @@ public class FusionAuthOnboardingIdentityManagerService implements OnboardingIde
         final RegistrationRequest registrationRequest = new RegistrationRequest();
         registrationRequest.user = fusionAuthUser;
         registrationRequest.registration = userRegistration;
-        registrationRequest.skipVerification = true;
+        registrationRequest.skipVerification = false;
+        registrationRequest.sendSetPasswordEmail = true;
 
         return registrationRequest;
     }
@@ -147,7 +147,6 @@ public class FusionAuthOnboardingIdentityManagerService implements OnboardingIde
         return new User()
                 .with(user -> user.username = userDto.username())
                 .with(user -> user.active = true)
-                .with(user -> user.password = userDto.firstName() + userDto.lastName() + PASSWORD_SUFFIX)
                 .with(user -> user.birthDate = userDto.birthDate())
                 .with(user -> user.email = userDto.email())
                 .with(user -> user.firstName = userDto.firstName())

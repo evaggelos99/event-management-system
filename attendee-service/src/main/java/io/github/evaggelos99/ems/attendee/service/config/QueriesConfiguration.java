@@ -23,6 +23,8 @@ public class QueriesConfiguration {
     private String deleteTicketMappings;
     private String getTickets;
     private String deleteTicketSingularMapping;
+    private String saveEmail;
+    private String getEmails;
 
     @Bean
     Map<CrudQueriesOperations, String> queriesProperties() {
@@ -41,6 +43,13 @@ public class QueriesConfiguration {
                 MappingQueriesOperations.DELETE_MAPPINGS, deleteTicketMappings,
                 MappingQueriesOperations.DELETE_SINGULAR_MAPPING, deleteTicketSingularMapping,
                 MappingQueriesOperations.GET_MAPPINGS, getTickets);
+    }
+
+    @Bean
+    Map<CrudQueriesOperations, String> emailQueriesProperties() {
+
+        return Map.of(CrudQueriesOperations.SAVE, saveEmail,
+                CrudQueriesOperations.GET_ALL, getEmails);
     }
 
     public String getSave() {
@@ -113,5 +122,21 @@ public class QueriesConfiguration {
 
     public String getDeleteTicketSingularMapping() {
         return deleteTicketSingularMapping;
+    }
+
+    public String getSaveEmail() {
+        return saveEmail;
+    }
+
+    public void setSaveEmail(final String saveEmail) {
+        this.saveEmail = saveEmail;
+    }
+
+    public String getGetEmails() {
+        return getEmails;
+    }
+
+    public void setGetEmails(final String getEmails) {
+        this.getEmails = getEmails;
     }
 }

@@ -2,19 +2,23 @@ package io.github.evaggelos99.ems.user.service;
 
 import io.github.evaggelos99.ems.common.api.controller.exceptions.ObjectNotFoundException;
 import io.github.evaggelos99.ems.common.api.domainobjects.validators.constraints.PublisherValidator;
+import io.github.evaggelos99.ems.common.api.dto.IdpUserProperties;
 import io.github.evaggelos99.ems.security.lib.SecurityContextHelper;
-import io.github.evaggelos99.ems.user.api.*;
+import io.github.evaggelos99.ems.user.api.User;
+import io.github.evaggelos99.ems.user.api.UserDto;
 import io.github.evaggelos99.ems.user.api.repo.IUserRepository;
+import io.github.evaggelos99.ems.user.api.service.IUserService;
+import io.github.evaggelos99.ems.user.api.service.OnboardingIdentityManagerService;
 import io.github.evaggelos99.ems.user.service.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.util.function.Tuple2;
+import reactor.util.function.Tuples;
 
 import java.util.UUID;
 
 import static io.github.evaggelos99.ems.user.api.Roles.ROLE_ADMIN;
-
 
 @Service
 public class UserService implements IUserService {
@@ -29,7 +33,7 @@ public class UserService implements IUserService {
      *                                         communicates with the database
      * @param onboardingIdentityManagerService
      */
-    public UserService(final IUserRepository userRepository, final OnboardingIdentityManagerService onboardingIdentityManagerService) {
+    UserService(final IUserRepository userRepository, final OnboardingIdentityManagerService onboardingIdentityManagerService) {
 
         this.userRepository = userRepository;
         this.onboardingIdentityManagerService = onboardingIdentityManagerService;
@@ -43,7 +47,7 @@ public class UserService implements IUserService {
 
         return SecurityContextHelper.filterRoles(ROLE_ADMIN)
                 .flatMap(x -> PublisherValidator.validateBooleanMono(x, () -> onboardingIdentityManagerService.enrollUser(userDto)))
-                .map(x -> UserDto.from(userDto).uuid(x.id()).build())
+                .map(userProperties -> UserDto.from(userDto).uuid(userProperties.id()).build())
                 .flatMap(userRepository::save);
     }
 
@@ -57,6 +61,26 @@ public class UserService implements IUserService {
                 .flatMap(x -> PublisherValidator.validateBooleanMono(x, () -> onboardingIdentityManagerService.getUser(uuid)))
                 .zipWith(userRepository.findById(uuid))
                 .map(this::mapToUserObject);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Mono<User> getEntity(final UUID entityUuid) {
+
+        return SecurityContextHelper.filterRoles(ROLE_ADMIN)
+                .flatMap(x -> PublisherValidator.validateBooleanMono(x, () -> userRepository.findByEntityId(entityUuid)))
+                .flatMap(user -> onboardingIdentityManagerService.getUser(user.getUuid())
+                        .map(idpUser -> Tuples.of(idpUser, user)))
+                .map(this::mapToUserObject);
+    }
+
+    @Override
+    public Mono<Void> addEntity(final User user, final UUID entityUuid) {
+
+        return SecurityContextHelper.filterRoles(ROLE_ADMIN)
+                .flatMap(x-> PublisherValidator.validateBooleanMono(x, () -> userRepository.addEntityUuid(user, entityUuid)));
     }
 
     /**

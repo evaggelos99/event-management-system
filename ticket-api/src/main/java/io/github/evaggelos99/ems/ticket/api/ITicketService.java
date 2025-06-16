@@ -10,4 +10,5 @@ public interface ITicketService extends IService<Ticket, TicketDto> {
 
     Mono<FileSystemResource> picture(UUID ticketId);
 
+    Mono<Boolean> useTicket(UUID ticketId);
 }

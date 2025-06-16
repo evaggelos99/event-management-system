@@ -1,4 +1,4 @@
-package io.github.evaggelos99.ems.user.api;
+package io.github.evaggelos99.ems.common.api.dto;
 
 import java.time.LocalDate;
 import java.util.List;

@@ -29,6 +29,7 @@ public class AttendeeService implements IAttendeeService {
     private final EventServicePublisher eventService;
     private final TicketLookUpRemoteService lookUpTicketService;
     private final IMappingRepository<AttendeeTicketMapping> attendeeTicketMappingRepository;
+    private final EmailService emailService;
 
     /**
      * C-or
@@ -45,12 +46,14 @@ public class AttendeeService implements IAttendeeService {
     public AttendeeService(final IAttendeeRepository attendeeRepository,
                            final EventServicePublisher eventService,
                            final TicketLookUpRemoteService lookUpTicketService,
-                           final IMappingRepository<AttendeeTicketMapping> attendeeTicketMappingRepository) {
+                           final IMappingRepository<AttendeeTicketMapping> attendeeTicketMappingRepository,
+                           final EmailService emailService) {
 
         this.attendeeRepository = requireNonNull(attendeeRepository);
         this.eventService = requireNonNull(eventService);
         this.lookUpTicketService = requireNonNull(lookUpTicketService);
         this.attendeeTicketMappingRepository = attendeeTicketMappingRepository;
+        this.emailService = emailService;
     }
 
     /**
@@ -123,7 +126,9 @@ public class AttendeeService implements IAttendeeService {
         return SecurityContextHelper.filterRoles(ROLE_UPDATE_ATTENDEE)
                 .flatMap(x -> PublisherValidator.validateBooleanMono(x, () -> attendeeTicketMappingRepository.saveSingularMapping(attendeeId, ticketId)))
                 .flatMap(x -> lookUpTicketService.lookUpTicket(ticketId))
-                .flatMap(ticketDto -> eventService.addAttendee(ticketDto.eventID(), attendeeId)).defaultIfEmpty(false);
+                .flatMap(ticketDto -> eventService.addAttendee(ticketDto, attendeeId))
+                .flatMap(x -> emailService.sendPurchaseTicketEmail(attendeeId, x))
+                .map(x -> true);
     }
 
     /**

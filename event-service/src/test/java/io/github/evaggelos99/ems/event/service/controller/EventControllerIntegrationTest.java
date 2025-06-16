@@ -78,7 +78,7 @@ class EventControllerIntegrationTest {
     @WithMockUser(roles = {"AUTHENTICATED"})
     void ping() {
 
-        assertEquals(Boolean.TRUE, restTemplate.getForEntity(createUrl() + "/ping", Boolean.class).getBody());
+        assertTrue(restTemplate.getForEntity(createUrl() + "/ping", Boolean.class).getStatusCode().is2xxSuccessful());
     }
 
     @Test
@@ -253,11 +253,9 @@ class EventControllerIntegrationTest {
 
         final ResponseEntity<Boolean> successfulAddOperation = restTemplate.exchange(createUrl() + "/{eventId}/addSponsor?sponsorId={sponsorId}", HttpMethod.PUT, null, Boolean.class, actualDto.uuid(), sponsorId2);
         assertTrue(successfulAddOperation.getStatusCode().is2xxSuccessful());
-        assertEquals(Boolean.TRUE, successfulAddOperation.getBody());
 
         final ResponseEntity<Boolean> successfulRemoveOperation = restTemplate.exchange(createUrl() + "/{eventId}/removeSponsor?sponsorId={sponsorId}", HttpMethod.PUT, null, Boolean.class, actualDto.uuid(), sponsorId2);
         assertTrue(successfulRemoveOperation.getStatusCode().is2xxSuccessful());
-        assertEquals(Boolean.TRUE, successfulRemoveOperation.getBody());
 
         restTemplate.delete(createUrl() + "/{eventId}", actualDto.uuid());
     }

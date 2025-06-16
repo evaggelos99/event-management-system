@@ -2,9 +2,11 @@ package io.github.evaggelos99.ems.ticket.service.controller;
 
 import io.github.evaggelos99.ems.common.api.service.IService;
 import io.github.evaggelos99.ems.ticket.api.ITicketController;
+import io.github.evaggelos99.ems.ticket.api.ITicketService;
 import io.github.evaggelos99.ems.ticket.api.Ticket;
 import io.github.evaggelos99.ems.ticket.api.TicketDto;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
@@ -26,16 +28,16 @@ import static java.util.Objects.requireNonNull;
 public class TicketController implements ITicketController {
 
     static final String TICKET_PATH = "/ticket";
-    private final IService<Ticket, TicketDto> ticketService;
+    private final ITicketService ticketService;
     private final Function<Ticket, TicketDto> ticketToTicketDtoConverter;
 
     /**
      * C-or
      *
      * @param ticketService              service responsible for CRUD operations
-     * @param ticketToTicketDtoConverter ticket to DTO
+     * @param ticketToTicketDtoConverter ticket to DTO converter
      */
-    public TicketController(final IService<Ticket, TicketDto> ticketService,
+    public TicketController(final ITicketService ticketService,
                             @Qualifier("ticketToTicketDtoConverter") final Function<Ticket, TicketDto> ticketToTicketDtoConverter) {
 
         this.ticketService = requireNonNull(ticketService);
@@ -73,20 +75,16 @@ public class TicketController implements ITicketController {
      * {@inheritDoc}
      */
     @Override
-    public Mono<Boolean> deleteTicket(final UUID ticketId) {
+    public Mono<ResponseEntity<Void>> deleteTicket(final UUID ticketId) {
 
-        return ticketService.delete(ticketId);
+        return ticketService.delete(ticketId).filter(Boolean::booleanValue).map(this::mapResponseEntity);
     }
 
     @Override
-    public Mono<Boolean> useTicket(final UUID ticketId) {
+    public Mono<ResponseEntity<Void>> useTicket(final UUID ticketId) {
 
         // TODO FIXME add some kind of integrity check something that makes sense business wise idk
-
-        return ticketService.get(ticketId)
-                .map(ticketToTicketDtoConverter)
-                .map(dto -> ticketService.edit(ticketId, TicketDto.from(dto).build()))
-                .map(Objects::nonNull);
+        return ticketService.useTicket(ticketId).filter(Boolean::booleanValue).map(this::mapResponseEntity);
     }
 
     /**
@@ -99,9 +97,13 @@ public class TicketController implements ITicketController {
     }
 
     @Override
-    public Mono<Boolean> ping() {
+    public Mono<ResponseEntity<Void>> ping() {
 
-        return ticketService.ping().onErrorReturn(false);
+        return ticketService.ping().filter(Boolean::booleanValue).map(x -> ResponseEntity.ok().build());
+    }
+
+    private ResponseEntity<Void> mapResponseEntity(Boolean ignored) {
+        return ResponseEntity.ok().build();
     }
 
 }

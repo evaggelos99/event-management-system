@@ -1,6 +1,6 @@
 package io.github.evaggelos99.ems.user.service.config;
 
-import io.github.evaggelos99.ems.user.api.OnboardingIdentityManagerService;
+import io.github.evaggelos99.ems.user.api.service.OnboardingIdentityManagerService;
 import io.github.evaggelos99.ems.user.service.FusionAuthOnboardingIdentityManagerService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

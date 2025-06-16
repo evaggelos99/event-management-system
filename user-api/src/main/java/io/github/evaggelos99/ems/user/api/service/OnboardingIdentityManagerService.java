@@ -1,5 +1,7 @@
-package io.github.evaggelos99.ems.user.api;
+package io.github.evaggelos99.ems.user.api.service;
 
+import io.github.evaggelos99.ems.common.api.dto.IdpUserProperties;
+import io.github.evaggelos99.ems.user.api.UserDto;
 import reactor.core.publisher.Mono;
 
 import java.util.UUID;

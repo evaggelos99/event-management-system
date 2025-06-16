@@ -19,13 +19,13 @@ For this specific system we have the following components:
 
 ## REST API for exporting:
 
-`
+```bash
     curl -X GET "http://localhost:9011/api/application" -H "Authorization: API_KEY"
-`
+```
 
-`
+```bash
     curl -X GET "http://localhost:9011/api/tenant" -H "Authorization: API_KEY"
-`
+```
 
 ### Exporting users
 There is no API for exporting all the users you would have to manually read from the DB and sync through some middleware or script to a new DB
@@ -33,6 +33,6 @@ There is no API for exporting all the users you would have to manually read from
 
 ## Importing application
 
-`
+```bash
     curl -X POST http://localhost:9011/api/application -H "Authorization: API_KEY" -H "Content-Type: application/json" -d @event-management-system.json
-`
+```

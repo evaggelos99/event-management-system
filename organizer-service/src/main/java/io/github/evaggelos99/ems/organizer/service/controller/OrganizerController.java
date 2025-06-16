@@ -5,6 +5,7 @@ import io.github.evaggelos99.ems.organizer.api.IOrganizerController;
 import io.github.evaggelos99.ems.organizer.api.Organizer;
 import io.github.evaggelos99.ems.organizer.api.OrganizerDto;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
@@ -46,9 +47,9 @@ public class OrganizerController implements IOrganizerController {
      * {@inheritDoc}
      */
     @Override
-    public Mono<Boolean> deleteOrganizer(final UUID organizerId) {
+    public Mono<ResponseEntity<Void>> deleteOrganizer(final UUID organizerId) {
 
-        return organizerService.delete(organizerId);
+        return organizerService.delete(organizerId).filter(Boolean::booleanValue).map(this::mapResponseEntity);
     }
 
     /**
@@ -71,9 +72,9 @@ public class OrganizerController implements IOrganizerController {
     }
 
     @Override
-    public Mono<Boolean> ping() {
+    public Mono<ResponseEntity<Void>> ping() {
 
-        return organizerService.ping().onErrorReturn(false);
+        return organizerService.ping().filter(Boolean::booleanValue).map(x -> ResponseEntity.ok().build());
     }
 
     /**
@@ -92,6 +93,10 @@ public class OrganizerController implements IOrganizerController {
     public Mono<OrganizerDto> putOrganizer(final UUID organizerId, final OrganizerDto organizerDto) {
 
         return organizerService.edit(organizerId, organizerDto).map(organizerToOrganizerDtoConverter);
+    }
+
+    private ResponseEntity<Void> mapResponseEntity(Boolean ignored) {
+        return ResponseEntity.ok().build();
     }
 
 }
