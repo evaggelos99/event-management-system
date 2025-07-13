@@ -27,3 +27,6 @@ docker buildx build -t evaggelosg99/event-stream-simulator:latest .
 cd ../user-service
 mvn clean package spring-boot:repackage -DskipTests
 docker buildx build -t evaggelosg99/user-service:latest .
+cd ../scheduler-service
+mvn clean package -DskipTests -Dquarkus.container-image.build=true -Dquarkus.container-image.name=scheduler-service -Dquarkus.container-image.tag=latest
+#docker buildx build -t evaggelosg99/scheduler-service:latest .

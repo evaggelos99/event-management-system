@@ -112,6 +112,14 @@ services:
     networks:
       - backend
 
+  redis:
+    image: redis:latest
+    container_name: redis
+    ports:
+      - "6379:6379"
+    networks:
+      - backend
+
   attendee-service:
     container_name: attendee-service
     hostname: attendee-service
@@ -269,12 +277,37 @@ services:
       io.github.evaggelos99.ems.event.simulator.username: superduper
       io.github.evaggelos99.ems.event.simulator.password: superduper
       io.github.evaggelos99.ems.event.simulator.clientId: 99c404e4-2877-4296-9c85-a89191d19e21
-
     depends_on:
       - broker
       - fusionauth
     ports:
       - "8085:8080"
+    networks:
+      - backend
+
+  scheduler-service:
+    container_name: scheduler-service
+    hostname: scheduler-service
+    image: 'evangelosgeorgiou/scheduler-service:latest'
+    restart: "always"
+    environment:
+      io.github.evaggelos99.ems.scheduler-service.mail.host: smtp-server
+      io.github.evaggelos99.ems.scheduler-service.mail.port: 1025
+      io.github.evaggelos99.ems.scheduler-service.mail.username: username
+      io.github.evaggelos99.ems.scheduler-service.mail.password: password
+      quarkus.datasource.db-kind: postgresql
+      quarkus.datasource.username: event-management-system-user
+      quarkus.datasource.password: event-management-system-user
+      quarkus.datasource.jdbc.url: jdbc:postgresql://db:5432/event-management-system
+      quarkus.datasource.jdbc.max-size: 32
+      quarkus.devservices.enabled: false
+      quarkus.redis.hosts: redis://redis:6379
+      quarkus.redis.client.pool.max-size: 20
+      quarkus.redis.client.pool.min-idle: 5
+    depends_on:
+      - db
+    ports:
+      - "8087:8080"
     networks:
       - backend
 
